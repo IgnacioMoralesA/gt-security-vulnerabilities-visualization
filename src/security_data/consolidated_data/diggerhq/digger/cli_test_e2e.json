@@ -1,0 +1,1247 @@
+{
+  "repo_owner": "diggerhq",
+  "repo_name": "digger",
+  "workflow_name": "cli_test_e2e",
+  "history": {
+    "2024-03-07T18-55-33Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "cli_test_e2e__2024-03-07T18-55-33Z__7d91148026fb51702eee4d251c383878c062fea5.yml",
+          "workflow_name": "Cli e2e tests",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 50,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Cli e2e tests",
+        "true": {
+          "push": null,
+          "pull_request": {
+            "types": [
+              "opened",
+              "reopened"
+            ]
+          }
+        },
+        "jobs": {
+          "build": {
+            "permissions": {
+              "contents": "read",
+              "id-token": "write"
+            },
+            "name": "Build",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Check out code into the Go module directory",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Download Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.22.0"
+                },
+                "id": "go"
+              },
+              {
+                "name": "Check out code into the Go module directory",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Deps cli",
+                "run": "go get -v ./...\n",
+                "working-directory": "cli"
+              },
+              {
+                "name": "Deps e2e",
+                "run": "go get -v ./...\n",
+                "working-directory": "cli_e2e"
+              },
+              {
+                "name": "Test",
+                "run": "echo '${{ secrets.GCP_CREDENTIALS }}' > /tmp/gcp.json\ngo test -v ./...\n",
+                "working-directory": "cli_e2e",
+                "env": {
+                  "GOOGLE_APPLICATION_CREDENTIALS": "/tmp/gcp.json",
+                  "GOOGLE_STORAGE_BUCKET": "gcp-plan-artefacts"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-04-25T08-45-58Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "cli_test_e2e__2024-04-25T08-45-58Z__3aec17575d7d63f18a0d1f6f628e5777456faba3.yml",
+          "workflow_name": "Cli e2e tests",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 50,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Cli e2e tests",
+        "true": {
+          "push": null,
+          "pull_request": {
+            "types": [
+              "opened",
+              "reopened"
+            ]
+          }
+        },
+        "jobs": {
+          "build": {
+            "if": "github.event.pull_request.head.repo.full_name == github.repository",
+            "permissions": {
+              "contents": "read",
+              "id-token": "write"
+            },
+            "name": "Build",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Check out code into the Go module directory",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Download Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.22.0"
+                },
+                "id": "go"
+              },
+              {
+                "name": "Check out code into the Go module directory",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Deps cli",
+                "run": "go get -v ./...\n",
+                "working-directory": "cli"
+              },
+              {
+                "name": "Deps e2e",
+                "run": "go get -v ./...\n",
+                "working-directory": "cli_e2e"
+              },
+              {
+                "name": "Test",
+                "run": "echo '${{ secrets.GCP_CREDENTIALS }}' > /tmp/gcp.json\ngo test -v ./...\n",
+                "working-directory": "cli_e2e",
+                "env": {
+                  "GOOGLE_APPLICATION_CREDENTIALS": "/tmp/gcp.json",
+                  "GOOGLE_STORAGE_BUCKET": "gcp-plan-artefacts"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-04-25T08-56-41Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "cli_test_e2e__2024-04-25T08-56-41Z__07da261cfcfc9fddcd4c17e74f3e659b00916c40.yml",
+          "workflow_name": "Cli e2e tests",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 49,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Cli e2e tests",
+        "true": {
+          "push": null,
+          "pull_request": {
+            "types": [
+              "opened",
+              "reopened"
+            ]
+          }
+        },
+        "jobs": {
+          "build": {
+            "permissions": {
+              "contents": "read",
+              "id-token": "write"
+            },
+            "name": "Build",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Check out code into the Go module directory",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Download Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.22.0"
+                },
+                "id": "go"
+              },
+              {
+                "name": "Check out code into the Go module directory",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Deps cli",
+                "run": "go get -v ./...\n",
+                "working-directory": "cli"
+              },
+              {
+                "name": "Deps e2e",
+                "run": "go get -v ./...\n",
+                "working-directory": "cli_e2e"
+              },
+              {
+                "name": "Test",
+                "run": "echo '${{ secrets.GCP_CREDENTIALS }}' > /tmp/gcp.json\ngo test -v ./...\n",
+                "working-directory": "cli_e2e",
+                "env": {
+                  "GOOGLE_APPLICATION_CREDENTIALS": "/tmp/gcp.json",
+                  "GOOGLE_STORAGE_BUCKET": "gcp-plan-artefacts"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-04-25T09-57-07Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "cli_test_e2e__2024-04-25T09-57-07Z__a9086e338eb2232d0134b2a781b2f8128df423bb.yml",
+          "workflow_name": "Cli e2e tests",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 48,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Cli e2e tests",
+        "true": {
+          "push": {
+            "branches": [
+              "develop"
+            ]
+          }
+        },
+        "jobs": {
+          "build": {
+            "permissions": {
+              "contents": "read",
+              "id-token": "write"
+            },
+            "name": "Build",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Check out code into the Go module directory",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Download Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.22.0"
+                },
+                "id": "go"
+              },
+              {
+                "name": "Check out code into the Go module directory",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Deps cli",
+                "run": "go get -v ./...\n",
+                "working-directory": "cli"
+              },
+              {
+                "name": "Deps e2e",
+                "run": "go get -v ./...\n",
+                "working-directory": "cli_e2e"
+              },
+              {
+                "name": "Test",
+                "run": "echo '${{ secrets.GCP_CREDENTIALS }}' > /tmp/gcp.json\ngo test -v ./...\n",
+                "working-directory": "cli_e2e",
+                "env": {
+                  "GOOGLE_APPLICATION_CREDENTIALS": "/tmp/gcp.json",
+                  "GOOGLE_STORAGE_BUCKET": "gcp-plan-artefacts"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-04-26T19-32-03Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "cli_test_e2e__2024-04-26T19-32-03Z__324e7a9dca0f6fc5f64a1b3e43778977a50e8694.yml",
+          "workflow_name": "Cli e2e tests",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 55,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5",
+              "aws-actions/configure-aws-credentials@v4"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Cli e2e tests",
+        "true": {
+          "push": {
+            "branches": [
+              "develop"
+            ]
+          }
+        },
+        "jobs": {
+          "build": {
+            "permissions": {
+              "contents": "read",
+              "id-token": "write"
+            },
+            "name": "Build",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Check out code into the Go module directory",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Download Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.22.0"
+                },
+                "id": "go"
+              },
+              {
+                "name": "Check out code into the Go module directory",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Deps cli",
+                "run": "go get -v ./...\n",
+                "working-directory": "cli"
+              },
+              {
+                "name": "Deps e2e",
+                "run": "go get -v ./...\n",
+                "working-directory": "cli_e2e"
+              },
+              {
+                "name": "Configure AWS Credentials",
+                "uses": "aws-actions/configure-aws-credentials@v4",
+                "with": {
+                  "aws-region": "us-east-1",
+                  "role-to-assume": "${{ secrets.AWS_E2E_TEST_ROLE }}"
+                }
+              },
+              {
+                "name": "Test",
+                "run": "echo '${{ secrets.GCP_CREDENTIALS }}' > /tmp/gcp.json\ngo test -v ./...\n",
+                "working-directory": "cli_e2e",
+                "env": {
+                  "GOOGLE_APPLICATION_CREDENTIALS": "/tmp/gcp.json",
+                  "GOOGLE_STORAGE_BUCKET": "gcp-plan-artefacts",
+                  "AWS_S3_BUCKET": "digger-tests-bucket"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-05-02T09-11-47Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "cli_test_e2e__2024-05-02T09-11-47Z__35b878520ea4203dd414fab86a91dd4af29158a4.yml",
+          "workflow_name": "Cli e2e tests",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 56,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5",
+              "aws-actions/configure-aws-credentials@v4"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Cli e2e tests",
+        "true": {
+          "push": {
+            "branches": [
+              "develop"
+            ]
+          }
+        },
+        "jobs": {
+          "build": {
+            "permissions": {
+              "contents": "read",
+              "id-token": "write"
+            },
+            "name": "Build",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Check out code into the Go module directory",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Download Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.22.0"
+                },
+                "id": "go"
+              },
+              {
+                "name": "Check out code into the Go module directory",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Deps cli",
+                "run": "go get -v ./...\n",
+                "working-directory": "cli"
+              },
+              {
+                "name": "Deps e2e",
+                "run": "go get -v ./...\n",
+                "working-directory": "cli_e2e"
+              },
+              {
+                "name": "Configure AWS Credentials",
+                "uses": "aws-actions/configure-aws-credentials@v4",
+                "with": {
+                  "aws-region": "us-east-1",
+                  "role-to-assume": "${{ secrets.AWS_E2E_TEST_ROLE }}"
+                }
+              },
+              {
+                "name": "Test",
+                "run": "echo '${{ secrets.GCP_CREDENTIALS }}' > /tmp/gcp.json\ngo test -v ./...\n",
+                "working-directory": "cli_e2e",
+                "env": {
+                  "GOOGLE_APPLICATION_CREDENTIALS": "/tmp/gcp.json",
+                  "GOOGLE_STORAGE_BUCKET": "gcp-plan-artefacts",
+                  "AWS_S3_BUCKET": "digger-tests-bucket",
+                  "AWS_REGION": "us-east-1"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-05-23T15-01-29Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "cli_test_e2e__2024-05-23T15-01-29Z__f6bd7aa624d25e3b6d7a2a392bc8523af0458f2f.yml",
+          "workflow_name": "Cli e2e tests",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 56,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5",
+              "aws-actions/configure-aws-credentials@v4"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Cli e2e tests",
+        "true": {
+          "push": {
+            "branches": [
+              "develop"
+            ]
+          }
+        },
+        "jobs": {
+          "build": {
+            "permissions": {
+              "contents": "read",
+              "id-token": "write"
+            },
+            "name": "Build",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Check out code into the Go module directory",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Download Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.22.0"
+                },
+                "id": "go"
+              },
+              {
+                "name": "Check out code into the Go module directory",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Deps cli",
+                "run": "go get -v ./...\n",
+                "working-directory": "cli"
+              },
+              {
+                "name": "Deps e2e",
+                "run": "go get -v ./...\n",
+                "working-directory": "cli_e2e"
+              },
+              {
+                "name": "Configure AWS Credentials",
+                "uses": "aws-actions/configure-aws-credentials@v4",
+                "with": {
+                  "aws-region": "us-east-1",
+                  "role-to-assume": "${{ secrets.AWS_E2E_TEST_ROLE }}"
+                }
+              },
+              {
+                "name": "Test",
+                "run": "echo '${{ secrets.GCP_CREDENTIALS }}' > /tmp/gcp.json\ngo test -v ./...\n",
+                "working-directory": "cli_e2e",
+                "env": {
+                  "GOOGLE_APPLICATION_CREDENTIALS": "/tmp/gcp.json",
+                  "GOOGLE_STORAGE_PLAN_ARTEFACT_BUCKET": "gcp-plan-artefacts",
+                  "AWS_S3_BUCKET": "digger-tests-bucket",
+                  "AWS_REGION": "us-east-1"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-06-12T09-30-15Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "cli_test_e2e__2024-06-12T09-30-15Z__d38a43b691445680c4ea4b481ee0a5def94b1a45.yml",
+          "workflow_name": "Cli e2e tests",
+          "triggers": {
+            "push": {
+              "branches": [
+                "develop"
+              ]
+            }
+          },
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 55,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 1
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5",
+              "aws-actions/configure-aws-credentials@v4"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Cli e2e tests",
+        "true": {
+          "push": {
+            "branches": [
+              "develop"
+            ]
+          }
+        },
+        "jobs": {
+          "build": {
+            "permissions": {
+              "contents": "read",
+              "id-token": "write"
+            },
+            "name": "Build",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Check out code into the Go module directory",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Download Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.22.0"
+                },
+                "id": "go"
+              },
+              {
+                "name": "Check out code into the Go module directory",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Deps cli",
+                "run": "go get -v ./...\n",
+                "working-directory": "cli"
+              },
+              {
+                "name": "Deps e2e",
+                "run": "go get -v ./...\n",
+                "working-directory": "cli_e2e"
+              },
+              {
+                "name": "Configure AWS Credentials",
+                "uses": "aws-actions/configure-aws-credentials@v4",
+                "with": {
+                  "aws-region": "us-east-1",
+                  "role-to-assume": "${{ secrets.AWS_E2E_TEST_ROLE }}"
+                }
+              },
+              {
+                "name": "Test",
+                "run": "echo '${{ secrets.GCP_CREDENTIALS }}' > /tmp/gcp.json\ngo test -v ./...\n",
+                "working-directory": "cli_e2e",
+                "env": {
+                  "GOOGLE_APPLICATION_CREDENTIALS": "/tmp/gcp.json",
+                  "GOOGLE_STORAGE_PLAN_ARTEFACT_BUCKET": "gcp-plan-artefacts",
+                  "AWS_S3_BUCKET": "digger-tests-bucket",
+                  "AWS_REGION": "us-east-1"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-05-20T00-26-44Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "cli_test_e2e__2025-05-20T00-26-44Z__20cefd9faf4bffe8f41bd82ef12b4c4494cca032.yml",
+          "workflow_name": "Cli e2e tests",
+          "triggers": {
+            "push": {
+              "branches": [
+                "develop"
+              ]
+            }
+          },
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 55,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 1
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5",
+              "aws-actions/configure-aws-credentials@v4"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Cli e2e tests",
+        "true": {
+          "push": {
+            "branches": [
+              "develop"
+            ]
+          }
+        },
+        "jobs": {
+          "build": {
+            "permissions": {
+              "contents": "read",
+              "id-token": "write"
+            },
+            "name": "Build",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Check out code into the Go module directory",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Download Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.24.0"
+                },
+                "id": "go"
+              },
+              {
+                "name": "Check out code into the Go module directory",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Deps cli",
+                "run": "go get -v ./...\n",
+                "working-directory": "cli"
+              },
+              {
+                "name": "Deps e2e",
+                "run": "go get -v ./...\n",
+                "working-directory": "cli_e2e"
+              },
+              {
+                "name": "Configure AWS Credentials",
+                "uses": "aws-actions/configure-aws-credentials@v4",
+                "with": {
+                  "aws-region": "us-east-1",
+                  "role-to-assume": "${{ secrets.AWS_E2E_TEST_ROLE }}"
+                }
+              },
+              {
+                "name": "Test",
+                "run": "echo '${{ secrets.GCP_CREDENTIALS }}' > /tmp/gcp.json\ngo test -v ./...\n",
+                "working-directory": "cli_e2e",
+                "env": {
+                  "GOOGLE_APPLICATION_CREDENTIALS": "/tmp/gcp.json",
+                  "GOOGLE_STORAGE_PLAN_ARTEFACT_BUCKET": "gcp-plan-artefacts",
+                  "AWS_S3_BUCKET": "digger-tests-bucket",
+                  "AWS_REGION": "us-east-1"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-06-16T22-34-04Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "cli_test_e2e__2025-06-16T22-34-04Z__386cea3be82992d145e52e9a1af6d8acbe235b2e.yml",
+          "workflow_name": "Cli e2e tests",
+          "triggers": {
+            "push": {
+              "branches": [
+                "develop"
+              ]
+            }
+          },
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 55,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 1
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5",
+              "aws-actions/configure-aws-credentials@v4"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Cli e2e tests",
+        "true": {
+          "push": {
+            "branches": [
+              "develop"
+            ]
+          }
+        },
+        "jobs": {
+          "build": {
+            "permissions": {
+              "contents": "read",
+              "id-token": "write"
+            },
+            "name": "Build",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Check out code into the Go module directory",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Download Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.24.0"
+                },
+                "id": "go"
+              },
+              {
+                "name": "Check out code into the Go module directory",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Deps cli",
+                "run": "go get -v ./...\n",
+                "working-directory": "cli"
+              },
+              {
+                "name": "Deps e2e",
+                "run": "go get -v ./...\n",
+                "working-directory": "cli_e2e"
+              },
+              {
+                "name": "Configure AWS Credentials",
+                "uses": "aws-actions/configure-aws-credentials@v4",
+                "with": {
+                  "aws-region": "us-east-1",
+                  "role-to-assume": "${{ secrets.AWS_E2E_TEST_ROLE }}"
+                }
+              },
+              {
+                "name": "Test",
+                "run": "echo '${{ secrets.GCP_CREDENTIALS }}' > /tmp/gcp.json\ngo test -v ./...\n",
+                "working-directory": "cli_e2e",
+                "env": {
+                  "GOOGLE_APPLICATION_CREDENTIALS": "/tmp/gcp.json",
+                  "GOOGLE_STORAGE_PLAN_ARTEFACT_BUCKET": "gcp-plan-artefacts",
+                  "AWS_S3_BUCKET": "digger-tests-bucket-e2e",
+                  "AWS_REGION": "us-east-1"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-06-16T22-58-13Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "cli_test_e2e__2025-06-16T22-58-13Z__5cd80d30212beff6e8162732080b44b0d97acd02.yml",
+          "workflow_name": "Cli e2e tests",
+          "triggers": {
+            "push": {
+              "branches": [
+                "develop"
+              ]
+            }
+          },
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 55,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 1
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5",
+              "aws-actions/configure-aws-credentials@v4"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Cli e2e tests",
+        "true": {
+          "push": {
+            "branches": [
+              "develop"
+            ]
+          }
+        },
+        "jobs": {
+          "build": {
+            "permissions": {
+              "contents": "read",
+              "id-token": "write"
+            },
+            "name": "Build",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Check out code into the Go module directory",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Download Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.24.0"
+                },
+                "id": "go"
+              },
+              {
+                "name": "Check out code into the Go module directory",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Deps cli",
+                "run": "go get -v ./...\n",
+                "working-directory": "cli"
+              },
+              {
+                "name": "Deps e2e",
+                "run": "go get -v ./...\n",
+                "working-directory": "cli_e2e"
+              },
+              {
+                "name": "Configure AWS Credentials",
+                "uses": "aws-actions/configure-aws-credentials@v4",
+                "with": {
+                  "aws-region": "us-east-1",
+                  "role-to-assume": "${{ secrets.AWS_E2E_TEST_ROLE }}"
+                }
+              },
+              {
+                "name": "Test",
+                "run": "echo '${{ secrets.GCP_CREDENTIALS }}' > /tmp/gcp.json\ngo test -v ./...\n",
+                "working-directory": "cli_e2e",
+                "env": {
+                  "GOOGLE_APPLICATION_CREDENTIALS": "/tmp/gcp.json",
+                  "GOOGLE_STORAGE_PLAN_ARTEFACT_BUCKET": "gcp-plan-artefacts",
+                  "AWS_S3_BUCKET": "digger-tests-bucket-e2e-tests",
+                  "AWS_REGION": "us-east-1"
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,2168 @@
+{
+  "repo_owner": "ophub",
+  "repo_name": "amlogic-s9xxx-armbian",
+  "workflow_name": "compile-kernel-using-docker",
+  "history": {
+    "2025-06-06T02-29-38Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-ac4e8726-8342-54c6-b6c3-d417b29a2282",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/compile-kernel-using-docker__2025-06-06T02-29-38Z__50980f259431f9927e1e94dd9ea730c9e35903e4.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 101,
+                  "startColumn": 5,
+                  "endLine": 208,
+                  "endColumn": 78
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "f2db9c6d89149f6e:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "compile-kernel-using-docker__2025-06-06T02-29-38Z__50980f259431f9927e1e94dd9ea730c9e35903e4.yml",
+          "workflow_name": "Compile the kernel using docker",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 208,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "ncipollo/release-action@main",
+              "ophub/amlogic-s9xxx-armbian@main"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 4,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Compile the kernel using docker",
+        "true": {
+          "repository_dispatch": null,
+          "workflow_dispatch": {
+            "inputs": {
+              "kernel_source": {
+                "description": "Select the kernel source",
+                "required": false,
+                "default": "unifreq",
+                "type": "choice",
+                "options": [
+                  "unifreq",
+                  "codesnas"
+                ]
+              },
+              "kernel_version": {
+                "description": "Select kernel version",
+                "required": false,
+                "default": "6.12.y",
+                "type": "choice",
+                "options": [
+                  "5.10.y",
+                  "5.15.y",
+                  "6.1.y",
+                  "6.6.y",
+                  "6.12.y",
+                  "5.10.y_5.15.y",
+                  "6.1.y_6.6.y_6.12.y",
+                  "all"
+                ]
+              },
+              "kernel_auto": {
+                "description": "Auto use the latest kernel",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              },
+              "silent_log": {
+                "description": "Use silent logging",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              },
+              "delete_source": {
+                "description": "Delete the source after compilation",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              },
+              "kernel_package": {
+                "description": "Select compile package list",
+                "required": false,
+                "default": "all",
+                "type": "choice",
+                "options": [
+                  "all",
+                  "dtbs"
+                ]
+              },
+              "kernel_toolchain": {
+                "description": "Select the compilation toolchain",
+                "required": false,
+                "default": "gcc",
+                "type": "choice",
+                "options": [
+                  "clang",
+                  "gcc",
+                  "gcc-14.2"
+                ]
+              },
+              "compress_format": {
+                "description": "Set the initrd compression format",
+                "required": false,
+                "default": "xz",
+                "type": "choice",
+                "options": [
+                  "xz",
+                  "gzip",
+                  "zstd",
+                  "lzma"
+                ]
+              },
+              "docker_image": {
+                "description": "Select Armbian docker image",
+                "required": false,
+                "default": "bookworm",
+                "type": "choice",
+                "options": [
+                  "jammy",
+                  "noble",
+                  "bookworm",
+                  "bullseye"
+                ]
+              },
+              "kernel_sign": {
+                "description": "Set the kernel custom signature",
+                "required": false,
+                "default": "-ophub",
+                "type": "choice",
+                "options": [
+                  "-ophub",
+                  "-yourname"
+                ]
+              }
+            }
+          }
+        },
+        "env": {
+          "TZ": "America/New_York"
+        },
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-22.04-arm",
+            "if": "${{ github.event.repository.owner.id }} == ${{ github.event.sender.id }}",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Initialization environment",
+                "id": "init",
+                "env": {
+                  "DEBIAN_FRONTEND": "noninteractive"
+                },
+                "run": "docker rmi $(docker images -q) 2>/dev/null\n[[ -n \"${AGENT_TOOLSDIRECTORY}\" ]] && sudo rm -rf \"${AGENT_TOOLSDIRECTORY}\"\nsudo rm -rf /usr/share/dotnet /usr/local/lib/android 2>/dev/null\nsudo swapoff -a\nsudo rm -f /swapfile /mnt/swapfile\nsudo -E apt-get -y update\nsudo -E apt-get -y purge azure-cli ghc* zulu* llvm* firefox google* dotnet* powershell openjdk* mongodb* moby* || true\nsudo -E apt-get -y install $(curl -fsSL https://tinyurl.com/ubuntu2204-build-armbian)\nsudo -E systemctl daemon-reload\n#sudo -E apt-get -y full-upgrade\nsudo -E apt-get -y autoremove --purge\nsudo -E apt-get clean\nsudo sed -i '/NVM_DIR/d;/skel/d' /root/{.bashrc,.profile}\nsudo rm -rf ~/{.cargo,.dotnet,.rustup}\nsudo timedatectl set-timezone \"${TZ}\"\necho \"status=success\" >> ${GITHUB_OUTPUT}\n"
+              },
+              {
+                "name": "Create simulated physical disk",
+                "id": "disk",
+                "run": "mnt_size=$(expr $(df -h /mnt | tail -1 | awk '{print $4}' | sed 's/[[:alpha:]]//g' | sed 's/\\..*//') - 1)\nroot_size=$(expr $(df -h / | tail -1 | awk '{print $4}' | sed 's/[[:alpha:]]//g' | sed 's/\\..*//') - 4)\nsudo truncate -s \"${mnt_size}\"G /mnt/mnt.img\nsudo truncate -s \"${root_size}\"G /root.img\nsudo losetup /dev/loop6 /mnt/mnt.img\nsudo losetup /dev/loop7 /root.img\nsudo pvcreate /dev/loop6\nsudo pvcreate /dev/loop7\nsudo vgcreate github /dev/loop6 /dev/loop7\nsudo lvcreate -n runner -l 100%FREE github\nsudo mkfs.xfs /dev/github/runner\nsudo mkdir -p /builder\nsudo mount /dev/github/runner /builder\nsudo chown -R runner.runner /builder\ndf -Th\necho \"status=success\" >> ${GITHUB_OUTPUT}\n"
+              },
+              {
+                "name": "Install Docker",
+                "id": "install",
+                "working-directory": "/builder",
+                "if": "${{ steps.disk.outputs.status }} == 'success' && !cancelled()",
+                "run": "df -hT ${PWD}\ncurl -fsSL https://get.docker.com | sh\nsudo usermod -aG docker $USER\nsudo newgrp docker\necho \"status=success\" >> ${GITHUB_OUTPUT}\n"
+              },
+              {
+                "name": "Pull Docker Image [ ${{ inputs.docker_image }} ]",
+                "id": "pull",
+                "working-directory": "/builder",
+                "if": "${{ steps.install.outputs.status }} == 'success' && !cancelled()",
+                "run": "# Create a docker mapping directory\nmkdir -p /builder/compile-kernel/{kernel,output}\nln -sf /builder/compile-kernel/kernel /home/runner/work/_actions/ophub/amlogic-s9xxx-armbian/main/compile-kernel/kernel\nln -sf /builder/compile-kernel/output /home/runner/work/_actions/ophub/amlogic-s9xxx-armbian/main/compile-kernel/output\n\n# Pull the Armbian Docker image\ndocker run -d --privileged \\\n    --name armbian-ophub \\\n    -v /builder/compile-kernel:/opt/kernel/compile-kernel \\\n    --restart=always \\\n    ophub/armbian-${{ inputs.docker_image }}:latest\n\necho \"status=success\" >> ${GITHUB_OUTPUT}\n"
+              },
+              {
+                "name": "Compile the kernel [ ${{ inputs.kernel_version }} ]",
+                "uses": "ophub/amlogic-s9xxx-armbian@main",
+                "if": "${{ steps.pull.outputs.status }} == 'success' && !cancelled()",
+                "with": {
+                  "build_target": "kernel",
+                  "kernel_source": "${{ inputs.kernel_source }}",
+                  "kernel_version": "${{ inputs.kernel_version }}",
+                  "kernel_auto": "${{ inputs.kernel_auto }}",
+                  "delete_source": "${{ inputs.delete_source }}",
+                  "kernel_package": "${{ inputs.kernel_package }}",
+                  "kernel_sign": "${{ inputs.kernel_sign }}",
+                  "kernel_toolchain": "${{ inputs.kernel_toolchain }}",
+                  "compress_format": "${{ inputs.compress_format }}",
+                  "silent_log": "${{ inputs.silent_log }}"
+                }
+              },
+              {
+                "name": "Upload Kernel to Release",
+                "uses": "ncipollo/release-action@main",
+                "if": "${{ env.PACKAGED_STATUS }} == 'success' && !cancelled()",
+                "with": {
+                  "tag": "kernel_stable",
+                  "artifacts": "${{ env.PACKAGED_OUTPUTPATH }}/*",
+                  "allowUpdates": true,
+                  "removeArtifacts": false,
+                  "replacesArtifacts": true,
+                  "token": "${{ secrets.GITHUB_TOKEN }}",
+                  "body": "The kernel can be used to compile Armbian and OpenWrt.\nThe kernel source code comes from: ${{ inputs.kernel_source }}\nThe kernel compilation toolchain: ${{ inputs.kernel_toolchain }}\n"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-07-29T06-23-21Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-fc3cf9c9-3be5-5afe-ac22-00d950bd119a",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/compile-kernel-using-docker__2025-07-29T06-23-21Z__c73a5d692cf0ae43d9abef7ed665d8902ea033f7.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 102,
+                  "startColumn": 5,
+                  "endLine": 209,
+                  "endColumn": 78
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "f2db9c6d89149f6e:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "compile-kernel-using-docker__2025-07-29T06-23-21Z__c73a5d692cf0ae43d9abef7ed665d8902ea033f7.yml",
+          "workflow_name": "Compile the kernel using docker",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 209,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "ncipollo/release-action@main",
+              "ophub/amlogic-s9xxx-armbian@main"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 4,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Compile the kernel using docker",
+        "true": {
+          "repository_dispatch": null,
+          "workflow_dispatch": {
+            "inputs": {
+              "kernel_source": {
+                "description": "Select the kernel source",
+                "required": false,
+                "default": "unifreq",
+                "type": "choice",
+                "options": [
+                  "unifreq",
+                  "codesnas"
+                ]
+              },
+              "kernel_version": {
+                "description": "Select kernel version",
+                "required": false,
+                "default": "6.12.y",
+                "type": "choice",
+                "options": [
+                  "5.10.y",
+                  "5.15.y",
+                  "6.1.y",
+                  "6.6.y",
+                  "6.12.y",
+                  "5.10.y_5.15.y",
+                  "6.1.y_6.6.y_6.12.y",
+                  "all"
+                ]
+              },
+              "kernel_auto": {
+                "description": "Auto use the latest kernel",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              },
+              "silent_log": {
+                "description": "Use silent logging",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              },
+              "delete_source": {
+                "description": "Delete the source after compilation",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              },
+              "kernel_package": {
+                "description": "Select compile package list",
+                "required": false,
+                "default": "all",
+                "type": "choice",
+                "options": [
+                  "all",
+                  "dtbs"
+                ]
+              },
+              "kernel_toolchain": {
+                "description": "Select the compilation toolchain",
+                "required": false,
+                "default": "gcc",
+                "type": "choice",
+                "options": [
+                  "clang",
+                  "gcc",
+                  "gcc-14.2"
+                ]
+              },
+              "compress_format": {
+                "description": "Set the initrd compression format",
+                "required": false,
+                "default": "xz",
+                "type": "choice",
+                "options": [
+                  "xz",
+                  "gzip",
+                  "zstd",
+                  "lzma"
+                ]
+              },
+              "docker_image": {
+                "description": "Select Armbian docker image",
+                "required": false,
+                "default": "bookworm",
+                "type": "choice",
+                "options": [
+                  "trixie",
+                  "bookworm",
+                  "bullseye",
+                  "noble",
+                  "jammy"
+                ]
+              },
+              "kernel_sign": {
+                "description": "Set the kernel custom signature",
+                "required": false,
+                "default": "-ophub",
+                "type": "choice",
+                "options": [
+                  "-ophub",
+                  "-yourname"
+                ]
+              }
+            }
+          }
+        },
+        "env": {
+          "TZ": "America/New_York"
+        },
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-22.04-arm",
+            "if": "${{ github.event.repository.owner.id }} == ${{ github.event.sender.id }}",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Initialization environment",
+                "id": "init",
+                "env": {
+                  "DEBIAN_FRONTEND": "noninteractive"
+                },
+                "run": "docker rmi $(docker images -q) 2>/dev/null\n[[ -n \"${AGENT_TOOLSDIRECTORY}\" ]] && sudo rm -rf \"${AGENT_TOOLSDIRECTORY}\"\nsudo rm -rf /usr/share/dotnet /usr/local/lib/android 2>/dev/null\nsudo swapoff -a\nsudo rm -f /swapfile /mnt/swapfile\nsudo -E apt-get -y update\nsudo -E apt-get -y purge azure-cli ghc* zulu* llvm* firefox google* dotnet* powershell openjdk* mongodb* moby* || true\nsudo -E apt-get -y install $(curl -fsSL https://tinyurl.com/ubuntu2204-build-armbian)\nsudo -E systemctl daemon-reload\n#sudo -E apt-get -y full-upgrade\nsudo -E apt-get -y autoremove --purge\nsudo -E apt-get clean\nsudo sed -i '/NVM_DIR/d;/skel/d' /root/{.bashrc,.profile}\nsudo rm -rf ~/{.cargo,.dotnet,.rustup}\nsudo timedatectl set-timezone \"${TZ}\"\necho \"status=success\" >> ${GITHUB_OUTPUT}\n"
+              },
+              {
+                "name": "Create simulated physical disk",
+                "id": "disk",
+                "run": "mnt_size=$(expr $(df -h /mnt | tail -1 | awk '{print $4}' | sed 's/[[:alpha:]]//g' | sed 's/\\..*//') - 1)\nroot_size=$(expr $(df -h / | tail -1 | awk '{print $4}' | sed 's/[[:alpha:]]//g' | sed 's/\\..*//') - 4)\nsudo truncate -s \"${mnt_size}\"G /mnt/mnt.img\nsudo truncate -s \"${root_size}\"G /root.img\nsudo losetup /dev/loop6 /mnt/mnt.img\nsudo losetup /dev/loop7 /root.img\nsudo pvcreate /dev/loop6\nsudo pvcreate /dev/loop7\nsudo vgcreate github /dev/loop6 /dev/loop7\nsudo lvcreate -n runner -l 100%FREE github\nsudo mkfs.xfs /dev/github/runner\nsudo mkdir -p /builder\nsudo mount /dev/github/runner /builder\nsudo chown -R runner.runner /builder\ndf -Th\necho \"status=success\" >> ${GITHUB_OUTPUT}\n"
+              },
+              {
+                "name": "Install Docker",
+                "id": "install",
+                "working-directory": "/builder",
+                "if": "${{ steps.disk.outputs.status }} == 'success' && !cancelled()",
+                "run": "df -hT ${PWD}\ncurl -fsSL https://get.docker.com | sh\nsudo usermod -aG docker $USER\nsudo newgrp docker\necho \"status=success\" >> ${GITHUB_OUTPUT}\n"
+              },
+              {
+                "name": "Pull Docker Image [ ${{ inputs.docker_image }} ]",
+                "id": "pull",
+                "working-directory": "/builder",
+                "if": "${{ steps.install.outputs.status }} == 'success' && !cancelled()",
+                "run": "# Create a docker mapping directory\nmkdir -p /builder/compile-kernel/{kernel,output}\nln -sf /builder/compile-kernel/kernel /home/runner/work/_actions/ophub/amlogic-s9xxx-armbian/main/compile-kernel/kernel\nln -sf /builder/compile-kernel/output /home/runner/work/_actions/ophub/amlogic-s9xxx-armbian/main/compile-kernel/output\n\n# Pull the Armbian Docker image\ndocker run -d --privileged \\\n    --name armbian-ophub \\\n    -v /builder/compile-kernel:/opt/kernel/compile-kernel \\\n    --restart=always \\\n    ophub/armbian-${{ inputs.docker_image }}:latest\n\necho \"status=success\" >> ${GITHUB_OUTPUT}\n"
+              },
+              {
+                "name": "Compile the kernel [ ${{ inputs.kernel_version }} ]",
+                "uses": "ophub/amlogic-s9xxx-armbian@main",
+                "if": "${{ steps.pull.outputs.status }} == 'success' && !cancelled()",
+                "with": {
+                  "build_target": "kernel",
+                  "kernel_source": "${{ inputs.kernel_source }}",
+                  "kernel_version": "${{ inputs.kernel_version }}",
+                  "kernel_auto": "${{ inputs.kernel_auto }}",
+                  "delete_source": "${{ inputs.delete_source }}",
+                  "kernel_package": "${{ inputs.kernel_package }}",
+                  "kernel_sign": "${{ inputs.kernel_sign }}",
+                  "kernel_toolchain": "${{ inputs.kernel_toolchain }}",
+                  "compress_format": "${{ inputs.compress_format }}",
+                  "silent_log": "${{ inputs.silent_log }}"
+                }
+              },
+              {
+                "name": "Upload Kernel to Release",
+                "uses": "ncipollo/release-action@main",
+                "if": "${{ env.PACKAGED_STATUS }} == 'success' && !cancelled()",
+                "with": {
+                  "tag": "kernel_stable",
+                  "artifacts": "${{ env.PACKAGED_OUTPUTPATH }}/*",
+                  "allowUpdates": true,
+                  "removeArtifacts": false,
+                  "replacesArtifacts": true,
+                  "token": "${{ secrets.GITHUB_TOKEN }}",
+                  "body": "The kernel can be used to compile Armbian and OpenWrt.\nThe kernel source code comes from: ${{ inputs.kernel_source }}\nThe kernel compilation toolchain: ${{ inputs.kernel_toolchain }}\n"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-09-01T01-39-47Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-4b62bd4b-6dc4-5ba8-90ff-188cf34cbe04",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/compile-kernel-using-docker__2025-09-01T01-39-47Z__203cfbd0fd727b95519f55e193586cf6168bbed7.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 107,
+                  "startColumn": 5,
+                  "endLine": 214,
+                  "endColumn": 78
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "f2db9c6d89149f6e:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "compile-kernel-using-docker__2025-09-01T01-39-47Z__203cfbd0fd727b95519f55e193586cf6168bbed7.yml",
+          "workflow_name": "Compile the kernel using docker",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 214,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "ncipollo/release-action@main",
+              "ophub/amlogic-s9xxx-armbian@main"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 4,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Compile the kernel using docker",
+        "true": {
+          "repository_dispatch": null,
+          "workflow_dispatch": {
+            "inputs": {
+              "kernel_source": {
+                "description": "Select the kernel source",
+                "required": false,
+                "default": "unifreq",
+                "type": "choice",
+                "options": [
+                  "unifreq",
+                  "codesnas"
+                ]
+              },
+              "kernel_version": {
+                "description": "Select kernel version",
+                "required": false,
+                "default": "6.12.y",
+                "type": "choice",
+                "options": [
+                  "5.4.y",
+                  "5.10.y",
+                  "5.15.y",
+                  "6.1.y",
+                  "6.6.y",
+                  "6.12.y",
+                  "5.4.y_5.10.y",
+                  "5.15.y_6.1.y",
+                  "6.6.y_6.12.y",
+                  "5.4.y_5.10.y_5.15.y",
+                  "6.1.y_6.6.y_6.12.y",
+                  "all"
+                ]
+              },
+              "kernel_auto": {
+                "description": "Auto use the latest kernel",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              },
+              "silent_log": {
+                "description": "Use silent logging",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              },
+              "delete_source": {
+                "description": "Delete the source after compilation",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              },
+              "kernel_package": {
+                "description": "Select compile package list",
+                "required": false,
+                "default": "all",
+                "type": "choice",
+                "options": [
+                  "all",
+                  "dtbs"
+                ]
+              },
+              "kernel_toolchain": {
+                "description": "Select the compilation toolchain",
+                "required": false,
+                "default": "gcc",
+                "type": "choice",
+                "options": [
+                  "clang",
+                  "gcc",
+                  "gcc-14.2",
+                  "gcc-14.3"
+                ]
+              },
+              "compress_format": {
+                "description": "Set the initrd compression format",
+                "required": false,
+                "default": "xz",
+                "type": "choice",
+                "options": [
+                  "xz",
+                  "gzip",
+                  "zstd",
+                  "lzma"
+                ]
+              },
+              "docker_image": {
+                "description": "Select Armbian docker image",
+                "required": false,
+                "default": "bookworm",
+                "type": "choice",
+                "options": [
+                  "trixie",
+                  "bookworm",
+                  "bullseye",
+                  "noble",
+                  "jammy"
+                ]
+              },
+              "kernel_sign": {
+                "description": "Set the kernel custom signature",
+                "required": false,
+                "default": "-ophub",
+                "type": "choice",
+                "options": [
+                  "-ophub",
+                  "-yourname"
+                ]
+              }
+            }
+          }
+        },
+        "env": {
+          "TZ": "America/New_York"
+        },
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-22.04-arm",
+            "if": "${{ github.event.repository.owner.id }} == ${{ github.event.sender.id }}",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Initialization environment",
+                "id": "init",
+                "env": {
+                  "DEBIAN_FRONTEND": "noninteractive"
+                },
+                "run": "docker rmi $(docker images -q) 2>/dev/null\n[[ -n \"${AGENT_TOOLSDIRECTORY}\" ]] && sudo rm -rf \"${AGENT_TOOLSDIRECTORY}\"\nsudo rm -rf /usr/share/dotnet /usr/local/lib/android 2>/dev/null\nsudo swapoff -a\nsudo rm -f /swapfile /mnt/swapfile\nsudo -E apt-get -y update\nsudo -E apt-get -y purge azure-cli ghc* zulu* llvm* firefox google* dotnet* powershell openjdk* mongodb* moby* || true\nsudo -E apt-get -y install $(curl -fsSL https://tinyurl.com/ubuntu2204-build-armbian)\nsudo -E systemctl daemon-reload\n#sudo -E apt-get -y full-upgrade\nsudo -E apt-get -y autoremove --purge\nsudo -E apt-get clean\nsudo sed -i '/NVM_DIR/d;/skel/d' /root/{.bashrc,.profile}\nsudo rm -rf ~/{.cargo,.dotnet,.rustup}\nsudo timedatectl set-timezone \"${TZ}\"\necho \"status=success\" >> ${GITHUB_OUTPUT}\n"
+              },
+              {
+                "name": "Create simulated physical disk",
+                "id": "disk",
+                "run": "mnt_size=$(expr $(df -h /mnt | tail -1 | awk '{print $4}' | sed 's/[[:alpha:]]//g' | sed 's/\\..*//') - 1)\nroot_size=$(expr $(df -h / | tail -1 | awk '{print $4}' | sed 's/[[:alpha:]]//g' | sed 's/\\..*//') - 4)\nsudo truncate -s \"${mnt_size}\"G /mnt/mnt.img\nsudo truncate -s \"${root_size}\"G /root.img\nsudo losetup /dev/loop6 /mnt/mnt.img\nsudo losetup /dev/loop7 /root.img\nsudo pvcreate /dev/loop6\nsudo pvcreate /dev/loop7\nsudo vgcreate github /dev/loop6 /dev/loop7\nsudo lvcreate -n runner -l 100%FREE github\nsudo mkfs.xfs /dev/github/runner\nsudo mkdir -p /builder\nsudo mount /dev/github/runner /builder\nsudo chown -R runner.runner /builder\ndf -Th\necho \"status=success\" >> ${GITHUB_OUTPUT}\n"
+              },
+              {
+                "name": "Install Docker",
+                "id": "install",
+                "working-directory": "/builder",
+                "if": "${{ steps.disk.outputs.status }} == 'success' && !cancelled()",
+                "run": "df -hT ${PWD}\ncurl -fsSL https://get.docker.com | sh\nsudo usermod -aG docker $USER\nsudo newgrp docker\necho \"status=success\" >> ${GITHUB_OUTPUT}\n"
+              },
+              {
+                "name": "Pull Docker Image [ ${{ inputs.docker_image }} ]",
+                "id": "pull",
+                "working-directory": "/builder",
+                "if": "${{ steps.install.outputs.status }} == 'success' && !cancelled()",
+                "run": "# Create a docker mapping directory\nmkdir -p /builder/compile-kernel/{kernel,output}\nln -sf /builder/compile-kernel/kernel /home/runner/work/_actions/ophub/amlogic-s9xxx-armbian/main/compile-kernel/kernel\nln -sf /builder/compile-kernel/output /home/runner/work/_actions/ophub/amlogic-s9xxx-armbian/main/compile-kernel/output\n\n# Pull the Armbian Docker image\ndocker run -d --privileged \\\n    --name armbian-ophub \\\n    -v /builder/compile-kernel:/opt/kernel/compile-kernel \\\n    --restart=always \\\n    ophub/armbian-${{ inputs.docker_image }}:latest\n\necho \"status=success\" >> ${GITHUB_OUTPUT}\n"
+              },
+              {
+                "name": "Compile the kernel [ ${{ inputs.kernel_version }} ]",
+                "uses": "ophub/amlogic-s9xxx-armbian@main",
+                "if": "${{ steps.pull.outputs.status }} == 'success' && !cancelled()",
+                "with": {
+                  "build_target": "kernel",
+                  "kernel_source": "${{ inputs.kernel_source }}",
+                  "kernel_version": "${{ inputs.kernel_version }}",
+                  "kernel_auto": "${{ inputs.kernel_auto }}",
+                  "delete_source": "${{ inputs.delete_source }}",
+                  "kernel_package": "${{ inputs.kernel_package }}",
+                  "kernel_sign": "${{ inputs.kernel_sign }}",
+                  "kernel_toolchain": "${{ inputs.kernel_toolchain }}",
+                  "compress_format": "${{ inputs.compress_format }}",
+                  "silent_log": "${{ inputs.silent_log }}"
+                }
+              },
+              {
+                "name": "Upload Kernel to Release",
+                "uses": "ncipollo/release-action@main",
+                "if": "${{ env.PACKAGED_STATUS }} == 'success' && !cancelled()",
+                "with": {
+                  "tag": "kernel_stable",
+                  "artifacts": "${{ env.PACKAGED_OUTPUTPATH }}/*",
+                  "allowUpdates": true,
+                  "removeArtifacts": false,
+                  "replacesArtifacts": true,
+                  "token": "${{ secrets.GITHUB_TOKEN }}",
+                  "body": "The kernel can be used to compile Armbian and OpenWrt.\nThe kernel source code comes from: ${{ inputs.kernel_source }}\nThe kernel compilation toolchain: ${{ inputs.kernel_toolchain }}\n"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-08-12T12-48-33Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-51cc8bc4-a077-5e47-b5be-d5e8addd4850",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/compile-kernel-using-docker__2025-08-12T12-48-33Z__0c79036619ccc71d81fe87e82aad5b48a4ce1faf.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 103,
+                  "startColumn": 5,
+                  "endLine": 210,
+                  "endColumn": 78
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "f2db9c6d89149f6e:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "compile-kernel-using-docker__2025-08-12T12-48-33Z__0c79036619ccc71d81fe87e82aad5b48a4ce1faf.yml",
+          "workflow_name": "Compile the kernel using docker",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 210,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "ncipollo/release-action@main",
+              "ophub/amlogic-s9xxx-armbian@main"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 4,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Compile the kernel using docker",
+        "true": {
+          "repository_dispatch": null,
+          "workflow_dispatch": {
+            "inputs": {
+              "kernel_source": {
+                "description": "Select the kernel source",
+                "required": false,
+                "default": "unifreq",
+                "type": "choice",
+                "options": [
+                  "unifreq",
+                  "codesnas"
+                ]
+              },
+              "kernel_version": {
+                "description": "Select kernel version",
+                "required": false,
+                "default": "6.12.y",
+                "type": "choice",
+                "options": [
+                  "5.10.y",
+                  "5.15.y",
+                  "6.1.y",
+                  "6.6.y",
+                  "6.12.y",
+                  "5.10.y_5.15.y",
+                  "6.1.y_6.6.y_6.12.y",
+                  "all"
+                ]
+              },
+              "kernel_auto": {
+                "description": "Auto use the latest kernel",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              },
+              "silent_log": {
+                "description": "Use silent logging",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              },
+              "delete_source": {
+                "description": "Delete the source after compilation",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              },
+              "kernel_package": {
+                "description": "Select compile package list",
+                "required": false,
+                "default": "all",
+                "type": "choice",
+                "options": [
+                  "all",
+                  "dtbs"
+                ]
+              },
+              "kernel_toolchain": {
+                "description": "Select the compilation toolchain",
+                "required": false,
+                "default": "gcc",
+                "type": "choice",
+                "options": [
+                  "clang",
+                  "gcc",
+                  "gcc-14.2",
+                  "gcc-14.3"
+                ]
+              },
+              "compress_format": {
+                "description": "Set the initrd compression format",
+                "required": false,
+                "default": "xz",
+                "type": "choice",
+                "options": [
+                  "xz",
+                  "gzip",
+                  "zstd",
+                  "lzma"
+                ]
+              },
+              "docker_image": {
+                "description": "Select Armbian docker image",
+                "required": false,
+                "default": "bookworm",
+                "type": "choice",
+                "options": [
+                  "trixie",
+                  "bookworm",
+                  "bullseye",
+                  "noble",
+                  "jammy"
+                ]
+              },
+              "kernel_sign": {
+                "description": "Set the kernel custom signature",
+                "required": false,
+                "default": "-ophub",
+                "type": "choice",
+                "options": [
+                  "-ophub",
+                  "-yourname"
+                ]
+              }
+            }
+          }
+        },
+        "env": {
+          "TZ": "America/New_York"
+        },
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-22.04-arm",
+            "if": "${{ github.event.repository.owner.id }} == ${{ github.event.sender.id }}",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Initialization environment",
+                "id": "init",
+                "env": {
+                  "DEBIAN_FRONTEND": "noninteractive"
+                },
+                "run": "docker rmi $(docker images -q) 2>/dev/null\n[[ -n \"${AGENT_TOOLSDIRECTORY}\" ]] && sudo rm -rf \"${AGENT_TOOLSDIRECTORY}\"\nsudo rm -rf /usr/share/dotnet /usr/local/lib/android 2>/dev/null\nsudo swapoff -a\nsudo rm -f /swapfile /mnt/swapfile\nsudo -E apt-get -y update\nsudo -E apt-get -y purge azure-cli ghc* zulu* llvm* firefox google* dotnet* powershell openjdk* mongodb* moby* || true\nsudo -E apt-get -y install $(curl -fsSL https://tinyurl.com/ubuntu2204-build-armbian)\nsudo -E systemctl daemon-reload\n#sudo -E apt-get -y full-upgrade\nsudo -E apt-get -y autoremove --purge\nsudo -E apt-get clean\nsudo sed -i '/NVM_DIR/d;/skel/d' /root/{.bashrc,.profile}\nsudo rm -rf ~/{.cargo,.dotnet,.rustup}\nsudo timedatectl set-timezone \"${TZ}\"\necho \"status=success\" >> ${GITHUB_OUTPUT}\n"
+              },
+              {
+                "name": "Create simulated physical disk",
+                "id": "disk",
+                "run": "mnt_size=$(expr $(df -h /mnt | tail -1 | awk '{print $4}' | sed 's/[[:alpha:]]//g' | sed 's/\\..*//') - 1)\nroot_size=$(expr $(df -h / | tail -1 | awk '{print $4}' | sed 's/[[:alpha:]]//g' | sed 's/\\..*//') - 4)\nsudo truncate -s \"${mnt_size}\"G /mnt/mnt.img\nsudo truncate -s \"${root_size}\"G /root.img\nsudo losetup /dev/loop6 /mnt/mnt.img\nsudo losetup /dev/loop7 /root.img\nsudo pvcreate /dev/loop6\nsudo pvcreate /dev/loop7\nsudo vgcreate github /dev/loop6 /dev/loop7\nsudo lvcreate -n runner -l 100%FREE github\nsudo mkfs.xfs /dev/github/runner\nsudo mkdir -p /builder\nsudo mount /dev/github/runner /builder\nsudo chown -R runner.runner /builder\ndf -Th\necho \"status=success\" >> ${GITHUB_OUTPUT}\n"
+              },
+              {
+                "name": "Install Docker",
+                "id": "install",
+                "working-directory": "/builder",
+                "if": "${{ steps.disk.outputs.status }} == 'success' && !cancelled()",
+                "run": "df -hT ${PWD}\ncurl -fsSL https://get.docker.com | sh\nsudo usermod -aG docker $USER\nsudo newgrp docker\necho \"status=success\" >> ${GITHUB_OUTPUT}\n"
+              },
+              {
+                "name": "Pull Docker Image [ ${{ inputs.docker_image }} ]",
+                "id": "pull",
+                "working-directory": "/builder",
+                "if": "${{ steps.install.outputs.status }} == 'success' && !cancelled()",
+                "run": "# Create a docker mapping directory\nmkdir -p /builder/compile-kernel/{kernel,output}\nln -sf /builder/compile-kernel/kernel /home/runner/work/_actions/ophub/amlogic-s9xxx-armbian/main/compile-kernel/kernel\nln -sf /builder/compile-kernel/output /home/runner/work/_actions/ophub/amlogic-s9xxx-armbian/main/compile-kernel/output\n\n# Pull the Armbian Docker image\ndocker run -d --privileged \\\n    --name armbian-ophub \\\n    -v /builder/compile-kernel:/opt/kernel/compile-kernel \\\n    --restart=always \\\n    ophub/armbian-${{ inputs.docker_image }}:latest\n\necho \"status=success\" >> ${GITHUB_OUTPUT}\n"
+              },
+              {
+                "name": "Compile the kernel [ ${{ inputs.kernel_version }} ]",
+                "uses": "ophub/amlogic-s9xxx-armbian@main",
+                "if": "${{ steps.pull.outputs.status }} == 'success' && !cancelled()",
+                "with": {
+                  "build_target": "kernel",
+                  "kernel_source": "${{ inputs.kernel_source }}",
+                  "kernel_version": "${{ inputs.kernel_version }}",
+                  "kernel_auto": "${{ inputs.kernel_auto }}",
+                  "delete_source": "${{ inputs.delete_source }}",
+                  "kernel_package": "${{ inputs.kernel_package }}",
+                  "kernel_sign": "${{ inputs.kernel_sign }}",
+                  "kernel_toolchain": "${{ inputs.kernel_toolchain }}",
+                  "compress_format": "${{ inputs.compress_format }}",
+                  "silent_log": "${{ inputs.silent_log }}"
+                }
+              },
+              {
+                "name": "Upload Kernel to Release",
+                "uses": "ncipollo/release-action@main",
+                "if": "${{ env.PACKAGED_STATUS }} == 'success' && !cancelled()",
+                "with": {
+                  "tag": "kernel_stable",
+                  "artifacts": "${{ env.PACKAGED_OUTPUTPATH }}/*",
+                  "allowUpdates": true,
+                  "removeArtifacts": false,
+                  "replacesArtifacts": true,
+                  "token": "${{ secrets.GITHUB_TOKEN }}",
+                  "body": "The kernel can be used to compile Armbian and OpenWrt.\nThe kernel source code comes from: ${{ inputs.kernel_source }}\nThe kernel compilation toolchain: ${{ inputs.kernel_toolchain }}\n"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-09-01T05-12-08Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-b352aa67-0429-52f2-837a-86a1641eea6f",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/compile-kernel-using-docker__2025-09-01T05-12-08Z__85643d242aed8a66c9fb0232ca804bbcd9ea638b.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 107,
+                  "startColumn": 5,
+                  "endLine": 218,
+                  "endColumn": 78
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "f2db9c6d89149f6e:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "compile-kernel-using-docker__2025-09-01T05-12-08Z__85643d242aed8a66c9fb0232ca804bbcd9ea638b.yml",
+          "workflow_name": "Compile the kernel using docker",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 218,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "ncipollo/release-action@main",
+              "ophub/amlogic-s9xxx-armbian@main"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 4,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Compile the kernel using docker",
+        "true": {
+          "repository_dispatch": null,
+          "workflow_dispatch": {
+            "inputs": {
+              "kernel_source": {
+                "description": "Select the kernel source",
+                "required": false,
+                "default": "unifreq",
+                "type": "choice",
+                "options": [
+                  "unifreq",
+                  "codesnas"
+                ]
+              },
+              "kernel_version": {
+                "description": "Select kernel version",
+                "required": false,
+                "default": "6.12.y",
+                "type": "choice",
+                "options": [
+                  "5.4.y",
+                  "5.10.y",
+                  "5.15.y",
+                  "6.1.y",
+                  "6.6.y",
+                  "6.12.y",
+                  "5.4.y_5.10.y",
+                  "5.15.y_6.1.y",
+                  "6.6.y_6.12.y",
+                  "5.4.y_5.10.y_5.15.y",
+                  "6.1.y_6.6.y_6.12.y",
+                  "all"
+                ]
+              },
+              "kernel_auto": {
+                "description": "Auto use the latest kernel",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              },
+              "silent_log": {
+                "description": "Use silent logging",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              },
+              "delete_source": {
+                "description": "Delete the source after compilation",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              },
+              "kernel_package": {
+                "description": "Select compile package list",
+                "required": false,
+                "default": "all",
+                "type": "choice",
+                "options": [
+                  "all",
+                  "dtbs"
+                ]
+              },
+              "kernel_toolchain": {
+                "description": "Select the compilation toolchain",
+                "required": false,
+                "default": "gcc",
+                "type": "choice",
+                "options": [
+                  "clang",
+                  "gcc",
+                  "gcc-14.2",
+                  "gcc-14.3"
+                ]
+              },
+              "compress_format": {
+                "description": "Set the initrd compression format",
+                "required": false,
+                "default": "xz",
+                "type": "choice",
+                "options": [
+                  "xz",
+                  "gzip",
+                  "zstd",
+                  "lzma"
+                ]
+              },
+              "docker_image": {
+                "description": "Select Armbian docker image",
+                "required": false,
+                "default": "bookworm",
+                "type": "choice",
+                "options": [
+                  "trixie",
+                  "bookworm",
+                  "bullseye",
+                  "noble",
+                  "jammy"
+                ]
+              },
+              "kernel_sign": {
+                "description": "Set the kernel custom signature",
+                "required": false,
+                "default": "-ophub",
+                "type": "choice",
+                "options": [
+                  "-ophub",
+                  "-yourname"
+                ]
+              }
+            }
+          }
+        },
+        "env": {
+          "TZ": "America/New_York"
+        },
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-22.04-arm",
+            "if": "${{ github.event.repository.owner.id }} == ${{ github.event.sender.id }}",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Initialization environment",
+                "id": "init",
+                "env": {
+                  "DEBIAN_FRONTEND": "noninteractive"
+                },
+                "run": "docker rmi $(docker images -q) 2>/dev/null\n[[ -n \"${AGENT_TOOLSDIRECTORY}\" ]] && sudo rm -rf \"${AGENT_TOOLSDIRECTORY}\"\nsudo rm -rf /usr/share/dotnet /usr/local/lib/android 2>/dev/null\nsudo swapoff -a\nsudo rm -f /swapfile /mnt/swapfile\nsudo -E apt-get -y update\nsudo -E apt-get -y purge azure-cli ghc* zulu* llvm* firefox google* dotnet* powershell openjdk* mongodb* moby* || true\nsudo -E apt-get -y install $(curl -fsSL https://tinyurl.com/ubuntu2204-build-armbian)\nsudo -E systemctl daemon-reload\n#sudo -E apt-get -y full-upgrade\nsudo -E apt-get -y autoremove --purge\nsudo -E apt-get clean\nsudo sed -i '/NVM_DIR/d;/skel/d' /root/{.bashrc,.profile}\nsudo rm -rf ~/{.cargo,.dotnet,.rustup}\nsudo -E timedatectl set-timezone \"${TZ}\"\nsudo -E apt-get install -y ntpdate\nsudo -E ntpdate pool.ntp.org\necho \"status=success\" >> ${GITHUB_OUTPUT}\n"
+              },
+              {
+                "name": "Create simulated physical disk",
+                "id": "disk",
+                "run": "mnt_size=$(expr $(df -h /mnt | tail -1 | awk '{print $4}' | sed 's/[[:alpha:]]//g' | sed 's/\\..*//') - 1)\nroot_size=$(expr $(df -h / | tail -1 | awk '{print $4}' | sed 's/[[:alpha:]]//g' | sed 's/\\..*//') - 4)\nsudo truncate -s \"${mnt_size}\"G /mnt/mnt.img\nsudo truncate -s \"${root_size}\"G /root.img\nsudo losetup /dev/loop6 /mnt/mnt.img\nsudo losetup /dev/loop7 /root.img\nsudo pvcreate /dev/loop6\nsudo pvcreate /dev/loop7\nsudo vgcreate github /dev/loop6 /dev/loop7\nsudo lvcreate -n runner -l 100%FREE github\nsudo mkfs.xfs /dev/github/runner\nsudo mkdir -p /builder\nsudo mount /dev/github/runner /builder\nsudo chown -R runner.runner /builder\ndf -Th\necho \"status=success\" >> ${GITHUB_OUTPUT}\n"
+              },
+              {
+                "name": "Install Docker",
+                "id": "install",
+                "working-directory": "/builder",
+                "if": "${{ steps.disk.outputs.status }} == 'success' && !cancelled()",
+                "run": "df -hT ${PWD}\ncurl -fsSL https://get.docker.com | sh\nsudo usermod -aG docker $USER\nsudo newgrp docker\necho \"status=success\" >> ${GITHUB_OUTPUT}\n"
+              },
+              {
+                "name": "Pull Docker Image [ ${{ inputs.docker_image }} ]",
+                "id": "pull",
+                "working-directory": "/builder",
+                "if": "${{ steps.install.outputs.status }} == 'success' && !cancelled()",
+                "run": "# Create a docker mapping directory\nmkdir -p /builder/compile-kernel/{kernel,output}\nln -sf /builder/compile-kernel/kernel /home/runner/work/_actions/ophub/amlogic-s9xxx-armbian/main/compile-kernel/kernel\nln -sf /builder/compile-kernel/output /home/runner/work/_actions/ophub/amlogic-s9xxx-armbian/main/compile-kernel/output\n\n# Pull the Armbian Docker image\ndocker run -d --privileged \\\n    --name armbian-ophub \\\n    -v /builder/compile-kernel:/opt/kernel/compile-kernel \\\n    -v /etc/localtime:/etc/localtime:ro \\\n    -v /etc/timezone:/etc/timezone:ro \\\n    --restart=always \\\n    ophub/armbian-${{ inputs.docker_image }}:latest\n\necho \"status=success\" >> ${GITHUB_OUTPUT}\n"
+              },
+              {
+                "name": "Compile the kernel [ ${{ inputs.kernel_version }} ]",
+                "uses": "ophub/amlogic-s9xxx-armbian@main",
+                "if": "${{ steps.pull.outputs.status }} == 'success' && !cancelled()",
+                "with": {
+                  "build_target": "kernel",
+                  "kernel_source": "${{ inputs.kernel_source }}",
+                  "kernel_version": "${{ inputs.kernel_version }}",
+                  "kernel_auto": "${{ inputs.kernel_auto }}",
+                  "delete_source": "${{ inputs.delete_source }}",
+                  "kernel_package": "${{ inputs.kernel_package }}",
+                  "kernel_sign": "${{ inputs.kernel_sign }}",
+                  "kernel_toolchain": "${{ inputs.kernel_toolchain }}",
+                  "compress_format": "${{ inputs.compress_format }}",
+                  "silent_log": "${{ inputs.silent_log }}"
+                }
+              },
+              {
+                "name": "Upload Kernel to Release",
+                "uses": "ncipollo/release-action@main",
+                "if": "${{ env.PACKAGED_STATUS }} == 'success' && !cancelled()",
+                "with": {
+                  "tag": "kernel_stable",
+                  "artifacts": "${{ env.PACKAGED_OUTPUTPATH }}/*",
+                  "allowUpdates": true,
+                  "removeArtifacts": false,
+                  "replacesArtifacts": true,
+                  "token": "${{ secrets.GITHUB_TOKEN }}",
+                  "body": "The kernel can be used to compile Armbian and OpenWrt.\nThe kernel source code comes from: ${{ inputs.kernel_source }}\nThe kernel compilation toolchain: ${{ inputs.kernel_toolchain }}\n"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-09-01T03-35-43Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-4e0772eb-eebd-5adc-80f7-94a9c81c832f",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/compile-kernel-using-docker__2025-09-01T03-35-43Z__432c0eb407599bf65e1837400f2dbb98d91eee29.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 107,
+                  "startColumn": 5,
+                  "endLine": 216,
+                  "endColumn": 78
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "f2db9c6d89149f6e:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "compile-kernel-using-docker__2025-09-01T03-35-43Z__432c0eb407599bf65e1837400f2dbb98d91eee29.yml",
+          "workflow_name": "Compile the kernel using docker",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 216,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "ncipollo/release-action@main",
+              "ophub/amlogic-s9xxx-armbian@main"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 4,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Compile the kernel using docker",
+        "true": {
+          "repository_dispatch": null,
+          "workflow_dispatch": {
+            "inputs": {
+              "kernel_source": {
+                "description": "Select the kernel source",
+                "required": false,
+                "default": "unifreq",
+                "type": "choice",
+                "options": [
+                  "unifreq",
+                  "codesnas"
+                ]
+              },
+              "kernel_version": {
+                "description": "Select kernel version",
+                "required": false,
+                "default": "6.12.y",
+                "type": "choice",
+                "options": [
+                  "5.4.y",
+                  "5.10.y",
+                  "5.15.y",
+                  "6.1.y",
+                  "6.6.y",
+                  "6.12.y",
+                  "5.4.y_5.10.y",
+                  "5.15.y_6.1.y",
+                  "6.6.y_6.12.y",
+                  "5.4.y_5.10.y_5.15.y",
+                  "6.1.y_6.6.y_6.12.y",
+                  "all"
+                ]
+              },
+              "kernel_auto": {
+                "description": "Auto use the latest kernel",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              },
+              "silent_log": {
+                "description": "Use silent logging",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              },
+              "delete_source": {
+                "description": "Delete the source after compilation",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              },
+              "kernel_package": {
+                "description": "Select compile package list",
+                "required": false,
+                "default": "all",
+                "type": "choice",
+                "options": [
+                  "all",
+                  "dtbs"
+                ]
+              },
+              "kernel_toolchain": {
+                "description": "Select the compilation toolchain",
+                "required": false,
+                "default": "gcc",
+                "type": "choice",
+                "options": [
+                  "clang",
+                  "gcc",
+                  "gcc-14.2",
+                  "gcc-14.3"
+                ]
+              },
+              "compress_format": {
+                "description": "Set the initrd compression format",
+                "required": false,
+                "default": "xz",
+                "type": "choice",
+                "options": [
+                  "xz",
+                  "gzip",
+                  "zstd",
+                  "lzma"
+                ]
+              },
+              "docker_image": {
+                "description": "Select Armbian docker image",
+                "required": false,
+                "default": "bookworm",
+                "type": "choice",
+                "options": [
+                  "trixie",
+                  "bookworm",
+                  "bullseye",
+                  "noble",
+                  "jammy"
+                ]
+              },
+              "kernel_sign": {
+                "description": "Set the kernel custom signature",
+                "required": false,
+                "default": "-ophub",
+                "type": "choice",
+                "options": [
+                  "-ophub",
+                  "-yourname"
+                ]
+              }
+            }
+          }
+        },
+        "env": {
+          "TZ": "America/New_York"
+        },
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-22.04-arm",
+            "if": "${{ github.event.repository.owner.id }} == ${{ github.event.sender.id }}",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Initialization environment",
+                "id": "init",
+                "env": {
+                  "DEBIAN_FRONTEND": "noninteractive"
+                },
+                "run": "docker rmi $(docker images -q) 2>/dev/null\n[[ -n \"${AGENT_TOOLSDIRECTORY}\" ]] && sudo rm -rf \"${AGENT_TOOLSDIRECTORY}\"\nsudo rm -rf /usr/share/dotnet /usr/local/lib/android 2>/dev/null\nsudo swapoff -a\nsudo rm -f /swapfile /mnt/swapfile\nsudo -E apt-get -y update\nsudo -E apt-get -y purge azure-cli ghc* zulu* llvm* firefox google* dotnet* powershell openjdk* mongodb* moby* || true\nsudo -E apt-get -y install $(curl -fsSL https://tinyurl.com/ubuntu2204-build-armbian)\nsudo -E systemctl daemon-reload\n#sudo -E apt-get -y full-upgrade\nsudo -E apt-get -y autoremove --purge\nsudo -E apt-get clean\nsudo sed -i '/NVM_DIR/d;/skel/d' /root/{.bashrc,.profile}\nsudo rm -rf ~/{.cargo,.dotnet,.rustup}\nsudo timedatectl set-timezone \"${TZ}\"\necho \"status=success\" >> ${GITHUB_OUTPUT}\n"
+              },
+              {
+                "name": "Create simulated physical disk",
+                "id": "disk",
+                "run": "mnt_size=$(expr $(df -h /mnt | tail -1 | awk '{print $4}' | sed 's/[[:alpha:]]//g' | sed 's/\\..*//') - 1)\nroot_size=$(expr $(df -h / | tail -1 | awk '{print $4}' | sed 's/[[:alpha:]]//g' | sed 's/\\..*//') - 4)\nsudo truncate -s \"${mnt_size}\"G /mnt/mnt.img\nsudo truncate -s \"${root_size}\"G /root.img\nsudo losetup /dev/loop6 /mnt/mnt.img\nsudo losetup /dev/loop7 /root.img\nsudo pvcreate /dev/loop6\nsudo pvcreate /dev/loop7\nsudo vgcreate github /dev/loop6 /dev/loop7\nsudo lvcreate -n runner -l 100%FREE github\nsudo mkfs.xfs /dev/github/runner\nsudo mkdir -p /builder\nsudo mount /dev/github/runner /builder\nsudo chown -R runner.runner /builder\ndf -Th\necho \"status=success\" >> ${GITHUB_OUTPUT}\n"
+              },
+              {
+                "name": "Install Docker",
+                "id": "install",
+                "working-directory": "/builder",
+                "if": "${{ steps.disk.outputs.status }} == 'success' && !cancelled()",
+                "run": "df -hT ${PWD}\ncurl -fsSL https://get.docker.com | sh\nsudo usermod -aG docker $USER\nsudo newgrp docker\necho \"status=success\" >> ${GITHUB_OUTPUT}\n"
+              },
+              {
+                "name": "Pull Docker Image [ ${{ inputs.docker_image }} ]",
+                "id": "pull",
+                "working-directory": "/builder",
+                "if": "${{ steps.install.outputs.status }} == 'success' && !cancelled()",
+                "run": "# Create a docker mapping directory\nmkdir -p /builder/compile-kernel/{kernel,output}\nln -sf /builder/compile-kernel/kernel /home/runner/work/_actions/ophub/amlogic-s9xxx-armbian/main/compile-kernel/kernel\nln -sf /builder/compile-kernel/output /home/runner/work/_actions/ophub/amlogic-s9xxx-armbian/main/compile-kernel/output\n\n# Pull the Armbian Docker image\ndocker run -d --privileged \\\n    --name armbian-ophub \\\n    -v /builder/compile-kernel:/opt/kernel/compile-kernel \\\n    -v /etc/localtime:/etc/localtime:ro \\\n    -v /etc/timezone:/etc/timezone:ro \\\n    --restart=always \\\n    ophub/armbian-${{ inputs.docker_image }}:latest\n\necho \"status=success\" >> ${GITHUB_OUTPUT}\n"
+              },
+              {
+                "name": "Compile the kernel [ ${{ inputs.kernel_version }} ]",
+                "uses": "ophub/amlogic-s9xxx-armbian@main",
+                "if": "${{ steps.pull.outputs.status }} == 'success' && !cancelled()",
+                "with": {
+                  "build_target": "kernel",
+                  "kernel_source": "${{ inputs.kernel_source }}",
+                  "kernel_version": "${{ inputs.kernel_version }}",
+                  "kernel_auto": "${{ inputs.kernel_auto }}",
+                  "delete_source": "${{ inputs.delete_source }}",
+                  "kernel_package": "${{ inputs.kernel_package }}",
+                  "kernel_sign": "${{ inputs.kernel_sign }}",
+                  "kernel_toolchain": "${{ inputs.kernel_toolchain }}",
+                  "compress_format": "${{ inputs.compress_format }}",
+                  "silent_log": "${{ inputs.silent_log }}"
+                }
+              },
+              {
+                "name": "Upload Kernel to Release",
+                "uses": "ncipollo/release-action@main",
+                "if": "${{ env.PACKAGED_STATUS }} == 'success' && !cancelled()",
+                "with": {
+                  "tag": "kernel_stable",
+                  "artifacts": "${{ env.PACKAGED_OUTPUTPATH }}/*",
+                  "allowUpdates": true,
+                  "removeArtifacts": false,
+                  "replacesArtifacts": true,
+                  "token": "${{ secrets.GITHUB_TOKEN }}",
+                  "body": "The kernel can be used to compile Armbian and OpenWrt.\nThe kernel source code comes from: ${{ inputs.kernel_source }}\nThe kernel compilation toolchain: ${{ inputs.kernel_toolchain }}\n"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-09-01T09-42-48Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-3ba28f82-26c1-50b4-ba51-351165d1577f",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/compile-kernel-using-docker__2025-09-01T09-42-48Z__3e1dbb2461344ee272d9644b70bceabdfe93c3da.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 107,
+                  "startColumn": 5,
+                  "endLine": 218,
+                  "endColumn": 78
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "f2db9c6d89149f6e:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "compile-kernel-using-docker__2025-09-01T09-42-48Z__3e1dbb2461344ee272d9644b70bceabdfe93c3da.yml",
+          "workflow_name": "Compile the kernel using docker",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 218,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "ncipollo/release-action@main",
+              "ophub/amlogic-s9xxx-armbian@main"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 4,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Compile the kernel using docker",
+        "true": {
+          "repository_dispatch": null,
+          "workflow_dispatch": {
+            "inputs": {
+              "kernel_source": {
+                "description": "Select the kernel source",
+                "required": false,
+                "default": "unifreq",
+                "type": "choice",
+                "options": [
+                  "unifreq",
+                  "codesnas"
+                ]
+              },
+              "kernel_version": {
+                "description": "Select kernel version",
+                "required": false,
+                "default": "6.12.y",
+                "type": "choice",
+                "options": [
+                  "5.4.y",
+                  "5.10.y",
+                  "5.15.y",
+                  "6.1.y",
+                  "6.6.y",
+                  "6.12.y",
+                  "5.4.y_5.10.y",
+                  "5.15.y_6.1.y",
+                  "6.6.y_6.12.y",
+                  "5.4.y_5.10.y_5.15.y",
+                  "6.1.y_6.6.y_6.12.y",
+                  "all"
+                ]
+              },
+              "kernel_auto": {
+                "description": "Auto use the latest kernel",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              },
+              "silent_log": {
+                "description": "Use silent logging",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              },
+              "delete_source": {
+                "description": "Delete the source after compilation",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              },
+              "kernel_package": {
+                "description": "Select compile package list",
+                "required": false,
+                "default": "all",
+                "type": "choice",
+                "options": [
+                  "all",
+                  "dtbs"
+                ]
+              },
+              "kernel_toolchain": {
+                "description": "Select the compilation toolchain",
+                "required": false,
+                "default": "gcc",
+                "type": "choice",
+                "options": [
+                  "clang",
+                  "gcc",
+                  "gcc-14.2",
+                  "gcc-14.3"
+                ]
+              },
+              "compress_format": {
+                "description": "Set the initrd compression format",
+                "required": false,
+                "default": "xz",
+                "type": "choice",
+                "options": [
+                  "xz",
+                  "gzip",
+                  "zstd",
+                  "lzma"
+                ]
+              },
+              "docker_image": {
+                "description": "Select Armbian docker image",
+                "required": false,
+                "default": "bookworm",
+                "type": "choice",
+                "options": [
+                  "trixie",
+                  "bookworm",
+                  "bullseye",
+                  "noble",
+                  "jammy"
+                ]
+              },
+              "kernel_sign": {
+                "description": "Set the kernel custom signature",
+                "required": false,
+                "default": "-ophub",
+                "type": "choice",
+                "options": [
+                  "-ophub",
+                  "-yourname"
+                ]
+              }
+            }
+          }
+        },
+        "env": {
+          "TZ": "Etc/UTC"
+        },
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-22.04-arm",
+            "if": "${{ github.event.repository.owner.id }} == ${{ github.event.sender.id }}",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Initialization environment",
+                "id": "init",
+                "env": {
+                  "DEBIAN_FRONTEND": "noninteractive"
+                },
+                "run": "docker rmi $(docker images -q) 2>/dev/null\n[[ -n \"${AGENT_TOOLSDIRECTORY}\" ]] && sudo rm -rf \"${AGENT_TOOLSDIRECTORY}\"\nsudo rm -rf /usr/share/dotnet /usr/local/lib/android 2>/dev/null\nsudo swapoff -a\nsudo rm -f /swapfile /mnt/swapfile\nsudo -E apt-get -y update\nsudo -E apt-get -y purge azure-cli ghc* zulu* llvm* firefox google* dotnet* powershell openjdk* mongodb* moby* || true\nsudo -E apt-get -y install $(curl -fsSL https://tinyurl.com/ubuntu2204-build-armbian)\nsudo -E systemctl daemon-reload\n#sudo -E apt-get -y full-upgrade\nsudo -E apt-get -y autoremove --purge\nsudo -E apt-get clean\nsudo sed -i '/NVM_DIR/d;/skel/d' /root/{.bashrc,.profile}\nsudo rm -rf ~/{.cargo,.dotnet,.rustup}\nsudo -E timedatectl set-timezone \"${TZ}\"\nsudo -E apt-get install -y ntpdate\nsudo -E ntpdate pool.ntp.org\necho \"status=success\" >> ${GITHUB_OUTPUT}\n"
+              },
+              {
+                "name": "Create simulated physical disk",
+                "id": "disk",
+                "run": "mnt_size=$(expr $(df -h /mnt | tail -1 | awk '{print $4}' | sed 's/[[:alpha:]]//g' | sed 's/\\..*//') - 1)\nroot_size=$(expr $(df -h / | tail -1 | awk '{print $4}' | sed 's/[[:alpha:]]//g' | sed 's/\\..*//') - 4)\nsudo truncate -s \"${mnt_size}\"G /mnt/mnt.img\nsudo truncate -s \"${root_size}\"G /root.img\nsudo losetup /dev/loop6 /mnt/mnt.img\nsudo losetup /dev/loop7 /root.img\nsudo pvcreate /dev/loop6\nsudo pvcreate /dev/loop7\nsudo vgcreate github /dev/loop6 /dev/loop7\nsudo lvcreate -n runner -l 100%FREE github\nsudo mkfs.xfs /dev/github/runner\nsudo mkdir -p /builder\nsudo mount /dev/github/runner /builder\nsudo chown -R runner.runner /builder\ndf -Th\necho \"status=success\" >> ${GITHUB_OUTPUT}\n"
+              },
+              {
+                "name": "Install Docker",
+                "id": "install",
+                "working-directory": "/builder",
+                "if": "${{ steps.disk.outputs.status }} == 'success' && !cancelled()",
+                "run": "df -hT ${PWD}\ncurl -fsSL https://get.docker.com | sh\nsudo usermod -aG docker $USER\nsudo newgrp docker\necho \"status=success\" >> ${GITHUB_OUTPUT}\n"
+              },
+              {
+                "name": "Pull Docker Image [ ${{ inputs.docker_image }} ]",
+                "id": "pull",
+                "working-directory": "/builder",
+                "if": "${{ steps.install.outputs.status }} == 'success' && !cancelled()",
+                "run": "# Create a docker mapping directory\nmkdir -p /builder/compile-kernel/{kernel,output}\nln -sf /builder/compile-kernel/kernel /home/runner/work/_actions/ophub/amlogic-s9xxx-armbian/main/compile-kernel/kernel\nln -sf /builder/compile-kernel/output /home/runner/work/_actions/ophub/amlogic-s9xxx-armbian/main/compile-kernel/output\n\n# Pull the Armbian Docker image\ndocker run -d --privileged \\\n    --name armbian-ophub \\\n    -v /builder/compile-kernel:/opt/kernel/compile-kernel \\\n    -v /etc/localtime:/etc/localtime:ro \\\n    -v /etc/timezone:/etc/timezone:ro \\\n    --restart=always \\\n    ophub/armbian-${{ inputs.docker_image }}:latest\n\necho \"status=success\" >> ${GITHUB_OUTPUT}\n"
+              },
+              {
+                "name": "Compile the kernel [ ${{ inputs.kernel_version }} ]",
+                "uses": "ophub/amlogic-s9xxx-armbian@main",
+                "if": "${{ steps.pull.outputs.status }} == 'success' && !cancelled()",
+                "with": {
+                  "build_target": "kernel",
+                  "kernel_source": "${{ inputs.kernel_source }}",
+                  "kernel_version": "${{ inputs.kernel_version }}",
+                  "kernel_auto": "${{ inputs.kernel_auto }}",
+                  "delete_source": "${{ inputs.delete_source }}",
+                  "kernel_package": "${{ inputs.kernel_package }}",
+                  "kernel_sign": "${{ inputs.kernel_sign }}",
+                  "kernel_toolchain": "${{ inputs.kernel_toolchain }}",
+                  "compress_format": "${{ inputs.compress_format }}",
+                  "silent_log": "${{ inputs.silent_log }}"
+                }
+              },
+              {
+                "name": "Upload Kernel to Release",
+                "uses": "ncipollo/release-action@main",
+                "if": "${{ env.PACKAGED_STATUS }} == 'success' && !cancelled()",
+                "with": {
+                  "tag": "kernel_stable",
+                  "artifacts": "${{ env.PACKAGED_OUTPUTPATH }}/*",
+                  "allowUpdates": true,
+                  "removeArtifacts": false,
+                  "replacesArtifacts": true,
+                  "token": "${{ secrets.GITHUB_TOKEN }}",
+                  "body": "The kernel can be used to compile Armbian and OpenWrt.\nThe kernel source code comes from: ${{ inputs.kernel_source }}\nThe kernel compilation toolchain: ${{ inputs.kernel_toolchain }}\n"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-09-02T01-13-42Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-e854bc87-c9a3-54fb-8a5b-e303d5aebe18",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/compile-kernel-using-docker__2025-09-02T01-13-42Z__dff1878dbf92bf35f7721bef1e766f5d4fbf316c.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 107,
+                  "startColumn": 5,
+                  "endLine": 221,
+                  "endColumn": 78
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "f2db9c6d89149f6e:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "compile-kernel-using-docker__2025-09-02T01-13-42Z__dff1878dbf92bf35f7721bef1e766f5d4fbf316c.yml",
+          "workflow_name": "Compile the kernel using docker",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 221,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "ncipollo/release-action@main",
+              "ophub/amlogic-s9xxx-armbian@main"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 4,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Compile the kernel using docker",
+        "true": {
+          "repository_dispatch": null,
+          "workflow_dispatch": {
+            "inputs": {
+              "kernel_source": {
+                "description": "Select the kernel source",
+                "required": false,
+                "default": "unifreq",
+                "type": "choice",
+                "options": [
+                  "unifreq",
+                  "codesnas"
+                ]
+              },
+              "kernel_version": {
+                "description": "Select kernel version",
+                "required": false,
+                "default": "6.12.y",
+                "type": "choice",
+                "options": [
+                  "5.4.y",
+                  "5.10.y",
+                  "5.15.y",
+                  "6.1.y",
+                  "6.6.y",
+                  "6.12.y",
+                  "5.4.y_5.10.y",
+                  "5.15.y_6.1.y",
+                  "6.6.y_6.12.y",
+                  "5.4.y_5.10.y_5.15.y",
+                  "6.1.y_6.6.y_6.12.y",
+                  "all"
+                ]
+              },
+              "kernel_auto": {
+                "description": "Auto use the latest kernel",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              },
+              "silent_log": {
+                "description": "Use silent logging",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              },
+              "delete_source": {
+                "description": "Delete the source after compilation",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              },
+              "kernel_package": {
+                "description": "Select compile package list",
+                "required": false,
+                "default": "all",
+                "type": "choice",
+                "options": [
+                  "all",
+                  "dtbs"
+                ]
+              },
+              "kernel_toolchain": {
+                "description": "Select the compilation toolchain",
+                "required": false,
+                "default": "gcc",
+                "type": "choice",
+                "options": [
+                  "clang",
+                  "gcc",
+                  "gcc-14.2",
+                  "gcc-14.3"
+                ]
+              },
+              "compress_format": {
+                "description": "Set the initrd compression format",
+                "required": false,
+                "default": "xz",
+                "type": "choice",
+                "options": [
+                  "xz",
+                  "gzip",
+                  "zstd",
+                  "lzma"
+                ]
+              },
+              "docker_image": {
+                "description": "Select Armbian docker image",
+                "required": false,
+                "default": "bookworm",
+                "type": "choice",
+                "options": [
+                  "trixie",
+                  "bookworm",
+                  "bullseye",
+                  "noble",
+                  "jammy"
+                ]
+              },
+              "kernel_sign": {
+                "description": "Set the kernel custom signature",
+                "required": false,
+                "default": "-ophub",
+                "type": "choice",
+                "options": [
+                  "-ophub",
+                  "-yourname"
+                ]
+              }
+            }
+          }
+        },
+        "env": {
+          "TZ": "Etc/UTC"
+        },
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-22.04-arm",
+            "if": "${{ github.event.repository.owner.id }} == ${{ github.event.sender.id }}",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Initialization environment",
+                "id": "init",
+                "env": {
+                  "DEBIAN_FRONTEND": "noninteractive"
+                },
+                "run": "docker rmi $(docker images -q) 2>/dev/null\n[[ -n \"${AGENT_TOOLSDIRECTORY}\" ]] && sudo rm -rf \"${AGENT_TOOLSDIRECTORY}\"\nsudo rm -rf /usr/share/dotnet /usr/local/lib/android 2>/dev/null\nsudo swapoff -a\nsudo rm -f /swapfile /mnt/swapfile\nsudo -E apt-get -y update\nsudo -E apt-get -y purge azure-cli ghc* zulu* llvm* firefox google* dotnet* powershell openjdk* mongodb* moby* || true\nsudo -E apt-get -y install $(curl -fsSL https://tinyurl.com/ubuntu2204-build-armbian)\nsudo -E systemctl daemon-reload\n#sudo -E apt-get -y full-upgrade\nsudo -E apt-get -y autoremove --purge\nsudo -E apt-get clean\nsudo sed -i '/NVM_DIR/d;/skel/d' /root/{.bashrc,.profile}\nsudo rm -rf ~/{.cargo,.dotnet,.rustup}\nsudo -E timedatectl set-timezone \"${TZ}\"\nsudo -E apt-get install -y ntpdate\nsudo -E ntpdate pool.ntp.org\nsudo -E timedatectl set-ntp true\ndate -u\ntimedatectl status\necho \"status=success\" >> ${GITHUB_OUTPUT}\n"
+              },
+              {
+                "name": "Create simulated physical disk",
+                "id": "disk",
+                "run": "mnt_size=$(expr $(df -h /mnt | tail -1 | awk '{print $4}' | sed 's/[[:alpha:]]//g' | sed 's/\\..*//') - 1)\nroot_size=$(expr $(df -h / | tail -1 | awk '{print $4}' | sed 's/[[:alpha:]]//g' | sed 's/\\..*//') - 4)\nsudo truncate -s \"${mnt_size}\"G /mnt/mnt.img\nsudo truncate -s \"${root_size}\"G /root.img\nsudo losetup /dev/loop6 /mnt/mnt.img\nsudo losetup /dev/loop7 /root.img\nsudo pvcreate /dev/loop6\nsudo pvcreate /dev/loop7\nsudo vgcreate github /dev/loop6 /dev/loop7\nsudo lvcreate -n runner -l 100%FREE github\nsudo mkfs.xfs /dev/github/runner\nsudo mkdir -p /builder\nsudo mount /dev/github/runner /builder\nsudo chown -R runner.runner /builder\ndf -Th\necho \"status=success\" >> ${GITHUB_OUTPUT}\n"
+              },
+              {
+                "name": "Install Docker",
+                "id": "install",
+                "working-directory": "/builder",
+                "if": "${{ steps.disk.outputs.status }} == 'success' && !cancelled()",
+                "run": "df -hT ${PWD}\ncurl -fsSL https://get.docker.com | sh\nsudo usermod -aG docker $USER\nsudo newgrp docker\necho \"status=success\" >> ${GITHUB_OUTPUT}\n"
+              },
+              {
+                "name": "Pull Docker Image [ ${{ inputs.docker_image }} ]",
+                "id": "pull",
+                "working-directory": "/builder",
+                "if": "${{ steps.install.outputs.status }} == 'success' && !cancelled()",
+                "run": "# Create a docker mapping directory\nmkdir -p /builder/compile-kernel/{kernel,output}\nln -sf /builder/compile-kernel/kernel /home/runner/work/_actions/ophub/amlogic-s9xxx-armbian/main/compile-kernel/kernel\nln -sf /builder/compile-kernel/output /home/runner/work/_actions/ophub/amlogic-s9xxx-armbian/main/compile-kernel/output\n\n# Pull the Armbian Docker image\ndocker run -d --privileged \\\n    --name armbian-ophub \\\n    -v /builder/compile-kernel:/opt/kernel/compile-kernel \\\n    -v /etc/localtime:/etc/localtime:ro \\\n    -v /etc/timezone:/etc/timezone:ro \\\n    --restart=always \\\n    ophub/armbian-${{ inputs.docker_image }}:latest\n\necho \"status=success\" >> ${GITHUB_OUTPUT}\n"
+              },
+              {
+                "name": "Compile the kernel [ ${{ inputs.kernel_version }} ]",
+                "uses": "ophub/amlogic-s9xxx-armbian@main",
+                "if": "${{ steps.pull.outputs.status }} == 'success' && !cancelled()",
+                "with": {
+                  "build_target": "kernel",
+                  "kernel_source": "${{ inputs.kernel_source }}",
+                  "kernel_version": "${{ inputs.kernel_version }}",
+                  "kernel_auto": "${{ inputs.kernel_auto }}",
+                  "delete_source": "${{ inputs.delete_source }}",
+                  "kernel_package": "${{ inputs.kernel_package }}",
+                  "kernel_sign": "${{ inputs.kernel_sign }}",
+                  "kernel_toolchain": "${{ inputs.kernel_toolchain }}",
+                  "compress_format": "${{ inputs.compress_format }}",
+                  "silent_log": "${{ inputs.silent_log }}"
+                }
+              },
+              {
+                "name": "Upload Kernel to Release",
+                "uses": "ncipollo/release-action@main",
+                "if": "${{ env.PACKAGED_STATUS }} == 'success' && !cancelled()",
+                "with": {
+                  "tag": "kernel_stable",
+                  "artifacts": "${{ env.PACKAGED_OUTPUTPATH }}/*",
+                  "allowUpdates": true,
+                  "removeArtifacts": false,
+                  "replacesArtifacts": true,
+                  "token": "${{ secrets.GITHUB_TOKEN }}",
+                  "body": "The kernel can be used to compile Armbian and OpenWrt.\nThe kernel source code comes from: ${{ inputs.kernel_source }}\nThe kernel compilation toolchain: ${{ inputs.kernel_toolchain }}\n"
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

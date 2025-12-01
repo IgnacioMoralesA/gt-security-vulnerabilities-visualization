@@ -1,0 +1,120 @@
+{
+  "repo_owner": "diggerhq",
+  "repo_name": "digger",
+  "workflow_name": "ee_backend_docker_release_fips",
+  "history": {
+    "2025-05-20T19-00-34Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "ee_backend_docker_release_fips__2025-05-20T19-00-34Z__91d39e1401deb5cb4951fca0466efae4c8236122.yml",
+          "workflow_name": "EE Backend Publish docker image",
+          "triggers": {
+            "release": {
+              "types": [
+                "released"
+              ]
+            }
+          },
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 51,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build-and-push-image": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 1
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build-and-push-image": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "docker/build-push-action@v5.3.0",
+              "docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772",
+              "docker/metadata-action@v5.5.1"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "EE Backend Publish docker image",
+        "true": {
+          "release": {
+            "types": [
+              "released"
+            ]
+          }
+        },
+        "env": {
+          "REGISTRY": "ghcr.io",
+          "IMAGE_NAME": "${{ github.repository }}_backend_ee_fips"
+        },
+        "jobs": {
+          "build-and-push-image": {
+            "if": "(startswith(github.event.release.tag_name, 'v'))",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "contents": "read",
+              "packages": "write"
+            },
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Log in to the Container registry",
+                "uses": "docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772",
+                "with": {
+                  "registry": "${{ env.REGISTRY }}",
+                  "username": "${{ github.actor }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Extract metadata (tags, labels) for Docker",
+                "id": "meta",
+                "uses": "docker/metadata-action@v5.5.1",
+                "with": {
+                  "images": "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}"
+                }
+              },
+              {
+                "name": "Build and push Docker image",
+                "uses": "docker/build-push-action@v5.3.0",
+                "with": {
+                  "context": ".",
+                  "file": "Dockerfile_backend_ee",
+                  "push": true,
+                  "tags": "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest, ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.event.release.tag_name }}",
+                  "labels": "${{ steps.meta.outputs.labels }}",
+                  "build-args": "GODEBUG_VALUE=fips140=only\nGOFIPS140_VALUE=v1.0.0            \n"
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

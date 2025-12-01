@@ -1,0 +1,2185 @@
+{
+  "repo_owner": "benchmark-action",
+  "repo_name": "github-action-benchmark",
+  "workflow_name": "benchmarkjs",
+  "history": {
+    "2019-11-09T17-03-36Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-e1e930b9-6dd7-59af-8e6e-1cc4b848bd5c",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/benchmarkjs__2019-11-09T17-03-36Z__b564011ca6235bcc6aa19dcc6da4bce19927a08a.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 6,
+                  "startColumn": 5,
+                  "endLine": 22,
+                  "endColumn": 130
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "2acdc84e9c270ac:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-04b2bdc2-7622-56de-900d-788efbb9516e",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/benchmarkjs__2019-11-09T17-03-36Z__bf4dbf177e428a06d70be0e54b5742f3595290a2.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 6,
+                  "startColumn": 5,
+                  "endLine": 30,
+                  "endColumn": 130
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "2acdc84e9c270ac:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "benchmarkjs__2019-11-09T17-03-36Z__bf4dbf177e428a06d70be0e54b5742f3595290a2.yml",
+          "workflow_name": "Benchmark.js Example",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 30,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "benchmark": 9
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "benchmark": 9
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "./",
+              "actions/cache@v1",
+              "actions/checkout@v1",
+              "actions/setup-node@v1"
+            ],
+            "num_run_commands": 5,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Benchmark.js Example",
+        "true": [
+          "push"
+        ],
+        "jobs": {
+          "benchmark": {
+            "name": "Run JavaScript benchmark example",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v1"
+              },
+              {
+                "uses": "actions/setup-node@v1"
+              },
+              {
+                "uses": "actions/cache@v1",
+                "with": {
+                  "path": "node_modules",
+                  "key": "${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}",
+                  "restore-keys": "${{ runner.os }}-node-\n"
+                }
+              },
+              {
+                "run": "npm install"
+              },
+              {
+                "run": "npm run build"
+              },
+              {
+                "name": "Run benchmark",
+                "run": "cd examples/benchmarkjs && npm install && node bench.js | tee output.txt"
+              },
+              {
+                "name": "Fetch gh-pages for avoiding conflict",
+                "run": "git fetch 'https://rhysd:${{ secrets.GITHUB_TOKEN }}@github.com/rhysd/github-action-benchmark.git' gh-pages:gh-pages"
+              },
+              {
+                "name": "Store benchmark result",
+                "uses": "./",
+                "with": {
+                  "name": "Benchmark.js Benchmark",
+                  "tool": "benchmarkjs",
+                  "output-file-path": "examples/benchmarkjs/output.txt"
+                }
+              },
+              {
+                "name": "Push benchmark result",
+                "run": "git push 'https://rhysd:${{ secrets.GITHUB_TOKEN }}@github.com/rhysd/github-action-benchmark.git' gh-pages:gh-pages"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2019-11-13T06-27-17Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-91184ea0-3ac0-5f8d-9cbf-bf0cb8c4474c",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/benchmarkjs__2019-11-13T06-27-17Z__66c19bb0ebe2a70ae1a6e278fe07a92b86485f40.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 9,
+                  "startColumn": 5,
+                  "endLine": 26,
+                  "endColumn": 139
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "2acdc84e9c270ac:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "benchmarkjs__2019-11-13T06-27-17Z__66c19bb0ebe2a70ae1a6e278fe07a92b86485f40.yml",
+          "workflow_name": "Benchmark.js Example",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 26,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "benchmark": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "benchmark": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v1",
+              "actions/setup-node@v1",
+              "rhysd/github-action-benchmark@v1"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Benchmark.js Example",
+        "true": {
+          "push": {
+            "branches": [
+              "master"
+            ]
+          }
+        },
+        "jobs": {
+          "benchmark": {
+            "name": "Run JavaScript benchmark example",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v1"
+              },
+              {
+                "uses": "actions/setup-node@v1"
+              },
+              {
+                "name": "Run benchmark",
+                "run": "cd examples/benchmarkjs && npm install && node bench.js | tee output.txt"
+              },
+              {
+                "name": "Fetch gh-pages for avoiding conflict",
+                "run": "git fetch 'https://rhysd:${{ secrets.PERSONAL_GITHUB_TOKEN }}@github.com/rhysd/github-action-benchmark.git' gh-pages:gh-pages"
+              },
+              {
+                "name": "Store benchmark result",
+                "uses": "rhysd/github-action-benchmark@v1",
+                "with": {
+                  "name": "Benchmark.js Benchmark",
+                  "tool": "benchmarkjs",
+                  "output-file-path": "examples/benchmarkjs/output.txt"
+                }
+              },
+              {
+                "name": "Push benchmark result",
+                "run": "git push 'https://rhysd:${{ secrets.PERSONAL_GITHUB_TOKEN }}@github.com/rhysd/github-action-benchmark.git' gh-pages:gh-pages"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2019-11-09T17-18-17Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-a88daa36-d21a-5531-9d43-4582f65b4312",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/benchmarkjs__2019-11-09T17-18-17Z__73dc0f211c6b06975019f694a0e9bdcd5373d382.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 9,
+                  "startColumn": 5,
+                  "endLine": 25,
+                  "endColumn": 130
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "2acdc84e9c270ac:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "benchmarkjs__2019-11-09T17-18-17Z__73dc0f211c6b06975019f694a0e9bdcd5373d382.yml",
+          "workflow_name": "Benchmark.js Example",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 25,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "benchmark": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "benchmark": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v1",
+              "actions/setup-node@v1",
+              "rhysd/github-action-benchmark@v1"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Benchmark.js Example",
+        "true": {
+          "push": {
+            "branches": [
+              "master"
+            ]
+          }
+        },
+        "jobs": {
+          "benchmark": {
+            "name": "Run JavaScript benchmark example",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v1"
+              },
+              {
+                "uses": "actions/setup-node@v1"
+              },
+              {
+                "name": "Run benchmark",
+                "run": "cd examples/benchmarkjs && npm install && node bench.js | tee output.txt"
+              },
+              {
+                "name": "Fetch gh-pages for avoiding conflict",
+                "run": "git fetch 'https://rhysd:${{ secrets.GITHUB_TOKEN }}@github.com/rhysd/github-action-benchmark.git' gh-pages:gh-pages"
+              },
+              {
+                "name": "Store benchmark result",
+                "uses": "rhysd/github-action-benchmark@v1",
+                "with": {
+                  "name": "Benchmark.js Benchmark",
+                  "tool": "benchmarkjs",
+                  "output-file-path": "examples/benchmarkjs/output.txt"
+                }
+              },
+              {
+                "name": "Push benchmark result",
+                "run": "git push 'https://rhysd:${{ secrets.GITHUB_TOKEN }}@github.com/rhysd/github-action-benchmark.git' gh-pages:gh-pages"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2019-11-14T08-35-32Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-90feec4e-11a7-55b4-8aaf-b9826615a416",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/benchmarkjs__2019-11-14T08-35-32Z__b6f49bb5877525a72c27f2fb6333e1d0a5968577.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 9,
+                  "startColumn": 5,
+                  "endLine": 24,
+                  "endColumn": 27
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "2acdc84e9c270ac:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "benchmarkjs__2019-11-14T08-35-32Z__b6f49bb5877525a72c27f2fb6333e1d0a5968577.yml",
+          "workflow_name": "Benchmark.js Example",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 24,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "benchmark": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "benchmark": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v1",
+              "actions/setup-node@v1",
+              "rhysd/github-action-benchmark@v1"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Benchmark.js Example",
+        "true": {
+          "push": {
+            "branches": [
+              "master"
+            ]
+          }
+        },
+        "jobs": {
+          "benchmark": {
+            "name": "Run JavaScript benchmark example",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v1"
+              },
+              {
+                "uses": "actions/setup-node@v1"
+              },
+              {
+                "name": "Run benchmark",
+                "run": "cd examples/benchmarkjs && npm install && node bench.js | tee output.txt"
+              },
+              {
+                "name": "Store benchmark result",
+                "uses": "rhysd/github-action-benchmark@v1",
+                "with": {
+                  "name": "Benchmark.js Benchmark",
+                  "tool": "benchmarkjs",
+                  "output-file-path": "examples/benchmarkjs/output.txt",
+                  "github-token": "${{ secrets.PERSONAL_GITHUB_TOKEN }}",
+                  "auto-push": true
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2019-11-20T10-49-17Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-1ce73555-2682-5a37-85cb-f3759ba71cd6",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/benchmarkjs__2019-11-20T10-49-17Z__7054588456f217b59871d4d7fb8d25e7c255453b.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 9,
+                  "startColumn": 5,
+                  "endLine": 28,
+                  "endColumn": 31
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "2acdc84e9c270ac:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "benchmarkjs__2019-11-20T10-49-17Z__7054588456f217b59871d4d7fb8d25e7c255453b.yml",
+          "workflow_name": "Benchmark.js Example",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 28,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "benchmark": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "benchmark": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v1",
+              "actions/setup-node@v1",
+              "rhysd/github-action-benchmark@v1"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Benchmark.js Example",
+        "true": {
+          "push": {
+            "branches": [
+              "master"
+            ]
+          }
+        },
+        "jobs": {
+          "benchmark": {
+            "name": "Run JavaScript benchmark example",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v1"
+              },
+              {
+                "uses": "actions/setup-node@v1"
+              },
+              {
+                "name": "Run benchmark",
+                "run": "cd examples/benchmarkjs && npm install && node bench.js | tee output.txt"
+              },
+              {
+                "name": "Store benchmark result",
+                "uses": "rhysd/github-action-benchmark@v1",
+                "with": {
+                  "name": "Benchmark.js Benchmark",
+                  "tool": "benchmarkjs",
+                  "output-file-path": "examples/benchmarkjs/output.txt",
+                  "github-token": "${{ secrets.PERSONAL_GITHUB_TOKEN }}",
+                  "auto-push": true,
+                  "alert-threshold": "200%",
+                  "comment-on-alert": true,
+                  "fail-on-alert": true
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2019-11-20T10-54-36Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-24dd1426-2bf2-502a-a484-113e503b7195",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/benchmarkjs__2019-11-20T10-54-36Z__dcbee476dc70556cfa64077745284a26aecb92ae.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 9,
+                  "startColumn": 5,
+                  "endLine": 29,
+                  "endColumn": 44
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "2acdc84e9c270ac:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "benchmarkjs__2019-11-20T10-54-36Z__dcbee476dc70556cfa64077745284a26aecb92ae.yml",
+          "workflow_name": "Benchmark.js Example",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 29,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "benchmark": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "benchmark": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v1",
+              "actions/setup-node@v1",
+              "rhysd/github-action-benchmark@v1"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Benchmark.js Example",
+        "true": {
+          "push": {
+            "branches": [
+              "master"
+            ]
+          }
+        },
+        "jobs": {
+          "benchmark": {
+            "name": "Run JavaScript benchmark example",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v1"
+              },
+              {
+                "uses": "actions/setup-node@v1"
+              },
+              {
+                "name": "Run benchmark",
+                "run": "cd examples/benchmarkjs && npm install && node bench.js | tee output.txt"
+              },
+              {
+                "name": "Store benchmark result",
+                "uses": "rhysd/github-action-benchmark@v1",
+                "with": {
+                  "name": "Benchmark.js Benchmark",
+                  "tool": "benchmarkjs",
+                  "output-file-path": "examples/benchmarkjs/output.txt",
+                  "github-token": "${{ secrets.PERSONAL_GITHUB_TOKEN }}",
+                  "auto-push": true,
+                  "alert-threshold": "200%",
+                  "comment-on-alert": true,
+                  "fail-on-alert": true,
+                  "alert-comment-cc-users": "@rhysd"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2019-12-16T10-58-34Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-5ba7cca0-ac3b-5164-88d7-57e2547f5782",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/benchmarkjs__2019-12-16T10-58-34Z__716994b965732c63f2da7a9d0005d480fd5a61fa.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 9,
+                  "startColumn": 5,
+                  "endLine": 29,
+                  "endColumn": 44
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "524f3a74f34e1e9:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "benchmarkjs__2019-12-16T10-58-34Z__716994b965732c63f2da7a9d0005d480fd5a61fa.yml",
+          "workflow_name": "Benchmark.js Example",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 29,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "benchmark": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "benchmark": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v2",
+              "actions/setup-node@v1",
+              "rhysd/github-action-benchmark@v1"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Benchmark.js Example",
+        "true": {
+          "push": {
+            "branches": [
+              "master"
+            ]
+          }
+        },
+        "jobs": {
+          "benchmark": {
+            "name": "Run JavaScript benchmark example",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "uses": "actions/setup-node@v1"
+              },
+              {
+                "name": "Run benchmark",
+                "run": "cd examples/benchmarkjs && npm install && node bench.js | tee output.txt"
+              },
+              {
+                "name": "Store benchmark result",
+                "uses": "rhysd/github-action-benchmark@v1",
+                "with": {
+                  "name": "Benchmark.js Benchmark",
+                  "tool": "benchmarkjs",
+                  "output-file-path": "examples/benchmarkjs/output.txt",
+                  "github-token": "${{ secrets.PERSONAL_GITHUB_TOKEN }}",
+                  "auto-push": true,
+                  "alert-threshold": "200%",
+                  "comment-on-alert": true,
+                  "fail-on-alert": true,
+                  "alert-comment-cc-users": "@rhysd"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2020-01-20T12-10-19Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-57a46e17-88db-5c79-bbf6-ce55a2dd4d10",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/benchmarkjs__2020-01-20T12-10-19Z__ededc76765335030c798a46c13273fbeb5e6bebc.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 9,
+                  "startColumn": 5,
+                  "endLine": 29,
+                  "endColumn": 44
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "524f3a74f34e1e9:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "benchmarkjs__2020-01-20T12-10-19Z__ededc76765335030c798a46c13273fbeb5e6bebc.yml",
+          "workflow_name": "Benchmark.js Example",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 29,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "benchmark": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "benchmark": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v2",
+              "actions/setup-node@v1",
+              "rhysd/github-action-benchmark@v1"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Benchmark.js Example",
+        "true": {
+          "push": {
+            "branches": [
+              "master"
+            ]
+          }
+        },
+        "jobs": {
+          "benchmark": {
+            "name": "Run JavaScript benchmark example",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "uses": "actions/setup-node@v1"
+              },
+              {
+                "name": "Run benchmark",
+                "run": "cd examples/benchmarkjs && npm install && node bench.js | tee output.txt"
+              },
+              {
+                "name": "Store benchmark result",
+                "uses": "rhysd/github-action-benchmark@v1",
+                "with": {
+                  "name": "Benchmark.js Benchmark",
+                  "tool": "benchmarkjs",
+                  "output-file-path": "examples/benchmarkjs/output.txt",
+                  "github-token": "${{ secrets.PERSONAL_GITHUB_TOKEN }}",
+                  "auto-push": true,
+                  "alert-threshold": "200%",
+                  "comment-on-alert": true,
+                  "fail-on-alert": true,
+                  "alert-comment-cc-users": "@rhysd"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2020-01-20T03-08-44Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-c8f5fecf-ce0c-574e-b420-7667ce22c5d5",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/benchmarkjs__2020-01-20T03-08-44Z__61a6ef440b3561cf6032862197941882c1c7d06a.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 9,
+                  "startColumn": 5,
+                  "endLine": 31,
+                  "endColumn": 44
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "546f82c192d50dc:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "benchmarkjs__2020-01-20T03-08-44Z__61a6ef440b3561cf6032862197941882c1c7d06a.yml",
+          "workflow_name": "Benchmark.js Example",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 31,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "benchmark": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "benchmark": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v2",
+              "actions/setup-node@v1",
+              "rhysd/github-action-benchmark@v1"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Benchmark.js Example",
+        "true": {
+          "push": {
+            "branches": [
+              "master"
+            ]
+          }
+        },
+        "jobs": {
+          "benchmark": {
+            "name": "Run JavaScript benchmark example",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v2",
+                "with": {
+                  "token": "${{ secrets.PERSONAL_GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "uses": "actions/setup-node@v1"
+              },
+              {
+                "name": "Run benchmark",
+                "run": "cd examples/benchmarkjs && npm install && node bench.js | tee output.txt"
+              },
+              {
+                "name": "Store benchmark result",
+                "uses": "rhysd/github-action-benchmark@v1",
+                "with": {
+                  "name": "Benchmark.js Benchmark",
+                  "tool": "benchmarkjs",
+                  "output-file-path": "examples/benchmarkjs/output.txt",
+                  "github-token": "${{ secrets.PERSONAL_GITHUB_TOKEN }}",
+                  "auto-push": true,
+                  "alert-threshold": "200%",
+                  "comment-on-alert": true,
+                  "fail-on-alert": true,
+                  "alert-comment-cc-users": "@rhysd"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2021-10-02T03-27-39Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-9a0d6a85-1c9e-51ac-8825-6da10af67826",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/benchmarkjs__2021-10-02T03-27-39Z__450cb083343edcf0fb6d82a917f890eaf2cd073f.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 9,
+                  "startColumn": 5,
+                  "endLine": 29,
+                  "endColumn": 44
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "524f3a74f34e1e9:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "benchmarkjs__2021-10-02T03-27-39Z__450cb083343edcf0fb6d82a917f890eaf2cd073f.yml",
+          "workflow_name": "Benchmark.js Example",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 29,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "benchmark": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "benchmark": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v2",
+              "actions/setup-node@v1",
+              "rhysd/github-action-benchmark@v1"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Benchmark.js Example",
+        "true": {
+          "push": {
+            "branches": [
+              "master"
+            ]
+          }
+        },
+        "jobs": {
+          "benchmark": {
+            "name": "Run JavaScript benchmark example",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "uses": "actions/setup-node@v1"
+              },
+              {
+                "name": "Run benchmark",
+                "run": "cd examples/benchmarkjs && npm install && node bench.js | tee output.txt"
+              },
+              {
+                "name": "Store benchmark result",
+                "uses": "rhysd/github-action-benchmark@v1",
+                "with": {
+                  "name": "Benchmark.js Benchmark",
+                  "tool": "benchmarkjs",
+                  "output-file-path": "examples/benchmarkjs/output.txt",
+                  "github-token": "${{ secrets.PERSONAL_GITHUB_TOKEN }}",
+                  "auto-push": true,
+                  "alert-threshold": "200%",
+                  "comment-on-alert": true,
+                  "fail-on-alert": true,
+                  "alert-comment-cc-users": "@rhysd"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2021-10-02T03-39-37Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-a548e6ef-6c5a-575d-a5f5-68673e0445b4",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/benchmarkjs__2021-10-02T03-39-37Z__212bdda1ace705087217d259c353e145c520701e.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 9,
+                  "startColumn": 5,
+                  "endLine": 28,
+                  "endColumn": 44
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "524f3a74f34e1e9:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "benchmarkjs__2021-10-02T03-39-37Z__212bdda1ace705087217d259c353e145c520701e.yml",
+          "workflow_name": "Benchmark.js Example",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 28,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "benchmark": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "benchmark": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v2",
+              "actions/setup-node@v1",
+              "rhysd/github-action-benchmark@v1"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Benchmark.js Example",
+        "true": {
+          "push": {
+            "branches": [
+              "master"
+            ]
+          }
+        },
+        "jobs": {
+          "benchmark": {
+            "name": "Run JavaScript benchmark example",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "uses": "actions/setup-node@v1"
+              },
+              {
+                "name": "Run benchmark",
+                "run": "cd examples/benchmarkjs && npm install && node bench.js | tee output.txt"
+              },
+              {
+                "name": "Store benchmark result",
+                "uses": "rhysd/github-action-benchmark@v1",
+                "with": {
+                  "name": "Benchmark.js Benchmark",
+                  "tool": "benchmarkjs",
+                  "output-file-path": "examples/benchmarkjs/output.txt",
+                  "github-token": "${{ secrets.GITHUB_TOKEN }}",
+                  "auto-push": true,
+                  "alert-threshold": "200%",
+                  "comment-on-alert": true,
+                  "fail-on-alert": true,
+                  "alert-comment-cc-users": "@rhysd"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2021-10-02T03-47-15Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "benchmarkjs__2021-10-02T03-47-15Z__f6cf380377baf48c4741e1d7eb47d8cefd660f00.yml",
+          "workflow_name": "Benchmark.js Example",
+          "triggers": {},
+          "permissions": {
+            "deployments": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 31,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "benchmark": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "benchmark": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v2",
+              "actions/setup-node@v1",
+              "rhysd/github-action-benchmark@v1"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Benchmark.js Example",
+        "true": {
+          "push": {
+            "branches": [
+              "master"
+            ]
+          }
+        },
+        "permissions": {
+          "deployments": "write"
+        },
+        "jobs": {
+          "benchmark": {
+            "name": "Run JavaScript benchmark example",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "uses": "actions/setup-node@v1"
+              },
+              {
+                "name": "Run benchmark",
+                "run": "cd examples/benchmarkjs && npm install && node bench.js | tee output.txt"
+              },
+              {
+                "name": "Store benchmark result",
+                "uses": "rhysd/github-action-benchmark@v1",
+                "with": {
+                  "name": "Benchmark.js Benchmark",
+                  "tool": "benchmarkjs",
+                  "output-file-path": "examples/benchmarkjs/output.txt",
+                  "github-token": "${{ secrets.GITHUB_TOKEN }}",
+                  "auto-push": true,
+                  "alert-threshold": "200%",
+                  "comment-on-alert": true,
+                  "fail-on-alert": true,
+                  "alert-comment-cc-users": "@rhysd"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2021-10-02T03-53-12Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "benchmarkjs__2021-10-02T03-53-12Z__3b96c47c597911e76bc2e766cde7efa5cc7e818b.yml",
+          "workflow_name": "Benchmark.js Example",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "deployments": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 32,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "benchmark": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "benchmark": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v2",
+              "actions/setup-node@v1",
+              "rhysd/github-action-benchmark@v1"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Benchmark.js Example",
+        "true": {
+          "push": {
+            "branches": [
+              "master"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "deployments": "write"
+        },
+        "jobs": {
+          "benchmark": {
+            "name": "Run JavaScript benchmark example",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "uses": "actions/setup-node@v1"
+              },
+              {
+                "name": "Run benchmark",
+                "run": "cd examples/benchmarkjs && npm install && node bench.js | tee output.txt"
+              },
+              {
+                "name": "Store benchmark result",
+                "uses": "rhysd/github-action-benchmark@v1",
+                "with": {
+                  "name": "Benchmark.js Benchmark",
+                  "tool": "benchmarkjs",
+                  "output-file-path": "examples/benchmarkjs/output.txt",
+                  "github-token": "${{ secrets.GITHUB_TOKEN }}",
+                  "auto-push": true,
+                  "alert-threshold": "200%",
+                  "comment-on-alert": true,
+                  "fail-on-alert": true,
+                  "alert-comment-cc-users": "@rhysd"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2021-10-02T07-38-21Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "benchmarkjs__2021-10-02T07-38-21Z__d7da2802bd6fcfb4a8150febdfa95fc8c2db9466.yml",
+          "workflow_name": "Benchmark.js Example",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "deployments": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 32,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "benchmark": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "benchmark": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v2",
+              "actions/setup-node@v1",
+              "benchmark-action/github-action-benchmark@v1"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Benchmark.js Example",
+        "true": {
+          "push": {
+            "branches": [
+              "master"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "deployments": "write"
+        },
+        "jobs": {
+          "benchmark": {
+            "name": "Run JavaScript benchmark example",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "uses": "actions/setup-node@v1"
+              },
+              {
+                "name": "Run benchmark",
+                "run": "cd examples/benchmarkjs && npm install && node bench.js | tee output.txt"
+              },
+              {
+                "name": "Store benchmark result",
+                "uses": "benchmark-action/github-action-benchmark@v1",
+                "with": {
+                  "name": "Benchmark.js Benchmark",
+                  "tool": "benchmarkjs",
+                  "output-file-path": "examples/benchmarkjs/output.txt",
+                  "github-token": "${{ secrets.GITHUB_TOKEN }}",
+                  "auto-push": true,
+                  "alert-threshold": "200%",
+                  "comment-on-alert": true,
+                  "fail-on-alert": true,
+                  "alert-comment-cc-users": "@rhysd"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2021-12-03T09-23-23Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "benchmarkjs__2021-12-03T09-23-23Z__3f97db687ed47d54879c9183b4c297f6de783d26.yml",
+          "workflow_name": "Benchmark.js Example",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "deployments": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 32,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "benchmark": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "benchmark": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v2",
+              "actions/setup-node@v1",
+              "benchmark-action/github-action-benchmark@v1"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Benchmark.js Example",
+        "true": {
+          "push": {
+            "branches": [
+              "master"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "deployments": "write"
+        },
+        "jobs": {
+          "benchmark": {
+            "name": "Run JavaScript benchmark example",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "uses": "actions/setup-node@v1"
+              },
+              {
+                "name": "Run benchmark",
+                "run": "cd examples/benchmarkjs && npm install && node bench.js | tee output.txt"
+              },
+              {
+                "name": "Store benchmark result",
+                "uses": "benchmark-action/github-action-benchmark@v1",
+                "with": {
+                  "name": "Benchmark.js Benchmark",
+                  "tool": "benchmarkjs",
+                  "output-file-path": "examples/benchmarkjs/output.txt",
+                  "github-token": "${{ secrets.GITHUB_TOKEN }}",
+                  "auto-push": true,
+                  "alert-threshold": "200%",
+                  "comment-on-alert": true,
+                  "fail-on-alert": true,
+                  "alert-comment-cc-users": "@ktrz"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-05-28T15-54-07Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "benchmarkjs__2022-05-28T15-54-07Z__0e77d47f88d46be363b44052613c0b60bf208243.yml",
+          "workflow_name": "Benchmark.js Example",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "deployments": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 49,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "benchmark": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "benchmark": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v2",
+              "actions/setup-node@v1",
+              "benchmark-action/github-action-benchmark@v1"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Benchmark.js Example",
+        "true": {
+          "push": {
+            "branches": [
+              "master"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "deployments": "write"
+        },
+        "jobs": {
+          "benchmark": {
+            "name": "Run JavaScript benchmark example",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "uses": "actions/setup-node@v1"
+              },
+              {
+                "name": "Run benchmark",
+                "run": "cd examples/benchmarkjs && npm install && node bench.js | tee output.txt"
+              },
+              {
+                "name": "Store benchmark result",
+                "uses": "benchmark-action/github-action-benchmark@v1",
+                "with": {
+                  "name": "Benchmark.js Benchmark",
+                  "tool": "benchmarkjs",
+                  "output-file-path": "examples/benchmarkjs/output.txt",
+                  "github-token": "${{ secrets.GITHUB_TOKEN }}",
+                  "auto-push": true,
+                  "alert-threshold": "200%",
+                  "comment-on-alert": true,
+                  "fail-on-alert": true,
+                  "alert-comment-cc-users": "@ktrz"
+                }
+              },
+              {
+                "name": "Store benchmark result - separate results repo",
+                "if": false,
+                "uses": "benchmark-action/github-action-benchmark@v1",
+                "with": {
+                  "name": "Benchmark.js Benchmark",
+                  "tool": "benchmarkjs",
+                  "output-file-path": "examples/benchmarkjs/output.txt",
+                  "github-token": "${{ secrets.BENCHMARK_ACTION_BOT_TOKEN }}",
+                  "auto-push": true,
+                  "alert-threshold": "200%",
+                  "comment-on-alert": true,
+                  "fail-on-alert": true,
+                  "alert-comment-cc-users": "@ktrz",
+                  "gh-repository": "github.com/benchmark-action/github-action-benchmark-results"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-05-28T16-04-35Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "benchmarkjs__2022-05-28T16-04-35Z__ba450747be524122c5ce53c8d9587160154eaed3.yml",
+          "workflow_name": "Benchmark.js Example",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "deployments": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 48,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "benchmark": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "benchmark": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v2",
+              "actions/setup-node@v1",
+              "benchmark-action/github-action-benchmark@v1"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Benchmark.js Example",
+        "true": {
+          "push": {
+            "branches": [
+              "master"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "deployments": "write"
+        },
+        "jobs": {
+          "benchmark": {
+            "name": "Run JavaScript benchmark example",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "uses": "actions/setup-node@v1"
+              },
+              {
+                "name": "Run benchmark",
+                "run": "cd examples/benchmarkjs && npm install && node bench.js | tee output.txt"
+              },
+              {
+                "name": "Store benchmark result",
+                "uses": "benchmark-action/github-action-benchmark@v1",
+                "with": {
+                  "name": "Benchmark.js Benchmark",
+                  "tool": "benchmarkjs",
+                  "output-file-path": "examples/benchmarkjs/output.txt",
+                  "github-token": "${{ secrets.GITHUB_TOKEN }}",
+                  "auto-push": true,
+                  "alert-threshold": "200%",
+                  "comment-on-alert": true,
+                  "fail-on-alert": true,
+                  "alert-comment-cc-users": "@ktrz"
+                }
+              },
+              {
+                "name": "Store benchmark result - separate results repo",
+                "uses": "benchmark-action/github-action-benchmark@v1",
+                "with": {
+                  "name": "Benchmark.js Benchmark",
+                  "tool": "benchmarkjs",
+                  "output-file-path": "examples/benchmarkjs/output.txt",
+                  "github-token": "${{ secrets.BENCHMARK_ACTION_BOT_TOKEN }}",
+                  "auto-push": true,
+                  "alert-threshold": "200%",
+                  "comment-on-alert": true,
+                  "fail-on-alert": true,
+                  "alert-comment-cc-users": "@ktrz",
+                  "gh-repository": "github.com/benchmark-action/github-action-benchmark-results"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-01-24T15-49-01Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "benchmarkjs__2024-01-24T15-49-01Z__83426c04e20ff3faef1257b544e08620a88c4551.yml",
+          "workflow_name": "Benchmark.js Example",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "deployments": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 51,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "benchmark": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "benchmark": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-node@v4",
+              "benchmark-action/github-action-benchmark@v1"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Benchmark.js Example",
+        "true": {
+          "push": {
+            "branches": [
+              "master"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "deployments": "write"
+        },
+        "jobs": {
+          "benchmark": {
+            "name": "Run JavaScript benchmark example",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "uses": "actions/setup-node@v4",
+                "with": {
+                  "node-version": 20,
+                  "cache": "npm"
+                }
+              },
+              {
+                "name": "Run benchmark",
+                "run": "cd examples/benchmarkjs && npm install && node bench.js | tee output.txt"
+              },
+              {
+                "name": "Store benchmark result",
+                "uses": "benchmark-action/github-action-benchmark@v1",
+                "with": {
+                  "name": "Benchmark.js Benchmark",
+                  "tool": "benchmarkjs",
+                  "output-file-path": "examples/benchmarkjs/output.txt",
+                  "github-token": "${{ secrets.GITHUB_TOKEN }}",
+                  "auto-push": true,
+                  "alert-threshold": "200%",
+                  "comment-on-alert": true,
+                  "fail-on-alert": true,
+                  "alert-comment-cc-users": "@ktrz"
+                }
+              },
+              {
+                "name": "Store benchmark result - separate results repo",
+                "uses": "benchmark-action/github-action-benchmark@v1",
+                "with": {
+                  "name": "Benchmark.js Benchmark",
+                  "tool": "benchmarkjs",
+                  "output-file-path": "examples/benchmarkjs/output.txt",
+                  "github-token": "${{ secrets.BENCHMARK_ACTION_BOT_TOKEN }}",
+                  "auto-push": true,
+                  "alert-threshold": "200%",
+                  "comment-on-alert": true,
+                  "fail-on-alert": true,
+                  "alert-comment-cc-users": "@ktrz",
+                  "gh-repository": "github.com/benchmark-action/github-action-benchmark-results"
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

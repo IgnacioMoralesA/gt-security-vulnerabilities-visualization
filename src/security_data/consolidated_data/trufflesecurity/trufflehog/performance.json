@@ -1,0 +1,1638 @@
+{
+  "repo_owner": "trufflesecurity",
+  "repo_name": "trufflehog",
+  "workflow_name": "performance",
+  "history": {
+    "2023-05-01T15-54-05Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-abadfb1f-bcc6-582e-a15d-968994e9e363",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/performance__2023-05-01T15-54-05Z__21258f416008f1e389a1e38b1af08ec5651b9d54.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 7,
+                  "startColumn": 5,
+                  "endLine": 88,
+                  "endColumn": 11
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "32247a5dff281302:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "performance__2023-05-01T15-54-05Z__21258f416008f1e389a1e38b1af08ec5651b9d54.yml",
+          "workflow_name": "Performance Test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 88,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "speed": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "speed": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-go@v4"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Performance Test",
+        "true": [
+          "pull_request"
+        ],
+        "jobs": {
+          "speed": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v4",
+                "with": {
+                  "go-version": "1.18"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v3",
+                "with": {
+                  "fetch-depth": 0,
+                  "ref": "${{ github.head_ref }}"
+                }
+              },
+              {
+                "name": "Run Head",
+                "run": "go build -o current .\nrepo_tmp=$(mktemp -d)\ngit clone https://github.com/trufflesecurity/trufflehog.git $repo_tmp\n\nuser_time_sum=0\n\nfor i in {1..5}\ndo\n  tmpfile=$(mktemp)\n  /usr/bin/time -o $tmpfile $GITHUB_WORKSPACE/current git \"file://$repo_tmp\" --no-verification --no-update > out.txt\n  cat $tmpfile\n  time_output=$(cat $tmpfile)\n  rm $tmpfile\n  user_time=$(echo $time_output | awk '{print $1}' | sed 's/user//')\n\n  # Add the user time to the sum\n  user_time_sum=$(echo \"$user_time_sum + $user_time\" | bc)\ndone\n\naverage_user_time=$(echo \"scale=3; $user_time_sum / 5\" | bc)\necho HEAD_TIME=$average_user_time >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Figure out previous tag",
+                "run": "git fetch --tags\ngit tag -l --sort=-v:refname | head -n 1 > previous_tag.txt\necho PREVIOUS_TAG=$(cat previous_tag.txt) >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v3",
+                "with": {
+                  "fetch-depth": 0,
+                  "ref": "${{ env.PREVIOUS_TAG }}"
+                }
+              },
+              {
+                "name": "Run Previous",
+                "run": "go build -o previous .\nrepo_tmp=$(mktemp -d)\ngit clone https://github.com/trufflesecurity/trufflehog.git $repo_tmp\n\nuser_time_sum=0\n\nfor i in {1..5}\ndo\n  tmpfile=$(mktemp)\n  /usr/bin/time -o $tmpfile $GITHUB_WORKSPACE/previous git \"file://$repo_tmp\" --no-verification --no-update > out.txt\n  cat $tmpfile\n  time_output=$(cat $tmpfile)\n  rm $tmpfile\n  user_time=$(echo $time_output | awk '{print $1}' | sed 's/user//')\n\n  # Add the user time to the sum\n  user_time_sum=$(echo \"$user_time_sum + $user_time\" | bc)\ndone\n\naverage_user_time=$(echo \"scale=3; $user_time_sum / 5\" | bc)\necho PREVIOUS_TIME=$average_user_time >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Compare Results",
+                "run": "echo \"head ($GITHUB_SHA) avg time (n=5): $HEAD_TIME\"\necho \"$PREVIOUS_TAG avg time (n=5): $PREVIOUS_TIME\"\nif [ $(echo \"$HEAD_TIME > $PREVIOUS_TIME * 1.1\" | bc) -eq 1 ]\nthen\n  echo \"HEAD run time is at least 10% slower than PREVIOUS run time\"\n  exit 1\nfi"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-07-11T13-13-00Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-6190f633-e233-52fa-9348-6ad5d3ec9c5a",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/performance__2023-07-11T13-13-00Z__0bbe62cec5e6a3be9ed7142feeaddc3c14337891.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 9,
+                  "startColumn": 5,
+                  "endLine": 92,
+                  "endColumn": 12
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "7479484f51eeeee9:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "performance__2023-07-11T13-13-00Z__0bbe62cec5e6a3be9ed7142feeaddc3c14337891.yml",
+          "workflow_name": "Performance Test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 92,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "speed": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "speed": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-go@v4"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Performance Test",
+        "true": [
+          "pull_request"
+        ],
+        "jobs": {
+          "speed": {
+            "if": "${{ ! github.event.pull_request.head.repo.fork }}",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v4",
+                "with": {
+                  "go-version": "1.18"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v3",
+                "with": {
+                  "fetch-depth": 0,
+                  "ref": "${{ github.head_ref }}"
+                }
+              },
+              {
+                "name": "Run Head",
+                "run": "go build -o current .\nrepo_tmp=$(mktemp -d)\ngit clone https://github.com/trufflesecurity/trufflehog.git $repo_tmp\n\nuser_time_sum=0\n\nfor i in {1..5}\ndo\n  tmpfile=$(mktemp)\n  /usr/bin/time -o $tmpfile $GITHUB_WORKSPACE/current git \"file://$repo_tmp\" --no-verification --no-update > out.txt\n  cat $tmpfile\n  time_output=$(cat $tmpfile)\n  rm $tmpfile\n  user_time=$(echo $time_output | awk '{print $1}' | sed 's/user//')\n\n  # Add the user time to the sum\n  user_time_sum=$(echo \"$user_time_sum + $user_time\" | bc)\ndone\n\naverage_user_time=$(echo \"scale=3; $user_time_sum / 5\" | bc)\necho HEAD_TIME=$average_user_time >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Figure out previous tag",
+                "run": "git fetch --tags\ngit tag -l --sort=-v:refname | head -n 1 > previous_tag.txt\necho PREVIOUS_TAG=$(cat previous_tag.txt) >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v3",
+                "with": {
+                  "fetch-depth": 0,
+                  "ref": "${{ env.PREVIOUS_TAG }}"
+                }
+              },
+              {
+                "name": "Run Previous",
+                "run": "go build -o previous .\nrepo_tmp=$(mktemp -d)\ngit clone https://github.com/trufflesecurity/trufflehog.git $repo_tmp\n\nuser_time_sum=0\n\nfor i in {1..5}\ndo\n  tmpfile=$(mktemp)\n  /usr/bin/time -o $tmpfile $GITHUB_WORKSPACE/previous git \"file://$repo_tmp\" --no-verification --no-update > out.txt\n  cat $tmpfile\n  time_output=$(cat $tmpfile)\n  rm $tmpfile\n  user_time=$(echo $time_output | awk '{print $1}' | sed 's/user//')\n\n  # Add the user time to the sum\n  user_time_sum=$(echo \"$user_time_sum + $user_time\" | bc)\ndone\n\naverage_user_time=$(echo \"scale=3; $user_time_sum / 5\" | bc)\necho PREVIOUS_TIME=$average_user_time >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Compare Results",
+                "run": "echo \"head ($GITHUB_SHA) avg time (n=5): $HEAD_TIME\"\necho \"$PREVIOUS_TAG avg time (n=5): $PREVIOUS_TIME\"\nif [ $(echo \"$HEAD_TIME > $PREVIOUS_TIME * 1.1\" | bc) -eq 1 ]\nthen\n  echo \"HEAD run time is at least 10% slower than PREVIOUS run time\"\n  exit 1\nfi\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-08-14T20-36-25Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-42738aa4-89d1-565c-b174-7703d0b919c2",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/performance__2023-08-14T20-36-25Z__eee01e036194906d6483f596a517d836769c7b52.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 9,
+                  "startColumn": 5,
+                  "endLine": 92,
+                  "endColumn": 12
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "7479484f51eeeee9:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "performance__2023-08-14T20-36-25Z__eee01e036194906d6483f596a517d836769c7b52.yml",
+          "workflow_name": "Performance Test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 92,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "speed": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "speed": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-go@v4"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Performance Test",
+        "true": [
+          "pull_request"
+        ],
+        "jobs": {
+          "speed": {
+            "if": "${{ ! github.event.pull_request.head.repo.fork }}",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v4",
+                "with": {
+                  "go-version": "1.21"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v3",
+                "with": {
+                  "fetch-depth": 0,
+                  "ref": "${{ github.head_ref }}"
+                }
+              },
+              {
+                "name": "Run Head",
+                "run": "go build -o current .\nrepo_tmp=$(mktemp -d)\ngit clone https://github.com/trufflesecurity/trufflehog.git $repo_tmp\n\nuser_time_sum=0\n\nfor i in {1..5}\ndo\n  tmpfile=$(mktemp)\n  /usr/bin/time -o $tmpfile $GITHUB_WORKSPACE/current git \"file://$repo_tmp\" --no-verification --no-update > out.txt\n  cat $tmpfile\n  time_output=$(cat $tmpfile)\n  rm $tmpfile\n  user_time=$(echo $time_output | awk '{print $1}' | sed 's/user//')\n\n  # Add the user time to the sum\n  user_time_sum=$(echo \"$user_time_sum + $user_time\" | bc)\ndone\n\naverage_user_time=$(echo \"scale=3; $user_time_sum / 5\" | bc)\necho HEAD_TIME=$average_user_time >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Figure out previous tag",
+                "run": "git fetch --tags\ngit tag -l --sort=-v:refname | head -n 1 > previous_tag.txt\necho PREVIOUS_TAG=$(cat previous_tag.txt) >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v3",
+                "with": {
+                  "fetch-depth": 0,
+                  "ref": "${{ env.PREVIOUS_TAG }}"
+                }
+              },
+              {
+                "name": "Run Previous",
+                "run": "go build -o previous .\nrepo_tmp=$(mktemp -d)\ngit clone https://github.com/trufflesecurity/trufflehog.git $repo_tmp\n\nuser_time_sum=0\n\nfor i in {1..5}\ndo\n  tmpfile=$(mktemp)\n  /usr/bin/time -o $tmpfile $GITHUB_WORKSPACE/previous git \"file://$repo_tmp\" --no-verification --no-update > out.txt\n  cat $tmpfile\n  time_output=$(cat $tmpfile)\n  rm $tmpfile\n  user_time=$(echo $time_output | awk '{print $1}' | sed 's/user//')\n\n  # Add the user time to the sum\n  user_time_sum=$(echo \"$user_time_sum + $user_time\" | bc)\ndone\n\naverage_user_time=$(echo \"scale=3; $user_time_sum / 5\" | bc)\necho PREVIOUS_TIME=$average_user_time >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Compare Results",
+                "run": "echo \"head ($GITHUB_SHA) avg time (n=5): $HEAD_TIME\"\necho \"$PREVIOUS_TAG avg time (n=5): $PREVIOUS_TIME\"\nif [ $(echo \"$HEAD_TIME > $PREVIOUS_TIME * 1.1\" | bc) -eq 1 ]\nthen\n  echo \"HEAD run time is at least 10% slower than PREVIOUS run time\"\n  exit 1\nfi\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-10-02T14-37-57Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-d84ba947-37c4-5a18-9fd9-6e302d46e512",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/performance__2023-10-02T14-37-57Z__c7965b2df6d1f5d0a20ad9eecadf002fd74a8b5c.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 9,
+                  "startColumn": 5,
+                  "endLine": 92,
+                  "endColumn": 12
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "7479484f51eeeee9:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "performance__2023-10-02T14-37-57Z__c7965b2df6d1f5d0a20ad9eecadf002fd74a8b5c.yml",
+          "workflow_name": "Performance Test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 92,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "speed": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "speed": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v4"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Performance Test",
+        "true": [
+          "pull_request"
+        ],
+        "jobs": {
+          "speed": {
+            "if": "${{ ! github.event.pull_request.head.repo.fork }}",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v4",
+                "with": {
+                  "go-version": "1.21"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0,
+                  "ref": "${{ github.head_ref }}"
+                }
+              },
+              {
+                "name": "Run Head",
+                "run": "go build -o current .\nrepo_tmp=$(mktemp -d)\ngit clone https://github.com/trufflesecurity/trufflehog.git $repo_tmp\n\nuser_time_sum=0\n\nfor i in {1..5}\ndo\n  tmpfile=$(mktemp)\n  /usr/bin/time -o $tmpfile $GITHUB_WORKSPACE/current git \"file://$repo_tmp\" --no-verification --no-update > out.txt\n  cat $tmpfile\n  time_output=$(cat $tmpfile)\n  rm $tmpfile\n  user_time=$(echo $time_output | awk '{print $1}' | sed 's/user//')\n\n  # Add the user time to the sum\n  user_time_sum=$(echo \"$user_time_sum + $user_time\" | bc)\ndone\n\naverage_user_time=$(echo \"scale=3; $user_time_sum / 5\" | bc)\necho HEAD_TIME=$average_user_time >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Figure out previous tag",
+                "run": "git fetch --tags\ngit tag -l --sort=-v:refname | head -n 1 > previous_tag.txt\necho PREVIOUS_TAG=$(cat previous_tag.txt) >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0,
+                  "ref": "${{ env.PREVIOUS_TAG }}"
+                }
+              },
+              {
+                "name": "Run Previous",
+                "run": "go build -o previous .\nrepo_tmp=$(mktemp -d)\ngit clone https://github.com/trufflesecurity/trufflehog.git $repo_tmp\n\nuser_time_sum=0\n\nfor i in {1..5}\ndo\n  tmpfile=$(mktemp)\n  /usr/bin/time -o $tmpfile $GITHUB_WORKSPACE/previous git \"file://$repo_tmp\" --no-verification --no-update > out.txt\n  cat $tmpfile\n  time_output=$(cat $tmpfile)\n  rm $tmpfile\n  user_time=$(echo $time_output | awk '{print $1}' | sed 's/user//')\n\n  # Add the user time to the sum\n  user_time_sum=$(echo \"$user_time_sum + $user_time\" | bc)\ndone\n\naverage_user_time=$(echo \"scale=3; $user_time_sum / 5\" | bc)\necho PREVIOUS_TIME=$average_user_time >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Compare Results",
+                "run": "echo \"head ($GITHUB_SHA) avg time (n=5): $HEAD_TIME\"\necho \"$PREVIOUS_TAG avg time (n=5): $PREVIOUS_TIME\"\nif [ $(echo \"$HEAD_TIME > $PREVIOUS_TIME * 1.1\" | bc) -eq 1 ]\nthen\n  echo \"HEAD run time is at least 10% slower than PREVIOUS run time\"\n  exit 1\nfi\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-07-18T16-41-51Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-f968cadd-89e4-52bd-a6f7-057cefd1f7ee",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/performance__2023-07-18T16-41-51Z__f6aaa4924f576b518b1525b20b434328f9ac1e74.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 9,
+                  "startColumn": 5,
+                  "endLine": 92,
+                  "endColumn": 12
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "7479484f51eeeee9:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "performance__2023-07-18T16-41-51Z__f6aaa4924f576b518b1525b20b434328f9ac1e74.yml",
+          "workflow_name": "Performance Test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 92,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "speed": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "speed": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-go@v4"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Performance Test",
+        "true": [
+          "pull_request"
+        ],
+        "jobs": {
+          "speed": {
+            "if": "${{ ! github.event.pull_request.head.repo.fork }}",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v4",
+                "with": {
+                  "go-version": "1.20"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v3",
+                "with": {
+                  "fetch-depth": 0,
+                  "ref": "${{ github.head_ref }}"
+                }
+              },
+              {
+                "name": "Run Head",
+                "run": "go build -o current .\nrepo_tmp=$(mktemp -d)\ngit clone https://github.com/trufflesecurity/trufflehog.git $repo_tmp\n\nuser_time_sum=0\n\nfor i in {1..5}\ndo\n  tmpfile=$(mktemp)\n  /usr/bin/time -o $tmpfile $GITHUB_WORKSPACE/current git \"file://$repo_tmp\" --no-verification --no-update > out.txt\n  cat $tmpfile\n  time_output=$(cat $tmpfile)\n  rm $tmpfile\n  user_time=$(echo $time_output | awk '{print $1}' | sed 's/user//')\n\n  # Add the user time to the sum\n  user_time_sum=$(echo \"$user_time_sum + $user_time\" | bc)\ndone\n\naverage_user_time=$(echo \"scale=3; $user_time_sum / 5\" | bc)\necho HEAD_TIME=$average_user_time >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Figure out previous tag",
+                "run": "git fetch --tags\ngit tag -l --sort=-v:refname | head -n 1 > previous_tag.txt\necho PREVIOUS_TAG=$(cat previous_tag.txt) >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v3",
+                "with": {
+                  "fetch-depth": 0,
+                  "ref": "${{ env.PREVIOUS_TAG }}"
+                }
+              },
+              {
+                "name": "Run Previous",
+                "run": "go build -o previous .\nrepo_tmp=$(mktemp -d)\ngit clone https://github.com/trufflesecurity/trufflehog.git $repo_tmp\n\nuser_time_sum=0\n\nfor i in {1..5}\ndo\n  tmpfile=$(mktemp)\n  /usr/bin/time -o $tmpfile $GITHUB_WORKSPACE/previous git \"file://$repo_tmp\" --no-verification --no-update > out.txt\n  cat $tmpfile\n  time_output=$(cat $tmpfile)\n  rm $tmpfile\n  user_time=$(echo $time_output | awk '{print $1}' | sed 's/user//')\n\n  # Add the user time to the sum\n  user_time_sum=$(echo \"$user_time_sum + $user_time\" | bc)\ndone\n\naverage_user_time=$(echo \"scale=3; $user_time_sum / 5\" | bc)\necho PREVIOUS_TIME=$average_user_time >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Compare Results",
+                "run": "echo \"head ($GITHUB_SHA) avg time (n=5): $HEAD_TIME\"\necho \"$PREVIOUS_TAG avg time (n=5): $PREVIOUS_TIME\"\nif [ $(echo \"$HEAD_TIME > $PREVIOUS_TIME * 1.1\" | bc) -eq 1 ]\nthen\n  echo \"HEAD run time is at least 10% slower than PREVIOUS run time\"\n  exit 1\nfi\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-02-13T03-15-50Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-73a97d51-246d-50ff-ab0e-ac956c7b0f74",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/performance__2024-02-13T03-15-50Z__774c48545eda5446d0045714317e5d7db670a4d6.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 9,
+                  "startColumn": 5,
+                  "endLine": 92,
+                  "endColumn": 12
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "7479484f51eeeee9:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "performance__2024-02-13T03-15-50Z__774c48545eda5446d0045714317e5d7db670a4d6.yml",
+          "workflow_name": "Performance Test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 92,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "speed": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "speed": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Performance Test",
+        "true": [
+          "pull_request"
+        ],
+        "jobs": {
+          "speed": {
+            "if": "${{ ! github.event.pull_request.head.repo.fork }}",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.21"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0,
+                  "ref": "${{ github.head_ref }}"
+                }
+              },
+              {
+                "name": "Run Head",
+                "run": "go build -o current .\nrepo_tmp=$(mktemp -d)\ngit clone https://github.com/trufflesecurity/trufflehog.git $repo_tmp\n\nuser_time_sum=0\n\nfor i in {1..5}\ndo\n  tmpfile=$(mktemp)\n  /usr/bin/time -o $tmpfile $GITHUB_WORKSPACE/current git \"file://$repo_tmp\" --no-verification --no-update > out.txt\n  cat $tmpfile\n  time_output=$(cat $tmpfile)\n  rm $tmpfile\n  user_time=$(echo $time_output | awk '{print $1}' | sed 's/user//')\n\n  # Add the user time to the sum\n  user_time_sum=$(echo \"$user_time_sum + $user_time\" | bc)\ndone\n\naverage_user_time=$(echo \"scale=3; $user_time_sum / 5\" | bc)\necho HEAD_TIME=$average_user_time >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Figure out previous tag",
+                "run": "git fetch --tags\ngit tag -l --sort=-v:refname | head -n 1 > previous_tag.txt\necho PREVIOUS_TAG=$(cat previous_tag.txt) >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0,
+                  "ref": "${{ env.PREVIOUS_TAG }}"
+                }
+              },
+              {
+                "name": "Run Previous",
+                "run": "go build -o previous .\nrepo_tmp=$(mktemp -d)\ngit clone https://github.com/trufflesecurity/trufflehog.git $repo_tmp\n\nuser_time_sum=0\n\nfor i in {1..5}\ndo\n  tmpfile=$(mktemp)\n  /usr/bin/time -o $tmpfile $GITHUB_WORKSPACE/previous git \"file://$repo_tmp\" --no-verification --no-update > out.txt\n  cat $tmpfile\n  time_output=$(cat $tmpfile)\n  rm $tmpfile\n  user_time=$(echo $time_output | awk '{print $1}' | sed 's/user//')\n\n  # Add the user time to the sum\n  user_time_sum=$(echo \"$user_time_sum + $user_time\" | bc)\ndone\n\naverage_user_time=$(echo \"scale=3; $user_time_sum / 5\" | bc)\necho PREVIOUS_TIME=$average_user_time >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Compare Results",
+                "run": "echo \"head ($GITHUB_SHA) avg time (n=5): $HEAD_TIME\"\necho \"$PREVIOUS_TAG avg time (n=5): $PREVIOUS_TIME\"\nif [ $(echo \"$HEAD_TIME > $PREVIOUS_TIME * 1.1\" | bc) -eq 1 ]\nthen\n  echo \"HEAD run time is at least 10% slower than PREVIOUS run time\"\n  exit 1\nfi\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-03-22T15-23-04Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-d62a3a30-f09a-5242-b2f2-096af19db2b4",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/performance__2024-03-22T15-23-04Z__41d58739bd32b0180af3a863a764f9163586e37a.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 9,
+                  "startColumn": 5,
+                  "endLine": 92,
+                  "endColumn": 14
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "7479484f51eeeee9:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "performance__2024-03-22T15-23-04Z__41d58739bd32b0180af3a863a764f9163586e37a.yml",
+          "workflow_name": "Performance Test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 92,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "speed": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "speed": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Performance Test",
+        "true": [
+          "pull_request"
+        ],
+        "jobs": {
+          "speed": {
+            "if": "${{ ! github.event.pull_request.head.repo.fork }}",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.22"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0,
+                  "ref": "${{ github.head_ref }}"
+                }
+              },
+              {
+                "name": "Run Head",
+                "run": "go build -o current .\nrepo_tmp=$(mktemp -d)\ngit clone https://github.com/trufflesecurity/trufflehog.git $repo_tmp\n\nuser_time_sum=0\n\nfor i in {1..5}\ndo\n  tmpfile=$(mktemp)\n  /usr/bin/time -o $tmpfile $GITHUB_WORKSPACE/current git \"file://$repo_tmp\" --no-verification --no-update > out.txt\n  cat $tmpfile\n  time_output=$(cat $tmpfile)\n  rm $tmpfile\n  user_time=$(echo $time_output | awk '{print $1}' | sed 's/user//')\n\n  # Add the user time to the sum\n  user_time_sum=$(echo \"$user_time_sum + $user_time\" | bc)\ndone\n\naverage_user_time=$(echo \"scale=3; $user_time_sum / 5\" | bc)\necho HEAD_TIME=$average_user_time >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Figure out previous tag",
+                "run": "git fetch --tags\ngit tag -l --sort=-v:refname | head -n 1 > previous_tag.txt\necho PREVIOUS_TAG=$(cat previous_tag.txt) >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0,
+                  "ref": "${{ env.PREVIOUS_TAG }}"
+                }
+              },
+              {
+                "name": "Run Previous",
+                "run": "go build -o previous .\nrepo_tmp=$(mktemp -d)\ngit clone https://github.com/trufflesecurity/trufflehog.git $repo_tmp\n\nuser_time_sum=0\n\nfor i in {1..5}\ndo\n  tmpfile=$(mktemp)\n  /usr/bin/time -o $tmpfile $GITHUB_WORKSPACE/previous git \"file://$repo_tmp\" --no-verification --no-update > out.txt\n  cat $tmpfile\n  time_output=$(cat $tmpfile)\n  rm $tmpfile\n  user_time=$(echo $time_output | awk '{print $1}' | sed 's/user//')\n\n  # Add the user time to the sum\n  user_time_sum=$(echo \"$user_time_sum + $user_time\" | bc)\ndone\n\naverage_user_time=$(echo \"scale=3; $user_time_sum / 5\" | bc)\necho PREVIOUS_TIME=$average_user_time >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Compare Results",
+                "run": "echo \"head ($GITHUB_SHA) avg time (n=5): $HEAD_TIME\"\necho \"$PREVIOUS_TAG avg time (n=5): $PREVIOUS_TIME\"\nif [ $(echo \"$HEAD_TIME > $PREVIOUS_TIME * 1.1\" | bc) -eq 1 ]\nthen\n  echo \"HEAD run time is at least 10% slower than PREVIOUS run time\"\n  exit 1\nfi\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-05-13T21-53-08Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-bb2021a5-8fb7-58ba-a6be-c2c312472c30",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/performance__2024-05-13T21-53-08Z__806c06406a983c584f5e8bbd5bc7cfd7b79afddf.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 9,
+                  "startColumn": 5,
+                  "endLine": 92,
+                  "endColumn": 14
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "7479484f51eeeee9:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "performance__2024-05-13T21-53-08Z__806c06406a983c584f5e8bbd5bc7cfd7b79afddf.yml",
+          "workflow_name": "Performance Test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 92,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "speed": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "speed": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Performance Test",
+        "true": [
+          "pull_request"
+        ],
+        "jobs": {
+          "speed": {
+            "if": "${{ ! github.event.pull_request.head.repo.fork }}",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.22"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0,
+                  "ref": "${{ github.head_ref }}"
+                }
+              },
+              {
+                "name": "Run Head",
+                "run": "go build -o current .\nrepo_tmp=$(mktemp -d)\ngit clone https://github.com/trufflesecurity/trufflehog.git $repo_tmp\n\nuser_time_sum=0\n\nfor i in {1..5}\ndo\n  tmpfile=$(mktemp)\n  /usr/bin/time -o $tmpfile $GITHUB_WORKSPACE/current git \"file://$repo_tmp\" --no-verification --no-update > out.txt\n  cat $tmpfile\n  time_output=$(cat $tmpfile)\n  rm $tmpfile\n  user_time=$(echo $time_output | awk '{print $1}' | sed 's/user//')\n\n  # Add the user time to the sum\n  user_time_sum=$(echo \"$user_time_sum + $user_time\" | bc)\ndone\n\naverage_user_time=$(echo \"scale=3; $user_time_sum / 5\" | bc)\necho HEAD_TIME=$average_user_time >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Figure out previous tag",
+                "run": "git fetch --tags\ngit tag -l --sort=-v:refname | head -n 1 > previous_tag.txt\necho PREVIOUS_TAG=$(cat previous_tag.txt) >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0,
+                  "ref": "${{ env.PREVIOUS_TAG }}"
+                }
+              },
+              {
+                "name": "Run Previous",
+                "run": "go build -o previous .\nrepo_tmp=$(mktemp -d)\ngit clone https://github.com/trufflesecurity/trufflehog.git $repo_tmp\n\nuser_time_sum=0\n\nfor i in {1..5}\ndo\n  tmpfile=$(mktemp)\n  /usr/bin/time -o $tmpfile $GITHUB_WORKSPACE/previous git \"file://$repo_tmp\" --no-verification --no-update > out.txt\n  cat $tmpfile\n  time_output=$(cat $tmpfile)\n  rm $tmpfile\n  user_time=$(echo $time_output | awk '{print $1}' | sed 's/user//')\n\n  # Add the user time to the sum\n  user_time_sum=$(echo \"$user_time_sum + $user_time\" | bc)\ndone\n\naverage_user_time=$(echo \"scale=3; $user_time_sum / 5\" | bc)\necho PREVIOUS_TIME=$average_user_time >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Compare Results",
+                "run": "echo \"head ($GITHUB_SHA) avg time (n=5): $HEAD_TIME\"\necho \"$PREVIOUS_TAG avg time (n=5): $PREVIOUS_TIME\"\nif [ $(echo \"$HEAD_TIME > $PREVIOUS_TIME * 1.5\" | bc) -eq 1 ]\nthen\n  echo \"HEAD run time is at least 10% slower than PREVIOUS run time\"\n  exit 1\nfi\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-05-14T16-57-01Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-f08e4ae7-8f94-5e7b-9aa8-ad8a8028152f",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/performance__2024-05-14T16-57-01Z__8d1fa4236008c1bea8bd9cd673e38bd39bbc5113.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 9,
+                  "startColumn": 5,
+                  "endLine": 96,
+                  "endColumn": 14
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "7479484f51eeeee9:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "performance__2024-05-14T16-57-01Z__8d1fa4236008c1bea8bd9cd673e38bd39bbc5113.yml",
+          "workflow_name": "Performance Test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 96,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "speed": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "speed": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Performance Test",
+        "true": [
+          "pull_request"
+        ],
+        "jobs": {
+          "speed": {
+            "if": "${{ ! github.event.pull_request.head.repo.fork }}",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.22"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0,
+                  "ref": "${{ github.head_ref }}"
+                }
+              },
+              {
+                "name": "Run Head",
+                "run": "go build -o current .\nrepo_tmp=$(mktemp -d)\ngit clone https://github.com/trufflesecurity/trufflehog.git $repo_tmp\ncd $repo_tmp\ngit checkout v3.75.1\n\nuser_time_sum=0\n\nfor i in {1..5}\ndo\n  tmpfile=$(mktemp)\n  /usr/bin/time -o $tmpfile $GITHUB_WORKSPACE/current filesystem \"$repo_tmp\" --no-verification --no-update > out.txt\n  cat $tmpfile\n  time_output=$(cat $tmpfile)\n  rm $tmpfile\n  user_time=$(echo $time_output | awk '{print $1}' | sed 's/user//')\n\n  # Add the user time to the sum\n  user_time_sum=$(echo \"$user_time_sum + $user_time\" | bc)\ndone\n\naverage_user_time=$(echo \"scale=3; $user_time_sum / 5\" | bc)\necho HEAD_TIME=$average_user_time >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Figure out previous tag",
+                "run": "git fetch --tags\ngit tag -l --sort=-v:refname | head -n 1 > previous_tag.txt\necho PREVIOUS_TAG=$(cat previous_tag.txt) >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0,
+                  "ref": "${{ env.PREVIOUS_TAG }}"
+                }
+              },
+              {
+                "name": "Run Previous",
+                "run": "go build -o previous .\nrepo_tmp=$(mktemp -d)\ngit clone https://github.com/trufflesecurity/trufflehog.git $repo_tmp\ncd $repo_tmp\ngit checkout v3.75.1\n\nuser_time_sum=0\n\nfor i in {1..5}\ndo\n  tmpfile=$(mktemp)\n  /usr/bin/time -o $tmpfile $GITHUB_WORKSPACE/previous filesystem \"$repo_tmp\" --no-verification --no-update > out.txt\n  cat $tmpfile\n  time_output=$(cat $tmpfile)\n  rm $tmpfile\n  user_time=$(echo $time_output | awk '{print $1}' | sed 's/user//')\n\n  # Add the user time to the sum\n  user_time_sum=$(echo \"$user_time_sum + $user_time\" | bc)\ndone\n\naverage_user_time=$(echo \"scale=3; $user_time_sum / 5\" | bc)\necho PREVIOUS_TIME=$average_user_time >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Compare Results",
+                "run": "echo \"head ($GITHUB_SHA) avg time (n=5): $HEAD_TIME\"\necho \"$PREVIOUS_TAG avg time (n=5): $PREVIOUS_TIME\"\nif [ $(echo \"$HEAD_TIME > $PREVIOUS_TIME * 1.5\" | bc) -eq 1 ]\nthen\n  echo \"HEAD run time is at least 10% slower than PREVIOUS run time\"\n  exit 1\nfi\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-09-27T16-55-15Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-8d604636-6291-5c8e-b865-de1b8fcf0bea",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/performance__2024-09-27T16-55-15Z__5f3b4521d705436bb4723c5639121faf21872fc5.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 9,
+                  "startColumn": 5,
+                  "endLine": 96,
+                  "endColumn": 14
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "7479484f51eeeee9:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "performance__2024-09-27T16-55-15Z__5f3b4521d705436bb4723c5639121faf21872fc5.yml",
+          "workflow_name": "Performance Test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 96,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "speed": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "speed": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Performance Test",
+        "true": [
+          "pull_request"
+        ],
+        "jobs": {
+          "speed": {
+            "if": "${{ ! github.event.pull_request.head.repo.fork }}",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.23"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0,
+                  "ref": "${{ github.head_ref }}"
+                }
+              },
+              {
+                "name": "Run Head",
+                "run": "go build -o current .\nrepo_tmp=$(mktemp -d)\ngit clone https://github.com/trufflesecurity/trufflehog.git $repo_tmp\ncd $repo_tmp\ngit checkout v3.75.1\n\nuser_time_sum=0\n\nfor i in {1..5}\ndo\n  tmpfile=$(mktemp)\n  /usr/bin/time -o $tmpfile $GITHUB_WORKSPACE/current filesystem \"$repo_tmp\" --no-verification --no-update > out.txt\n  cat $tmpfile\n  time_output=$(cat $tmpfile)\n  rm $tmpfile\n  user_time=$(echo $time_output | awk '{print $1}' | sed 's/user//')\n\n  # Add the user time to the sum\n  user_time_sum=$(echo \"$user_time_sum + $user_time\" | bc)\ndone\n\naverage_user_time=$(echo \"scale=3; $user_time_sum / 5\" | bc)\necho HEAD_TIME=$average_user_time >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Figure out previous tag",
+                "run": "git fetch --tags\ngit tag -l --sort=-v:refname | head -n 1 > previous_tag.txt\necho PREVIOUS_TAG=$(cat previous_tag.txt) >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0,
+                  "ref": "${{ env.PREVIOUS_TAG }}"
+                }
+              },
+              {
+                "name": "Run Previous",
+                "run": "go build -o previous .\nrepo_tmp=$(mktemp -d)\ngit clone https://github.com/trufflesecurity/trufflehog.git $repo_tmp\ncd $repo_tmp\ngit checkout v3.75.1\n\nuser_time_sum=0\n\nfor i in {1..5}\ndo\n  tmpfile=$(mktemp)\n  /usr/bin/time -o $tmpfile $GITHUB_WORKSPACE/previous filesystem \"$repo_tmp\" --no-verification --no-update > out.txt\n  cat $tmpfile\n  time_output=$(cat $tmpfile)\n  rm $tmpfile\n  user_time=$(echo $time_output | awk '{print $1}' | sed 's/user//')\n\n  # Add the user time to the sum\n  user_time_sum=$(echo \"$user_time_sum + $user_time\" | bc)\ndone\n\naverage_user_time=$(echo \"scale=3; $user_time_sum / 5\" | bc)\necho PREVIOUS_TIME=$average_user_time >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Compare Results",
+                "run": "echo \"head ($GITHUB_SHA) avg time (n=5): $HEAD_TIME\"\necho \"$PREVIOUS_TAG avg time (n=5): $PREVIOUS_TIME\"\nif [ $(echo \"$HEAD_TIME > $PREVIOUS_TIME * 1.5\" | bc) -eq 1 ]\nthen\n  echo \"HEAD run time is at least 10% slower than PREVIOUS run time\"\n  exit 1\nfi\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-04-02T03-45-42Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-b441398f-92bf-564a-8119-f22eb96ebcd9",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/performance__2025-04-02T03-45-42Z__9a59a7a52a9699a94be4725bc0f4fbfe911429ef.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 9,
+                  "startColumn": 5,
+                  "endLine": 96,
+                  "endColumn": 14
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "7479484f51eeeee9:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "performance__2025-04-02T03-45-42Z__9a59a7a52a9699a94be4725bc0f4fbfe911429ef.yml",
+          "workflow_name": "Performance Test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 96,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "speed": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "speed": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Performance Test",
+        "true": [
+          "pull_request"
+        ],
+        "jobs": {
+          "speed": {
+            "if": "${{ ! github.event.pull_request.head.repo.fork }}",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.24"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0,
+                  "ref": "${{ github.head_ref }}"
+                }
+              },
+              {
+                "name": "Run Head",
+                "run": "go build -o current .\nrepo_tmp=$(mktemp -d)\ngit clone https://github.com/trufflesecurity/trufflehog.git $repo_tmp\ncd $repo_tmp\ngit checkout v3.75.1\n\nuser_time_sum=0\n\nfor i in {1..5}\ndo\n  tmpfile=$(mktemp)\n  /usr/bin/time -o $tmpfile $GITHUB_WORKSPACE/current filesystem \"$repo_tmp\" --no-verification --no-update > out.txt\n  cat $tmpfile\n  time_output=$(cat $tmpfile)\n  rm $tmpfile\n  user_time=$(echo $time_output | awk '{print $1}' | sed 's/user//')\n\n  # Add the user time to the sum\n  user_time_sum=$(echo \"$user_time_sum + $user_time\" | bc)\ndone\n\naverage_user_time=$(echo \"scale=3; $user_time_sum / 5\" | bc)\necho HEAD_TIME=$average_user_time >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Figure out previous tag",
+                "run": "git fetch --tags\ngit tag -l --sort=-v:refname | head -n 1 > previous_tag.txt\necho PREVIOUS_TAG=$(cat previous_tag.txt) >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0,
+                  "ref": "${{ env.PREVIOUS_TAG }}"
+                }
+              },
+              {
+                "name": "Run Previous",
+                "run": "go build -o previous .\nrepo_tmp=$(mktemp -d)\ngit clone https://github.com/trufflesecurity/trufflehog.git $repo_tmp\ncd $repo_tmp\ngit checkout v3.75.1\n\nuser_time_sum=0\n\nfor i in {1..5}\ndo\n  tmpfile=$(mktemp)\n  /usr/bin/time -o $tmpfile $GITHUB_WORKSPACE/previous filesystem \"$repo_tmp\" --no-verification --no-update > out.txt\n  cat $tmpfile\n  time_output=$(cat $tmpfile)\n  rm $tmpfile\n  user_time=$(echo $time_output | awk '{print $1}' | sed 's/user//')\n\n  # Add the user time to the sum\n  user_time_sum=$(echo \"$user_time_sum + $user_time\" | bc)\ndone\n\naverage_user_time=$(echo \"scale=3; $user_time_sum / 5\" | bc)\necho PREVIOUS_TIME=$average_user_time >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Compare Results",
+                "run": "echo \"head ($GITHUB_SHA) avg time (n=5): $HEAD_TIME\"\necho \"$PREVIOUS_TAG avg time (n=5): $PREVIOUS_TIME\"\nif [ $(echo \"$HEAD_TIME > $PREVIOUS_TIME * 1.5\" | bc) -eq 1 ]\nthen\n  echo \"HEAD run time is at least 10% slower than PREVIOUS run time\"\n  exit 1\nfi\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-05-19T23-18-13Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-f7c1e4e1-5d1c-56bf-b9b0-c88cd25f74e3",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/performance__2025-05-19T23-18-13Z__fa703eacf669db678b9f402eeda5cbaef02f59f0.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 9,
+                  "startColumn": 5,
+                  "endLine": 96,
+                  "endColumn": 14
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "f36fe7ee1f4beaae:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "performance__2025-05-19T23-18-13Z__fa703eacf669db678b9f402eeda5cbaef02f59f0.yml",
+          "workflow_name": "Performance Test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 96,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "speed": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "speed": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Performance Test",
+        "true": [
+          "pull_request"
+        ],
+        "jobs": {
+          "speed": {
+            "if": "${{ ! github.event.pull_request.head.repo.fork }}",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0,
+                  "ref": "${{ github.head_ref }}"
+                }
+              },
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.24"
+                }
+              },
+              {
+                "name": "Run Head",
+                "run": "go build -o current .\nrepo_tmp=$(mktemp -d)\ngit clone https://github.com/trufflesecurity/trufflehog.git $repo_tmp\ncd $repo_tmp\ngit checkout v3.75.1\n\nuser_time_sum=0\n\nfor i in {1..5}\ndo\n  tmpfile=$(mktemp)\n  /usr/bin/time -o $tmpfile $GITHUB_WORKSPACE/current filesystem \"$repo_tmp\" --no-verification --no-update > out.txt\n  cat $tmpfile\n  time_output=$(cat $tmpfile)\n  rm $tmpfile\n  user_time=$(echo $time_output | awk '{print $1}' | sed 's/user//')\n\n  # Add the user time to the sum\n  user_time_sum=$(echo \"$user_time_sum + $user_time\" | bc)\ndone\n\naverage_user_time=$(echo \"scale=3; $user_time_sum / 5\" | bc)\necho HEAD_TIME=$average_user_time >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Figure out previous tag",
+                "run": "git fetch --tags\ngit tag -l --sort=-v:refname | head -n 1 > previous_tag.txt\necho PREVIOUS_TAG=$(cat previous_tag.txt) >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0,
+                  "ref": "${{ env.PREVIOUS_TAG }}"
+                }
+              },
+              {
+                "name": "Run Previous",
+                "run": "go build -o previous .\nrepo_tmp=$(mktemp -d)\ngit clone https://github.com/trufflesecurity/trufflehog.git $repo_tmp\ncd $repo_tmp\ngit checkout v3.75.1\n\nuser_time_sum=0\n\nfor i in {1..5}\ndo\n  tmpfile=$(mktemp)\n  /usr/bin/time -o $tmpfile $GITHUB_WORKSPACE/previous filesystem \"$repo_tmp\" --no-verification --no-update > out.txt\n  cat $tmpfile\n  time_output=$(cat $tmpfile)\n  rm $tmpfile\n  user_time=$(echo $time_output | awk '{print $1}' | sed 's/user//')\n\n  # Add the user time to the sum\n  user_time_sum=$(echo \"$user_time_sum + $user_time\" | bc)\ndone\n\naverage_user_time=$(echo \"scale=3; $user_time_sum / 5\" | bc)\necho PREVIOUS_TIME=$average_user_time >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Compare Results",
+                "run": "echo \"head ($GITHUB_SHA) avg time (n=5): $HEAD_TIME\"\necho \"$PREVIOUS_TAG avg time (n=5): $PREVIOUS_TIME\"\nif [ $(echo \"$HEAD_TIME > $PREVIOUS_TIME * 1.5\" | bc) -eq 1 ]\nthen\n  echo \"HEAD run time is at least 10% slower than PREVIOUS run time\"\n  exit 1\nfi\n"
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

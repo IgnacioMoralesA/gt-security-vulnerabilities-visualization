@@ -1,0 +1,82 @@
+{
+  "repo_owner": "aws-actions",
+  "repo_name": "configure-aws-credentials",
+  "workflow_name": "cawsc-test",
+  "history": {
+    "2025-02-05T01-06-10Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "cawsc-test__2025-02-05T01-06-10Z__1780ebd97bfd07ffbef8765880395a9bfed87d09.yml",
+          "workflow_name": "Test Configure AWS Credential",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 20,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "cawsc": 2
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "cawsc": 2
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 1,
+            "actions_used": [
+              "aws-actions/configure-aws-credentials@main"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Test Configure AWS Credential",
+        "true": {
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "cawsc": {
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "name": "CAWSC",
+                "uses": "aws-actions/configure-aws-credentials@main",
+                "with": {
+                  "aws-region": "us-west-2",
+                  "role-to-assume": "${{ secrets.SECRETS_AWS_PACKAGING_ROLE_TO_ASSUME }}",
+                  "role-duration-seconds": 900,
+                  "role-session-name": "TestCAWSC"
+                }
+              },
+              {
+                "name": "Whoami",
+                "run": "aws sts get-caller-identity\n"
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

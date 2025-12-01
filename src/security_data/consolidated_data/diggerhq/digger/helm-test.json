@@ -1,0 +1,128 @@
+{
+  "repo_owner": "diggerhq",
+  "repo_name": "digger",
+  "workflow_name": "helm-test",
+  "history": {
+    "2025-07-23T14-57-59Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-ae1cffbc-52b1-5b51-87e2-c11630aaf341",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/helm-test__2025-07-23T14-57-59Z__7c60fdaf434004af8951be740dc5876c9e98152a.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 11,
+                  "startColumn": 5,
+                  "endLine": 29,
+                  "endColumn": 51
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "655c64fb540f5486:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "helm-test__2025-07-23T14-57-59Z__7c60fdaf434004af8951be740dc5876c9e98152a.yml",
+          "workflow_name": "Test Helm Charts",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 29,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "test": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "actions/checkout@v4",
+              "azure/setup-helm@v4"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Test Helm Charts",
+        "true": {
+          "pull_request": {
+            "paths": [
+              "helm-charts/**",
+              ".github/workflows/helm-test.yml"
+            ]
+          }
+        },
+        "jobs": {
+          "test": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Install Helm",
+                "uses": "azure/setup-helm@v4"
+              },
+              {
+                "name": "Install helm-unittest",
+                "run": "helm plugin install https://github.com/helm-unittest/helm-unittest.git\n"
+              },
+              {
+                "name": "Lint chart",
+                "run": "helm lint helm-charts/digger-backend\n"
+              },
+              {
+                "name": "Run unit tests",
+                "run": "helm unittest helm-charts/digger-backend"
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

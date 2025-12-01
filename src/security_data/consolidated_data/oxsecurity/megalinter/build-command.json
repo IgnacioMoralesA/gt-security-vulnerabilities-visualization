@@ -1,0 +1,4504 @@
+{
+  "repo_owner": "oxsecurity",
+  "repo_name": "megalinter",
+  "workflow_name": "build-command",
+  "history": {
+    "2023-02-19T20-47-07Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-cc9a0a21-407c-52a3-a711-ebe6ceb1f882",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/build-command__2023-02-19T20-47-07Z__eb684981eef6b7f8adaa911b93475ac13ec9878d.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 25,
+                  "startColumn": 5,
+                  "endLine": 122,
+                  "endColumn": 72
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "2dc558fedbab613f:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "build-command__2023-02-19T20-47-07Z__eb684981eef6b7f8adaa911b93475ac13ec9878d.yml",
+          "workflow_name": "build-command",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 122,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build-sh": 13
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build-sh": 13
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 7,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-python@v4.5.0",
+              "peter-evans/create-or-update-comment@v2"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 4,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "build-command",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "repository": {
+                "description": "The repository from which the slash command was dispatched",
+                "required": true
+              },
+              "comment-id": {
+                "description": "The comment-id of the slash command",
+                "required": true
+              },
+              "issue-number": {
+                "description": "The issue number in which the slash command was made",
+                "required": true
+              },
+              "actor": {
+                "description": "The user who executed the slash command",
+                "required": true
+              }
+            }
+          },
+          "repository_dispatch": {
+            "types": [
+              "build-command"
+            ]
+          }
+        },
+        "jobs": {
+          "build-sh": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Create URL to the run output",
+                "id": "vars",
+                "run": "echo \"run-url=https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID\" >> $GITHUB_OUTPUT"
+              },
+              {
+                "name": "Create comment",
+                "uses": "peter-evans/create-or-update-comment@v2",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> [Command run output](${{ steps.vars.outputs.run-url }})\n> Build command workflow started.\n> Installing dependencies\n"
+                }
+              },
+              {
+                "name": "Dump the client payload context",
+                "env": {
+                  "PAYLOAD_CONTEXT": "${{ toJson(github.event.client_payload) }}"
+                },
+                "run": "echo \"$PAYLOAD_CONTEXT\""
+              },
+              {
+                "uses": "actions/checkout@v3",
+                "with": {
+                  "token": "${{ secrets.PAT }}",
+                  "repository": "${{ github.event.client_payload.pull_request.head.repo.full_name }}",
+                  "ref": "${{ github.event.client_payload.pull_request.head.ref }}"
+                }
+              },
+              {
+                "name": "Setup Python",
+                "uses": "actions/setup-python@v4.5.0",
+                "with": {
+                  "python-version": "3.11.1",
+                  "cache": "pip"
+                }
+              },
+              {
+                "run": "pip install -r requirements.dev.txt"
+              },
+              {
+                "name": "Create comment starting build.sh",
+                "if": "steps.check-changes.outputs.has-changes != '1'",
+                "uses": "peter-evans/create-or-update-comment@v2",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Running script `./build.sh`\n"
+                }
+              },
+              {
+                "name": "Run build script",
+                "run": "./build.sh"
+              },
+              {
+                "name": "Check if changes were made",
+                "id": "check-changes",
+                "run": "git diff --quiet && git diff --staged --quiet\nHAS_CHANGES=$?\necho \"has-changes=$HAS_CHANGES\" >> $GITHUB_OUTPUT\necho \"$HAS_CHANGES\"\n"
+              },
+              {
+                "name": "Commit changes to the PR branch",
+                "if": "steps.check-changes.outputs.has-changes == '1'",
+                "run": "git config --global user.name 'github-actions[bot]'\ngit config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'\ngit diff --quiet && git diff --staged --quiet || (git commit -am \"[build-command] Update generated files\")\ngit push\n"
+              },
+              {
+                "name": "Add reaction",
+                "uses": "peter-evans/create-or-update-comment@v2",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "reaction-type": "hooray"
+                }
+              },
+              {
+                "name": "Create final comment updated files",
+                "if": "steps.check-changes.outputs.has-changes == '1'",
+                "uses": "peter-evans/create-or-update-comment@v2",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Build command workflow completed updating files.\n"
+                }
+              },
+              {
+                "name": "Create final comment no updated files",
+                "if": "steps.check-changes.outputs.has-changes != '1'",
+                "uses": "peter-evans/create-or-update-comment@v2",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Build command workflow completed without updating files.\n"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-02-26T20-32-34Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-025fb953-f8eb-5d34-9be6-9d0a7ced4e38",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/build-command__2023-02-26T20-32-34Z__7e091b730869efc4630b30425d4a62a536c5444a.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 25,
+                  "startColumn": 5,
+                  "endLine": 110,
+                  "endColumn": 72
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "2dc558fedbab613f:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "build-command__2023-02-26T20-32-34Z__7e091b730869efc4630b30425d4a62a536c5444a.yml",
+          "workflow_name": "build-command",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 110,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build-sh": 12
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build-sh": 12
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 8,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-python@v4.5.0",
+              "peter-evans/create-or-update-comment@v2",
+              "stefanzweifel/git-auto-commit-action@v4"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "build-command",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "repository": {
+                "description": "The repository from which the slash command was dispatched",
+                "required": true
+              },
+              "comment-id": {
+                "description": "The comment-id of the slash command",
+                "required": true
+              },
+              "issue-number": {
+                "description": "The issue number in which the slash command was made",
+                "required": true
+              },
+              "actor": {
+                "description": "The user who executed the slash command",
+                "required": true
+              }
+            }
+          },
+          "repository_dispatch": {
+            "types": [
+              "build-command"
+            ]
+          }
+        },
+        "jobs": {
+          "build-sh": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Create URL to the run output",
+                "id": "vars",
+                "run": "echo \"run-url=https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID\" >> $GITHUB_OUTPUT"
+              },
+              {
+                "name": "Create comment",
+                "uses": "peter-evans/create-or-update-comment@v2",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> [Command run output](${{ steps.vars.outputs.run-url }})\n> Build command workflow started.\n> Installing dependencies\n"
+                }
+              },
+              {
+                "name": "Dump the client payload context",
+                "env": {
+                  "PAYLOAD_CONTEXT": "${{ toJson(github.event.client_payload) }}"
+                },
+                "run": "echo \"$PAYLOAD_CONTEXT\""
+              },
+              {
+                "uses": "actions/checkout@v3",
+                "with": {
+                  "token": "${{ secrets.PAT }}",
+                  "repository": "${{ github.event.client_payload.pull_request.head.repo.full_name }}",
+                  "ref": "${{ github.event.client_payload.pull_request.head.ref }}"
+                }
+              },
+              {
+                "name": "Setup Python",
+                "uses": "actions/setup-python@v4.5.0",
+                "with": {
+                  "python-version": "3.11.2",
+                  "cache": "pip"
+                }
+              },
+              {
+                "run": "pip install -r requirements.dev.txt"
+              },
+              {
+                "name": "Create comment starting build.sh",
+                "uses": "peter-evans/create-or-update-comment@v2",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Running script `./build.sh`\n"
+                }
+              },
+              {
+                "name": "Run build script",
+                "run": "./build.sh"
+              },
+              {
+                "uses": "stefanzweifel/git-auto-commit-action@v4",
+                "id": "auto-commit-action",
+                "with": {
+                  "commit_message": "[build-command] Update generated files"
+                }
+              },
+              {
+                "name": "Add reaction",
+                "uses": "peter-evans/create-or-update-comment@v2",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "reaction-type": "hooray"
+                }
+              },
+              {
+                "name": "Create final comment updated files",
+                "if": "steps.auto-commit-action.outputs.changes_detected == 'true'",
+                "uses": "peter-evans/create-or-update-comment@v2",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Build command workflow completed updating files.\n"
+                }
+              },
+              {
+                "name": "Create final comment no updated files",
+                "if": "steps.auto-commit-action.outputs.changes_detected == 'false'",
+                "uses": "peter-evans/create-or-update-comment@v2",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Build command workflow completed without updating files.\n"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-04-01T08-41-59Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-79540742-2ca5-5487-90e5-18e04232fd3d",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/build-command__2023-04-01T08-41-59Z__12bae53b7345d2f083e57a058067d187f7563b3e.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 25,
+                  "startColumn": 5,
+                  "endLine": 112,
+                  "endColumn": 72
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "2dc558fedbab613f:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "build-command__2023-04-01T08-41-59Z__12bae53b7345d2f083e57a058067d187f7563b3e.yml",
+          "workflow_name": "build-command",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 112,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build-sh": 12
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build-sh": 12
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 8,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-python@v4.5.0",
+              "peter-evans/create-or-update-comment@v2",
+              "stefanzweifel/git-auto-commit-action@v4"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "build-command",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "repository": {
+                "description": "The repository from which the slash command was dispatched",
+                "required": true
+              },
+              "comment-id": {
+                "description": "The comment-id of the slash command",
+                "required": true
+              },
+              "issue-number": {
+                "description": "The issue number in which the slash command was made",
+                "required": true
+              },
+              "actor": {
+                "description": "The user who executed the slash command",
+                "required": true
+              }
+            }
+          },
+          "repository_dispatch": {
+            "types": [
+              "build-command"
+            ]
+          }
+        },
+        "jobs": {
+          "build-sh": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Create URL to the run output",
+                "id": "vars",
+                "run": "echo \"run-url=https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID\" >> $GITHUB_OUTPUT"
+              },
+              {
+                "name": "Create comment",
+                "uses": "peter-evans/create-or-update-comment@v2",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> [Command run output](${{ steps.vars.outputs.run-url }})\n> Build command workflow started.\n> Installing dependencies\n"
+                }
+              },
+              {
+                "name": "Dump the client payload context",
+                "env": {
+                  "PAYLOAD_CONTEXT": "${{ toJson(github.event.client_payload) }}"
+                },
+                "run": "echo \"$PAYLOAD_CONTEXT\""
+              },
+              {
+                "uses": "actions/checkout@v3",
+                "with": {
+                  "token": "${{ secrets.PAT }}",
+                  "repository": "${{ github.event.client_payload.pull_request.head.repo.full_name }}",
+                  "ref": "${{ github.event.client_payload.pull_request.head.ref }}"
+                }
+              },
+              {
+                "name": "Setup Python",
+                "uses": "actions/setup-python@v4.5.0",
+                "with": {
+                  "python-version": "3.11.2",
+                  "cache": "pip"
+                }
+              },
+              {
+                "run": "pip install -r requirements.dev.txt"
+              },
+              {
+                "name": "Create comment starting build.sh",
+                "uses": "peter-evans/create-or-update-comment@v2",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Running script `./build.sh`\n"
+                }
+              },
+              {
+                "name": "Run build script",
+                "run": "./build.sh"
+              },
+              {
+                "uses": "stefanzweifel/git-auto-commit-action@v4",
+                "id": "auto-commit-action",
+                "with": {
+                  "commit_message": "[build-command] Update generated files",
+                  "commit_user_name": "megalinter-bot",
+                  "commit_user_email": "nicolas.vuillamy@ox.security"
+                }
+              },
+              {
+                "name": "Add reaction",
+                "uses": "peter-evans/create-or-update-comment@v2",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "reaction-type": "hooray"
+                }
+              },
+              {
+                "name": "Create final comment updated files",
+                "if": "steps.auto-commit-action.outputs.changes_detected == 'true'",
+                "uses": "peter-evans/create-or-update-comment@v2",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Build command workflow completed updating files.\n"
+                }
+              },
+              {
+                "name": "Create final comment no updated files",
+                "if": "steps.auto-commit-action.outputs.changes_detected == 'false'",
+                "uses": "peter-evans/create-or-update-comment@v2",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Build command workflow completed without updating files.\n"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-04-07T17-40-14Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-686a961f-c45e-5ee9-9881-62aac52c6a72",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/build-command__2023-04-07T17-40-14Z__00df56bc50c8a6248f681d98cde8c6602e29c688.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 25,
+                  "startColumn": 5,
+                  "endLine": 112,
+                  "endColumn": 72
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "2dc558fedbab613f:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "build-command__2023-04-07T17-40-14Z__00df56bc50c8a6248f681d98cde8c6602e29c688.yml",
+          "workflow_name": "build-command",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 112,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build-sh": 12
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build-sh": 12
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 8,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-python@v4.5.0",
+              "peter-evans/create-or-update-comment@v3",
+              "stefanzweifel/git-auto-commit-action@v4"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "build-command",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "repository": {
+                "description": "The repository from which the slash command was dispatched",
+                "required": true
+              },
+              "comment-id": {
+                "description": "The comment-id of the slash command",
+                "required": true
+              },
+              "issue-number": {
+                "description": "The issue number in which the slash command was made",
+                "required": true
+              },
+              "actor": {
+                "description": "The user who executed the slash command",
+                "required": true
+              }
+            }
+          },
+          "repository_dispatch": {
+            "types": [
+              "build-command"
+            ]
+          }
+        },
+        "jobs": {
+          "build-sh": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Create URL to the run output",
+                "id": "vars",
+                "run": "echo \"run-url=https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID\" >> $GITHUB_OUTPUT"
+              },
+              {
+                "name": "Create comment",
+                "uses": "peter-evans/create-or-update-comment@v3",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> [Command run output](${{ steps.vars.outputs.run-url }})\n> Build command workflow started.\n> Installing dependencies\n"
+                }
+              },
+              {
+                "name": "Dump the client payload context",
+                "env": {
+                  "PAYLOAD_CONTEXT": "${{ toJson(github.event.client_payload) }}"
+                },
+                "run": "echo \"$PAYLOAD_CONTEXT\""
+              },
+              {
+                "uses": "actions/checkout@v3",
+                "with": {
+                  "token": "${{ secrets.PAT }}",
+                  "repository": "${{ github.event.client_payload.pull_request.head.repo.full_name }}",
+                  "ref": "${{ github.event.client_payload.pull_request.head.ref }}"
+                }
+              },
+              {
+                "name": "Setup Python",
+                "uses": "actions/setup-python@v4.5.0",
+                "with": {
+                  "python-version": "3.11.2",
+                  "cache": "pip"
+                }
+              },
+              {
+                "run": "pip install -r requirements.dev.txt"
+              },
+              {
+                "name": "Create comment starting build.sh",
+                "uses": "peter-evans/create-or-update-comment@v3",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Running script `./build.sh`\n"
+                }
+              },
+              {
+                "name": "Run build script",
+                "run": "./build.sh"
+              },
+              {
+                "uses": "stefanzweifel/git-auto-commit-action@v4",
+                "id": "auto-commit-action",
+                "with": {
+                  "commit_message": "[build-command] Update generated files",
+                  "commit_user_name": "megalinter-bot",
+                  "commit_user_email": "nicolas.vuillamy@ox.security"
+                }
+              },
+              {
+                "name": "Add reaction",
+                "uses": "peter-evans/create-or-update-comment@v3",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "reaction-type": "hooray"
+                }
+              },
+              {
+                "name": "Create final comment updated files",
+                "if": "steps.auto-commit-action.outputs.changes_detected == 'true'",
+                "uses": "peter-evans/create-or-update-comment@v3",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Build command workflow completed updating files.\n"
+                }
+              },
+              {
+                "name": "Create final comment no updated files",
+                "if": "steps.auto-commit-action.outputs.changes_detected == 'false'",
+                "uses": "peter-evans/create-or-update-comment@v3",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Build command workflow completed without updating files.\n"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-04-12T19-22-43Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-0fd5b819-c633-532d-9071-ccab58526b38",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/build-command__2023-04-12T19-22-43Z__cdec5078a041759f7f268ff86ee7217ab247f254.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 31,
+                  "startColumn": 5,
+                  "endLine": 122,
+                  "endColumn": 72
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "2dc558fedbab613f:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "build-command__2023-04-12T19-22-43Z__cdec5078a041759f7f268ff86ee7217ab247f254.yml",
+          "workflow_name": "build-command",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 122,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build-sh": 13
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build-sh": 13
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 8,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-python@v4.5.0",
+              "peter-evans/create-or-update-comment@v3",
+              "stefanzweifel/git-auto-commit-action@v4"
+            ],
+            "num_run_commands": 5,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "build-command",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "repository": {
+                "description": "The repository from which the slash command was dispatched",
+                "required": true
+              },
+              "comment-id": {
+                "description": "The comment-id of the slash command",
+                "required": true
+              },
+              "issue-number": {
+                "description": "The issue number in which the slash command was made",
+                "required": true
+              },
+              "actor": {
+                "description": "The user who executed the slash command",
+                "required": true
+              },
+              "checkout-ref": {
+                "description": "The reference to pass to 'ref' to checkout action",
+                "required": true
+              },
+              "checkout-repository": {
+                "description": "The repository to pass to 'repository' to tcheckout action",
+                "required": false
+              }
+            }
+          },
+          "repository_dispatch": {
+            "types": [
+              "build-command"
+            ]
+          }
+        },
+        "jobs": {
+          "build-sh": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Create URL to the run output",
+                "id": "vars",
+                "run": "echo \"run-url=https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID\" >> $GITHUB_OUTPUT"
+              },
+              {
+                "name": "Create comment",
+                "uses": "peter-evans/create-or-update-comment@v3",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> [Command run output](${{ steps.vars.outputs.run-url }})\n> Build command workflow started.\n> Installing dependencies\n"
+                }
+              },
+              {
+                "name": "Dump the client payload context",
+                "env": {
+                  "PAYLOAD_CONTEXT": "${{ toJson(github.event.client_payload) }}"
+                },
+                "run": "echo \"$PAYLOAD_CONTEXT\""
+              },
+              {
+                "name": "Dump the inputs payload context",
+                "env": {
+                  "INPUTS_CONTEXT": "${{ toJson(github.event.inputs) }}"
+                },
+                "run": "echo \"$INPUTS_CONTEXT\""
+              },
+              {
+                "uses": "actions/checkout@v3",
+                "with": {
+                  "token": "${{ secrets.PAT }}",
+                  "repository": "${{ github.event.inputs.checkout-repository }}",
+                  "ref": "${{ github.event.inputs.checkout-ref }}"
+                }
+              },
+              {
+                "name": "Setup Python",
+                "uses": "actions/setup-python@v4.5.0",
+                "with": {
+                  "python-version": "3.11.3",
+                  "cache": "pip"
+                }
+              },
+              {
+                "run": "pip install -r requirements.dev.txt"
+              },
+              {
+                "name": "Create comment starting build.sh",
+                "uses": "peter-evans/create-or-update-comment@v3",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Running script `./build.sh`\n"
+                }
+              },
+              {
+                "name": "Run build script",
+                "run": "./build.sh"
+              },
+              {
+                "uses": "stefanzweifel/git-auto-commit-action@v4",
+                "id": "auto-commit-action",
+                "with": {
+                  "commit_message": "[build-command] Update generated files",
+                  "commit_user_name": "megalinter-bot",
+                  "commit_user_email": "nicolas.vuillamy@ox.security"
+                }
+              },
+              {
+                "name": "Add reaction",
+                "uses": "peter-evans/create-or-update-comment@v3",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "reaction-type": "hooray"
+                }
+              },
+              {
+                "name": "Create final comment updated files",
+                "if": "steps.auto-commit-action.outputs.changes_detected == 'true'",
+                "uses": "peter-evans/create-or-update-comment@v3",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Build command workflow completed updating files.\n"
+                }
+              },
+              {
+                "name": "Create final comment no updated files",
+                "if": "steps.auto-commit-action.outputs.changes_detected == 'false'",
+                "uses": "peter-evans/create-or-update-comment@v3",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Build command workflow completed without updating files.\n"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-05-18T14-54-57Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "build-command__2023-05-18T14-54-57Z__b742d7619d9d26eecd4ea0eba880eb615a20ea59.yml",
+          "workflow_name": "build-command",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 128,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build-sh": 13
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build-sh": 13
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 8,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-python@v4.5.0",
+              "peter-evans/create-or-update-comment@v3",
+              "stefanzweifel/git-auto-commit-action@v4"
+            ],
+            "num_run_commands": 5,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "build-command",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "repository": {
+                "description": "The repository from which the slash command was dispatched",
+                "required": true
+              },
+              "comment-id": {
+                "description": "The comment-id of the slash command",
+                "required": true
+              },
+              "issue-number": {
+                "description": "The issue number in which the slash command was made",
+                "required": true
+              },
+              "actor": {
+                "description": "The user who executed the slash command",
+                "required": true
+              },
+              "checkout-ref": {
+                "description": "The reference to pass to 'ref' to checkout action",
+                "required": true
+              },
+              "checkout-repository": {
+                "description": "The repository to pass to 'repository' to tcheckout action",
+                "required": false
+              }
+            }
+          },
+          "repository_dispatch": {
+            "types": [
+              "build-command"
+            ]
+          }
+        },
+        "jobs": {
+          "build-sh": {
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "contents": "write",
+              "issues": "write",
+              "pull-requests": "write"
+            },
+            "steps": [
+              {
+                "name": "Create URL to the run output",
+                "id": "vars",
+                "run": "echo \"run-url=https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID\" >> $GITHUB_OUTPUT"
+              },
+              {
+                "name": "Create comment",
+                "uses": "peter-evans/create-or-update-comment@v3",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> [Command run output](${{ steps.vars.outputs.run-url }})\n> Build command workflow started.\n> Installing dependencies\n"
+                }
+              },
+              {
+                "name": "Dump the client payload context",
+                "env": {
+                  "PAYLOAD_CONTEXT": "${{ toJson(github.event.client_payload) }}"
+                },
+                "run": "echo \"$PAYLOAD_CONTEXT\""
+              },
+              {
+                "name": "Dump the inputs payload context",
+                "env": {
+                  "INPUTS_CONTEXT": "${{ toJson(github.event.inputs) }}"
+                },
+                "run": "echo \"$INPUTS_CONTEXT\""
+              },
+              {
+                "uses": "actions/checkout@v3",
+                "with": {
+                  "token": "${{ secrets.GITHUB_TOKEN }}",
+                  "repository": "${{ github.event.inputs.checkout-repository }}",
+                  "ref": "${{ github.event.inputs.checkout-ref }}"
+                }
+              },
+              {
+                "name": "Setup Python",
+                "uses": "actions/setup-python@v4.5.0",
+                "with": {
+                  "python-version": "3.11.3",
+                  "cache": "pip"
+                }
+              },
+              {
+                "run": "pip install -r requirements.dev.txt"
+              },
+              {
+                "name": "Create comment starting build.sh",
+                "uses": "peter-evans/create-or-update-comment@v3",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Running script `./build.sh`\n"
+                }
+              },
+              {
+                "name": "Run build script",
+                "run": "./build.sh"
+              },
+              {
+                "uses": "stefanzweifel/git-auto-commit-action@v4",
+                "id": "auto-commit-action",
+                "with": {
+                  "commit_message": "[build-command] Update generated files",
+                  "commit_user_name": "megalinter-bot",
+                  "commit_user_email": "nicolas.vuillamy@ox.security"
+                }
+              },
+              {
+                "name": "Add reaction",
+                "uses": "peter-evans/create-or-update-comment@v3",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "reaction-type": "hooray"
+                }
+              },
+              {
+                "name": "Create final comment updated files",
+                "if": "steps.auto-commit-action.outputs.changes_detected == 'true'",
+                "uses": "peter-evans/create-or-update-comment@v3",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Build command workflow completed updating files.\n"
+                }
+              },
+              {
+                "name": "Create final comment no updated files",
+                "if": "steps.auto-commit-action.outputs.changes_detected == 'false'",
+                "uses": "peter-evans/create-or-update-comment@v3",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Build command workflow completed without updating files.\n"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-07-11T17-24-21Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "build-command__2023-07-11T17-24-21Z__f7df5cf80f6e5b941e009c88f60c2a03259f1537.yml",
+          "workflow_name": "build-command",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 128,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build-sh": 13
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build-sh": 13
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 8,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-python@v4.5.0",
+              "peter-evans/create-or-update-comment@v3",
+              "stefanzweifel/git-auto-commit-action@v4"
+            ],
+            "num_run_commands": 5,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "build-command",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "repository": {
+                "description": "The repository from which the slash command was dispatched",
+                "required": true
+              },
+              "comment-id": {
+                "description": "The comment-id of the slash command",
+                "required": true
+              },
+              "issue-number": {
+                "description": "The issue number in which the slash command was made",
+                "required": true
+              },
+              "actor": {
+                "description": "The user who executed the slash command",
+                "required": true
+              },
+              "checkout-ref": {
+                "description": "The reference to pass to 'ref' to checkout action",
+                "required": true
+              },
+              "checkout-repository": {
+                "description": "The repository to pass to 'repository' to tcheckout action",
+                "required": false
+              }
+            }
+          },
+          "repository_dispatch": {
+            "types": [
+              "build-command"
+            ]
+          }
+        },
+        "jobs": {
+          "build-sh": {
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "contents": "write",
+              "issues": "write",
+              "pull-requests": "write"
+            },
+            "steps": [
+              {
+                "name": "Create URL to the run output",
+                "id": "vars",
+                "run": "echo \"run-url=https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID\" >> $GITHUB_OUTPUT"
+              },
+              {
+                "name": "Create comment",
+                "uses": "peter-evans/create-or-update-comment@v3",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> [Command run output](${{ steps.vars.outputs.run-url }})\n> Build command workflow started.\n> Installing dependencies\n"
+                }
+              },
+              {
+                "name": "Dump the client payload context",
+                "env": {
+                  "PAYLOAD_CONTEXT": "${{ toJson(github.event.client_payload) }}"
+                },
+                "run": "echo \"$PAYLOAD_CONTEXT\""
+              },
+              {
+                "name": "Dump the inputs payload context",
+                "env": {
+                  "INPUTS_CONTEXT": "${{ toJson(github.event.inputs) }}"
+                },
+                "run": "echo \"$INPUTS_CONTEXT\""
+              },
+              {
+                "uses": "actions/checkout@v3",
+                "with": {
+                  "token": "${{ secrets.GITHUB_TOKEN }}",
+                  "repository": "${{ github.event.inputs.checkout-repository }}",
+                  "ref": "${{ github.event.inputs.checkout-ref }}"
+                }
+              },
+              {
+                "name": "Setup Python",
+                "uses": "actions/setup-python@v4.5.0",
+                "with": {
+                  "python-version-file": ".python-version",
+                  "cache": "pip"
+                }
+              },
+              {
+                "run": "pip install -r .config/python/dev/requirements.txt"
+              },
+              {
+                "name": "Create comment starting build.sh",
+                "uses": "peter-evans/create-or-update-comment@v3",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Running script `./build.sh`\n"
+                }
+              },
+              {
+                "name": "Run build script",
+                "run": "./build.sh"
+              },
+              {
+                "uses": "stefanzweifel/git-auto-commit-action@v4",
+                "id": "auto-commit-action",
+                "with": {
+                  "commit_message": "[build-command] Update generated files",
+                  "commit_user_name": "megalinter-bot",
+                  "commit_user_email": "nicolas.vuillamy@ox.security"
+                }
+              },
+              {
+                "name": "Add reaction",
+                "uses": "peter-evans/create-or-update-comment@v3",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "reaction-type": "hooray"
+                }
+              },
+              {
+                "name": "Create final comment updated files",
+                "if": "steps.auto-commit-action.outputs.changes_detected == 'true'",
+                "uses": "peter-evans/create-or-update-comment@v3",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Build command workflow completed updating files.\n"
+                }
+              },
+              {
+                "name": "Create final comment no updated files",
+                "if": "steps.auto-commit-action.outputs.changes_detected == 'false'",
+                "uses": "peter-evans/create-or-update-comment@v3",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Build command workflow completed without updating files.\n"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-09-05T20-54-53Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "build-command__2023-09-05T20-54-53Z__095a05ab3b32d722b8805a3ab963d9920b35b1dd.yml",
+          "workflow_name": "build-command",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 128,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build-sh": 13
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build-sh": 13
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 8,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-python@v4.5.0",
+              "peter-evans/create-or-update-comment@v3",
+              "stefanzweifel/git-auto-commit-action@v4"
+            ],
+            "num_run_commands": 5,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "build-command",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "repository": {
+                "description": "The repository from which the slash command was dispatched",
+                "required": true
+              },
+              "comment-id": {
+                "description": "The comment-id of the slash command",
+                "required": true
+              },
+              "issue-number": {
+                "description": "The issue number in which the slash command was made",
+                "required": true
+              },
+              "actor": {
+                "description": "The user who executed the slash command",
+                "required": true
+              },
+              "checkout-ref": {
+                "description": "The reference to pass to 'ref' to checkout action",
+                "required": true
+              },
+              "checkout-repository": {
+                "description": "The repository to pass to 'repository' to tcheckout action",
+                "required": false
+              }
+            }
+          },
+          "repository_dispatch": {
+            "types": [
+              "build-command"
+            ]
+          }
+        },
+        "jobs": {
+          "build-sh": {
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "contents": "write",
+              "issues": "write",
+              "pull-requests": "write"
+            },
+            "steps": [
+              {
+                "name": "Create URL to the run output",
+                "id": "vars",
+                "run": "echo \"run-url=https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID\" >> $GITHUB_OUTPUT"
+              },
+              {
+                "name": "Create comment",
+                "uses": "peter-evans/create-or-update-comment@v3",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> [Command run output](${{ steps.vars.outputs.run-url }})\n> Build command workflow started.\n> Installing dependencies\n"
+                }
+              },
+              {
+                "name": "Dump the client payload context",
+                "env": {
+                  "PAYLOAD_CONTEXT": "${{ toJson(github.event.client_payload) }}"
+                },
+                "run": "echo \"$PAYLOAD_CONTEXT\""
+              },
+              {
+                "name": "Dump the inputs payload context",
+                "env": {
+                  "INPUTS_CONTEXT": "${{ toJson(github.event.inputs) }}"
+                },
+                "run": "echo \"$INPUTS_CONTEXT\""
+              },
+              {
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "token": "${{ secrets.GITHUB_TOKEN }}",
+                  "repository": "${{ github.event.inputs.checkout-repository }}",
+                  "ref": "${{ github.event.inputs.checkout-ref }}"
+                }
+              },
+              {
+                "name": "Setup Python",
+                "uses": "actions/setup-python@v4.5.0",
+                "with": {
+                  "python-version-file": ".python-version",
+                  "cache": "pip"
+                }
+              },
+              {
+                "run": "pip install -r .config/python/dev/requirements.txt"
+              },
+              {
+                "name": "Create comment starting build.sh",
+                "uses": "peter-evans/create-or-update-comment@v3",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Running script `./build.sh`\n"
+                }
+              },
+              {
+                "name": "Run build script",
+                "run": "./build.sh"
+              },
+              {
+                "uses": "stefanzweifel/git-auto-commit-action@v4",
+                "id": "auto-commit-action",
+                "with": {
+                  "commit_message": "[build-command] Update generated files",
+                  "commit_user_name": "megalinter-bot",
+                  "commit_user_email": "nicolas.vuillamy@ox.security"
+                }
+              },
+              {
+                "name": "Add reaction",
+                "uses": "peter-evans/create-or-update-comment@v3",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "reaction-type": "hooray"
+                }
+              },
+              {
+                "name": "Create final comment updated files",
+                "if": "steps.auto-commit-action.outputs.changes_detected == 'true'",
+                "uses": "peter-evans/create-or-update-comment@v3",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Build command workflow completed updating files.\n"
+                }
+              },
+              {
+                "name": "Create final comment no updated files",
+                "if": "steps.auto-commit-action.outputs.changes_detected == 'false'",
+                "uses": "peter-evans/create-or-update-comment@v3",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Build command workflow completed without updating files.\n"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-10-12T06-30-41Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "build-command__2023-10-12T06-30-41Z__7da3281b67531db6e89c528b3c4c6f1796ef2870.yml",
+          "workflow_name": "build-command",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 128,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build-sh": 13
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build-sh": 13
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 8,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-python@v4.5.0",
+              "peter-evans/create-or-update-comment@v3",
+              "stefanzweifel/git-auto-commit-action@v5"
+            ],
+            "num_run_commands": 5,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "build-command",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "repository": {
+                "description": "The repository from which the slash command was dispatched",
+                "required": true
+              },
+              "comment-id": {
+                "description": "The comment-id of the slash command",
+                "required": true
+              },
+              "issue-number": {
+                "description": "The issue number in which the slash command was made",
+                "required": true
+              },
+              "actor": {
+                "description": "The user who executed the slash command",
+                "required": true
+              },
+              "checkout-ref": {
+                "description": "The reference to pass to 'ref' to checkout action",
+                "required": true
+              },
+              "checkout-repository": {
+                "description": "The repository to pass to 'repository' to tcheckout action",
+                "required": false
+              }
+            }
+          },
+          "repository_dispatch": {
+            "types": [
+              "build-command"
+            ]
+          }
+        },
+        "jobs": {
+          "build-sh": {
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "contents": "write",
+              "issues": "write",
+              "pull-requests": "write"
+            },
+            "steps": [
+              {
+                "name": "Create URL to the run output",
+                "id": "vars",
+                "run": "echo \"run-url=https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID\" >> $GITHUB_OUTPUT"
+              },
+              {
+                "name": "Create comment",
+                "uses": "peter-evans/create-or-update-comment@v3",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> [Command run output](${{ steps.vars.outputs.run-url }})\n> Build command workflow started.\n> Installing dependencies\n"
+                }
+              },
+              {
+                "name": "Dump the client payload context",
+                "env": {
+                  "PAYLOAD_CONTEXT": "${{ toJson(github.event.client_payload) }}"
+                },
+                "run": "echo \"$PAYLOAD_CONTEXT\""
+              },
+              {
+                "name": "Dump the inputs payload context",
+                "env": {
+                  "INPUTS_CONTEXT": "${{ toJson(github.event.inputs) }}"
+                },
+                "run": "echo \"$INPUTS_CONTEXT\""
+              },
+              {
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "token": "${{ secrets.GITHUB_TOKEN }}",
+                  "repository": "${{ github.event.inputs.checkout-repository }}",
+                  "ref": "${{ github.event.inputs.checkout-ref }}"
+                }
+              },
+              {
+                "name": "Setup Python",
+                "uses": "actions/setup-python@v4.5.0",
+                "with": {
+                  "python-version-file": ".python-version",
+                  "cache": "pip"
+                }
+              },
+              {
+                "run": "pip install -r .config/python/dev/requirements.txt"
+              },
+              {
+                "name": "Create comment starting build.sh",
+                "uses": "peter-evans/create-or-update-comment@v3",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Running script `./build.sh`\n"
+                }
+              },
+              {
+                "name": "Run build script",
+                "run": "./build.sh"
+              },
+              {
+                "uses": "stefanzweifel/git-auto-commit-action@v5",
+                "id": "auto-commit-action",
+                "with": {
+                  "commit_message": "[build-command] Update generated files",
+                  "commit_user_name": "megalinter-bot",
+                  "commit_user_email": "nicolas.vuillamy@ox.security"
+                }
+              },
+              {
+                "name": "Add reaction",
+                "uses": "peter-evans/create-or-update-comment@v3",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "reaction-type": "hooray"
+                }
+              },
+              {
+                "name": "Create final comment updated files",
+                "if": "steps.auto-commit-action.outputs.changes_detected == 'true'",
+                "uses": "peter-evans/create-or-update-comment@v3",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Build command workflow completed updating files.\n"
+                }
+              },
+              {
+                "name": "Create final comment no updated files",
+                "if": "steps.auto-commit-action.outputs.changes_detected == 'false'",
+                "uses": "peter-evans/create-or-update-comment@v3",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Build command workflow completed without updating files.\n"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-10-22T20-57-31Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "build-command__2023-10-22T20-57-31Z__09b8f0df4491a74d4b1328829dca9ff80d7ac029.yml",
+          "workflow_name": "build-command",
+          "triggers": {},
+          "permissions": {},
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 113,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build-sh": 13
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build-sh": 13
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 8,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-python@v4.7.1",
+              "peter-evans/create-or-update-comment@v3",
+              "stefanzweifel/git-auto-commit-action@v5"
+            ],
+            "num_run_commands": 5,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "build-command",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "repository": {
+                "description": "The repository from which the slash command was dispatched",
+                "required": true
+              },
+              "comment-id": {
+                "description": "The comment-id of the slash command",
+                "required": true
+              },
+              "issue-number": {
+                "description": "The issue number in which the slash command was made",
+                "required": true
+              },
+              "actor": {
+                "description": "The user who executed the slash command",
+                "required": true
+              },
+              "checkout-ref": {
+                "description": "The reference to pass to 'ref' to checkout action",
+                "required": true
+              },
+              "checkout-repository": {
+                "description": "The repository to pass to 'repository' to checkout action",
+                "required": false
+              }
+            }
+          },
+          "repository_dispatch": {
+            "types": [
+              "build-command"
+            ]
+          }
+        },
+        "permissions": {},
+        "jobs": {
+          "build-sh": {
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "contents": "write",
+              "pull-requests": "write"
+            },
+            "steps": [
+              {
+                "name": "Create URL to the run output",
+                "id": "vars",
+                "run": "echo \"run-url=https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID\" >> $GITHUB_OUTPUT"
+              },
+              {
+                "name": "Create comment",
+                "uses": "peter-evans/create-or-update-comment@v3",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> [Command run output](${{ steps.vars.outputs.run-url }})\n> Build command workflow started.\n> Installing dependencies\n"
+                }
+              },
+              {
+                "name": "Dump the client payload context",
+                "env": {
+                  "PAYLOAD_CONTEXT": "${{ toJson(github.event.client_payload) }}"
+                },
+                "run": "echo \"$PAYLOAD_CONTEXT\""
+              },
+              {
+                "name": "Dump the inputs payload context",
+                "env": {
+                  "INPUTS_CONTEXT": "${{ toJson(github.event.inputs) }}"
+                },
+                "run": "echo \"$INPUTS_CONTEXT\""
+              },
+              {
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "token": "${{ secrets.GITHUB_TOKEN }}",
+                  "repository": "${{ github.event.inputs.checkout-repository }}",
+                  "ref": "${{ github.event.inputs.checkout-ref }}"
+                }
+              },
+              {
+                "name": "Setup Python",
+                "uses": "actions/setup-python@v4.7.1",
+                "with": {
+                  "python-version-file": ".python-version",
+                  "cache": "pip"
+                }
+              },
+              {
+                "run": "pip install -r .config/python/dev/requirements.txt"
+              },
+              {
+                "name": "Create comment starting build.sh",
+                "uses": "peter-evans/create-or-update-comment@v3",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Running script `./build.sh`\n"
+                }
+              },
+              {
+                "name": "Run build script",
+                "run": "./build.sh"
+              },
+              {
+                "uses": "stefanzweifel/git-auto-commit-action@v5",
+                "id": "auto-commit-action",
+                "with": {
+                  "commit_message": "[build-command] Update generated files",
+                  "commit_user_name": "megalinter-bot",
+                  "commit_user_email": "nicolas.vuillamy@ox.security"
+                }
+              },
+              {
+                "name": "Add reaction",
+                "uses": "peter-evans/create-or-update-comment@v3",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "reactions": "hooray"
+                }
+              },
+              {
+                "name": "Create final comment updated files",
+                "if": "steps.auto-commit-action.outputs.changes_detected == 'true'",
+                "uses": "peter-evans/create-or-update-comment@v3",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Build command workflow completed updating files.\n"
+                }
+              },
+              {
+                "name": "Create final comment no updated files",
+                "if": "steps.auto-commit-action.outputs.changes_detected == 'false'",
+                "uses": "peter-evans/create-or-update-comment@v3",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Build command workflow completed without updating files.\n"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-10-23T05-38-14Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "build-command__2023-10-23T05-38-14Z__8fa759764a01cdcf7ea67b6c301a3e899452a3bf.yml",
+          "workflow_name": "build-command",
+          "triggers": {},
+          "permissions": {},
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 124,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build-sh": 15
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build-sh": 15
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 9,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-python@v4.7.1",
+              "peter-evans/create-or-update-comment@v3",
+              "stefanzweifel/git-auto-commit-action@v5"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 3,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "build-command",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "repository": {
+                "description": "The repository from which the slash command was dispatched",
+                "required": true
+              },
+              "comment-id": {
+                "description": "The comment-id of the slash command",
+                "required": true
+              },
+              "issue-number": {
+                "description": "The issue number in which the slash command was made",
+                "required": true
+              },
+              "actor": {
+                "description": "The user who executed the slash command",
+                "required": true
+              },
+              "checkout-ref": {
+                "description": "The reference to pass to 'ref' to checkout action",
+                "required": true
+              },
+              "checkout-repository": {
+                "description": "The repository to pass to 'repository' to checkout action",
+                "required": false
+              }
+            }
+          },
+          "repository_dispatch": {
+            "types": [
+              "build-command"
+            ]
+          }
+        },
+        "permissions": {},
+        "jobs": {
+          "build-sh": {
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "contents": "write",
+              "pull-requests": "write"
+            },
+            "steps": [
+              {
+                "name": "Create URL to the run output",
+                "id": "vars",
+                "run": "echo \"run-url=https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID\" >> $GITHUB_OUTPUT"
+              },
+              {
+                "name": "Create comment",
+                "uses": "peter-evans/create-or-update-comment@v3",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> [Command run output](${{ steps.vars.outputs.run-url }})\n> Build command workflow started.\n> Installing dependencies\n"
+                }
+              },
+              {
+                "name": "Dump the client payload context",
+                "env": {
+                  "PAYLOAD_CONTEXT": "${{ toJson(github.event.client_payload) }}"
+                },
+                "run": "echo \"$PAYLOAD_CONTEXT\""
+              },
+              {
+                "name": "Dump the inputs payload context",
+                "env": {
+                  "INPUTS_CONTEXT": "${{ toJson(github.event.inputs) }}"
+                },
+                "run": "echo \"$INPUTS_CONTEXT\""
+              },
+              {
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "token": "${{ secrets.GITHUB_TOKEN }}",
+                  "repository": "${{ github.event.inputs.checkout-repository }}",
+                  "ref": "${{ github.event.inputs.checkout-ref }}"
+                }
+              },
+              {
+                "name": "Setup Python",
+                "uses": "actions/setup-python@v4.7.1",
+                "with": {
+                  "python-version-file": ".python-version",
+                  "cache": "pip"
+                }
+              },
+              {
+                "run": "pip install -r .config/python/dev/requirements.txt"
+              },
+              {
+                "name": "Create comment starting build.sh",
+                "uses": "peter-evans/create-or-update-comment@v3",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Running script `./build.sh`\n"
+                }
+              },
+              {
+                "name": "Run build script",
+                "run": "./build.sh"
+              },
+              {
+                "run": "git pull"
+              },
+              {
+                "uses": "stefanzweifel/git-auto-commit-action@v5",
+                "id": "auto-commit-action",
+                "with": {
+                  "commit_message": "[build-command] Update generated files",
+                  "commit_user_name": "megalinter-bot",
+                  "commit_user_email": "nicolas.vuillamy@ox.security"
+                }
+              },
+              {
+                "name": "Add reaction",
+                "uses": "peter-evans/create-or-update-comment@v3",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "reactions": "hooray"
+                }
+              },
+              {
+                "name": "Create final comment updated files",
+                "if": "steps.auto-commit-action.outputs.changes_detected == 'true'",
+                "uses": "peter-evans/create-or-update-comment@v3",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Build command workflow completed updating files.\n"
+                }
+              },
+              {
+                "name": "Create final comment no updated files",
+                "if": "steps.auto-commit-action.outputs.changes_detected == 'false'",
+                "uses": "peter-evans/create-or-update-comment@v3",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Build command workflow completed without updating files.\n"
+                }
+              },
+              {
+                "name": "Add failure reaction",
+                "if": "failure()",
+                "uses": "peter-evans/create-or-update-comment@v3",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.comment.id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Build command workflow failed.\n",
+                  "reactions": -1
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-12-10T16-48-26Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "build-command__2023-12-10T16-48-26Z__56233f7883ca625c832c6a9d13bd70d38eafb229.yml",
+          "workflow_name": "build-command",
+          "triggers": {},
+          "permissions": {},
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 124,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build-sh": 15
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build-sh": 15
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 9,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-python@v5",
+              "peter-evans/create-or-update-comment@v3",
+              "stefanzweifel/git-auto-commit-action@v5"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 3,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "build-command",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "repository": {
+                "description": "The repository from which the slash command was dispatched",
+                "required": true
+              },
+              "comment-id": {
+                "description": "The comment-id of the slash command",
+                "required": true
+              },
+              "issue-number": {
+                "description": "The issue number in which the slash command was made",
+                "required": true
+              },
+              "actor": {
+                "description": "The user who executed the slash command",
+                "required": true
+              },
+              "checkout-ref": {
+                "description": "The reference to pass to 'ref' to checkout action",
+                "required": true
+              },
+              "checkout-repository": {
+                "description": "The repository to pass to 'repository' to checkout action",
+                "required": false
+              }
+            }
+          },
+          "repository_dispatch": {
+            "types": [
+              "build-command"
+            ]
+          }
+        },
+        "permissions": {},
+        "jobs": {
+          "build-sh": {
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "contents": "write",
+              "pull-requests": "write"
+            },
+            "steps": [
+              {
+                "name": "Create URL to the run output",
+                "id": "vars",
+                "run": "echo \"run-url=https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID\" >> $GITHUB_OUTPUT"
+              },
+              {
+                "name": "Create comment",
+                "uses": "peter-evans/create-or-update-comment@v3",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> [Command run output](${{ steps.vars.outputs.run-url }})\n> Build command workflow started.\n> Installing dependencies\n"
+                }
+              },
+              {
+                "name": "Dump the client payload context",
+                "env": {
+                  "PAYLOAD_CONTEXT": "${{ toJson(github.event.client_payload) }}"
+                },
+                "run": "echo \"$PAYLOAD_CONTEXT\""
+              },
+              {
+                "name": "Dump the inputs payload context",
+                "env": {
+                  "INPUTS_CONTEXT": "${{ toJson(github.event.inputs) }}"
+                },
+                "run": "echo \"$INPUTS_CONTEXT\""
+              },
+              {
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "token": "${{ secrets.GITHUB_TOKEN }}",
+                  "repository": "${{ github.event.inputs.checkout-repository }}",
+                  "ref": "${{ github.event.inputs.checkout-ref }}"
+                }
+              },
+              {
+                "name": "Setup Python",
+                "uses": "actions/setup-python@v5",
+                "with": {
+                  "python-version-file": ".python-version",
+                  "cache": "pip"
+                }
+              },
+              {
+                "run": "pip install -r .config/python/dev/requirements.txt"
+              },
+              {
+                "name": "Create comment starting build.sh",
+                "uses": "peter-evans/create-or-update-comment@v3",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Running script `./build.sh`\n"
+                }
+              },
+              {
+                "name": "Run build script",
+                "run": "./build.sh"
+              },
+              {
+                "run": "git pull"
+              },
+              {
+                "uses": "stefanzweifel/git-auto-commit-action@v5",
+                "id": "auto-commit-action",
+                "with": {
+                  "commit_message": "[build-command] Update generated files",
+                  "commit_user_name": "megalinter-bot",
+                  "commit_user_email": "nicolas.vuillamy@ox.security"
+                }
+              },
+              {
+                "name": "Add reaction",
+                "uses": "peter-evans/create-or-update-comment@v3",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "reactions": "hooray"
+                }
+              },
+              {
+                "name": "Create final comment updated files",
+                "if": "steps.auto-commit-action.outputs.changes_detected == 'true'",
+                "uses": "peter-evans/create-or-update-comment@v3",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Build command workflow completed updating files.\n"
+                }
+              },
+              {
+                "name": "Create final comment no updated files",
+                "if": "steps.auto-commit-action.outputs.changes_detected == 'false'",
+                "uses": "peter-evans/create-or-update-comment@v3",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Build command workflow completed without updating files.\n"
+                }
+              },
+              {
+                "name": "Add failure reaction",
+                "if": "failure()",
+                "uses": "peter-evans/create-or-update-comment@v3",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.comment.id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Build command workflow failed.\n",
+                  "reactions": -1
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-01-27T20-49-46Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "build-command__2024-01-27T20-49-46Z__be3a76c65df1256ef799809a4062359f9bcc1fd6.yml",
+          "workflow_name": "build-command",
+          "triggers": {},
+          "permissions": {},
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 124,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build-sh": 15
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build-sh": 15
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 9,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-python@v5",
+              "peter-evans/create-or-update-comment@v4",
+              "stefanzweifel/git-auto-commit-action@v5"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 3,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "build-command",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "repository": {
+                "description": "The repository from which the slash command was dispatched",
+                "required": true
+              },
+              "comment-id": {
+                "description": "The comment-id of the slash command",
+                "required": true
+              },
+              "issue-number": {
+                "description": "The issue number in which the slash command was made",
+                "required": true
+              },
+              "actor": {
+                "description": "The user who executed the slash command",
+                "required": true
+              },
+              "checkout-ref": {
+                "description": "The reference to pass to 'ref' to checkout action",
+                "required": true
+              },
+              "checkout-repository": {
+                "description": "The repository to pass to 'repository' to checkout action",
+                "required": false
+              }
+            }
+          },
+          "repository_dispatch": {
+            "types": [
+              "build-command"
+            ]
+          }
+        },
+        "permissions": {},
+        "jobs": {
+          "build-sh": {
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "contents": "write",
+              "pull-requests": "write"
+            },
+            "steps": [
+              {
+                "name": "Create URL to the run output",
+                "id": "vars",
+                "run": "echo \"run-url=https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID\" >> $GITHUB_OUTPUT"
+              },
+              {
+                "name": "Create comment",
+                "uses": "peter-evans/create-or-update-comment@v4",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> [Command run output](${{ steps.vars.outputs.run-url }})\n> Build command workflow started.\n> Installing dependencies\n"
+                }
+              },
+              {
+                "name": "Dump the client payload context",
+                "env": {
+                  "PAYLOAD_CONTEXT": "${{ toJson(github.event.client_payload) }}"
+                },
+                "run": "echo \"$PAYLOAD_CONTEXT\""
+              },
+              {
+                "name": "Dump the inputs payload context",
+                "env": {
+                  "INPUTS_CONTEXT": "${{ toJson(github.event.inputs) }}"
+                },
+                "run": "echo \"$INPUTS_CONTEXT\""
+              },
+              {
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "token": "${{ secrets.GITHUB_TOKEN }}",
+                  "repository": "${{ github.event.inputs.checkout-repository }}",
+                  "ref": "${{ github.event.inputs.checkout-ref }}"
+                }
+              },
+              {
+                "name": "Setup Python",
+                "uses": "actions/setup-python@v5",
+                "with": {
+                  "python-version-file": ".python-version",
+                  "cache": "pip"
+                }
+              },
+              {
+                "run": "pip install -r .config/python/dev/requirements.txt"
+              },
+              {
+                "name": "Create comment starting build.sh",
+                "uses": "peter-evans/create-or-update-comment@v4",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Running script `./build.sh`\n"
+                }
+              },
+              {
+                "name": "Run build script",
+                "run": "./build.sh"
+              },
+              {
+                "run": "git pull"
+              },
+              {
+                "uses": "stefanzweifel/git-auto-commit-action@v5",
+                "id": "auto-commit-action",
+                "with": {
+                  "commit_message": "[build-command] Update generated files",
+                  "commit_user_name": "megalinter-bot",
+                  "commit_user_email": "nicolas.vuillamy@ox.security"
+                }
+              },
+              {
+                "name": "Add reaction",
+                "uses": "peter-evans/create-or-update-comment@v4",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "reactions": "hooray"
+                }
+              },
+              {
+                "name": "Create final comment updated files",
+                "if": "steps.auto-commit-action.outputs.changes_detected == 'true'",
+                "uses": "peter-evans/create-or-update-comment@v4",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Build command workflow completed updating files.\n"
+                }
+              },
+              {
+                "name": "Create final comment no updated files",
+                "if": "steps.auto-commit-action.outputs.changes_detected == 'false'",
+                "uses": "peter-evans/create-or-update-comment@v4",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Build command workflow completed without updating files.\n"
+                }
+              },
+              {
+                "name": "Add failure reaction",
+                "if": "failure()",
+                "uses": "peter-evans/create-or-update-comment@v4",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.comment.id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Build command workflow failed.\n",
+                  "reactions": -1
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-05-20T05-24-21Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "build-command__2024-05-20T05-24-21Z__31274b91d424b4c4a210e9683d15a98cc7f3da91.yml",
+          "workflow_name": "build-command",
+          "triggers": {},
+          "permissions": {},
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 125,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build-sh": 16
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build-sh": 16
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 9,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-python@v5",
+              "peter-evans/create-or-update-comment@v4",
+              "stefanzweifel/git-auto-commit-action@v5"
+            ],
+            "num_run_commands": 7,
+            "steps_with_conditionals": 3,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "build-command",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "repository": {
+                "description": "The repository from which the slash command was dispatched",
+                "required": true
+              },
+              "comment-id": {
+                "description": "The comment-id of the slash command",
+                "required": true
+              },
+              "issue-number": {
+                "description": "The issue number in which the slash command was made",
+                "required": true
+              },
+              "actor": {
+                "description": "The user who executed the slash command",
+                "required": true
+              },
+              "checkout-ref": {
+                "description": "The reference to pass to 'ref' to checkout action",
+                "required": true
+              },
+              "checkout-repository": {
+                "description": "The repository to pass to 'repository' to checkout action",
+                "required": false
+              }
+            }
+          },
+          "repository_dispatch": {
+            "types": [
+              "build-command"
+            ]
+          }
+        },
+        "permissions": {},
+        "jobs": {
+          "build-sh": {
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "contents": "write",
+              "pull-requests": "write"
+            },
+            "steps": [
+              {
+                "name": "Create URL to the run output",
+                "id": "vars",
+                "run": "echo \"run-url=https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID\" >> $GITHUB_OUTPUT"
+              },
+              {
+                "name": "Create comment",
+                "uses": "peter-evans/create-or-update-comment@v4",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> [Command run output](${{ steps.vars.outputs.run-url }})\n> Build command workflow started.\n> Installing dependencies\n"
+                }
+              },
+              {
+                "name": "Dump the client payload context",
+                "env": {
+                  "PAYLOAD_CONTEXT": "${{ toJson(github.event.client_payload) }}"
+                },
+                "run": "echo \"$PAYLOAD_CONTEXT\""
+              },
+              {
+                "name": "Dump the inputs payload context",
+                "env": {
+                  "INPUTS_CONTEXT": "${{ toJson(github.event.inputs) }}"
+                },
+                "run": "echo \"$INPUTS_CONTEXT\""
+              },
+              {
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "token": "${{ secrets.GITHUB_TOKEN }}",
+                  "repository": "${{ github.event.inputs.checkout-repository }}",
+                  "ref": "${{ github.event.inputs.checkout-ref }}"
+                }
+              },
+              {
+                "name": "Setup Python",
+                "uses": "actions/setup-python@v5",
+                "with": {
+                  "python-version-file": ".python-version",
+                  "cache": "pip"
+                }
+              },
+              {
+                "run": "python -m pip install uv"
+              },
+              {
+                "run": "uv pip install --system -r .config/python/dev/requirements.txt"
+              },
+              {
+                "name": "Create comment starting build.sh",
+                "uses": "peter-evans/create-or-update-comment@v4",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Running script `./build.sh`\n"
+                }
+              },
+              {
+                "name": "Run build script",
+                "run": "./build.sh"
+              },
+              {
+                "run": "git pull"
+              },
+              {
+                "uses": "stefanzweifel/git-auto-commit-action@v5",
+                "id": "auto-commit-action",
+                "with": {
+                  "commit_message": "[build-command] Update generated files",
+                  "commit_user_name": "megalinter-bot",
+                  "commit_user_email": "nicolas.vuillamy@ox.security"
+                }
+              },
+              {
+                "name": "Add reaction",
+                "uses": "peter-evans/create-or-update-comment@v4",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "reactions": "hooray"
+                }
+              },
+              {
+                "name": "Create final comment updated files",
+                "if": "steps.auto-commit-action.outputs.changes_detected == 'true'",
+                "uses": "peter-evans/create-or-update-comment@v4",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Build command workflow completed updating files.\n"
+                }
+              },
+              {
+                "name": "Create final comment no updated files",
+                "if": "steps.auto-commit-action.outputs.changes_detected == 'false'",
+                "uses": "peter-evans/create-or-update-comment@v4",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Build command workflow completed without updating files.\n"
+                }
+              },
+              {
+                "name": "Add failure reaction",
+                "if": "failure()",
+                "uses": "peter-evans/create-or-update-comment@v4",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.comment.id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Build command workflow failed.\n",
+                  "reactions": -1
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-02-14T20-01-23Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "build-command__2025-02-14T20-01-23Z__a2ff398cff90a74921ebc5b6af0ee1f70f41c09a.yml",
+          "workflow_name": "build-command",
+          "triggers": {},
+          "permissions": {},
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 125,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build-sh": 16
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build-sh": 16
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 9,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-python@v5",
+              "peter-evans/create-or-update-comment@v4",
+              "stefanzweifel/git-auto-commit-action@v5"
+            ],
+            "num_run_commands": 7,
+            "steps_with_conditionals": 3,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "build-command",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "repository": {
+                "description": "The repository from which the slash command was dispatched",
+                "required": true
+              },
+              "comment-id": {
+                "description": "The comment-id of the slash command",
+                "required": true
+              },
+              "issue-number": {
+                "description": "The issue number in which the slash command was made",
+                "required": true
+              },
+              "actor": {
+                "description": "The user who executed the slash command",
+                "required": true
+              },
+              "checkout-ref": {
+                "description": "The reference to pass to 'ref' to checkout action",
+                "required": true
+              },
+              "checkout-repository": {
+                "description": "The repository to pass to 'repository' to checkout action",
+                "required": false
+              }
+            }
+          },
+          "repository_dispatch": {
+            "types": [
+              "build-command"
+            ]
+          }
+        },
+        "permissions": {},
+        "jobs": {
+          "build-sh": {
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "contents": "write",
+              "pull-requests": "write"
+            },
+            "steps": [
+              {
+                "name": "Create URL to the run output",
+                "id": "vars",
+                "run": "echo \"run-url=https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID\" >> $GITHUB_OUTPUT"
+              },
+              {
+                "name": "Create comment",
+                "uses": "peter-evans/create-or-update-comment@v4",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> [Command run output](${{ steps.vars.outputs.run-url }})\n> Build command workflow started.\n> Installing dependencies\n"
+                }
+              },
+              {
+                "name": "Dump the client payload context",
+                "env": {
+                  "PAYLOAD_CONTEXT": "${{ toJson(github.event.client_payload) }}"
+                },
+                "run": "echo \"$PAYLOAD_CONTEXT\""
+              },
+              {
+                "name": "Dump the inputs payload context",
+                "env": {
+                  "INPUTS_CONTEXT": "${{ toJson(github.event.inputs) }}"
+                },
+                "run": "echo \"$INPUTS_CONTEXT\""
+              },
+              {
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "token": "${{ secrets.GITHUB_TOKEN }}",
+                  "repository": "${{ github.event.inputs.checkout-repository }}",
+                  "ref": "${{ github.event.inputs.checkout-ref }}"
+                }
+              },
+              {
+                "name": "Setup Python",
+                "uses": "actions/setup-python@v5",
+                "with": {
+                  "python-version-file": ".python-version",
+                  "cache": "pip"
+                }
+              },
+              {
+                "run": "python -m pip install uv"
+              },
+              {
+                "run": "uv pip install --system -r .config/python/dev/requirements.txt"
+              },
+              {
+                "name": "Create comment starting build.sh",
+                "uses": "peter-evans/create-or-update-comment@v4",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Running script `./build.sh`\n"
+                }
+              },
+              {
+                "name": "Run build script",
+                "run": "./build.sh"
+              },
+              {
+                "run": "git pull"
+              },
+              {
+                "uses": "stefanzweifel/git-auto-commit-action@v5",
+                "id": "auto-commit-action",
+                "with": {
+                  "commit_message": "[build-command] Update generated files",
+                  "commit_user_name": "megalinter-bot",
+                  "commit_user_email": "129584137+megalinter-bot@users.noreply.github.com"
+                }
+              },
+              {
+                "name": "Add reaction",
+                "uses": "peter-evans/create-or-update-comment@v4",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "reactions": "hooray"
+                }
+              },
+              {
+                "name": "Create final comment updated files",
+                "if": "steps.auto-commit-action.outputs.changes_detected == 'true'",
+                "uses": "peter-evans/create-or-update-comment@v4",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Build command workflow completed updating files.\n"
+                }
+              },
+              {
+                "name": "Create final comment no updated files",
+                "if": "steps.auto-commit-action.outputs.changes_detected == 'false'",
+                "uses": "peter-evans/create-or-update-comment@v4",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Build command workflow completed without updating files.\n"
+                }
+              },
+              {
+                "name": "Add failure reaction",
+                "if": "failure()",
+                "uses": "peter-evans/create-or-update-comment@v4",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.comment.id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Build command workflow failed.\n",
+                  "reactions": -1
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-04-14T17-11-01Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "build-command__2025-04-14T17-11-01Z__84d5b1fe2e6e3a862aa877f308d80cd7b87b5f74.yml",
+          "workflow_name": "build-command",
+          "triggers": {},
+          "permissions": {},
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 125,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build-sh": 16
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build-sh": 16
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 9,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-python@v5",
+              "peter-evans/create-or-update-comment@v4",
+              "stefanzweifel/git-auto-commit-action@v5"
+            ],
+            "num_run_commands": 7,
+            "steps_with_conditionals": 3,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "build-command",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "repository": {
+                "description": "The repository from which the slash command was dispatched",
+                "required": true
+              },
+              "comment-id": {
+                "description": "The comment-id of the slash command",
+                "required": true
+              },
+              "issue-number": {
+                "description": "The issue number in which the slash command was made",
+                "required": true
+              },
+              "actor": {
+                "description": "The user who executed the slash command",
+                "required": true
+              },
+              "checkout-ref": {
+                "description": "The reference to pass to 'ref' to checkout action",
+                "required": true
+              },
+              "checkout-repository": {
+                "description": "The repository to pass to 'repository' to checkout action",
+                "required": false
+              }
+            }
+          },
+          "repository_dispatch": {
+            "types": [
+              "build-command"
+            ]
+          }
+        },
+        "permissions": {},
+        "jobs": {
+          "build-sh": {
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "contents": "write",
+              "pull-requests": "write"
+            },
+            "steps": [
+              {
+                "name": "Create URL to the run output",
+                "id": "vars",
+                "run": "echo \"run-url=https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID\" >> $GITHUB_OUTPUT"
+              },
+              {
+                "name": "Create comment",
+                "uses": "peter-evans/create-or-update-comment@v4",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> [Command run output](${{ steps.vars.outputs.run-url }})\n> Build command workflow started.\n> Installing dependencies\n"
+                }
+              },
+              {
+                "name": "Dump the client payload context",
+                "env": {
+                  "PAYLOAD_CONTEXT": "${{ toJson(github.event.client_payload) }}"
+                },
+                "run": "echo \"$PAYLOAD_CONTEXT\""
+              },
+              {
+                "name": "Dump the inputs payload context",
+                "env": {
+                  "INPUTS_CONTEXT": "${{ toJson(github.event.inputs) }}"
+                },
+                "run": "echo \"$INPUTS_CONTEXT\""
+              },
+              {
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "token": "${{ secrets.GITHUB_TOKEN }}",
+                  "repository": "${{ github.event.inputs.checkout-repository }}",
+                  "ref": "${{ github.event.inputs.checkout-ref }}"
+                }
+              },
+              {
+                "name": "Setup Python",
+                "uses": "actions/setup-python@v5",
+                "with": {
+                  "python-version-file": ".python-version",
+                  "cache": "pip"
+                }
+              },
+              {
+                "run": "python -m pip install uv"
+              },
+              {
+                "run": "uv pip install --system -r .config/python/dev/requirements.txt"
+              },
+              {
+                "name": "Create comment starting build.sh",
+                "uses": "peter-evans/create-or-update-comment@v4",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Running script `./build.sh`\n"
+                }
+              },
+              {
+                "name": "Run build script",
+                "run": "./build.sh"
+              },
+              {
+                "run": "git pull --unshallow || git pull"
+              },
+              {
+                "uses": "stefanzweifel/git-auto-commit-action@v5",
+                "id": "auto-commit-action",
+                "with": {
+                  "commit_message": "[build-command] Update generated files",
+                  "commit_user_name": "megalinter-bot",
+                  "commit_user_email": "129584137+megalinter-bot@users.noreply.github.com"
+                }
+              },
+              {
+                "name": "Add reaction",
+                "uses": "peter-evans/create-or-update-comment@v4",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "reactions": "hooray"
+                }
+              },
+              {
+                "name": "Create final comment updated files",
+                "if": "steps.auto-commit-action.outputs.changes_detected == 'true'",
+                "uses": "peter-evans/create-or-update-comment@v4",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Build command workflow completed updating files.\n"
+                }
+              },
+              {
+                "name": "Create final comment no updated files",
+                "if": "steps.auto-commit-action.outputs.changes_detected == 'false'",
+                "uses": "peter-evans/create-or-update-comment@v4",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Build command workflow completed without updating files.\n"
+                }
+              },
+              {
+                "name": "Add failure reaction",
+                "if": "failure()",
+                "uses": "peter-evans/create-or-update-comment@v4",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.comment.id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Build command workflow failed.\n",
+                  "reactions": -1
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-06-13T15-50-24Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "build-command__2025-06-13T15-50-24Z__b12b3cf9b60347d7e14095d73d3441667cd17276.yml",
+          "workflow_name": "build-command",
+          "triggers": {},
+          "permissions": {},
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 125,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build-sh": 16
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build-sh": 16
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 9,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-python@v5",
+              "peter-evans/create-or-update-comment@v4",
+              "stefanzweifel/git-auto-commit-action@v6"
+            ],
+            "num_run_commands": 7,
+            "steps_with_conditionals": 3,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "build-command",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "repository": {
+                "description": "The repository from which the slash command was dispatched",
+                "required": true
+              },
+              "comment-id": {
+                "description": "The comment-id of the slash command",
+                "required": true
+              },
+              "issue-number": {
+                "description": "The issue number in which the slash command was made",
+                "required": true
+              },
+              "actor": {
+                "description": "The user who executed the slash command",
+                "required": true
+              },
+              "checkout-ref": {
+                "description": "The reference to pass to 'ref' to checkout action",
+                "required": true
+              },
+              "checkout-repository": {
+                "description": "The repository to pass to 'repository' to checkout action",
+                "required": false
+              }
+            }
+          },
+          "repository_dispatch": {
+            "types": [
+              "build-command"
+            ]
+          }
+        },
+        "permissions": {},
+        "jobs": {
+          "build-sh": {
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "contents": "write",
+              "pull-requests": "write"
+            },
+            "steps": [
+              {
+                "name": "Create URL to the run output",
+                "id": "vars",
+                "run": "echo \"run-url=https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID\" >> $GITHUB_OUTPUT"
+              },
+              {
+                "name": "Create comment",
+                "uses": "peter-evans/create-or-update-comment@v4",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> [Command run output](${{ steps.vars.outputs.run-url }})\n> Build command workflow started.\n> Installing dependencies\n"
+                }
+              },
+              {
+                "name": "Dump the client payload context",
+                "env": {
+                  "PAYLOAD_CONTEXT": "${{ toJson(github.event.client_payload) }}"
+                },
+                "run": "echo \"$PAYLOAD_CONTEXT\""
+              },
+              {
+                "name": "Dump the inputs payload context",
+                "env": {
+                  "INPUTS_CONTEXT": "${{ toJson(github.event.inputs) }}"
+                },
+                "run": "echo \"$INPUTS_CONTEXT\""
+              },
+              {
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "token": "${{ secrets.GITHUB_TOKEN }}",
+                  "repository": "${{ github.event.inputs.checkout-repository }}",
+                  "ref": "${{ github.event.inputs.checkout-ref }}"
+                }
+              },
+              {
+                "name": "Setup Python",
+                "uses": "actions/setup-python@v5",
+                "with": {
+                  "python-version-file": ".python-version",
+                  "cache": "pip"
+                }
+              },
+              {
+                "run": "python -m pip install uv"
+              },
+              {
+                "run": "uv pip install --system -r .config/python/dev/requirements.txt"
+              },
+              {
+                "name": "Create comment starting build.sh",
+                "uses": "peter-evans/create-or-update-comment@v4",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Running script `./build.sh`\n"
+                }
+              },
+              {
+                "name": "Run build script",
+                "run": "./build.sh"
+              },
+              {
+                "run": "git pull --unshallow || git pull"
+              },
+              {
+                "uses": "stefanzweifel/git-auto-commit-action@v6",
+                "id": "auto-commit-action",
+                "with": {
+                  "commit_message": "[build-command] Update generated files",
+                  "commit_user_name": "megalinter-bot",
+                  "commit_user_email": "129584137+megalinter-bot@users.noreply.github.com"
+                }
+              },
+              {
+                "name": "Add reaction",
+                "uses": "peter-evans/create-or-update-comment@v4",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "reactions": "hooray"
+                }
+              },
+              {
+                "name": "Create final comment updated files",
+                "if": "steps.auto-commit-action.outputs.changes_detected == 'true'",
+                "uses": "peter-evans/create-or-update-comment@v4",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Build command workflow completed updating files.\n"
+                }
+              },
+              {
+                "name": "Create final comment no updated files",
+                "if": "steps.auto-commit-action.outputs.changes_detected == 'false'",
+                "uses": "peter-evans/create-or-update-comment@v4",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Build command workflow completed without updating files.\n"
+                }
+              },
+              {
+                "name": "Add failure reaction",
+                "if": "failure()",
+                "uses": "peter-evans/create-or-update-comment@v4",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.comment.id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Build command workflow failed.\n",
+                  "reactions": -1
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-07-05T16-02-04Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "build-command__2025-07-05T16-02-04Z__9a1eba6fb58f86e9b758a10e803cc22fc9fdb13c.yml",
+          "workflow_name": "build-command",
+          "triggers": {},
+          "permissions": {},
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 124,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build-sh": 15
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build-sh": 15
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 9,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-python@v5",
+              "peter-evans/create-or-update-comment@v4",
+              "stefanzweifel/git-auto-commit-action@v6"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 3,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "build-command",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "repository": {
+                "description": "The repository from which the slash command was dispatched",
+                "required": true
+              },
+              "comment-id": {
+                "description": "The comment-id of the slash command",
+                "required": true
+              },
+              "issue-number": {
+                "description": "The issue number in which the slash command was made",
+                "required": true
+              },
+              "actor": {
+                "description": "The user who executed the slash command",
+                "required": true
+              },
+              "checkout-ref": {
+                "description": "The reference to pass to 'ref' to checkout action",
+                "required": true
+              },
+              "checkout-repository": {
+                "description": "The repository to pass to 'repository' to checkout action",
+                "required": false
+              }
+            }
+          },
+          "repository_dispatch": {
+            "types": [
+              "build-command"
+            ]
+          }
+        },
+        "permissions": {},
+        "jobs": {
+          "build-sh": {
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "contents": "write",
+              "pull-requests": "write"
+            },
+            "steps": [
+              {
+                "name": "Create URL to the run output",
+                "id": "vars",
+                "run": "echo \"run-url=https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID\" >> $GITHUB_OUTPUT"
+              },
+              {
+                "name": "Create comment",
+                "uses": "peter-evans/create-or-update-comment@v4",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> [Command run output](${{ steps.vars.outputs.run-url }})\n> Build command workflow started.\n> Installing dependencies\n"
+                }
+              },
+              {
+                "name": "Dump the client payload context",
+                "env": {
+                  "PAYLOAD_CONTEXT": "${{ toJson(github.event.client_payload) }}"
+                },
+                "run": "echo \"$PAYLOAD_CONTEXT\""
+              },
+              {
+                "name": "Dump the inputs payload context",
+                "env": {
+                  "INPUTS_CONTEXT": "${{ toJson(github.event.inputs) }}"
+                },
+                "run": "echo \"$INPUTS_CONTEXT\""
+              },
+              {
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "token": "${{ secrets.GITHUB_TOKEN }}",
+                  "repository": "${{ github.event.inputs.checkout-repository }}",
+                  "ref": "${{ github.event.inputs.checkout-ref }}"
+                }
+              },
+              {
+                "name": "Setup Python",
+                "uses": "actions/setup-python@v5",
+                "with": {
+                  "python-version-file": ".python-version",
+                  "cache": "pip"
+                }
+              },
+              {
+                "run": "python -m pip install uv"
+              },
+              {
+                "run": "uv pip install --system -r .config/python/dev/requirements.txt"
+              },
+              {
+                "name": "Create comment starting build.sh",
+                "uses": "peter-evans/create-or-update-comment@v4",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Running script `./build.sh`\n"
+                }
+              },
+              {
+                "name": "Run build script",
+                "run": "./build.sh"
+              },
+              {
+                "uses": "stefanzweifel/git-auto-commit-action@v6",
+                "id": "auto-commit-action",
+                "with": {
+                  "commit_message": "[build-command] Update generated files",
+                  "commit_user_name": "megalinter-bot",
+                  "commit_user_email": "129584137+megalinter-bot@users.noreply.github.com"
+                }
+              },
+              {
+                "name": "Add reaction",
+                "uses": "peter-evans/create-or-update-comment@v4",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "reactions": "hooray"
+                }
+              },
+              {
+                "name": "Create final comment updated files",
+                "if": "steps.auto-commit-action.outputs.changes_detected == 'true'",
+                "uses": "peter-evans/create-or-update-comment@v4",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Build command workflow completed updating files.\n"
+                }
+              },
+              {
+                "name": "Create final comment no updated files",
+                "if": "steps.auto-commit-action.outputs.changes_detected == 'false'",
+                "uses": "peter-evans/create-or-update-comment@v4",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Build command workflow completed without updating files.\n"
+                }
+              },
+              {
+                "name": "Add failure reaction",
+                "if": "failure()",
+                "uses": "peter-evans/create-or-update-comment@v4",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.comment.id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Build command workflow failed.\n",
+                  "reactions": -1
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-08-20T22-37-32Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "build-command__2025-08-20T22-37-32Z__a5461f6fd3e9c94a26ddd138918d957b229cb7f3.yml",
+          "workflow_name": "build-command",
+          "triggers": {},
+          "permissions": {},
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 124,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build-sh": 15
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build-sh": 15
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 9,
+            "actions_used": [
+              "actions/checkout@v5",
+              "actions/setup-python@v5",
+              "peter-evans/create-or-update-comment@v4",
+              "stefanzweifel/git-auto-commit-action@v6"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 3,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "build-command",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "repository": {
+                "description": "The repository from which the slash command was dispatched",
+                "required": true
+              },
+              "comment-id": {
+                "description": "The comment-id of the slash command",
+                "required": true
+              },
+              "issue-number": {
+                "description": "The issue number in which the slash command was made",
+                "required": true
+              },
+              "actor": {
+                "description": "The user who executed the slash command",
+                "required": true
+              },
+              "checkout-ref": {
+                "description": "The reference to pass to 'ref' to checkout action",
+                "required": true
+              },
+              "checkout-repository": {
+                "description": "The repository to pass to 'repository' to checkout action",
+                "required": false
+              }
+            }
+          },
+          "repository_dispatch": {
+            "types": [
+              "build-command"
+            ]
+          }
+        },
+        "permissions": {},
+        "jobs": {
+          "build-sh": {
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "contents": "write",
+              "pull-requests": "write"
+            },
+            "steps": [
+              {
+                "name": "Create URL to the run output",
+                "id": "vars",
+                "run": "echo \"run-url=https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID\" >> $GITHUB_OUTPUT"
+              },
+              {
+                "name": "Create comment",
+                "uses": "peter-evans/create-or-update-comment@v4",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> [Command run output](${{ steps.vars.outputs.run-url }})\n> Build command workflow started.\n> Installing dependencies\n"
+                }
+              },
+              {
+                "name": "Dump the client payload context",
+                "env": {
+                  "PAYLOAD_CONTEXT": "${{ toJson(github.event.client_payload) }}"
+                },
+                "run": "echo \"$PAYLOAD_CONTEXT\""
+              },
+              {
+                "name": "Dump the inputs payload context",
+                "env": {
+                  "INPUTS_CONTEXT": "${{ toJson(github.event.inputs) }}"
+                },
+                "run": "echo \"$INPUTS_CONTEXT\""
+              },
+              {
+                "uses": "actions/checkout@v5",
+                "with": {
+                  "token": "${{ secrets.GITHUB_TOKEN }}",
+                  "repository": "${{ github.event.inputs.checkout-repository }}",
+                  "ref": "${{ github.event.inputs.checkout-ref }}"
+                }
+              },
+              {
+                "name": "Setup Python",
+                "uses": "actions/setup-python@v5",
+                "with": {
+                  "python-version-file": ".python-version",
+                  "cache": "pip"
+                }
+              },
+              {
+                "run": "python -m pip install uv"
+              },
+              {
+                "run": "uv pip install --system -r .config/python/dev/requirements.txt"
+              },
+              {
+                "name": "Create comment starting build.sh",
+                "uses": "peter-evans/create-or-update-comment@v4",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Running script `./build.sh`\n"
+                }
+              },
+              {
+                "name": "Run build script",
+                "run": "./build.sh"
+              },
+              {
+                "uses": "stefanzweifel/git-auto-commit-action@v6",
+                "id": "auto-commit-action",
+                "with": {
+                  "commit_message": "[build-command] Update generated files",
+                  "commit_user_name": "megalinter-bot",
+                  "commit_user_email": "129584137+megalinter-bot@users.noreply.github.com"
+                }
+              },
+              {
+                "name": "Add reaction",
+                "uses": "peter-evans/create-or-update-comment@v4",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "reactions": "hooray"
+                }
+              },
+              {
+                "name": "Create final comment updated files",
+                "if": "steps.auto-commit-action.outputs.changes_detected == 'true'",
+                "uses": "peter-evans/create-or-update-comment@v4",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Build command workflow completed updating files.\n"
+                }
+              },
+              {
+                "name": "Create final comment no updated files",
+                "if": "steps.auto-commit-action.outputs.changes_detected == 'false'",
+                "uses": "peter-evans/create-or-update-comment@v4",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Build command workflow completed without updating files.\n"
+                }
+              },
+              {
+                "name": "Add failure reaction",
+                "if": "failure()",
+                "uses": "peter-evans/create-or-update-comment@v4",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.comment.id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Build command workflow failed.\n",
+                  "reactions": -1
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-09-07T12-51-28Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "build-command__2025-09-07T12-51-28Z__a5cf9e58fe98bb4e8527b6f702f8ab85f6fdfbc3.yml",
+          "workflow_name": "build-command",
+          "triggers": {},
+          "permissions": {},
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 124,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build-sh": 15
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build-sh": 15
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 9,
+            "actions_used": [
+              "actions/checkout@v5",
+              "actions/setup-python@v6",
+              "peter-evans/create-or-update-comment@v4",
+              "stefanzweifel/git-auto-commit-action@v6"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 3,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "build-command",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "repository": {
+                "description": "The repository from which the slash command was dispatched",
+                "required": true
+              },
+              "comment-id": {
+                "description": "The comment-id of the slash command",
+                "required": true
+              },
+              "issue-number": {
+                "description": "The issue number in which the slash command was made",
+                "required": true
+              },
+              "actor": {
+                "description": "The user who executed the slash command",
+                "required": true
+              },
+              "checkout-ref": {
+                "description": "The reference to pass to 'ref' to checkout action",
+                "required": true
+              },
+              "checkout-repository": {
+                "description": "The repository to pass to 'repository' to checkout action",
+                "required": false
+              }
+            }
+          },
+          "repository_dispatch": {
+            "types": [
+              "build-command"
+            ]
+          }
+        },
+        "permissions": {},
+        "jobs": {
+          "build-sh": {
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "contents": "write",
+              "pull-requests": "write"
+            },
+            "steps": [
+              {
+                "name": "Create URL to the run output",
+                "id": "vars",
+                "run": "echo \"run-url=https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID\" >> $GITHUB_OUTPUT"
+              },
+              {
+                "name": "Create comment",
+                "uses": "peter-evans/create-or-update-comment@v4",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> [Command run output](${{ steps.vars.outputs.run-url }})\n> Build command workflow started.\n> Installing dependencies\n"
+                }
+              },
+              {
+                "name": "Dump the client payload context",
+                "env": {
+                  "PAYLOAD_CONTEXT": "${{ toJson(github.event.client_payload) }}"
+                },
+                "run": "echo \"$PAYLOAD_CONTEXT\""
+              },
+              {
+                "name": "Dump the inputs payload context",
+                "env": {
+                  "INPUTS_CONTEXT": "${{ toJson(github.event.inputs) }}"
+                },
+                "run": "echo \"$INPUTS_CONTEXT\""
+              },
+              {
+                "uses": "actions/checkout@v5",
+                "with": {
+                  "token": "${{ secrets.GITHUB_TOKEN }}",
+                  "repository": "${{ github.event.inputs.checkout-repository }}",
+                  "ref": "${{ github.event.inputs.checkout-ref }}"
+                }
+              },
+              {
+                "name": "Setup Python",
+                "uses": "actions/setup-python@v6",
+                "with": {
+                  "python-version-file": ".python-version",
+                  "cache": "pip"
+                }
+              },
+              {
+                "run": "python -m pip install uv"
+              },
+              {
+                "run": "uv pip install --system -r .config/python/dev/requirements.txt"
+              },
+              {
+                "name": "Create comment starting build.sh",
+                "uses": "peter-evans/create-or-update-comment@v4",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Running script `./build.sh`\n"
+                }
+              },
+              {
+                "name": "Run build script",
+                "run": "./build.sh"
+              },
+              {
+                "uses": "stefanzweifel/git-auto-commit-action@v6",
+                "id": "auto-commit-action",
+                "with": {
+                  "commit_message": "[build-command] Update generated files",
+                  "commit_user_name": "megalinter-bot",
+                  "commit_user_email": "129584137+megalinter-bot@users.noreply.github.com"
+                }
+              },
+              {
+                "name": "Add reaction",
+                "uses": "peter-evans/create-or-update-comment@v4",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "reactions": "hooray"
+                }
+              },
+              {
+                "name": "Create final comment updated files",
+                "if": "steps.auto-commit-action.outputs.changes_detected == 'true'",
+                "uses": "peter-evans/create-or-update-comment@v4",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Build command workflow completed updating files.\n"
+                }
+              },
+              {
+                "name": "Create final comment no updated files",
+                "if": "steps.auto-commit-action.outputs.changes_detected == 'false'",
+                "uses": "peter-evans/create-or-update-comment@v4",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Build command workflow completed without updating files.\n"
+                }
+              },
+              {
+                "name": "Add failure reaction",
+                "if": "failure()",
+                "uses": "peter-evans/create-or-update-comment@v4",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.comment.id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Build command workflow failed.\n",
+                  "reactions": -1
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-10-06T17-05-57Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "build-command__2025-10-06T17-05-57Z__84c860794fdc3a8cbdbae130a121890bf0561af2.yml",
+          "workflow_name": "build-command",
+          "triggers": {},
+          "permissions": {},
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 124,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build-sh": 15
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build-sh": 15
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 9,
+            "actions_used": [
+              "actions/checkout@v5",
+              "actions/setup-python@v6",
+              "peter-evans/create-or-update-comment@v5",
+              "stefanzweifel/git-auto-commit-action@v6"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 3,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "build-command",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "repository": {
+                "description": "The repository from which the slash command was dispatched",
+                "required": true
+              },
+              "comment-id": {
+                "description": "The comment-id of the slash command",
+                "required": true
+              },
+              "issue-number": {
+                "description": "The issue number in which the slash command was made",
+                "required": true
+              },
+              "actor": {
+                "description": "The user who executed the slash command",
+                "required": true
+              },
+              "checkout-ref": {
+                "description": "The reference to pass to 'ref' to checkout action",
+                "required": true
+              },
+              "checkout-repository": {
+                "description": "The repository to pass to 'repository' to checkout action",
+                "required": false
+              }
+            }
+          },
+          "repository_dispatch": {
+            "types": [
+              "build-command"
+            ]
+          }
+        },
+        "permissions": {},
+        "jobs": {
+          "build-sh": {
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "contents": "write",
+              "pull-requests": "write"
+            },
+            "steps": [
+              {
+                "name": "Create URL to the run output",
+                "id": "vars",
+                "run": "echo \"run-url=https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID\" >> $GITHUB_OUTPUT"
+              },
+              {
+                "name": "Create comment",
+                "uses": "peter-evans/create-or-update-comment@v5",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> [Command run output](${{ steps.vars.outputs.run-url }})\n> Build command workflow started.\n> Installing dependencies\n"
+                }
+              },
+              {
+                "name": "Dump the client payload context",
+                "env": {
+                  "PAYLOAD_CONTEXT": "${{ toJson(github.event.client_payload) }}"
+                },
+                "run": "echo \"$PAYLOAD_CONTEXT\""
+              },
+              {
+                "name": "Dump the inputs payload context",
+                "env": {
+                  "INPUTS_CONTEXT": "${{ toJson(github.event.inputs) }}"
+                },
+                "run": "echo \"$INPUTS_CONTEXT\""
+              },
+              {
+                "uses": "actions/checkout@v5",
+                "with": {
+                  "token": "${{ secrets.GITHUB_TOKEN }}",
+                  "repository": "${{ github.event.inputs.checkout-repository }}",
+                  "ref": "${{ github.event.inputs.checkout-ref }}"
+                }
+              },
+              {
+                "name": "Setup Python",
+                "uses": "actions/setup-python@v6",
+                "with": {
+                  "python-version-file": ".python-version",
+                  "cache": "pip"
+                }
+              },
+              {
+                "run": "python -m pip install uv"
+              },
+              {
+                "run": "uv pip install --system -r .config/python/dev/requirements.txt"
+              },
+              {
+                "name": "Create comment starting build.sh",
+                "uses": "peter-evans/create-or-update-comment@v5",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Running script `./build.sh`\n"
+                }
+              },
+              {
+                "name": "Run build script",
+                "run": "./build.sh"
+              },
+              {
+                "uses": "stefanzweifel/git-auto-commit-action@v6",
+                "id": "auto-commit-action",
+                "with": {
+                  "commit_message": "[build-command] Update generated files",
+                  "commit_user_name": "megalinter-bot",
+                  "commit_user_email": "129584137+megalinter-bot@users.noreply.github.com"
+                }
+              },
+              {
+                "name": "Add reaction",
+                "uses": "peter-evans/create-or-update-comment@v5",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "reactions": "hooray"
+                }
+              },
+              {
+                "name": "Create final comment updated files",
+                "if": "steps.auto-commit-action.outputs.changes_detected == 'true'",
+                "uses": "peter-evans/create-or-update-comment@v5",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Build command workflow completed updating files.\n"
+                }
+              },
+              {
+                "name": "Create final comment no updated files",
+                "if": "steps.auto-commit-action.outputs.changes_detected == 'false'",
+                "uses": "peter-evans/create-or-update-comment@v5",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.inputs.comment-id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Build command workflow completed without updating files.\n"
+                }
+              },
+              {
+                "name": "Add failure reaction",
+                "if": "failure()",
+                "uses": "peter-evans/create-or-update-comment@v5",
+                "with": {
+                  "repository": "${{ github.event.inputs.repository }}",
+                  "comment-id": "${{ github.event.comment.id }}",
+                  "issue-number": "${{ github.event.inputs.issue-number }}",
+                  "body": "> Build command workflow failed.\n",
+                  "reactions": -1
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

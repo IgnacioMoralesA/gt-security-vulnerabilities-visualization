@@ -1,0 +1,405 @@
+{
+  "repo_owner": "diggerhq",
+  "repo_name": "digger",
+  "workflow_name": "latest_tag",
+  "history": {
+    "2024-06-03T15-27-59Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-e634cf08-7289-58e9-9655-dc4afad14e24",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/latest_tag__2024-06-03T15-27-59Z__29bef50034c351dde663206d0aa1e744c3acec38.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 10,
+                  "startColumn": 5,
+                  "endLine": 36,
+                  "endColumn": 26
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "b5ff2aec062e37e8:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "latest_tag__2024-06-03T15-27-59Z__29bef50034c351dde663206d0aa1e744c3acec38.yml",
+          "workflow_name": "Update latest tag for every new latest release",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 36,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "update_latest_tag": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "update_latest_tag": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "EndBug/latest-tag@latest",
+              "actions/checkout@v4",
+              "softprops/action-gh-release@v2"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Update latest tag for every new latest release",
+        "true": {
+          "release": {
+            "types": [
+              "released"
+            ]
+          }
+        },
+        "jobs": {
+          "update_latest_tag": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Check out repository",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Check if the latest release",
+                "id": "check_latest_release",
+                "run": "latest_release=$(curl -s https://api.github.com/repos/${{ github.repository }}/releases/latest | jq -r '.tag_name')\nif [[ \"refs/tags/$latest_release\" == \"${{ github.ref }}\" ]]; then\n  echo \"::set-output name=is_latest::true\"\nelse\n  echo \"::set-output name=is_latest::false\"\nfi\n"
+              },
+              {
+                "name": "Update latest tag",
+                "if": "steps.check_latest_release.outputs.is_latest == 'true'",
+                "uses": "EndBug/latest-tag@latest",
+                "with": {
+                  "ref": "latest",
+                  "description": "Latest tag",
+                  "force-branch": false
+                }
+              },
+              {
+                "name": "Upload release asset",
+                "if": "steps.check_latest_release.outputs.is_latest == 'true'",
+                "uses": "softprops/action-gh-release@v2",
+                "with": {
+                  "files": "LICENSE"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-06-12T09-30-15Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-34df5bf3-7445-5885-9bdf-f2acacd7ace2",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/latest_tag__2024-06-12T09-30-15Z__d38a43b691445680c4ea4b481ee0a5def94b1a45.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 11,
+                  "startColumn": 5,
+                  "endLine": 44,
+                  "endColumn": 46
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "95b7528ad4458515:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "latest_tag__2024-06-12T09-30-15Z__d38a43b691445680c4ea4b481ee0a5def94b1a45.yml",
+          "workflow_name": "Update latest tag for every new latest release",
+          "triggers": {
+            "release": {
+              "types": [
+                "released"
+              ]
+            }
+          },
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 44,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "update_latest_tag": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 1
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "update_latest_tag": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "EndBug/latest-tag@latest",
+              "actions/checkout@v4",
+              "softprops/action-gh-release@v2"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Update latest tag for every new latest release",
+        "true": {
+          "release": {
+            "types": [
+              "released"
+            ]
+          }
+        },
+        "jobs": {
+          "update_latest_tag": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Check out repository",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Check if the latest release",
+                "id": "check_latest_release",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                },
+                "run": "latest_release=$(curl -s -H \"Authorization: token $GITHUB_TOKEN\" https://api.github.com/repos/${{ github.repository }}/releases/latest | jq -r '.tag_name')\necho \"Latest release: $latest_release\"\necho \"Current release: ${{ github.ref }}\"\nif [[ \"refs/tags/$latest_release\" == \"${{ github.ref }}\" ]]; then\n  echo \"is_latest=true\" >> $GITHUB_OUTPUT\nelse\n  echo \"is_latest=false\" >> $GITHUB_OUTPUT\nfi\n"
+              },
+              {
+                "name": "Update latest tag",
+                "if": "steps.check_latest_release.outputs.is_latest == 'true'",
+                "uses": "EndBug/latest-tag@latest",
+                "with": {
+                  "ref": "latest",
+                  "description": "Latest tag",
+                  "force-branch": false
+                }
+              },
+              {
+                "name": "Upload release asset",
+                "if": "steps.check_latest_release.outputs.is_latest == 'true'",
+                "uses": "softprops/action-gh-release@v2",
+                "with": {
+                  "files": "LICENSE",
+                  "token": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-06-04T05-30-44Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-b68e58f6-ac3c-5c77-b3a6-87f4e385e687",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/latest_tag__2024-06-04T05-30-44Z__e9cb76b7d00c44507e44b684ad342f0d24c647fc.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 10,
+                  "startColumn": 5,
+                  "endLine": 42,
+                  "endColumn": 46
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "b5ff2aec062e37e8:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "latest_tag__2024-06-04T05-30-44Z__e9cb76b7d00c44507e44b684ad342f0d24c647fc.yml",
+          "workflow_name": "Update latest tag for every new latest release",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 42,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "update_latest_tag": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "update_latest_tag": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "EndBug/latest-tag@latest",
+              "actions/checkout@v4",
+              "softprops/action-gh-release@v2"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Update latest tag for every new latest release",
+        "true": {
+          "release": {
+            "types": [
+              "released"
+            ]
+          }
+        },
+        "jobs": {
+          "update_latest_tag": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Check out repository",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Check if the latest release",
+                "id": "check_latest_release",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                },
+                "run": "latest_release=$(curl -s -H \"Authorization: token $GITHUB_TOKEN\" https://api.github.com/repos/${{ github.repository }}/releases/latest | jq -r '.tag_name')\necho \"Latest release: $latest_release\"\necho \"Current release: ${{ github.ref }}\"\nif [[ \"refs/tags/$latest_release\" == \"${{ github.ref }}\" ]]; then            \n  echo \"is_latest=true\" >> $GITHUB_OUTPUT            \nelse\n  echo \"is_latest=false\" >> $GITHUB_OUTPUT\nfi\n"
+              },
+              {
+                "name": "Update latest tag",
+                "if": "steps.check_latest_release.outputs.is_latest == 'true'",
+                "uses": "EndBug/latest-tag@latest",
+                "with": {
+                  "ref": "latest",
+                  "description": "Latest tag",
+                  "force-branch": false
+                }
+              },
+              {
+                "name": "Upload release asset",
+                "if": "steps.check_latest_release.outputs.is_latest == 'true'",
+                "uses": "softprops/action-gh-release@v2",
+                "with": {
+                  "files": "LICENSE",
+                  "token": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,925 @@
+{
+  "repo_owner": "amannn",
+  "repo_name": "action-semantic-pull-request",
+  "workflow_name": "lint-pr-title-preview-outputErrorMessage",
+  "history": {
+    "2023-03-16T11-48-23Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-3242a11b-087c-587d-9d06-5aa84e58e2e8",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/lint-pr-title-preview-outputErrorMessage__2023-03-16T11-48-23Z__e797448a07516738bcfdd6f26ad1d1f84c58d0cc.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 11,
+                  "startColumn": 5,
+                  "endLine": 44,
+                  "endColumn": 23
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "fd6a05c70aa1a1fd:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "lint-pr-title-preview-outputErrorMessage__2023-03-16T11-48-23Z__e797448a07516738bcfdd6f26ad1d1f84c58d0cc.yml",
+          "workflow_name": "Lint PR title preview (current branch, outputErrorMessage)",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 44,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "main": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "main": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 5,
+            "actions_used": [
+              "./",
+              "actions/checkout@v2",
+              "actions/setup-node@v2",
+              "marocchino/sticky-pull-request-comment@v2"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Lint PR title preview (current branch, outputErrorMessage)",
+        "true": {
+          "pull_request": {
+            "types": [
+              "opened",
+              "edited",
+              "synchronize"
+            ]
+          }
+        },
+        "jobs": {
+          "main": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "uses": "actions/setup-node@v2",
+                "with": {
+                  "node-version": 16
+                }
+              },
+              {
+                "run": "yarn install"
+              },
+              {
+                "run": "yarn build"
+              },
+              {
+                "uses": "./",
+                "id": "lint_pr_title",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "uses": "marocchino/sticky-pull-request-comment@v2",
+                "if": "always() && (steps.lint_pr_title.outputs.error_message != null)",
+                "with": {
+                  "header": "pr-title-lint-error",
+                  "message": "Hey there and thank you for opening this pull request! \ud83d\udc4b\ud83c\udffc\n\nWe require pull request titles to follow the [Conventional Commits specification](https://www.conventionalcommits.org/en/v1.0.0/) and it looks like your proposed title needs to be adjusted.\n\nDetails:\n\n```\n${{ steps.lint_pr_title.outputs.error_message }}\n```\n"
+                }
+              },
+              {
+                "if": "${{ steps.lint_pr_title.outputs.error_message == null }}",
+                "uses": "marocchino/sticky-pull-request-comment@v2",
+                "with": {
+                  "header": "pr-title-lint-error",
+                  "delete": true
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-05-16T08-24-56Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "lint-pr-title-preview-outputErrorMessage__2023-05-16T08-24-56Z__c91b8fb449859051dc39d9684aa20a73788e5e5e.yml",
+          "workflow_name": "Lint PR title preview (current branch, outputErrorMessage)",
+          "triggers": {},
+          "permissions": {
+            "pull-requests": "read"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 47,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "main": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "main": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 5,
+            "actions_used": [
+              "./",
+              "actions/checkout@v3",
+              "actions/setup-node@v3",
+              "marocchino/sticky-pull-request-comment@v2"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Lint PR title preview (current branch, outputErrorMessage)",
+        "true": {
+          "pull_request": {
+            "types": [
+              "opened",
+              "edited",
+              "synchronize"
+            ]
+          }
+        },
+        "permissions": {
+          "pull-requests": "read"
+        },
+        "jobs": {
+          "main": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "uses": "actions/setup-node@v3",
+                "with": {
+                  "node-version": 16
+                }
+              },
+              {
+                "run": "yarn install"
+              },
+              {
+                "run": "yarn build"
+              },
+              {
+                "uses": "./",
+                "id": "lint_pr_title",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "uses": "marocchino/sticky-pull-request-comment@v2",
+                "if": "always() && (steps.lint_pr_title.outputs.error_message != null)",
+                "with": {
+                  "header": "pr-title-lint-error",
+                  "message": "Hey there and thank you for opening this pull request! \ud83d\udc4b\ud83c\udffc\n\nWe require pull request titles to follow the [Conventional Commits specification](https://www.conventionalcommits.org/en/v1.0.0/) and it looks like your proposed title needs to be adjusted.\n\nDetails:\n\n```\n${{ steps.lint_pr_title.outputs.error_message }}\n```\n"
+                }
+              },
+              {
+                "if": "${{ steps.lint_pr_title.outputs.error_message == null }}",
+                "uses": "marocchino/sticky-pull-request-comment@v2",
+                "with": {
+                  "header": "pr-title-lint-error",
+                  "delete": true
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-06-26T07-20-44Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "lint-pr-title-preview-outputErrorMessage__2023-06-26T07-20-44Z__a67a88bf051cb544d35cce2a3b64bd0216bcbc65.yml",
+          "workflow_name": "Lint PR title preview (current branch, outputErrorMessage)",
+          "triggers": {},
+          "permissions": {
+            "pull-requests": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 47,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "main": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "main": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 5,
+            "actions_used": [
+              "./",
+              "actions/checkout@v3",
+              "actions/setup-node@v3",
+              "marocchino/sticky-pull-request-comment@v2"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Lint PR title preview (current branch, outputErrorMessage)",
+        "true": {
+          "pull_request": {
+            "types": [
+              "opened",
+              "edited",
+              "synchronize"
+            ]
+          }
+        },
+        "permissions": {
+          "pull-requests": "write"
+        },
+        "jobs": {
+          "main": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "uses": "actions/setup-node@v3",
+                "with": {
+                  "node-version": 16
+                }
+              },
+              {
+                "run": "yarn install"
+              },
+              {
+                "run": "yarn build"
+              },
+              {
+                "uses": "./",
+                "id": "lint_pr_title",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "uses": "marocchino/sticky-pull-request-comment@v2",
+                "if": "always() && (steps.lint_pr_title.outputs.error_message != null)",
+                "with": {
+                  "header": "pr-title-lint-error",
+                  "message": "Hey there and thank you for opening this pull request! \ud83d\udc4b\ud83c\udffc\n\nWe require pull request titles to follow the [Conventional Commits specification](https://www.conventionalcommits.org/en/v1.0.0/) and it looks like your proposed title needs to be adjusted.\n\nDetails:\n\n```\n${{ steps.lint_pr_title.outputs.error_message }}\n```\n"
+                }
+              },
+              {
+                "if": "${{ steps.lint_pr_title.outputs.error_message == null }}",
+                "uses": "marocchino/sticky-pull-request-comment@v2",
+                "with": {
+                  "header": "pr-title-lint-error",
+                  "delete": true
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-09-25T11-42-26Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "lint-pr-title-preview-outputErrorMessage__2023-09-25T11-42-26Z__4c0d5a21fc86635c67cc57ffe89d842c34ade284.yml",
+          "workflow_name": "Lint PR title preview (current branch, outputErrorMessage)",
+          "triggers": {},
+          "permissions": {
+            "pull-requests": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 47,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "main": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "main": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 5,
+            "actions_used": [
+              "./",
+              "actions/checkout@v3",
+              "actions/setup-node@v3",
+              "marocchino/sticky-pull-request-comment@v2"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Lint PR title preview (current branch, outputErrorMessage)",
+        "true": {
+          "pull_request": {
+            "types": [
+              "opened",
+              "edited",
+              "synchronize"
+            ]
+          }
+        },
+        "permissions": {
+          "pull-requests": "write"
+        },
+        "jobs": {
+          "main": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "uses": "actions/setup-node@v3",
+                "with": {
+                  "node-version": 20
+                }
+              },
+              {
+                "run": "yarn install"
+              },
+              {
+                "run": "yarn build"
+              },
+              {
+                "uses": "./",
+                "id": "lint_pr_title",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "uses": "marocchino/sticky-pull-request-comment@v2",
+                "if": "always() && (steps.lint_pr_title.outputs.error_message != null)",
+                "with": {
+                  "header": "pr-title-lint-error",
+                  "message": "Hey there and thank you for opening this pull request! \ud83d\udc4b\ud83c\udffc\n\nWe require pull request titles to follow the [Conventional Commits specification](https://www.conventionalcommits.org/en/v1.0.0/) and it looks like your proposed title needs to be adjusted.\n\nDetails:\n\n```\n${{ steps.lint_pr_title.outputs.error_message }}\n```\n"
+                }
+              },
+              {
+                "if": "${{ steps.lint_pr_title.outputs.error_message == null }}",
+                "uses": "marocchino/sticky-pull-request-comment@v2",
+                "with": {
+                  "header": "pr-title-lint-error",
+                  "delete": true
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-03-25T10-38-58Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "lint-pr-title-preview-outputErrorMessage__2025-03-25T10-38-58Z__04501d43b574e4c1d23c629ffe4dcec27acfdeff.yml",
+          "workflow_name": "Lint PR title preview (current branch, outputErrorMessage)",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 46,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "main": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "main": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 5,
+            "actions_used": [
+              "./",
+              "actions/checkout@v3",
+              "actions/setup-node@v3",
+              "marocchino/sticky-pull-request-comment@v2"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Lint PR title preview (current branch, outputErrorMessage)",
+        "true": {
+          "pull_request": {
+            "types": [
+              "opened",
+              "edited",
+              "synchronize"
+            ]
+          }
+        },
+        "jobs": {
+          "main": {
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "pull-requests": "write"
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "uses": "actions/setup-node@v3",
+                "with": {
+                  "node-version": 20
+                }
+              },
+              {
+                "run": "yarn install"
+              },
+              {
+                "run": "yarn build"
+              },
+              {
+                "uses": "./",
+                "id": "lint_pr_title",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "uses": "marocchino/sticky-pull-request-comment@v2",
+                "if": "always() && (steps.lint_pr_title.outputs.error_message != null)",
+                "with": {
+                  "header": "pr-title-lint-error",
+                  "message": "Hey there and thank you for opening this pull request! \ud83d\udc4b\ud83c\udffc\n\nWe require pull request titles to follow the [Conventional Commits specification](https://www.conventionalcommits.org/en/v1.0.0/) and it looks like your proposed title needs to be adjusted.\n\nDetails:\n\n```\n${{ steps.lint_pr_title.outputs.error_message }}\n```\n"
+                }
+              },
+              {
+                "if": "${{ steps.lint_pr_title.outputs.error_message == null }}",
+                "uses": "marocchino/sticky-pull-request-comment@v2",
+                "with": {
+                  "header": "pr-title-lint-error",
+                  "delete": true
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-08-13T11-00-36Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "lint-pr-title-preview-outputErrorMessage__2025-08-13T11-00-36Z__631ffdc0283366e1d671846987cd2532bebcaba7.yml",
+          "workflow_name": "Lint PR title preview (current branch, outputErrorMessage)",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 46,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "main": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "main": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 5,
+            "actions_used": [
+              "./",
+              "actions/checkout@v5",
+              "actions/setup-node@v4",
+              "marocchino/sticky-pull-request-comment@v2"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Lint PR title preview (current branch, outputErrorMessage)",
+        "true": {
+          "pull_request": {
+            "types": [
+              "opened",
+              "edited",
+              "synchronize"
+            ]
+          }
+        },
+        "jobs": {
+          "main": {
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "pull-requests": "write"
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v5"
+              },
+              {
+                "uses": "actions/setup-node@v4",
+                "with": {
+                  "node-version": 20
+                }
+              },
+              {
+                "run": "yarn install"
+              },
+              {
+                "run": "yarn build"
+              },
+              {
+                "uses": "./",
+                "id": "lint_pr_title",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "uses": "marocchino/sticky-pull-request-comment@v2",
+                "if": "always() && (steps.lint_pr_title.outputs.error_message != null)",
+                "with": {
+                  "header": "pr-title-lint-error",
+                  "message": "Hey there and thank you for opening this pull request! \ud83d\udc4b\ud83c\udffc\n\nWe require pull request titles to follow the [Conventional Commits specification](https://www.conventionalcommits.org/en/v1.0.0/) and it looks like your proposed title needs to be adjusted.\n\nDetails:\n\n```\n${{ steps.lint_pr_title.outputs.error_message }}\n```\n"
+                }
+              },
+              {
+                "if": "${{ steps.lint_pr_title.outputs.error_message == null }}",
+                "uses": "marocchino/sticky-pull-request-comment@v2",
+                "with": {
+                  "header": "pr-title-lint-error",
+                  "delete": true
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-08-13T12-59-38Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "lint-pr-title-preview-outputErrorMessage__2025-08-13T12-59-38Z__bc0c9a79abfe07c0f08c498dd4a040bd22fe9b79.yml",
+          "workflow_name": "Lint PR title preview (current branch, outputErrorMessage)",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 49,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "main": 8
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "main": 8
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 6,
+            "actions_used": [
+              "./",
+              "actions/checkout@v5",
+              "actions/setup-node@v4",
+              "marocchino/sticky-pull-request-comment@v2",
+              "pnpm/action-setup@v4"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Lint PR title preview (current branch, outputErrorMessage)",
+        "true": {
+          "pull_request": {
+            "types": [
+              "opened",
+              "edited",
+              "synchronize"
+            ]
+          }
+        },
+        "jobs": {
+          "main": {
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "pull-requests": "write"
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v5"
+              },
+              {
+                "uses": "pnpm/action-setup@v4",
+                "with": {
+                  "version": 9
+                }
+              },
+              {
+                "uses": "actions/setup-node@v4",
+                "with": {
+                  "node-version": 24
+                }
+              },
+              {
+                "run": "pnpm install"
+              },
+              {
+                "run": "pnpm build"
+              },
+              {
+                "uses": "./",
+                "id": "lint_pr_title",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "uses": "marocchino/sticky-pull-request-comment@v2",
+                "if": "always() && (steps.lint_pr_title.outputs.error_message != null)",
+                "with": {
+                  "header": "pr-title-lint-error",
+                  "message": "Hey there and thank you for opening this pull request! \ud83d\udc4b\ud83c\udffc\n\nWe require pull request titles to follow the [Conventional Commits specification](https://www.conventionalcommits.org/en/v1.0.0/) and it looks like your proposed title needs to be adjusted.\n\nDetails:\n\n```\n${{ steps.lint_pr_title.outputs.error_message }}\n```\n"
+                }
+              },
+              {
+                "if": "${{ steps.lint_pr_title.outputs.error_message == null }}",
+                "uses": "marocchino/sticky-pull-request-comment@v2",
+                "with": {
+                  "header": "pr-title-lint-error",
+                  "delete": true
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-10-01T05-50-38Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "lint-pr-title-preview-outputErrorMessage__2025-10-01T05-50-38Z__d07556525014f3170a42825656aa5554ad40ba88.yml",
+          "workflow_name": "Lint PR title preview (current branch, outputErrorMessage)",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 49,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "main": 8
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "main": 8
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 6,
+            "actions_used": [
+              "./",
+              "actions/checkout@v5",
+              "actions/setup-node@v5",
+              "marocchino/sticky-pull-request-comment@v2",
+              "pnpm/action-setup@v4"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Lint PR title preview (current branch, outputErrorMessage)",
+        "true": {
+          "pull_request": {
+            "types": [
+              "opened",
+              "edited",
+              "synchronize"
+            ]
+          }
+        },
+        "jobs": {
+          "main": {
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "pull-requests": "write"
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v5"
+              },
+              {
+                "uses": "pnpm/action-setup@v4",
+                "with": {
+                  "version": 9
+                }
+              },
+              {
+                "uses": "actions/setup-node@v5",
+                "with": {
+                  "node-version": 24
+                }
+              },
+              {
+                "run": "pnpm install"
+              },
+              {
+                "run": "pnpm build"
+              },
+              {
+                "uses": "./",
+                "id": "lint_pr_title",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "uses": "marocchino/sticky-pull-request-comment@v2",
+                "if": "always() && (steps.lint_pr_title.outputs.error_message != null)",
+                "with": {
+                  "header": "pr-title-lint-error",
+                  "message": "Hey there and thank you for opening this pull request! \ud83d\udc4b\ud83c\udffc\n\nWe require pull request titles to follow the [Conventional Commits specification](https://www.conventionalcommits.org/en/v1.0.0/) and it looks like your proposed title needs to be adjusted.\n\nDetails:\n\n```\n${{ steps.lint_pr_title.outputs.error_message }}\n```\n"
+                }
+              },
+              {
+                "if": "${{ steps.lint_pr_title.outputs.error_message == null }}",
+                "uses": "marocchino/sticky-pull-request-comment@v2",
+                "with": {
+                  "header": "pr-title-lint-error",
+                  "delete": true
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

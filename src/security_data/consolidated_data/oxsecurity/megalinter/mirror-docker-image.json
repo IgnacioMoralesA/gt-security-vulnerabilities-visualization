@@ -1,0 +1,1149 @@
+{
+  "repo_owner": "oxsecurity",
+  "repo_name": "megalinter",
+  "workflow_name": "mirror-docker-image",
+  "history": {
+    "2024-10-20T10-21-46Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-236189f5-ce37-5cad-ac7d-456371058fc5",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/mirror-docker-image__2024-10-20T10-21-46Z__19bba713f7da6b1acf7f03006170358bcc34edc3.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 19,
+                  "startColumn": 5,
+                  "endLine": 42,
+                  "endColumn": 68
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "f3225aeb04c37c2b:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "mirror-docker-image__2024-10-20T10-21-46Z__19bba713f7da6b1acf7f03006170358bcc34edc3.yml",
+          "workflow_name": "Mirror docker image",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 42,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "copy-to-docker-hub": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "copy-to-docker-hub": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 1,
+            "actions_used": [
+              "docker/login-action@v3"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Mirror docker image",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "source-image": {
+                "description": "Source of the image on ghcr.io",
+                "required": true
+              },
+              "target-image": {
+                "description": "Target of the image hosted on docker hub",
+                "required": true
+              },
+              "free-space-before": {
+                "description": "Free space on the runner before pulling and pushing docker image",
+                "required": false,
+                "default": "true"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "copy-to-docker-hub": {
+            "runs-on": "ubuntu-latest",
+            "environment": {
+              "name": "beta"
+            },
+            "steps": [
+              {
+                "name": "Free Disk space",
+                "if": "github.event.inputs.free-space-before == 'true'",
+                "shell": "bash",
+                "run": "sudo rm -rf /usr/local/lib/android  # will release about 10 GB if you don't need Android\nsudo rm -rf /usr/share/dotnet # will release about 20GB if you don't need .NET\n"
+              },
+              {
+                "name": "Login to Docker Hub",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "username": "${{ secrets.DOCKER_USERNAME }}",
+                  "password": "${{ secrets.DOCKER_PASSWORD }}"
+                }
+              },
+              {
+                "name": "Pull image from GHCR",
+                "run": "docker pull \"${{ github.event.inputs.source-image }}\""
+              },
+              {
+                "name": "Tag image for Docker Hub",
+                "run": "docker tag \"${{ github.event.inputs.source-image }}\" \"${{ github.event.inputs.target-image }}\""
+              },
+              {
+                "name": "Push image to Docker Hub",
+                "run": "docker push \"${{ github.event.inputs.target-image }}\""
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-10-20T11-49-14Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-2627d3e8-8465-5ab8-baec-64c24c5addb3",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/mirror-docker-image__2024-10-20T11-49-14Z__af6d8d160b5d61964ce63815d5ac08486a58f11a.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 20,
+                  "startColumn": 5,
+                  "endLine": 46,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "69f0634bcd816010:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-ca0084ac-e80a-5256-97ec-92da2e1148dd",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/mirror-docker-image__2024-10-20T11-49-14Z__af6d8d160b5d61964ce63815d5ac08486a58f11a.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 47,
+                  "startColumn": 5,
+                  "endLine": 71,
+                  "endColumn": 68
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "b79280ce50df7254:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "mirror-docker-image__2024-10-20T11-49-14Z__af6d8d160b5d61964ce63815d5ac08486a58f11a.yml",
+          "workflow_name": "Mirror docker image",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 71,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "copy-to-docker-hub-alpha": 5,
+            "copy-to-docker-hub-main": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "copy-to-docker-hub-alpha": 5,
+              "copy-to-docker-hub-main": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "docker/login-action@v3"
+            ],
+            "num_run_commands": 8,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Mirror docker image",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "source-image": {
+                "description": "Source of the image on ghcr.io",
+                "required": true
+              },
+              "target-image": {
+                "description": "Target of the image hosted on docker hub",
+                "required": true
+              },
+              "free-space-before": {
+                "description": "Free space on the runner before pulling and pushing docker image",
+                "required": false,
+                "default": "true"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "copy-to-docker-hub-alpha": {
+            "if": "github.ref_name == 'alpha'",
+            "runs-on": "ubuntu-latest",
+            "environment": {
+              "name": "alpha"
+            },
+            "steps": [
+              {
+                "name": "Free Disk space",
+                "if": "github.event.inputs.free-space-before == 'true'",
+                "shell": "bash",
+                "run": "sudo rm -rf /usr/local/lib/android  # will release about 10 GB if you don't need Android\nsudo rm -rf /usr/share/dotnet # will release about 20GB if you don't need .NET\n"
+              },
+              {
+                "name": "Login to Docker Hub",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "username": "${{ secrets.DOCKER_USERNAME }}",
+                  "password": "${{ secrets.DOCKER_PASSWORD }}"
+                }
+              },
+              {
+                "name": "Pull image from GHCR",
+                "run": "docker pull \"${{ github.event.inputs.source-image }}\""
+              },
+              {
+                "name": "Tag image for Docker Hub",
+                "run": "docker tag \"${{ github.event.inputs.source-image }}\" \"${{ github.event.inputs.target-image }}\""
+              },
+              {
+                "name": "Push image to Docker Hub",
+                "run": "docker push \"${{ github.event.inputs.target-image }}\""
+              }
+            ]
+          },
+          "copy-to-docker-hub-main": {
+            "if": "github.ref_name == 'main'",
+            "runs-on": "ubuntu-latest",
+            "environment": {
+              "name": "beta"
+            },
+            "steps": [
+              {
+                "name": "Free Disk space",
+                "if": "github.event.inputs.free-space-before == 'true'",
+                "shell": "bash",
+                "run": "sudo rm -rf /usr/local/lib/android  # will release about 10 GB if you don't need Android\nsudo rm -rf /usr/share/dotnet # will release about 20GB if you don't need .NET\n"
+              },
+              {
+                "name": "Login to Docker Hub",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "username": "${{ secrets.DOCKER_USERNAME }}",
+                  "password": "${{ secrets.DOCKER_PASSWORD }}"
+                }
+              },
+              {
+                "name": "Pull image from GHCR",
+                "run": "docker pull \"${{ github.event.inputs.source-image }}\""
+              },
+              {
+                "name": "Tag image for Docker Hub",
+                "run": "docker tag \"${{ github.event.inputs.source-image }}\" \"${{ github.event.inputs.target-image }}\""
+              },
+              {
+                "name": "Push image to Docker Hub",
+                "run": "docker push \"${{ github.event.inputs.target-image }}\""
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-11-17T13-49-53Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-b17921e0-9cf7-5a55-a4ea-beafed6721e5",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/mirror-docker-image__2024-11-17T13-49-53Z__dac68e94ba988c799b67a4bd0a39d51d0cec7a26.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 20,
+                  "startColumn": 5,
+                  "endLine": 46,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "69f0634bcd816010:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-aa0c52bb-a698-5473-8226-3bd9059996f3",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/mirror-docker-image__2024-11-17T13-49-53Z__dac68e94ba988c799b67a4bd0a39d51d0cec7a26.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 47,
+                  "startColumn": 5,
+                  "endLine": 71,
+                  "endColumn": 68
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "83840de6ef89b641:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "mirror-docker-image__2024-11-17T13-49-53Z__dac68e94ba988c799b67a4bd0a39d51d0cec7a26.yml",
+          "workflow_name": "Mirror docker image",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 71,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "copy-to-docker-hub-alpha": 5,
+            "copy-to-docker-hub-main": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "copy-to-docker-hub-alpha": 5,
+              "copy-to-docker-hub-main": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "docker/login-action@v3"
+            ],
+            "num_run_commands": 8,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Mirror docker image",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "source-image": {
+                "description": "Source of the image on ghcr.io",
+                "required": true
+              },
+              "target-image": {
+                "description": "Target of the image hosted on docker hub",
+                "required": true
+              },
+              "free-space-before": {
+                "description": "Free space on the runner before pulling and pushing docker image",
+                "required": false,
+                "default": "true"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "copy-to-docker-hub-alpha": {
+            "if": "github.ref_name == 'alpha'",
+            "runs-on": "ubuntu-latest",
+            "environment": {
+              "name": "alpha"
+            },
+            "steps": [
+              {
+                "name": "Free Disk space",
+                "if": "github.event.inputs.free-space-before == 'true'",
+                "shell": "bash",
+                "run": "sudo rm -rf /usr/local/lib/android  # will release about 10 GB if you don't need Android\nsudo rm -rf /usr/share/dotnet # will release about 20GB if you don't need .NET\n"
+              },
+              {
+                "name": "Login to Docker Hub",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "username": "${{ secrets.DOCKER_USERNAME }}",
+                  "password": "${{ secrets.DOCKER_PASSWORD }}"
+                }
+              },
+              {
+                "name": "Pull image from GHCR",
+                "run": "docker pull \"${{ github.event.inputs.source-image }}\""
+              },
+              {
+                "name": "Tag image for Docker Hub",
+                "run": "docker tag \"${{ github.event.inputs.source-image }}\" \"${{ github.event.inputs.target-image }}\""
+              },
+              {
+                "name": "Push image to Docker Hub",
+                "run": "docker push \"${{ github.event.inputs.target-image }}\""
+              }
+            ]
+          },
+          "copy-to-docker-hub-main": {
+            "if": "github.ref_name == 'main' || startsWith(github.ref_name, 'v')",
+            "runs-on": "ubuntu-latest",
+            "environment": {
+              "name": "beta"
+            },
+            "steps": [
+              {
+                "name": "Free Disk space",
+                "if": "github.event.inputs.free-space-before == 'true'",
+                "shell": "bash",
+                "run": "sudo rm -rf /usr/local/lib/android  # will release about 10 GB if you don't need Android\nsudo rm -rf /usr/share/dotnet # will release about 20GB if you don't need .NET\n"
+              },
+              {
+                "name": "Login to Docker Hub",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "username": "${{ secrets.DOCKER_USERNAME }}",
+                  "password": "${{ secrets.DOCKER_PASSWORD }}"
+                }
+              },
+              {
+                "name": "Pull image from GHCR",
+                "run": "docker pull \"${{ github.event.inputs.source-image }}\""
+              },
+              {
+                "name": "Tag image for Docker Hub",
+                "run": "docker tag \"${{ github.event.inputs.source-image }}\" \"${{ github.event.inputs.target-image }}\""
+              },
+              {
+                "name": "Push image to Docker Hub",
+                "run": "docker push \"${{ github.event.inputs.target-image }}\""
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-11-23T08-27-50Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-a52ffe53-35ec-526d-a698-79e3523b7cc8",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/mirror-docker-image__2024-11-23T08-27-50Z__9824f376627430fff6d2e19116c59ea2bbd7f412.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 20,
+                  "startColumn": 5,
+                  "endLine": 46,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "7224ee8f1e320552:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-64c20ab5-7f16-5664-963c-5aac39184ec4",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/mirror-docker-image__2024-11-23T08-27-50Z__9824f376627430fff6d2e19116c59ea2bbd7f412.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 47,
+                  "startColumn": 5,
+                  "endLine": 73,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "93494cbfb1521d81:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-ffd07b74-d4fb-56f5-8de3-fba02d62c48a",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/mirror-docker-image__2024-11-23T08-27-50Z__9824f376627430fff6d2e19116c59ea2bbd7f412.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 74,
+                  "startColumn": 5,
+                  "endLine": 98,
+                  "endColumn": 67
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "5a98e2063b557567:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "mirror-docker-image__2024-11-23T08-27-50Z__9824f376627430fff6d2e19116c59ea2bbd7f412.yml",
+          "workflow_name": "Mirror docker image",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 98,
+          "num_jobs": 3,
+          "steps_per_job": {
+            "copy-to-docker-hub-alpha": 5,
+            "copy-to-docker-hub-main": 5,
+            "copy-to-docker-hub-release": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 3,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "copy-to-docker-hub-alpha": 5,
+              "copy-to-docker-hub-main": 5,
+              "copy-to-docker-hub-release": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "docker/login-action@v3"
+            ],
+            "num_run_commands": 12,
+            "steps_with_conditionals": 3,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Mirror docker image",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "source-image": {
+                "description": "Source of the image on ghcr.io",
+                "required": true
+              },
+              "target-image": {
+                "description": "Target of the image hosted on docker hub",
+                "required": true
+              },
+              "free-space-before": {
+                "description": "Free space on the runner before pulling and pushing docker image",
+                "required": false,
+                "default": "true"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "copy-to-docker-hub-alpha": {
+            "if": "github.ref_name == 'alpha' && endsWith(github.event.inputs.source-image,'alpha') && endsWith(github.event.inputs.target-image,'alpha')",
+            "runs-on": "ubuntu-latest",
+            "environment": {
+              "name": "alpha"
+            },
+            "steps": [
+              {
+                "name": "Free Disk space",
+                "if": "github.event.inputs.free-space-before == 'true'",
+                "shell": "bash",
+                "run": "sudo rm -rf /usr/local/lib/android  # will release about 10 GB if you don't need Android\nsudo rm -rf /usr/share/dotnet # will release about 20GB if you don't need .NET\n"
+              },
+              {
+                "name": "Login to Docker Hub",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "username": "${{ secrets.DOCKER_USERNAME }}",
+                  "password": "${{ secrets.DOCKER_PASSWORD }}"
+                }
+              },
+              {
+                "name": "Pull image from GHCR",
+                "run": "docker pull \"${{ github.event.inputs.source-image }}\""
+              },
+              {
+                "name": "Tag image for Docker Hub",
+                "run": "docker tag \"${{ github.event.inputs.source-image }}\" \"${{ github.event.inputs.target-image }}\""
+              },
+              {
+                "name": "Push image to Docker Hub",
+                "run": "docker push \"${{ github.event.inputs.target-image }}\""
+              }
+            ]
+          },
+          "copy-to-docker-hub-main": {
+            "if": "github.ref_name == 'main' && endsWith(github.event.inputs.source-image,'beta') && endsWith(github.event.inputs.target-image,'beta')",
+            "runs-on": "ubuntu-latest",
+            "environment": {
+              "name": "beta"
+            },
+            "steps": [
+              {
+                "name": "Free Disk space",
+                "if": "github.event.inputs.free-space-before == 'true'",
+                "shell": "bash",
+                "run": "sudo rm -rf /usr/local/lib/android  # will release about 10 GB if you don't need Android\nsudo rm -rf /usr/share/dotnet # will release about 20GB if you don't need .NET\n"
+              },
+              {
+                "name": "Login to Docker Hub",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "username": "${{ secrets.DOCKER_USERNAME }}",
+                  "password": "${{ secrets.DOCKER_PASSWORD }}"
+                }
+              },
+              {
+                "name": "Pull image from GHCR",
+                "run": "docker pull \"${{ github.event.inputs.source-image }}\""
+              },
+              {
+                "name": "Tag image for Docker Hub",
+                "run": "docker tag \"${{ github.event.inputs.source-image }}\" \"${{ github.event.inputs.target-image }}\""
+              },
+              {
+                "name": "Push image to Docker Hub",
+                "run": "docker push \"${{ github.event.inputs.target-image }}\""
+              }
+            ]
+          },
+          "copy-to-docker-hub-release": {
+            "if": "github.ref_name == 'main' && contains(github.event.inputs.source-image,'v8') && (contains(github.event.inputs.target-image,'v8') || contains(github.event.inputs.target-image,'latest'))",
+            "runs-on": "ubuntu-latest",
+            "environment": {
+              "name": "release"
+            },
+            "steps": [
+              {
+                "name": "Free Disk space",
+                "if": "github.event.inputs.free-space-before == 'true'",
+                "shell": "bash",
+                "run": "sudo rm -rf /usr/local/lib/android  # will release about 10 GB if you don't need Android\nsudo rm -rf /usr/share/dotnet # will release about 20GB if you don't need .NET\n"
+              },
+              {
+                "name": "Login to Docker Hub",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "username": "${{ secrets.DOCKER_USERNAME }}",
+                  "password": "${{ secrets.DOCKER_PASSWORD }}"
+                }
+              },
+              {
+                "name": "Pull image from GHCR",
+                "run": "docker pull \"${{ github.event.inputs.source-image }}\""
+              },
+              {
+                "name": "Tag image for Docker Hub",
+                "run": "docker tag \"${{ github.event.inputs.source-image }}\" \"${{ github.event.inputs.target-image }}\""
+              },
+              {
+                "name": "Push image to Docker Hub",
+                "run": "docker push \"${{ github.event.inputs.target-image }}\""
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-10-06T20-14-10Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-a1cd4e1e-1ec1-5f16-8981-cd8a52897a39",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/mirror-docker-image__2025-10-06T20-14-10Z__2f40a6c82805e551937e497761d4b0147cc8b076.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 20,
+                  "startColumn": 5,
+                  "endLine": 46,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "7224ee8f1e320552:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-3a2487d7-79a8-513b-af20-310e22367927",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/mirror-docker-image__2025-10-06T20-14-10Z__2f40a6c82805e551937e497761d4b0147cc8b076.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 47,
+                  "startColumn": 5,
+                  "endLine": 73,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "93494cbfb1521d81:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-2442af07-6e9b-5cf0-9d7e-619b3e2dfc20",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/mirror-docker-image__2025-10-06T20-14-10Z__2f40a6c82805e551937e497761d4b0147cc8b076.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 75,
+                  "startColumn": 5,
+                  "endLine": 99,
+                  "endColumn": 67
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "aa7abcfbbc18d964:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "mirror-docker-image__2025-10-06T20-14-10Z__2f40a6c82805e551937e497761d4b0147cc8b076.yml",
+          "workflow_name": "Mirror docker image",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 99,
+          "num_jobs": 3,
+          "steps_per_job": {
+            "copy-to-docker-hub-alpha": 5,
+            "copy-to-docker-hub-main": 5,
+            "copy-to-docker-hub-release": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 3,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "copy-to-docker-hub-alpha": 5,
+              "copy-to-docker-hub-main": 5,
+              "copy-to-docker-hub-release": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "docker/login-action@v3"
+            ],
+            "num_run_commands": 12,
+            "steps_with_conditionals": 3,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Mirror docker image",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "source-image": {
+                "description": "Source of the image on ghcr.io",
+                "required": true
+              },
+              "target-image": {
+                "description": "Target of the image hosted on docker hub",
+                "required": true
+              },
+              "free-space-before": {
+                "description": "Free space on the runner before pulling and pushing docker image",
+                "required": false,
+                "default": "true"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "copy-to-docker-hub-alpha": {
+            "if": "github.ref_name == 'alpha' && endsWith(github.event.inputs.source-image,'alpha') && endsWith(github.event.inputs.target-image,'alpha')",
+            "runs-on": "ubuntu-latest",
+            "environment": {
+              "name": "alpha"
+            },
+            "steps": [
+              {
+                "name": "Free Disk space",
+                "if": "github.event.inputs.free-space-before == 'true'",
+                "shell": "bash",
+                "run": "sudo rm -rf /usr/local/lib/android  # will release about 10 GB if you don't need Android\nsudo rm -rf /usr/share/dotnet # will release about 20GB if you don't need .NET\n"
+              },
+              {
+                "name": "Login to Docker Hub",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "username": "${{ secrets.DOCKER_USERNAME }}",
+                  "password": "${{ secrets.DOCKER_PASSWORD }}"
+                }
+              },
+              {
+                "name": "Pull image from GHCR",
+                "run": "docker pull \"${{ github.event.inputs.source-image }}\""
+              },
+              {
+                "name": "Tag image for Docker Hub",
+                "run": "docker tag \"${{ github.event.inputs.source-image }}\" \"${{ github.event.inputs.target-image }}\""
+              },
+              {
+                "name": "Push image to Docker Hub",
+                "run": "docker push \"${{ github.event.inputs.target-image }}\""
+              }
+            ]
+          },
+          "copy-to-docker-hub-main": {
+            "if": "github.ref_name == 'main' && endsWith(github.event.inputs.source-image,'beta') && endsWith(github.event.inputs.target-image,'beta')",
+            "runs-on": "ubuntu-latest",
+            "environment": {
+              "name": "beta"
+            },
+            "steps": [
+              {
+                "name": "Free Disk space",
+                "if": "github.event.inputs.free-space-before == 'true'",
+                "shell": "bash",
+                "run": "sudo rm -rf /usr/local/lib/android  # will release about 10 GB if you don't need Android\nsudo rm -rf /usr/share/dotnet # will release about 20GB if you don't need .NET\n"
+              },
+              {
+                "name": "Login to Docker Hub",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "username": "${{ secrets.DOCKER_USERNAME }}",
+                  "password": "${{ secrets.DOCKER_PASSWORD }}"
+                }
+              },
+              {
+                "name": "Pull image from GHCR",
+                "run": "docker pull \"${{ github.event.inputs.source-image }}\""
+              },
+              {
+                "name": "Tag image for Docker Hub",
+                "run": "docker tag \"${{ github.event.inputs.source-image }}\" \"${{ github.event.inputs.target-image }}\""
+              },
+              {
+                "name": "Push image to Docker Hub",
+                "run": "docker push \"${{ github.event.inputs.target-image }}\""
+              }
+            ]
+          },
+          "copy-to-docker-hub-release": {
+            "if": "github.ref_name == 'main' && contains(github.event.inputs.source-image,'v9') && (contains(github.event.inputs.target-image,'v9') || contains(github.event.inputs.target-image,'latest'))",
+            "runs-on": "ubuntu-latest",
+            "environment": {
+              "name": "release"
+            },
+            "steps": [
+              {
+                "name": "Free Disk space",
+                "if": "github.event.inputs.free-space-before == 'true'",
+                "shell": "bash",
+                "run": "sudo rm -rf /usr/local/lib/android  # will release about 10 GB if you don't need Android\nsudo rm -rf /usr/share/dotnet # will release about 20GB if you don't need .NET\n"
+              },
+              {
+                "name": "Login to Docker Hub",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "username": "${{ secrets.DOCKER_USERNAME }}",
+                  "password": "${{ secrets.DOCKER_PASSWORD }}"
+                }
+              },
+              {
+                "name": "Pull image from GHCR",
+                "run": "docker pull \"${{ github.event.inputs.source-image }}\""
+              },
+              {
+                "name": "Tag image for Docker Hub",
+                "run": "docker tag \"${{ github.event.inputs.source-image }}\" \"${{ github.event.inputs.target-image }}\""
+              },
+              {
+                "name": "Push image to Docker Hub",
+                "run": "docker push \"${{ github.event.inputs.target-image }}\""
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

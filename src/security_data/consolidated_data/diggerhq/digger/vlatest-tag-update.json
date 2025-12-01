@@ -1,0 +1,175 @@
+{
+  "repo_owner": "diggerhq",
+  "repo_name": "digger",
+  "workflow_name": "vlatest-tag-update",
+  "history": {
+    "2025-08-27T19-40-15Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "vlatest-tag-update__2025-08-27T19-40-15Z__8e34ebbb25e7601d05b4cfd11f372939feb712d6.yml",
+          "workflow_name": "Recreate vLatest release from develop",
+          "triggers": {},
+          "permissions": {
+            "contents": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 79,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "recreate-vlatest": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "recreate-vlatest": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/github-script@v7"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Recreate vLatest release from develop",
+        "true": {
+          "workflow_dispatch": null
+        },
+        "permissions": {
+          "contents": "write"
+        },
+        "jobs": {
+          "recreate-vlatest": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Delete release \"vLatest\" if it exists",
+                "uses": "actions/github-script@v7",
+                "with": {
+                  "script": "const owner = context.repo.owner;\nconst repo = context.repo.repo;\nconst tag = 'vLatest';\n\n// Try to fetch the release by tag\ntry {\n  const rel = await github.rest.repos.getReleaseByTag({ owner, repo, tag });\n  core.info(`Found release for tag ${tag}: id=${rel.data.id}. Deleting...`);\n  await github.rest.repos.deleteRelease({ owner, repo, release_id: rel.data.id });\n  core.info(`Deleted release id=${rel.data.id}.`);\n} catch (err) {\n  if (err.status === 404) {\n    core.info(`No release found for tag ${tag}; skipping delete.`);\n  } else {\n    throw err;\n  }\n}\n"
+                }
+              },
+              {
+                "name": "Delete tag \"vLatest\" if it exists",
+                "uses": "actions/github-script@v7",
+                "with": {
+                  "script": "const owner = context.repo.owner;\nconst repo = context.repo.repo;\nconst ref = 'tags/vLatest';\ntry {\n  await github.rest.git.deleteRef({ owner, repo, ref });\n  core.info(`Deleted ref ${ref}.`);\n} catch (err) {\n  if (err.status === 404) {\n    core.info(`Ref ${ref} not found; skipping.`);\n  } else {\n    // Some repos may return 422 if the ref doesn't exist in certain states\n    if (err.status === 422) {\n      core.info(`Ref ${ref} not deletable/doesn't exist; skipping.`);\n    } else {\n      throw err;\n    }\n  }\n}\n"
+                }
+              },
+              {
+                "name": "Create release \"vLatest\" from develop",
+                "uses": "actions/github-script@v7",
+                "with": {
+                  "script": "const owner = context.repo.owner;\nconst repo = context.repo.repo;\nconst tag_name = 'vLatest';\nconst target_commitish = 'develop';\n\nconst res = await github.rest.repos.createRelease({\n  owner,\n  repo,\n  tag_name,\n  target_commitish,\n  name: tag_name,\n  body: 'Automated vLatest release from `develop`.',\n  draft: false,\n  prerelease: false,\n  // If supported on your repo, this marks it as the \"Latest\" on the Releases page.\n  make_latest: 'true'\n});\ncore.info(`Created release ${res.data.html_url}`);\n"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-08-27T19-42-37Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "vlatest-tag-update__2025-08-27T19-42-37Z__1f50b96ac2bb2262f5937440b367b1819bcf1c4f.yml",
+          "workflow_name": "Recreate vLatest release from develop",
+          "triggers": {},
+          "permissions": {
+            "contents": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 78,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "recreate-vlatest": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "recreate-vlatest": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/github-script@v7"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Recreate vLatest release from develop",
+        "true": {
+          "workflow_dispatch": null
+        },
+        "permissions": {
+          "contents": "write"
+        },
+        "jobs": {
+          "recreate-vlatest": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Delete release \"vLatest\" if it exists",
+                "uses": "actions/github-script@v7",
+                "with": {
+                  "script": "const owner = context.repo.owner;\nconst repo = context.repo.repo;\nconst tag = 'vLatest';\n\n// Try to fetch the release by tag\ntry {\n  const rel = await github.rest.repos.getReleaseByTag({ owner, repo, tag });\n  core.info(`Found release for tag ${tag}: id=${rel.data.id}. Deleting...`);\n  await github.rest.repos.deleteRelease({ owner, repo, release_id: rel.data.id });\n  core.info(`Deleted release id=${rel.data.id}.`);\n} catch (err) {\n  if (err.status === 404) {\n    core.info(`No release found for tag ${tag}; skipping delete.`);\n  } else {\n    throw err;\n  }\n}\n"
+                }
+              },
+              {
+                "name": "Delete tag \"vLatest\" if it exists",
+                "uses": "actions/github-script@v7",
+                "with": {
+                  "script": "const owner = context.repo.owner;\nconst repo = context.repo.repo;\nconst ref = 'tags/vLatest';\ntry {\n  await github.rest.git.deleteRef({ owner, repo, ref });\n  core.info(`Deleted ref ${ref}.`);\n} catch (err) {\n  if (err.status === 404) {\n    core.info(`Ref ${ref} not found; skipping.`);\n  } else {\n    // Some repos may return 422 if the ref doesn't exist in certain states\n    if (err.status === 422) {\n      core.info(`Ref ${ref} not deletable/doesn't exist; skipping.`);\n    } else {\n      throw err;\n    }\n  }\n}\n"
+                }
+              },
+              {
+                "name": "Create release \"vLatest\" from develop",
+                "uses": "actions/github-script@v7",
+                "with": {
+                  "script": "const owner = context.repo.owner;\nconst repo = context.repo.repo;\nconst tag_name = 'vLatest';\nconst target_commitish = 'develop';\n\nconst res = await github.rest.repos.createRelease({\n  owner,\n  repo,\n  tag_name,\n  target_commitish,\n  name: tag_name,\n  body: 'Automated vLatest release from `develop`.',\n  draft: false,\n  prerelease: false,\n  make_latest: 'false'\n});\ncore.info(`Created release ${res.data.html_url}`);\n"
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

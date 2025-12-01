@@ -1,0 +1,839 @@
+{
+  "repo_owner": "aws-actions",
+  "repo_name": "configure-aws-credentials",
+  "workflow_name": "tests-unit",
+  "history": {
+    "2023-08-23T23-35-15Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-8c335f37-ee48-5ab1-a351-3c583e85412a",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/tests-unit__2023-08-23T23-35-15Z__ef93a73b1313f148011965ef7361f667f371f58b.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 8,
+                  "startColumn": 5,
+                  "endLine": 27,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "e5cc189feb8bdd12:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-d8dde756-55c0-549c-836a-ceab69c0f154",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/tests-unit__2023-08-23T23-35-15Z__ef93a73b1313f148011965ef7361f667f371f58b.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 28,
+                  "startColumn": 5,
+                  "endLine": 41,
+                  "endColumn": 40
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "868ada34fa1a7e13:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "tests-unit__2023-08-23T23-35-15Z__ef93a73b1313f148011965ef7361f667f371f58b.yml",
+          "workflow_name": "Run unit tests",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 41,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "unit-test": 4,
+            "lint": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "unit-test": 4,
+              "lint": 4
+            },
+            "jobs_with_timeout": 2,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 2,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 6,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-node@v3",
+              "bahmutov/npm-install@v1"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "true": [
+          "pull_request"
+        ],
+        "name": "Run unit tests",
+        "jobs": {
+          "unit-test": {
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "os": [
+                  "windows-latest",
+                  "ubuntu-latest",
+                  "macos-latest"
+                ],
+                "node": [
+                  14,
+                  16,
+                  18
+                ]
+              }
+            },
+            "name": "Run unit tests",
+            "runs-on": "${{ matrix.os }}",
+            "timeout-minutes": 5,
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Setup node",
+                "uses": "actions/setup-node@v3",
+                "with": {
+                  "node-version": "${{ matrix.node }}"
+                }
+              },
+              {
+                "name": "Install dependencies",
+                "uses": "bahmutov/npm-install@v1"
+              },
+              {
+                "name": "Run tests",
+                "run": "npm run test --if-present"
+              }
+            ]
+          },
+          "lint": {
+            "name": "Ensure code standards",
+            "runs-on": "ubuntu-latest",
+            "timeout-minutes": 5,
+            "steps": [
+              {
+                "name": "Checkout repostiory",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Setup node",
+                "uses": "actions/setup-node@v3",
+                "with": {
+                  "node-version": 16
+                }
+              },
+              {
+                "name": "Install dependencies",
+                "uses": "bahmutov/npm-install@v1"
+              },
+              {
+                "name": "Lint code",
+                "run": "npm run lint --if-present"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-09-11T21-52-44Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-2f9c3617-0bc0-518c-aaff-153ecf5e9d20",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/tests-unit__2023-09-11T21-52-44Z__8c3f20df09ac63af7b3ae3d7c91f105f857d8497.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 8,
+                  "startColumn": 5,
+                  "endLine": 26,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "a5b16cff11dc1cae:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-06358501-5ef6-5389-846c-1feceff7b564",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/tests-unit__2023-09-11T21-52-44Z__8c3f20df09ac63af7b3ae3d7c91f105f857d8497.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 27,
+                  "startColumn": 5,
+                  "endLine": 40,
+                  "endColumn": 40
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "868ada34fa1a7e13:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "tests-unit__2023-09-11T21-52-44Z__8c3f20df09ac63af7b3ae3d7c91f105f857d8497.yml",
+          "workflow_name": "Run unit tests",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 40,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "unit-test": 4,
+            "lint": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "unit-test": 4,
+              "lint": 4
+            },
+            "jobs_with_timeout": 2,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 2,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 6,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-node@v3",
+              "bahmutov/npm-install@v1"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "true": [
+          "pull_request"
+        ],
+        "name": "Run unit tests",
+        "jobs": {
+          "unit-test": {
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "os": [
+                  "windows-latest",
+                  "ubuntu-latest",
+                  "macos-latest"
+                ]
+              }
+            },
+            "name": "Run unit tests",
+            "runs-on": "${{ matrix.os }}",
+            "timeout-minutes": 5,
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Setup node",
+                "uses": "actions/setup-node@v3",
+                "with": {
+                  "node-version": 20
+                }
+              },
+              {
+                "name": "Install dependencies",
+                "uses": "bahmutov/npm-install@v1"
+              },
+              {
+                "name": "Run tests",
+                "run": "npm run test --if-present"
+              }
+            ]
+          },
+          "lint": {
+            "name": "Ensure code standards",
+            "runs-on": "ubuntu-latest",
+            "timeout-minutes": 5,
+            "steps": [
+              {
+                "name": "Checkout repostiory",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Setup node",
+                "uses": "actions/setup-node@v3",
+                "with": {
+                  "node-version": 20
+                }
+              },
+              {
+                "name": "Install dependencies",
+                "uses": "bahmutov/npm-install@v1"
+              },
+              {
+                "name": "Lint code",
+                "run": "npm run lint --if-present"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-02-16T18-10-37Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-ebccbfd2-895f-5aff-a842-e115e1199363",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/tests-unit__2024-02-16T18-10-37Z__72072f2ea635961b5e61079daa978d80e09a0a67.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 8,
+                  "startColumn": 5,
+                  "endLine": 26,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "a5b16cff11dc1cae:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-95993dde-d7f6-571f-91ac-ae5150ce511c",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/tests-unit__2024-02-16T18-10-37Z__72072f2ea635961b5e61079daa978d80e09a0a67.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 27,
+                  "startColumn": 5,
+                  "endLine": 40,
+                  "endColumn": 40
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "868ada34fa1a7e13:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "tests-unit__2024-02-16T18-10-37Z__72072f2ea635961b5e61079daa978d80e09a0a67.yml",
+          "workflow_name": "Run unit tests",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 40,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "unit-test": 4,
+            "lint": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "unit-test": 4,
+              "lint": 4
+            },
+            "jobs_with_timeout": 2,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 2,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 6,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-node@v4",
+              "bahmutov/npm-install@v1"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "true": [
+          "pull_request"
+        ],
+        "name": "Run unit tests",
+        "jobs": {
+          "unit-test": {
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "os": [
+                  "windows-latest",
+                  "ubuntu-latest",
+                  "macos-latest"
+                ]
+              }
+            },
+            "name": "Run unit tests",
+            "runs-on": "${{ matrix.os }}",
+            "timeout-minutes": 5,
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Setup node",
+                "uses": "actions/setup-node@v4",
+                "with": {
+                  "node-version": 20
+                }
+              },
+              {
+                "name": "Install dependencies",
+                "uses": "bahmutov/npm-install@v1"
+              },
+              {
+                "name": "Run tests",
+                "run": "npm run test --if-present"
+              }
+            ]
+          },
+          "lint": {
+            "name": "Ensure code standards",
+            "runs-on": "ubuntu-latest",
+            "timeout-minutes": 5,
+            "steps": [
+              {
+                "name": "Checkout repostiory",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Setup node",
+                "uses": "actions/setup-node@v4",
+                "with": {
+                  "node-version": 20
+                }
+              },
+              {
+                "name": "Install dependencies",
+                "uses": "bahmutov/npm-install@v1"
+              },
+              {
+                "name": "Lint code",
+                "run": "npm run lint --if-present"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-08-20T16-48-34Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "tests-unit__2025-08-20T16-48-34Z__df886f22da1812ef162de5e4da57610446cbf6fa.yml",
+          "workflow_name": "Run unit tests",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 42,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "unit-test": 4,
+            "lint": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "unit-test": 4,
+              "lint": 4
+            },
+            "jobs_with_timeout": 2,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 2,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 5,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/checkout@v5",
+              "actions/setup-node@v4",
+              "actions/setup-node@v4.4.0",
+              "bahmutov/npm-install@v1"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "true": [
+          "pull_request"
+        ],
+        "name": "Run unit tests",
+        "permissions": {
+          "contents": "read"
+        },
+        "jobs": {
+          "unit-test": {
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "os": [
+                  "windows-latest",
+                  "ubuntu-latest",
+                  "macos-latest"
+                ]
+              }
+            },
+            "name": "Run unit tests",
+            "runs-on": "${{ matrix.os }}",
+            "timeout-minutes": 5,
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v5"
+              },
+              {
+                "name": "Setup node",
+                "uses": "actions/setup-node@v4.4.0",
+                "with": {
+                  "node-version": 20
+                }
+              },
+              {
+                "name": "Install dependencies",
+                "run": "npm ci"
+              },
+              {
+                "name": "Run tests",
+                "run": "npm run test --if-present"
+              }
+            ]
+          },
+          "lint": {
+            "name": "Ensure code standards",
+            "runs-on": "ubuntu-latest",
+            "timeout-minutes": 5,
+            "steps": [
+              {
+                "name": "Checkout repostiory",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Setup node",
+                "uses": "actions/setup-node@v4",
+                "with": {
+                  "node-version": 20
+                }
+              },
+              {
+                "name": "Install dependencies",
+                "uses": "bahmutov/npm-install@v1"
+              },
+              {
+                "name": "Lint code",
+                "run": "npm run lint --if-present"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-09-04T23-53-56Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "tests-unit__2025-09-04T23-53-56Z__0994a359d5944ec322eaedab8dedf891ed62329c.yml",
+          "workflow_name": "Run unit tests",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 42,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "unit-test": 4,
+            "lint": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "unit-test": 4,
+              "lint": 4
+            },
+            "jobs_with_timeout": 2,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 2,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 5,
+            "actions_used": [
+              "actions/checkout@v5",
+              "actions/setup-node@v4",
+              "actions/setup-node@v4.4.0",
+              "bahmutov/npm-install@v1"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "true": [
+          "pull_request"
+        ],
+        "name": "Run unit tests",
+        "permissions": {
+          "contents": "read"
+        },
+        "jobs": {
+          "unit-test": {
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "os": [
+                  "windows-latest",
+                  "ubuntu-latest",
+                  "macos-latest"
+                ]
+              }
+            },
+            "name": "Run unit tests",
+            "runs-on": "${{ matrix.os }}",
+            "timeout-minutes": 5,
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v5"
+              },
+              {
+                "name": "Setup node",
+                "uses": "actions/setup-node@v4.4.0",
+                "with": {
+                  "node-version": 20
+                }
+              },
+              {
+                "name": "Install dependencies",
+                "run": "npm ci"
+              },
+              {
+                "name": "Run tests",
+                "run": "npm run test --if-present"
+              }
+            ]
+          },
+          "lint": {
+            "name": "Ensure code standards",
+            "runs-on": "ubuntu-latest",
+            "timeout-minutes": 5,
+            "steps": [
+              {
+                "name": "Checkout repostiory",
+                "uses": "actions/checkout@v5"
+              },
+              {
+                "name": "Setup node",
+                "uses": "actions/setup-node@v4",
+                "with": {
+                  "node-version": 20
+                }
+              },
+              {
+                "name": "Install dependencies",
+                "uses": "bahmutov/npm-install@v1"
+              },
+              {
+                "name": "Lint code",
+                "run": "npm run lint --if-present"
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

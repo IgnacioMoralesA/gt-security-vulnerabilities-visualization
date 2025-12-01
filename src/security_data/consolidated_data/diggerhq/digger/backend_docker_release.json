@@ -1,0 +1,2054 @@
+{
+  "repo_owner": "diggerhq",
+  "repo_name": "digger",
+  "workflow_name": "backend_docker_release",
+  "history": {
+    "2024-01-02T12-01-38Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "backend_docker_release__2024-01-02T12-01-38Z__69a4edf05dd1dbd91bd0a879ffc52ff2f5be30c5.yml",
+          "workflow_name": "Backend Publish docker image",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 47,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build-and-push-image": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build-and-push-image": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4",
+              "docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1",
+              "docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Backend Publish docker image",
+        "true": {
+          "release": {
+            "types": [
+              "released"
+            ]
+          }
+        },
+        "env": {
+          "REGISTRY": "ghcr.io",
+          "IMAGE_NAME": "${{ github.repository }}_backend"
+        },
+        "jobs": {
+          "build-and-push-image": {
+            "if": "(startswith(github.event.release.tag_name, 'v'))",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "contents": "read",
+              "packages": "write"
+            },
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Log in to the Container registry",
+                "uses": "docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1",
+                "with": {
+                  "registry": "${{ env.REGISTRY }}",
+                  "username": "${{ github.actor }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Extract metadata (tags, labels) for Docker",
+                "id": "meta",
+                "uses": "docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7",
+                "with": {
+                  "images": "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}"
+                }
+              },
+              {
+                "name": "Build and push Docker image",
+                "uses": "docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4",
+                "with": {
+                  "context": ".",
+                  "file": "Dockerfile_backend",
+                  "push": true,
+                  "tags": [
+                    "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest",
+                    "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:{{ github.event.release.tag_name }}"
+                  ],
+                  "labels": "${{ steps.meta.outputs.labels }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-01-02T12-52-52Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "backend_docker_release__2024-01-02T12-52-52Z__7aa5b220a191c30a667357198a0e73441d7f0c36.yml",
+          "workflow_name": "Backend Publish docker image",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 47,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build-and-push-image": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build-and-push-image": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4",
+              "docker/login-action@3d58c274f17dffee475a5520cbe67f0a882c4dbb",
+              "docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Backend Publish docker image",
+        "true": {
+          "release": {
+            "types": [
+              "released"
+            ]
+          }
+        },
+        "env": {
+          "REGISTRY": "ghcr.io",
+          "IMAGE_NAME": "${{ github.repository }}_backend"
+        },
+        "jobs": {
+          "build-and-push-image": {
+            "if": "(startswith(github.event.release.tag_name, 'v'))",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "contents": "read",
+              "packages": "write"
+            },
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Log in to the Container registry",
+                "uses": "docker/login-action@3d58c274f17dffee475a5520cbe67f0a882c4dbb",
+                "with": {
+                  "registry": "${{ env.REGISTRY }}",
+                  "username": "${{ github.actor }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Extract metadata (tags, labels) for Docker",
+                "id": "meta",
+                "uses": "docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7",
+                "with": {
+                  "images": "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}"
+                }
+              },
+              {
+                "name": "Build and push Docker image",
+                "uses": "docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4",
+                "with": {
+                  "context": ".",
+                  "file": "Dockerfile_backend",
+                  "push": true,
+                  "tags": [
+                    "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest",
+                    "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:{{ github.event.release.tag_name }}"
+                  ],
+                  "labels": "${{ steps.meta.outputs.labels }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-01-02T12-53-08Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "backend_docker_release__2024-01-02T12-53-08Z__987c515736fc1c00e4eef50bea05e7497c34a7a9.yml",
+          "workflow_name": "Backend Publish docker image",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 47,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build-and-push-image": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build-and-push-image": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "docker/build-push-action@9f6f8c940b91232557f8699b21341a08624a8dce",
+              "docker/login-action@3d58c274f17dffee475a5520cbe67f0a882c4dbb",
+              "docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Backend Publish docker image",
+        "true": {
+          "release": {
+            "types": [
+              "released"
+            ]
+          }
+        },
+        "env": {
+          "REGISTRY": "ghcr.io",
+          "IMAGE_NAME": "${{ github.repository }}_backend"
+        },
+        "jobs": {
+          "build-and-push-image": {
+            "if": "(startswith(github.event.release.tag_name, 'v'))",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "contents": "read",
+              "packages": "write"
+            },
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Log in to the Container registry",
+                "uses": "docker/login-action@3d58c274f17dffee475a5520cbe67f0a882c4dbb",
+                "with": {
+                  "registry": "${{ env.REGISTRY }}",
+                  "username": "${{ github.actor }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Extract metadata (tags, labels) for Docker",
+                "id": "meta",
+                "uses": "docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7",
+                "with": {
+                  "images": "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}"
+                }
+              },
+              {
+                "name": "Build and push Docker image",
+                "uses": "docker/build-push-action@9f6f8c940b91232557f8699b21341a08624a8dce",
+                "with": {
+                  "context": ".",
+                  "file": "Dockerfile_backend",
+                  "push": true,
+                  "tags": [
+                    "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest",
+                    "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:{{ github.event.release.tag_name }}"
+                  ],
+                  "labels": "${{ steps.meta.outputs.labels }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-01-02T13-12-05Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "backend_docker_release__2024-01-02T13-12-05Z__4392301f664faab139165f12dccca490c1f99bed.yml",
+          "workflow_name": "Backend Publish docker image",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 45,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build-and-push-image": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build-and-push-image": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "docker/build-push-action@9f6f8c940b91232557f8699b21341a08624a8dce",
+              "docker/login-action@3d58c274f17dffee475a5520cbe67f0a882c4dbb",
+              "docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Backend Publish docker image",
+        "true": {
+          "release": {
+            "types": [
+              "released"
+            ]
+          }
+        },
+        "env": {
+          "REGISTRY": "ghcr.io",
+          "IMAGE_NAME": "${{ github.repository }}_backend"
+        },
+        "jobs": {
+          "build-and-push-image": {
+            "if": "(startswith(github.event.release.tag_name, 'v'))",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "contents": "read",
+              "packages": "write"
+            },
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Log in to the Container registry",
+                "uses": "docker/login-action@3d58c274f17dffee475a5520cbe67f0a882c4dbb",
+                "with": {
+                  "registry": "${{ env.REGISTRY }}",
+                  "username": "${{ github.actor }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Extract metadata (tags, labels) for Docker",
+                "id": "meta",
+                "uses": "docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7",
+                "with": {
+                  "images": "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}"
+                }
+              },
+              {
+                "name": "Build and push Docker image",
+                "uses": "docker/build-push-action@9f6f8c940b91232557f8699b21341a08624a8dce",
+                "with": {
+                  "context": ".",
+                  "file": "Dockerfile_backend",
+                  "push": true,
+                  "tags": "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest, ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:{{ github.event.release.tag_name }}",
+                  "labels": "${{ steps.meta.outputs.labels }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-01-02T13-15-35Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "backend_docker_release__2024-01-02T13-15-35Z__e9e48adfb2788c4fd3be83c8453a9978c18afa3c.yml",
+          "workflow_name": "Backend Publish docker image",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 45,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build-and-push-image": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build-and-push-image": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "docker/build-push-action@9f6f8c940b91232557f8699b21341a08624a8dce",
+              "docker/login-action@3d58c274f17dffee475a5520cbe67f0a882c4dbb",
+              "docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Backend Publish docker image",
+        "true": {
+          "release": {
+            "types": [
+              "released"
+            ]
+          }
+        },
+        "env": {
+          "REGISTRY": "ghcr.io",
+          "IMAGE_NAME": "${{ github.repository }}_backend"
+        },
+        "jobs": {
+          "build-and-push-image": {
+            "if": "(startswith(github.event.release.tag_name, 'v'))",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "contents": "read",
+              "packages": "write"
+            },
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Log in to the Container registry",
+                "uses": "docker/login-action@3d58c274f17dffee475a5520cbe67f0a882c4dbb",
+                "with": {
+                  "registry": "${{ env.REGISTRY }}",
+                  "username": "${{ github.actor }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Extract metadata (tags, labels) for Docker",
+                "id": "meta",
+                "uses": "docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7",
+                "with": {
+                  "images": "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}"
+                }
+              },
+              {
+                "name": "Build and push Docker image",
+                "uses": "docker/build-push-action@9f6f8c940b91232557f8699b21341a08624a8dce",
+                "with": {
+                  "context": ".",
+                  "file": "Dockerfile_backend",
+                  "push": true,
+                  "tags": "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest, ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.event.release.tag_name }}",
+                  "labels": "${{ steps.meta.outputs.labels }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-01-04T17-45-40Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "backend_docker_release__2024-01-04T17-45-40Z__7a8bca7005e8ce3756ef276472dafac4a9835281.yml",
+          "workflow_name": "Backend Publish docker image",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 45,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build-and-push-image": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build-and-push-image": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "docker/build-push-action@9f6f8c940b91232557f8699b21341a08624a8dce",
+              "docker/login-action@3d58c274f17dffee475a5520cbe67f0a882c4dbb",
+              "docker/metadata-action@41e1fe3437fd5c8d22c24a824307673223ead782"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Backend Publish docker image",
+        "true": {
+          "release": {
+            "types": [
+              "released"
+            ]
+          }
+        },
+        "env": {
+          "REGISTRY": "ghcr.io",
+          "IMAGE_NAME": "${{ github.repository }}_backend"
+        },
+        "jobs": {
+          "build-and-push-image": {
+            "if": "(startswith(github.event.release.tag_name, 'v'))",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "contents": "read",
+              "packages": "write"
+            },
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Log in to the Container registry",
+                "uses": "docker/login-action@3d58c274f17dffee475a5520cbe67f0a882c4dbb",
+                "with": {
+                  "registry": "${{ env.REGISTRY }}",
+                  "username": "${{ github.actor }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Extract metadata (tags, labels) for Docker",
+                "id": "meta",
+                "uses": "docker/metadata-action@41e1fe3437fd5c8d22c24a824307673223ead782",
+                "with": {
+                  "images": "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}"
+                }
+              },
+              {
+                "name": "Build and push Docker image",
+                "uses": "docker/build-push-action@9f6f8c940b91232557f8699b21341a08624a8dce",
+                "with": {
+                  "context": ".",
+                  "file": "Dockerfile_backend",
+                  "push": true,
+                  "tags": "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest, ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.event.release.tag_name }}",
+                  "labels": "${{ steps.meta.outputs.labels }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-01-08T10-43-21Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "backend_docker_release__2024-01-08T10-43-21Z__1642f23c1dde7a45fae8dc3d0e3a96e2cb608d5a.yml",
+          "workflow_name": "Backend Publish docker image",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 45,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build-and-push-image": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build-and-push-image": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "docker/build-push-action@v5.1.0",
+              "docker/login-action@3d58c274f17dffee475a5520cbe67f0a882c4dbb",
+              "docker/metadata-action@v5.5.0"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Backend Publish docker image",
+        "true": {
+          "release": {
+            "types": [
+              "released"
+            ]
+          }
+        },
+        "env": {
+          "REGISTRY": "ghcr.io",
+          "IMAGE_NAME": "${{ github.repository }}_backend"
+        },
+        "jobs": {
+          "build-and-push-image": {
+            "if": "(startswith(github.event.release.tag_name, 'v'))",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "contents": "read",
+              "packages": "write"
+            },
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Log in to the Container registry",
+                "uses": "docker/login-action@3d58c274f17dffee475a5520cbe67f0a882c4dbb",
+                "with": {
+                  "registry": "${{ env.REGISTRY }}",
+                  "username": "${{ github.actor }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Extract metadata (tags, labels) for Docker",
+                "id": "meta",
+                "uses": "docker/metadata-action@v5.5.0",
+                "with": {
+                  "images": "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}"
+                }
+              },
+              {
+                "name": "Build and push Docker image",
+                "uses": "docker/build-push-action@v5.1.0",
+                "with": {
+                  "context": ".",
+                  "file": "Dockerfile_backend",
+                  "push": true,
+                  "tags": "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest, ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.event.release.tag_name }}",
+                  "labels": "${{ steps.meta.outputs.labels }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-02-06T09-58-13Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "backend_docker_release__2024-02-06T09-58-13Z__12c66dffac356e3c9294ae83416c447cc773aac2.yml",
+          "workflow_name": "Backend Publish docker image",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 45,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build-and-push-image": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build-and-push-image": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "docker/build-push-action@v5.1.0",
+              "docker/login-action@3d58c274f17dffee475a5520cbe67f0a882c4dbb",
+              "docker/metadata-action@v5.5.1"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Backend Publish docker image",
+        "true": {
+          "release": {
+            "types": [
+              "released"
+            ]
+          }
+        },
+        "env": {
+          "REGISTRY": "ghcr.io",
+          "IMAGE_NAME": "${{ github.repository }}_backend"
+        },
+        "jobs": {
+          "build-and-push-image": {
+            "if": "(startswith(github.event.release.tag_name, 'v'))",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "contents": "read",
+              "packages": "write"
+            },
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Log in to the Container registry",
+                "uses": "docker/login-action@3d58c274f17dffee475a5520cbe67f0a882c4dbb",
+                "with": {
+                  "registry": "${{ env.REGISTRY }}",
+                  "username": "${{ github.actor }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Extract metadata (tags, labels) for Docker",
+                "id": "meta",
+                "uses": "docker/metadata-action@v5.5.1",
+                "with": {
+                  "images": "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}"
+                }
+              },
+              {
+                "name": "Build and push Docker image",
+                "uses": "docker/build-push-action@v5.1.0",
+                "with": {
+                  "context": ".",
+                  "file": "Dockerfile_backend",
+                  "push": true,
+                  "tags": "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest, ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.event.release.tag_name }}",
+                  "labels": "${{ steps.meta.outputs.labels }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-02-16T17-29-58Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "backend_docker_release__2024-02-16T17-29-58Z__6f355ba60f122fc4dee1690452779247bd41db91.yml",
+          "workflow_name": "Backend Publish docker image",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 45,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build-and-push-image": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build-and-push-image": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "docker/build-push-action@v5.1.0",
+              "docker/login-action@83a00bc1ab5ded6580f31df1c49e6aaa932d840d",
+              "docker/metadata-action@v5.5.1"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Backend Publish docker image",
+        "true": {
+          "release": {
+            "types": [
+              "released"
+            ]
+          }
+        },
+        "env": {
+          "REGISTRY": "ghcr.io",
+          "IMAGE_NAME": "${{ github.repository }}_backend"
+        },
+        "jobs": {
+          "build-and-push-image": {
+            "if": "(startswith(github.event.release.tag_name, 'v'))",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "contents": "read",
+              "packages": "write"
+            },
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Log in to the Container registry",
+                "uses": "docker/login-action@83a00bc1ab5ded6580f31df1c49e6aaa932d840d",
+                "with": {
+                  "registry": "${{ env.REGISTRY }}",
+                  "username": "${{ github.actor }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Extract metadata (tags, labels) for Docker",
+                "id": "meta",
+                "uses": "docker/metadata-action@v5.5.1",
+                "with": {
+                  "images": "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}"
+                }
+              },
+              {
+                "name": "Build and push Docker image",
+                "uses": "docker/build-push-action@v5.1.0",
+                "with": {
+                  "context": ".",
+                  "file": "Dockerfile_backend",
+                  "push": true,
+                  "tags": "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest, ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.event.release.tag_name }}",
+                  "labels": "${{ steps.meta.outputs.labels }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-02-23T16-50-12Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "backend_docker_release__2024-02-23T16-50-12Z__1b1e0d4575b57af51ba643597185ecf04ccf608b.yml",
+          "workflow_name": "Backend Publish docker image",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 45,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build-and-push-image": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build-and-push-image": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "docker/build-push-action@v5.1.0",
+              "docker/login-action@5139682d94efc37792e6b54386b5b470a68a4737",
+              "docker/metadata-action@v5.5.1"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Backend Publish docker image",
+        "true": {
+          "release": {
+            "types": [
+              "released"
+            ]
+          }
+        },
+        "env": {
+          "REGISTRY": "ghcr.io",
+          "IMAGE_NAME": "${{ github.repository }}_backend"
+        },
+        "jobs": {
+          "build-and-push-image": {
+            "if": "(startswith(github.event.release.tag_name, 'v'))",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "contents": "read",
+              "packages": "write"
+            },
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Log in to the Container registry",
+                "uses": "docker/login-action@5139682d94efc37792e6b54386b5b470a68a4737",
+                "with": {
+                  "registry": "${{ env.REGISTRY }}",
+                  "username": "${{ github.actor }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Extract metadata (tags, labels) for Docker",
+                "id": "meta",
+                "uses": "docker/metadata-action@v5.5.1",
+                "with": {
+                  "images": "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}"
+                }
+              },
+              {
+                "name": "Build and push Docker image",
+                "uses": "docker/build-push-action@v5.1.0",
+                "with": {
+                  "context": ".",
+                  "file": "Dockerfile_backend",
+                  "push": true,
+                  "tags": "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest, ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.event.release.tag_name }}",
+                  "labels": "${{ steps.meta.outputs.labels }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-03-18T15-34-53Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "backend_docker_release__2024-03-18T15-34-53Z__66d022698ea418bf0d206cb4a1e6c6bb788df7e3.yml",
+          "workflow_name": "Backend Publish docker image",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 45,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build-and-push-image": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build-and-push-image": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "docker/build-push-action@v5.1.0",
+              "docker/login-action@e92390c5fb421da1463c202d546fed0ec5c39f20",
+              "docker/metadata-action@v5.5.1"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Backend Publish docker image",
+        "true": {
+          "release": {
+            "types": [
+              "released"
+            ]
+          }
+        },
+        "env": {
+          "REGISTRY": "ghcr.io",
+          "IMAGE_NAME": "${{ github.repository }}_backend"
+        },
+        "jobs": {
+          "build-and-push-image": {
+            "if": "(startswith(github.event.release.tag_name, 'v'))",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "contents": "read",
+              "packages": "write"
+            },
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Log in to the Container registry",
+                "uses": "docker/login-action@e92390c5fb421da1463c202d546fed0ec5c39f20",
+                "with": {
+                  "registry": "${{ env.REGISTRY }}",
+                  "username": "${{ github.actor }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Extract metadata (tags, labels) for Docker",
+                "id": "meta",
+                "uses": "docker/metadata-action@v5.5.1",
+                "with": {
+                  "images": "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}"
+                }
+              },
+              {
+                "name": "Build and push Docker image",
+                "uses": "docker/build-push-action@v5.1.0",
+                "with": {
+                  "context": ".",
+                  "file": "Dockerfile_backend",
+                  "push": true,
+                  "tags": "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest, ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.event.release.tag_name }}",
+                  "labels": "${{ steps.meta.outputs.labels }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-03-18T15-46-29Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "backend_docker_release__2024-03-18T15-46-29Z__6094dad4a3ccd090e7c062273d6e529c5d2d3cb0.yml",
+          "workflow_name": "Backend Publish docker image",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 45,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build-and-push-image": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build-and-push-image": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "docker/build-push-action@v5.3.0",
+              "docker/login-action@e92390c5fb421da1463c202d546fed0ec5c39f20",
+              "docker/metadata-action@v5.5.1"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Backend Publish docker image",
+        "true": {
+          "release": {
+            "types": [
+              "released"
+            ]
+          }
+        },
+        "env": {
+          "REGISTRY": "ghcr.io",
+          "IMAGE_NAME": "${{ github.repository }}_backend"
+        },
+        "jobs": {
+          "build-and-push-image": {
+            "if": "(startswith(github.event.release.tag_name, 'v'))",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "contents": "read",
+              "packages": "write"
+            },
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Log in to the Container registry",
+                "uses": "docker/login-action@e92390c5fb421da1463c202d546fed0ec5c39f20",
+                "with": {
+                  "registry": "${{ env.REGISTRY }}",
+                  "username": "${{ github.actor }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Extract metadata (tags, labels) for Docker",
+                "id": "meta",
+                "uses": "docker/metadata-action@v5.5.1",
+                "with": {
+                  "images": "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}"
+                }
+              },
+              {
+                "name": "Build and push Docker image",
+                "uses": "docker/build-push-action@v5.3.0",
+                "with": {
+                  "context": ".",
+                  "file": "Dockerfile_backend",
+                  "push": true,
+                  "tags": "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest, ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.event.release.tag_name }}",
+                  "labels": "${{ steps.meta.outputs.labels }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-04-15T11-41-57Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "backend_docker_release__2024-04-15T11-41-57Z__e3ddfa6ee0868a3c6e240e240c71c6f9fb73883f.yml",
+          "workflow_name": "Backend Publish docker image",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 45,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build-and-push-image": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build-and-push-image": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "docker/build-push-action@v5.3.0",
+              "docker/login-action@5f4866a30a54f16a52d2ecb4a3898e9e424939cf",
+              "docker/metadata-action@v5.5.1"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Backend Publish docker image",
+        "true": {
+          "release": {
+            "types": [
+              "released"
+            ]
+          }
+        },
+        "env": {
+          "REGISTRY": "ghcr.io",
+          "IMAGE_NAME": "${{ github.repository }}_backend"
+        },
+        "jobs": {
+          "build-and-push-image": {
+            "if": "(startswith(github.event.release.tag_name, 'v'))",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "contents": "read",
+              "packages": "write"
+            },
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Log in to the Container registry",
+                "uses": "docker/login-action@5f4866a30a54f16a52d2ecb4a3898e9e424939cf",
+                "with": {
+                  "registry": "${{ env.REGISTRY }}",
+                  "username": "${{ github.actor }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Extract metadata (tags, labels) for Docker",
+                "id": "meta",
+                "uses": "docker/metadata-action@v5.5.1",
+                "with": {
+                  "images": "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}"
+                }
+              },
+              {
+                "name": "Build and push Docker image",
+                "uses": "docker/build-push-action@v5.3.0",
+                "with": {
+                  "context": ".",
+                  "file": "Dockerfile_backend",
+                  "push": true,
+                  "tags": "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest, ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.event.release.tag_name }}",
+                  "labels": "${{ steps.meta.outputs.labels }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-05-09T12-01-43Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "backend_docker_release__2024-05-09T12-01-43Z__fe8400dd289143e19ff394bb0e579a761b4d1ffb.yml",
+          "workflow_name": "Backend Publish docker image",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 45,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build-and-push-image": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build-and-push-image": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "docker/build-push-action@v5.3.0",
+              "docker/login-action@7840e6ddd4a9223910798f6a315544257fccd96e",
+              "docker/metadata-action@v5.5.1"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Backend Publish docker image",
+        "true": {
+          "release": {
+            "types": [
+              "released"
+            ]
+          }
+        },
+        "env": {
+          "REGISTRY": "ghcr.io",
+          "IMAGE_NAME": "${{ github.repository }}_backend"
+        },
+        "jobs": {
+          "build-and-push-image": {
+            "if": "(startswith(github.event.release.tag_name, 'v'))",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "contents": "read",
+              "packages": "write"
+            },
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Log in to the Container registry",
+                "uses": "docker/login-action@7840e6ddd4a9223910798f6a315544257fccd96e",
+                "with": {
+                  "registry": "${{ env.REGISTRY }}",
+                  "username": "${{ github.actor }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Extract metadata (tags, labels) for Docker",
+                "id": "meta",
+                "uses": "docker/metadata-action@v5.5.1",
+                "with": {
+                  "images": "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}"
+                }
+              },
+              {
+                "name": "Build and push Docker image",
+                "uses": "docker/build-push-action@v5.3.0",
+                "with": {
+                  "context": ".",
+                  "file": "Dockerfile_backend",
+                  "push": true,
+                  "tags": "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest, ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.event.release.tag_name }}",
+                  "labels": "${{ steps.meta.outputs.labels }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-05-29T10-16-46Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "backend_docker_release__2024-05-29T10-16-46Z__81710d3654fb852eb2e2db169a64d51c1b80a996.yml",
+          "workflow_name": "Backend Publish docker image",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 45,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build-and-push-image": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build-and-push-image": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "docker/build-push-action@v5.3.0",
+              "docker/login-action@0d4c9c5ea7693da7b068278f7b52bda2a190a446",
+              "docker/metadata-action@v5.5.1"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Backend Publish docker image",
+        "true": {
+          "release": {
+            "types": [
+              "released"
+            ]
+          }
+        },
+        "env": {
+          "REGISTRY": "ghcr.io",
+          "IMAGE_NAME": "${{ github.repository }}_backend"
+        },
+        "jobs": {
+          "build-and-push-image": {
+            "if": "(startswith(github.event.release.tag_name, 'v'))",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "contents": "read",
+              "packages": "write"
+            },
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Log in to the Container registry",
+                "uses": "docker/login-action@0d4c9c5ea7693da7b068278f7b52bda2a190a446",
+                "with": {
+                  "registry": "${{ env.REGISTRY }}",
+                  "username": "${{ github.actor }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Extract metadata (tags, labels) for Docker",
+                "id": "meta",
+                "uses": "docker/metadata-action@v5.5.1",
+                "with": {
+                  "images": "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}"
+                }
+              },
+              {
+                "name": "Build and push Docker image",
+                "uses": "docker/build-push-action@v5.3.0",
+                "with": {
+                  "context": ".",
+                  "file": "Dockerfile_backend",
+                  "push": true,
+                  "tags": "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest, ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.event.release.tag_name }}",
+                  "labels": "${{ steps.meta.outputs.labels }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-06-12T09-30-15Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "backend_docker_release__2024-06-12T09-30-15Z__d38a43b691445680c4ea4b481ee0a5def94b1a45.yml",
+          "workflow_name": "Backend Publish docker image",
+          "triggers": {
+            "release": {
+              "types": [
+                "released"
+              ]
+            }
+          },
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 47,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build-and-push-image": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 1
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build-and-push-image": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "docker/build-push-action@v5.3.0",
+              "docker/login-action@0d4c9c5ea7693da7b068278f7b52bda2a190a446",
+              "docker/metadata-action@v5.5.1"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Backend Publish docker image",
+        "true": {
+          "release": {
+            "types": [
+              "released"
+            ]
+          }
+        },
+        "env": {
+          "REGISTRY": "ghcr.io",
+          "IMAGE_NAME": "${{ github.repository }}_backend"
+        },
+        "jobs": {
+          "build-and-push-image": {
+            "if": "(startswith(github.event.release.tag_name, 'v'))",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "contents": "read",
+              "packages": "write"
+            },
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Log in to the Container registry",
+                "uses": "docker/login-action@0d4c9c5ea7693da7b068278f7b52bda2a190a446",
+                "with": {
+                  "registry": "${{ env.REGISTRY }}",
+                  "username": "${{ github.actor }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Extract metadata (tags, labels) for Docker",
+                "id": "meta",
+                "uses": "docker/metadata-action@v5.5.1",
+                "with": {
+                  "images": "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}"
+                }
+              },
+              {
+                "name": "Build and push Docker image",
+                "uses": "docker/build-push-action@v5.3.0",
+                "with": {
+                  "context": ".",
+                  "file": "Dockerfile_backend",
+                  "push": true,
+                  "tags": "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest, ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.event.release.tag_name }}",
+                  "labels": "${{ steps.meta.outputs.labels }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-11-04T17-27-21Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "backend_docker_release__2024-11-04T17-27-21Z__bc9d12f438f6c608301f5ef8374baa64fe5ddd3f.yml",
+          "workflow_name": "Backend Publish docker image",
+          "triggers": {
+            "release": {
+              "types": [
+                "released"
+              ]
+            }
+          },
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 47,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build-and-push-image": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 1
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build-and-push-image": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "docker/build-push-action@v5.3.0",
+              "docker/login-action@06895751d15a223ec091bea144ad5c7f50d228d0",
+              "docker/metadata-action@v5.5.1"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Backend Publish docker image",
+        "true": {
+          "release": {
+            "types": [
+              "released"
+            ]
+          }
+        },
+        "env": {
+          "REGISTRY": "ghcr.io",
+          "IMAGE_NAME": "${{ github.repository }}_backend"
+        },
+        "jobs": {
+          "build-and-push-image": {
+            "if": "(startswith(github.event.release.tag_name, 'v'))",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "contents": "read",
+              "packages": "write"
+            },
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Log in to the Container registry",
+                "uses": "docker/login-action@06895751d15a223ec091bea144ad5c7f50d228d0",
+                "with": {
+                  "registry": "${{ env.REGISTRY }}",
+                  "username": "${{ github.actor }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Extract metadata (tags, labels) for Docker",
+                "id": "meta",
+                "uses": "docker/metadata-action@v5.5.1",
+                "with": {
+                  "images": "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}"
+                }
+              },
+              {
+                "name": "Build and push Docker image",
+                "uses": "docker/build-push-action@v5.3.0",
+                "with": {
+                  "context": ".",
+                  "file": "Dockerfile_backend",
+                  "push": true,
+                  "tags": "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest, ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.event.release.tag_name }}",
+                  "labels": "${{ steps.meta.outputs.labels }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-11-11T12-06-03Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "backend_docker_release__2024-11-11T12-06-03Z__cc07a0f8daff44e60a1aa8a976262650bd062716.yml",
+          "workflow_name": "Backend Publish docker image",
+          "triggers": {
+            "release": {
+              "types": [
+                "released"
+              ]
+            }
+          },
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 47,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build-and-push-image": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 1
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build-and-push-image": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "docker/build-push-action@v5.3.0",
+              "docker/login-action@7ca345011ac4304463197fac0e56eab1bc7e6af0",
+              "docker/metadata-action@v5.5.1"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Backend Publish docker image",
+        "true": {
+          "release": {
+            "types": [
+              "released"
+            ]
+          }
+        },
+        "env": {
+          "REGISTRY": "ghcr.io",
+          "IMAGE_NAME": "${{ github.repository }}_backend"
+        },
+        "jobs": {
+          "build-and-push-image": {
+            "if": "(startswith(github.event.release.tag_name, 'v'))",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "contents": "read",
+              "packages": "write"
+            },
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Log in to the Container registry",
+                "uses": "docker/login-action@7ca345011ac4304463197fac0e56eab1bc7e6af0",
+                "with": {
+                  "registry": "${{ env.REGISTRY }}",
+                  "username": "${{ github.actor }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Extract metadata (tags, labels) for Docker",
+                "id": "meta",
+                "uses": "docker/metadata-action@v5.5.1",
+                "with": {
+                  "images": "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}"
+                }
+              },
+              {
+                "name": "Build and push Docker image",
+                "uses": "docker/build-push-action@v5.3.0",
+                "with": {
+                  "context": ".",
+                  "file": "Dockerfile_backend",
+                  "push": true,
+                  "tags": "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest, ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.event.release.tag_name }}",
+                  "labels": "${{ steps.meta.outputs.labels }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-03-24T18-14-05Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "backend_docker_release__2025-03-24T18-14-05Z__887fd51109186a2cc9d9fe3b5607e808a8f1edc7.yml",
+          "workflow_name": "Backend Publish docker image",
+          "triggers": {
+            "release": {
+              "types": [
+                "released"
+              ]
+            }
+          },
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 47,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build-and-push-image": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 1
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build-and-push-image": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "docker/build-push-action@v5.3.0",
+              "docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772",
+              "docker/metadata-action@v5.5.1"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Backend Publish docker image",
+        "true": {
+          "release": {
+            "types": [
+              "released"
+            ]
+          }
+        },
+        "env": {
+          "REGISTRY": "ghcr.io",
+          "IMAGE_NAME": "${{ github.repository }}_backend"
+        },
+        "jobs": {
+          "build-and-push-image": {
+            "if": "(startswith(github.event.release.tag_name, 'v'))",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "contents": "read",
+              "packages": "write"
+            },
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Log in to the Container registry",
+                "uses": "docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772",
+                "with": {
+                  "registry": "${{ env.REGISTRY }}",
+                  "username": "${{ github.actor }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Extract metadata (tags, labels) for Docker",
+                "id": "meta",
+                "uses": "docker/metadata-action@v5.5.1",
+                "with": {
+                  "images": "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}"
+                }
+              },
+              {
+                "name": "Build and push Docker image",
+                "uses": "docker/build-push-action@v5.3.0",
+                "with": {
+                  "context": ".",
+                  "file": "Dockerfile_backend",
+                  "push": true,
+                  "tags": "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest, ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.event.release.tag_name }}",
+                  "labels": "${{ steps.meta.outputs.labels }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

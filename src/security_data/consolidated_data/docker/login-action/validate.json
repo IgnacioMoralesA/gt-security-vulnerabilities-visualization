@@ -1,0 +1,1458 @@
+{
+  "repo_owner": "docker",
+  "repo_name": "login-action",
+  "workflow_name": "validate",
+  "history": {
+    "2023-03-12T12-55-42Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-5e863fa2-0363-5892-8de7-79f0334fd46c",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/validate__2023-03-12T12-55-42Z__eb81c74b3143fbacbd9134bb79e25027f38bcca8.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 25,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "4fcd141f251cf27a:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-5253c7dd-d911-540d-b128-1338406c4339",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/validate__2023-03-12T12-55-42Z__eb81c74b3143fbacbd9134bb79e25027f38bcca8.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 26,
+                  "startColumn": 5,
+                  "endLine": 41,
+                  "endColumn": 41
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "221670cfdf15f227:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "validate__2023-03-12T12-55-42Z__eb81c74b3143fbacbd9134bb79e25027f38bcca8.yml",
+          "workflow_name": "validate",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 41,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "prepare": 2,
+            "validate": 2
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 1,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "prepare": 2,
+              "validate": 2
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v3",
+              "docker/bake-action@v2"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "validate",
+        "true": {
+          "push": {
+            "branches": [
+              "master",
+              "releases/v*"
+            ]
+          },
+          "pull_request": null
+        },
+        "jobs": {
+          "prepare": {
+            "runs-on": "ubuntu-latest",
+            "outputs": {
+              "targets": "${{ steps.targets.outputs.matrix }}"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Targets matrix",
+                "id": "targets",
+                "run": "echo \"matrix=$(docker buildx bake validate --print | jq -cr '.group.validate.targets')\" >> $GITHUB_OUTPUT\n"
+              }
+            ]
+          },
+          "validate": {
+            "runs-on": "ubuntu-latest",
+            "needs": [
+              "prepare"
+            ],
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "target": "${{ fromJson(needs.prepare.outputs.targets) }}"
+              }
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Validate",
+                "uses": "docker/bake-action@v2",
+                "with": {
+                  "targets": "${{ matrix.target }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-04-19T05-58-19Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-d405e822-177e-563a-82f9-4482637097ad",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/validate__2023-04-19T05-58-19Z__6ba7f31490b371a50287fbfe4bdad369ff7a346e.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 25,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "4fcd141f251cf27a:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-85c654a3-15a4-5f17-9145-d1cdca0f1898",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/validate__2023-04-19T05-58-19Z__6ba7f31490b371a50287fbfe4bdad369ff7a346e.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 26,
+                  "startColumn": 5,
+                  "endLine": 41,
+                  "endColumn": 41
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "221670cfdf15f227:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "validate__2023-04-19T05-58-19Z__6ba7f31490b371a50287fbfe4bdad369ff7a346e.yml",
+          "workflow_name": "validate",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 41,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "prepare": 2,
+            "validate": 2
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 1,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "prepare": 2,
+              "validate": 2
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v3",
+              "docker/bake-action@v3"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "validate",
+        "true": {
+          "push": {
+            "branches": [
+              "master",
+              "releases/v*"
+            ]
+          },
+          "pull_request": null
+        },
+        "jobs": {
+          "prepare": {
+            "runs-on": "ubuntu-latest",
+            "outputs": {
+              "targets": "${{ steps.targets.outputs.matrix }}"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Targets matrix",
+                "id": "targets",
+                "run": "echo \"matrix=$(docker buildx bake validate --print | jq -cr '.group.validate.targets')\" >> $GITHUB_OUTPUT\n"
+              }
+            ]
+          },
+          "validate": {
+            "runs-on": "ubuntu-latest",
+            "needs": [
+              "prepare"
+            ],
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "target": "${{ fromJson(needs.prepare.outputs.targets) }}"
+              }
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Validate",
+                "uses": "docker/bake-action@v3",
+                "with": {
+                  "targets": "${{ matrix.target }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-09-05T09-00-45Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-3e26d39f-8e7e-5888-ae8f-d027bc768beb",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/validate__2023-09-05T09-00-45Z__e67ee94f2c577cb2172e00e48676d0b4aee5aa40.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 16,
+                  "startColumn": 5,
+                  "endLine": 29,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "4fcd141f251cf27a:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-edee2e39-91d1-54d7-a5b9-b2cd002c4ad1",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/validate__2023-09-05T09-00-45Z__e67ee94f2c577cb2172e00e48676d0b4aee5aa40.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 30,
+                  "startColumn": 5,
+                  "endLine": 45,
+                  "endColumn": 41
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "221670cfdf15f227:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "validate__2023-09-05T09-00-45Z__e67ee94f2c577cb2172e00e48676d0b4aee5aa40.yml",
+          "workflow_name": "validate",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": {
+            "group": "${{ github.workflow }}-${{ github.ref }}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 45,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "prepare": 2,
+            "validate": 2
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 1,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "prepare": 2,
+              "validate": 2
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "docker/bake-action@v3"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "validate",
+        "concurrency": {
+          "group": "${{ github.workflow }}-${{ github.ref }}",
+          "cancel-in-progress": true
+        },
+        "true": {
+          "push": {
+            "branches": [
+              "master",
+              "releases/v*"
+            ]
+          },
+          "pull_request": null
+        },
+        "jobs": {
+          "prepare": {
+            "runs-on": "ubuntu-latest",
+            "outputs": {
+              "targets": "${{ steps.targets.outputs.matrix }}"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Targets matrix",
+                "id": "targets",
+                "run": "echo \"matrix=$(docker buildx bake validate --print | jq -cr '.group.validate.targets')\" >> $GITHUB_OUTPUT\n"
+              }
+            ]
+          },
+          "validate": {
+            "runs-on": "ubuntu-latest",
+            "needs": [
+              "prepare"
+            ],
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "target": "${{ fromJson(needs.prepare.outputs.targets) }}"
+              }
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Validate",
+                "uses": "docker/bake-action@v3",
+                "with": {
+                  "targets": "${{ matrix.target }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-09-05T05-39-46Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-da77f5f5-7146-5d2f-ad22-2a97033122f6",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/validate__2023-09-05T05-39-46Z__69b57c9b4d86f652375c92222f17afdcc5efef33.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 25,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "4fcd141f251cf27a:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-c78916ec-585c-5f4d-9b5e-9512e41b57fa",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/validate__2023-09-05T05-39-46Z__69b57c9b4d86f652375c92222f17afdcc5efef33.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 26,
+                  "startColumn": 5,
+                  "endLine": 41,
+                  "endColumn": 41
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "221670cfdf15f227:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "validate__2023-09-05T05-39-46Z__69b57c9b4d86f652375c92222f17afdcc5efef33.yml",
+          "workflow_name": "validate",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 41,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "prepare": 2,
+            "validate": 2
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 1,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "prepare": 2,
+              "validate": 2
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "docker/bake-action@v3"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "validate",
+        "true": {
+          "push": {
+            "branches": [
+              "master",
+              "releases/v*"
+            ]
+          },
+          "pull_request": null
+        },
+        "jobs": {
+          "prepare": {
+            "runs-on": "ubuntu-latest",
+            "outputs": {
+              "targets": "${{ steps.targets.outputs.matrix }}"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Targets matrix",
+                "id": "targets",
+                "run": "echo \"matrix=$(docker buildx bake validate --print | jq -cr '.group.validate.targets')\" >> $GITHUB_OUTPUT\n"
+              }
+            ]
+          },
+          "validate": {
+            "runs-on": "ubuntu-latest",
+            "needs": [
+              "prepare"
+            ],
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "target": "${{ fromJson(needs.prepare.outputs.targets) }}"
+              }
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Validate",
+                "uses": "docker/bake-action@v3",
+                "with": {
+                  "targets": "${{ matrix.target }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-09-13T05-29-30Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-d471378e-12c9-59de-bd78-6dd8bfbc998c",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/validate__2023-09-13T05-29-30Z__194e6ce7297622d70ecc3f1a9a86e8248aedc848.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 16,
+                  "startColumn": 5,
+                  "endLine": 29,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "4fcd141f251cf27a:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-06182255-5a31-5eec-8cb1-db1abb6e4b56",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/validate__2023-09-13T05-29-30Z__194e6ce7297622d70ecc3f1a9a86e8248aedc848.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 30,
+                  "startColumn": 5,
+                  "endLine": 45,
+                  "endColumn": 41
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "221670cfdf15f227:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "validate__2023-09-13T05-29-30Z__194e6ce7297622d70ecc3f1a9a86e8248aedc848.yml",
+          "workflow_name": "validate",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": {
+            "group": "${{ github.workflow }}-${{ github.ref }}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 45,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "prepare": 2,
+            "validate": 2
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 1,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "prepare": 2,
+              "validate": 2
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "docker/bake-action@v4"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "validate",
+        "concurrency": {
+          "group": "${{ github.workflow }}-${{ github.ref }}",
+          "cancel-in-progress": true
+        },
+        "true": {
+          "push": {
+            "branches": [
+              "master",
+              "releases/v*"
+            ]
+          },
+          "pull_request": null
+        },
+        "jobs": {
+          "prepare": {
+            "runs-on": "ubuntu-latest",
+            "outputs": {
+              "targets": "${{ steps.targets.outputs.matrix }}"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Targets matrix",
+                "id": "targets",
+                "run": "echo \"matrix=$(docker buildx bake validate --print | jq -cr '.group.validate.targets')\" >> $GITHUB_OUTPUT\n"
+              }
+            ]
+          },
+          "validate": {
+            "runs-on": "ubuntu-latest",
+            "needs": [
+              "prepare"
+            ],
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "target": "${{ fromJson(needs.prepare.outputs.targets) }}"
+              }
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Validate",
+                "uses": "docker/bake-action@v4",
+                "with": {
+                  "targets": "${{ matrix.target }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-06-18T05-46-15Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-5132d43f-43be-5e4c-b6e4-51c4ae9f85c8",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/validate__2024-06-18T05-46-15Z__793c19c8fc1a0a6e836dc7ff6d64f331d131a3fb.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 16,
+                  "startColumn": 5,
+                  "endLine": 29,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "4fcd141f251cf27a:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-c028503d-c5fa-5b81-9dc7-142634712379",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/validate__2024-06-18T05-46-15Z__793c19c8fc1a0a6e836dc7ff6d64f331d131a3fb.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 30,
+                  "startColumn": 5,
+                  "endLine": 45,
+                  "endColumn": 41
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "221670cfdf15f227:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "validate__2024-06-18T05-46-15Z__793c19c8fc1a0a6e836dc7ff6d64f331d131a3fb.yml",
+          "workflow_name": "validate",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": {
+            "group": "${{ github.workflow }}-${{ github.ref }}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 45,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "prepare": 2,
+            "validate": 2
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 1,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "prepare": 2,
+              "validate": 2
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "docker/bake-action@v5"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "validate",
+        "concurrency": {
+          "group": "${{ github.workflow }}-${{ github.ref }}",
+          "cancel-in-progress": true
+        },
+        "true": {
+          "push": {
+            "branches": [
+              "master",
+              "releases/v*"
+            ]
+          },
+          "pull_request": null
+        },
+        "jobs": {
+          "prepare": {
+            "runs-on": "ubuntu-latest",
+            "outputs": {
+              "targets": "${{ steps.targets.outputs.matrix }}"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Targets matrix",
+                "id": "targets",
+                "run": "echo \"matrix=$(docker buildx bake validate --print | jq -cr '.group.validate.targets')\" >> $GITHUB_OUTPUT\n"
+              }
+            ]
+          },
+          "validate": {
+            "runs-on": "ubuntu-latest",
+            "needs": [
+              "prepare"
+            ],
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "target": "${{ fromJson(needs.prepare.outputs.targets) }}"
+              }
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Validate",
+                "uses": "docker/bake-action@v5",
+                "with": {
+                  "targets": "${{ matrix.target }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-01-08T11-58-36Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-9475efdb-4283-5a72-bcf0-06ecc83c991e",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/validate__2025-01-08T11-58-36Z__e217ef3a2d40d69c8669e6d757c4061b171e4c2d.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 16,
+                  "startColumn": 5,
+                  "endLine": 30,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "ac937ac7ed471208:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-df29dc35-1d93-5cf6-adc9-a6a31774e6e7",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/validate__2025-01-08T11-58-36Z__e217ef3a2d40d69c8669e6d757c4061b171e4c2d.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 31,
+                  "startColumn": 5,
+                  "endLine": 43,
+                  "endColumn": 41
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "221670cfdf15f227:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "validate__2025-01-08T11-58-36Z__e217ef3a2d40d69c8669e6d757c4061b171e4c2d.yml",
+          "workflow_name": "validate",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": {
+            "group": "${{ github.workflow }}-${{ github.ref }}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 43,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "prepare": 2,
+            "validate": 1
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 1,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "prepare": 2,
+              "validate": 1
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "docker/bake-action/subaction/list-targets@v6",
+              "docker/bake-action@v6"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "validate",
+        "concurrency": {
+          "group": "${{ github.workflow }}-${{ github.ref }}",
+          "cancel-in-progress": true
+        },
+        "true": {
+          "push": {
+            "branches": [
+              "master",
+              "releases/v*"
+            ]
+          },
+          "pull_request": null
+        },
+        "jobs": {
+          "prepare": {
+            "runs-on": "ubuntu-latest",
+            "outputs": {
+              "targets": "${{ steps.generate.outputs.targets }}"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "List targets",
+                "id": "generate",
+                "uses": "docker/bake-action/subaction/list-targets@v6",
+                "with": {
+                  "target": "validate"
+                }
+              }
+            ]
+          },
+          "validate": {
+            "runs-on": "ubuntu-latest",
+            "needs": [
+              "prepare"
+            ],
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "target": "${{ fromJson(needs.prepare.outputs.targets) }}"
+              }
+            },
+            "steps": [
+              {
+                "name": "Validate",
+                "uses": "docker/bake-action@v6",
+                "with": {
+                  "targets": "${{ matrix.target }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-08-12T14-16-25Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-1d1b3848-119c-5ab1-a717-eec4176568ac",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/validate__2025-08-12T14-16-25Z__9b3389107c4d9ea670f09a2402d36117a0b45339.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 16,
+                  "startColumn": 5,
+                  "endLine": 30,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "ac937ac7ed471208:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-98b2bfd9-d702-55bf-96af-a6ee07a253d8",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/validate__2025-08-12T14-16-25Z__9b3389107c4d9ea670f09a2402d36117a0b45339.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 31,
+                  "startColumn": 5,
+                  "endLine": 43,
+                  "endColumn": 41
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "221670cfdf15f227:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "validate__2025-08-12T14-16-25Z__9b3389107c4d9ea670f09a2402d36117a0b45339.yml",
+          "workflow_name": "validate",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": {
+            "group": "${{ github.workflow }}-${{ github.ref }}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 43,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "prepare": 2,
+            "validate": 1
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 1,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "prepare": 2,
+              "validate": 1
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v5",
+              "docker/bake-action/subaction/list-targets@v6",
+              "docker/bake-action@v6"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "validate",
+        "concurrency": {
+          "group": "${{ github.workflow }}-${{ github.ref }}",
+          "cancel-in-progress": true
+        },
+        "true": {
+          "push": {
+            "branches": [
+              "master",
+              "releases/v*"
+            ]
+          },
+          "pull_request": null
+        },
+        "jobs": {
+          "prepare": {
+            "runs-on": "ubuntu-latest",
+            "outputs": {
+              "targets": "${{ steps.generate.outputs.targets }}"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v5"
+              },
+              {
+                "name": "List targets",
+                "id": "generate",
+                "uses": "docker/bake-action/subaction/list-targets@v6",
+                "with": {
+                  "target": "validate"
+                }
+              }
+            ]
+          },
+          "validate": {
+            "runs-on": "ubuntu-latest",
+            "needs": [
+              "prepare"
+            ],
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "target": "${{ fromJson(needs.prepare.outputs.targets) }}"
+              }
+            },
+            "steps": [
+              {
+                "name": "Validate",
+                "uses": "docker/bake-action@v6",
+                "with": {
+                  "targets": "${{ matrix.target }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

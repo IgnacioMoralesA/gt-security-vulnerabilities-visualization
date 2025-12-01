@@ -1,0 +1,1468 @@
+{
+  "repo_owner": "actions",
+  "repo_name": "setup-node",
+  "workflow_name": "proxy",
+  "history": {
+    "2020-05-19T13-25-54Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-f05cf09a-bff6-5d23-b174-8fc5c9304c67",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/proxy__2020-05-19T13-25-54Z__e434342e4e324065b1b19b24586c710a1a68d2d7.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 16,
+                  "startColumn": 5,
+                  "endLine": 40,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "6020cd18ed2dcf29:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-39412b74-4668-5ccb-9e12-2e33b6b47ea8",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/proxy__2020-05-19T13-25-54Z__e434342e4e324065b1b19b24586c710a1a68d2d7.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 41,
+                  "startColumn": 5,
+                  "endLine": 56,
+                  "endColumn": 42
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "579d93c1f6902685:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "proxy__2020-05-19T13-25-54Z__e434342e4e324065b1b19b24586c710a1a68d2d7.yml",
+          "workflow_name": "proxy",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 56,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "test-proxy": 4,
+            "test-bypass-proxy": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test-proxy": 4,
+              "test-bypass-proxy": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 1,
+            "jobs_with_services": 1
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "./",
+              "actions/checkout@v2"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "proxy",
+        "true": {
+          "pull_request": {
+            "paths-ignore": [
+              "**.md"
+            ]
+          },
+          "push": {
+            "branches": [
+              "master",
+              "releases/*"
+            ],
+            "paths-ignore": [
+              "**.md"
+            ]
+          }
+        },
+        "jobs": {
+          "test-proxy": {
+            "runs-on": "ubuntu-latest",
+            "strategy": {
+              "fail-fast": false
+            },
+            "container": {
+              "image": "ubuntu:latest",
+              "options": "--dns 127.0.0.1"
+            },
+            "services": {
+              "squid-proxy": {
+                "image": "datadog/squid:latest",
+                "ports": [
+                  "3128:3128"
+                ]
+              }
+            },
+            "env": {
+              "https_proxy": "http://squid-proxy:3128"
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "name": "Clear tool cache",
+                "run": "rm -rf $RUNNER_TOOL_CACHE/*"
+              },
+              {
+                "name": "Setup node 10",
+                "uses": "./",
+                "with": {
+                  "node-version": "10.x"
+                }
+              },
+              {
+                "name": "Verify node and npm",
+                "run": "__tests__/verify-node.sh 10"
+              }
+            ]
+          },
+          "test-bypass-proxy": {
+            "runs-on": "ubuntu-latest",
+            "strategy": {
+              "fail-fast": false
+            },
+            "env": {
+              "https_proxy": "http://no-such-proxy:3128",
+              "no_proxy": "api.github.com,github.com,nodejs.org,registry.npmjs.org,*.s3.amazonaws.com,s3.amazonaws.com"
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "name": "Clear tool cache",
+                "run": "rm -rf $RUNNER_TOOL_CACHE/*"
+              },
+              {
+                "name": "Setup node 11",
+                "uses": "./",
+                "with": {
+                  "node-version": 11
+                }
+              },
+              {
+                "name": "Verify node and npm",
+                "run": "__tests__/verify-node.sh 11"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2021-06-30T12-07-45Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-b29417a6-6850-55f5-bde8-c23d3a9e464d",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/proxy__2021-06-30T12-07-45Z__40f85c8c9749fde9bb1f49ac6f38d0acc30cb80a.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 16,
+                  "startColumn": 5,
+                  "endLine": 40,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "6020cd18ed2dcf29:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-fc6d9c1e-bae6-5168-9888-134e06c5ca48",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/proxy__2021-06-30T12-07-45Z__40f85c8c9749fde9bb1f49ac6f38d0acc30cb80a.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 41,
+                  "startColumn": 5,
+                  "endLine": 56,
+                  "endColumn": 42
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "579d93c1f6902685:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "proxy__2021-06-30T12-07-45Z__40f85c8c9749fde9bb1f49ac6f38d0acc30cb80a.yml",
+          "workflow_name": "proxy",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 56,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "test-proxy": 4,
+            "test-bypass-proxy": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test-proxy": 4,
+              "test-bypass-proxy": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 1,
+            "jobs_with_services": 1
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "./",
+              "actions/checkout@v2"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "proxy",
+        "true": {
+          "pull_request": {
+            "paths-ignore": [
+              "**.md"
+            ]
+          },
+          "push": {
+            "branches": [
+              "master",
+              "releases/*"
+            ],
+            "paths-ignore": [
+              "**.md"
+            ]
+          }
+        },
+        "jobs": {
+          "test-proxy": {
+            "runs-on": "ubuntu-latest",
+            "strategy": {
+              "fail-fast": false
+            },
+            "container": {
+              "image": "ubuntu:latest",
+              "options": "--dns 127.0.0.1"
+            },
+            "services": {
+              "squid-proxy": {
+                "image": "datadog/squid:latest",
+                "ports": [
+                  "3128:3128"
+                ]
+              }
+            },
+            "env": {
+              "https_proxy": "http://squid-proxy:3128"
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "name": "Clear tool cache",
+                "run": "rm -rf $RUNNER_TOOL_CACHE/*"
+              },
+              {
+                "name": "Setup node 14",
+                "uses": "./",
+                "with": {
+                  "node-version": "14.x"
+                }
+              },
+              {
+                "name": "Verify node and npm",
+                "run": "__tests__/verify-node.sh 14"
+              }
+            ]
+          },
+          "test-bypass-proxy": {
+            "runs-on": "ubuntu-latest",
+            "strategy": {
+              "fail-fast": false
+            },
+            "env": {
+              "https_proxy": "http://no-such-proxy:3128",
+              "no_proxy": "api.github.com,github.com,nodejs.org,registry.npmjs.org,*.s3.amazonaws.com,s3.amazonaws.com"
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "name": "Clear tool cache",
+                "run": "rm -rf $RUNNER_TOOL_CACHE/*"
+              },
+              {
+                "name": "Setup node 11",
+                "uses": "./",
+                "with": {
+                  "node-version": 11
+                }
+              },
+              {
+                "name": "Verify node and npm",
+                "run": "__tests__/verify-node.sh 11"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2021-12-30T13-58-49Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-f72614fe-5bc9-5a30-bf17-b9e1b20523af",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/proxy__2021-12-30T13-58-49Z__7b558676dd6f955a469559a6f9db9e0447fe8749.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 16,
+                  "startColumn": 5,
+                  "endLine": 38,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "12da2f3c487cb6d9:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-db1193ea-13ba-52aa-b3e9-d2a6f5ff1c26",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/proxy__2021-12-30T13-58-49Z__7b558676dd6f955a469559a6f9db9e0447fe8749.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 39,
+                  "startColumn": 5,
+                  "endLine": 52,
+                  "endColumn": 42
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "f24063d10428d300:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "proxy__2021-12-30T13-58-49Z__7b558676dd6f955a469559a6f9db9e0447fe8749.yml",
+          "workflow_name": "proxy",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 52,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "test-proxy": 4,
+            "test-bypass-proxy": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test-proxy": 4,
+              "test-bypass-proxy": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 1,
+            "jobs_with_services": 1
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "./",
+              "actions/checkout@v2"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "proxy",
+        "true": {
+          "pull_request": {
+            "paths-ignore": [
+              "**.md"
+            ]
+          },
+          "push": {
+            "branches": [
+              "main",
+              "releases/*"
+            ],
+            "paths-ignore": [
+              "**.md"
+            ]
+          }
+        },
+        "jobs": {
+          "test-proxy": {
+            "runs-on": "ubuntu-latest",
+            "container": {
+              "image": "ubuntu:latest",
+              "options": "--dns 127.0.0.1"
+            },
+            "services": {
+              "squid-proxy": {
+                "image": "datadog/squid:latest",
+                "ports": [
+                  "3128:3128"
+                ]
+              }
+            },
+            "env": {
+              "https_proxy": "http://squid-proxy:3128"
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "name": "Clear tool cache",
+                "run": "rm -rf $RUNNER_TOOL_CACHE/*"
+              },
+              {
+                "name": "Setup node 14",
+                "uses": "./",
+                "with": {
+                  "node-version": "14.x"
+                }
+              },
+              {
+                "name": "Verify node and npm",
+                "run": "__tests__/verify-node.sh 14"
+              }
+            ]
+          },
+          "test-bypass-proxy": {
+            "runs-on": "ubuntu-latest",
+            "env": {
+              "https_proxy": "http://no-such-proxy:3128",
+              "no_proxy": "api.github.com,github.com,nodejs.org,registry.npmjs.org,*.s3.amazonaws.com,s3.amazonaws.com"
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "name": "Clear tool cache",
+                "run": "rm -rf $RUNNER_TOOL_CACHE/*"
+              },
+              {
+                "name": "Setup node 11",
+                "uses": "./",
+                "with": {
+                  "node-version": 11
+                }
+              },
+              {
+                "name": "Verify node and npm",
+                "run": "__tests__/verify-node.sh 11"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-04-01T08-13-52Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-cc69092e-ac03-569d-b340-b1d4bcc21123",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/proxy__2022-04-01T08-13-52Z__75716637dc8cd06e88621003df6357fdcee67772.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 16,
+                  "startColumn": 5,
+                  "endLine": 38,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "12da2f3c487cb6d9:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-1ad4e833-8612-5dbd-82e2-43c1f6c18334",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/proxy__2022-04-01T08-13-52Z__75716637dc8cd06e88621003df6357fdcee67772.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 39,
+                  "startColumn": 5,
+                  "endLine": 52,
+                  "endColumn": 42
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "f24063d10428d300:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "proxy__2022-04-01T08-13-52Z__75716637dc8cd06e88621003df6357fdcee67772.yml",
+          "workflow_name": "proxy",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 52,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "test-proxy": 4,
+            "test-bypass-proxy": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test-proxy": 4,
+              "test-bypass-proxy": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 1,
+            "jobs_with_services": 1
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "./",
+              "actions/checkout@v3"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "proxy",
+        "true": {
+          "pull_request": {
+            "paths-ignore": [
+              "**.md"
+            ]
+          },
+          "push": {
+            "branches": [
+              "main",
+              "releases/*"
+            ],
+            "paths-ignore": [
+              "**.md"
+            ]
+          }
+        },
+        "jobs": {
+          "test-proxy": {
+            "runs-on": "ubuntu-latest",
+            "container": {
+              "image": "ubuntu:latest",
+              "options": "--dns 127.0.0.1"
+            },
+            "services": {
+              "squid-proxy": {
+                "image": "datadog/squid:latest",
+                "ports": [
+                  "3128:3128"
+                ]
+              }
+            },
+            "env": {
+              "https_proxy": "http://squid-proxy:3128"
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Clear tool cache",
+                "run": "rm -rf $RUNNER_TOOL_CACHE/*"
+              },
+              {
+                "name": "Setup node 14",
+                "uses": "./",
+                "with": {
+                  "node-version": "14.x"
+                }
+              },
+              {
+                "name": "Verify node and npm",
+                "run": "__tests__/verify-node.sh 14"
+              }
+            ]
+          },
+          "test-bypass-proxy": {
+            "runs-on": "ubuntu-latest",
+            "env": {
+              "https_proxy": "http://no-such-proxy:3128",
+              "no_proxy": "api.github.com,github.com,nodejs.org,registry.npmjs.org,*.s3.amazonaws.com,s3.amazonaws.com"
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Clear tool cache",
+                "run": "rm -rf $RUNNER_TOOL_CACHE/*"
+              },
+              {
+                "name": "Setup node 11",
+                "uses": "./",
+                "with": {
+                  "node-version": 11
+                }
+              },
+              {
+                "name": "Verify node and npm",
+                "run": "__tests__/verify-node.sh 11"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-11-09T17-18-47Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-c4cbec4b-9c76-5266-a9d3-f7347dd2429e",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/proxy__2022-11-09T17-18-47Z__9b8fcdc725d99a2f6d5fd880cf5d84129c4c4a40.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 16,
+                  "startColumn": 5,
+                  "endLine": 38,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "12da2f3c487cb6d9:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-bb777642-12e3-5b6c-a304-1ddf71778f32",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/proxy__2022-11-09T17-18-47Z__9b8fcdc725d99a2f6d5fd880cf5d84129c4c4a40.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 39,
+                  "startColumn": 5,
+                  "endLine": 52,
+                  "endColumn": 42
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "f24063d10428d300:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "proxy__2022-11-09T17-18-47Z__9b8fcdc725d99a2f6d5fd880cf5d84129c4c4a40.yml",
+          "workflow_name": "proxy",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 52,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "test-proxy": 4,
+            "test-bypass-proxy": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test-proxy": 4,
+              "test-bypass-proxy": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 1,
+            "jobs_with_services": 1
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "./",
+              "actions/checkout@v3"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "proxy",
+        "true": {
+          "pull_request": {
+            "paths-ignore": [
+              "**.md"
+            ]
+          },
+          "push": {
+            "branches": [
+              "main",
+              "releases/*"
+            ],
+            "paths-ignore": [
+              "**.md"
+            ]
+          }
+        },
+        "jobs": {
+          "test-proxy": {
+            "runs-on": "ubuntu-latest",
+            "container": {
+              "image": "ubuntu:latest",
+              "options": "--dns 127.0.0.1"
+            },
+            "services": {
+              "squid-proxy": {
+                "image": "ubuntu/squid:latest",
+                "ports": [
+                  "3128:3128"
+                ]
+              }
+            },
+            "env": {
+              "https_proxy": "http://squid-proxy:3128"
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Clear tool cache",
+                "run": "rm -rf $RUNNER_TOOL_CACHE/*"
+              },
+              {
+                "name": "Setup node 14",
+                "uses": "./",
+                "with": {
+                  "node-version": "14.x"
+                }
+              },
+              {
+                "name": "Verify node and npm",
+                "run": "__tests__/verify-node.sh 14"
+              }
+            ]
+          },
+          "test-bypass-proxy": {
+            "runs-on": "ubuntu-latest",
+            "env": {
+              "https_proxy": "http://no-such-proxy:3128",
+              "no_proxy": "api.github.com,github.com,nodejs.org,registry.npmjs.org,*.s3.amazonaws.com,s3.amazonaws.com"
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Clear tool cache",
+                "run": "rm -rf $RUNNER_TOOL_CACHE/*"
+              },
+              {
+                "name": "Setup node 11",
+                "uses": "./",
+                "with": {
+                  "node-version": 11
+                }
+              },
+              {
+                "name": "Verify node and npm",
+                "run": "__tests__/verify-node.sh 11"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-10-23T14-22-01Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-e1f53a7c-bfb9-567e-8a28-d9b2ae8d81e3",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/proxy__2023-10-23T14-22-01Z__8f152de45cc393bb48ce5d89d36b731f54556e65.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 16,
+                  "startColumn": 5,
+                  "endLine": 38,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "12da2f3c487cb6d9:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-6e0241f9-9978-5b41-b002-c49fb9fe6575",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/proxy__2023-10-23T14-22-01Z__8f152de45cc393bb48ce5d89d36b731f54556e65.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 39,
+                  "startColumn": 5,
+                  "endLine": 52,
+                  "endColumn": 42
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "f24063d10428d300:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "proxy__2023-10-23T14-22-01Z__8f152de45cc393bb48ce5d89d36b731f54556e65.yml",
+          "workflow_name": "proxy",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 52,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "test-proxy": 4,
+            "test-bypass-proxy": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test-proxy": 4,
+              "test-bypass-proxy": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 1,
+            "jobs_with_services": 1
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "./",
+              "actions/checkout@v4"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "proxy",
+        "true": {
+          "pull_request": {
+            "paths-ignore": [
+              "**.md"
+            ]
+          },
+          "push": {
+            "branches": [
+              "main",
+              "releases/*"
+            ],
+            "paths-ignore": [
+              "**.md"
+            ]
+          }
+        },
+        "jobs": {
+          "test-proxy": {
+            "runs-on": "ubuntu-latest",
+            "container": {
+              "image": "ubuntu:latest",
+              "options": "--dns 127.0.0.1"
+            },
+            "services": {
+              "squid-proxy": {
+                "image": "ubuntu/squid:latest",
+                "ports": [
+                  "3128:3128"
+                ]
+              }
+            },
+            "env": {
+              "https_proxy": "http://squid-proxy:3128"
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Clear tool cache",
+                "run": "rm -rf $RUNNER_TOOL_CACHE/*"
+              },
+              {
+                "name": "Setup node 14",
+                "uses": "./",
+                "with": {
+                  "node-version": "14.x"
+                }
+              },
+              {
+                "name": "Verify node and npm",
+                "run": "__tests__/verify-node.sh 14"
+              }
+            ]
+          },
+          "test-bypass-proxy": {
+            "runs-on": "ubuntu-latest",
+            "env": {
+              "https_proxy": "http://no-such-proxy:3128",
+              "no_proxy": "api.github.com,github.com,nodejs.org,registry.npmjs.org,*.s3.amazonaws.com,s3.amazonaws.com"
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Clear tool cache",
+                "run": "rm -rf $RUNNER_TOOL_CACHE/*"
+              },
+              {
+                "name": "Setup node 11",
+                "uses": "./",
+                "with": {
+                  "node-version": 11
+                }
+              },
+              {
+                "name": "Verify node and npm",
+                "run": "__tests__/verify-node.sh 11"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-09-03T17-47-21Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-5f90e5e6-af27-54a0-b233-859a21c28fa9",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/proxy__2025-09-03T17-47-21Z__a0853c24544627f65ddf259abe73b1d18a591444.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 16,
+                  "startColumn": 5,
+                  "endLine": 38,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "12da2f3c487cb6d9:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-919154c4-cfc7-5d14-8bf3-d62ab00d5f2c",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/proxy__2025-09-03T17-47-21Z__a0853c24544627f65ddf259abe73b1d18a591444.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 39,
+                  "startColumn": 5,
+                  "endLine": 52,
+                  "endColumn": 42
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "f24063d10428d300:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "proxy__2025-09-03T17-47-21Z__a0853c24544627f65ddf259abe73b1d18a591444.yml",
+          "workflow_name": "proxy",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 52,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "test-proxy": 4,
+            "test-bypass-proxy": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test-proxy": 4,
+              "test-bypass-proxy": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 1,
+            "jobs_with_services": 1
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "./",
+              "actions/checkout@v5"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "proxy",
+        "true": {
+          "pull_request": {
+            "paths-ignore": [
+              "**.md"
+            ]
+          },
+          "push": {
+            "branches": [
+              "main",
+              "releases/*"
+            ],
+            "paths-ignore": [
+              "**.md"
+            ]
+          }
+        },
+        "jobs": {
+          "test-proxy": {
+            "runs-on": "ubuntu-latest",
+            "container": {
+              "image": "ubuntu:latest",
+              "options": "--dns 127.0.0.1"
+            },
+            "services": {
+              "squid-proxy": {
+                "image": "ubuntu/squid:latest",
+                "ports": [
+                  "3128:3128"
+                ]
+              }
+            },
+            "env": {
+              "https_proxy": "http://squid-proxy:3128"
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v5"
+              },
+              {
+                "name": "Clear tool cache",
+                "run": "rm -rf $RUNNER_TOOL_CACHE/*"
+              },
+              {
+                "name": "Setup node 14",
+                "uses": "./",
+                "with": {
+                  "node-version": "14.x"
+                }
+              },
+              {
+                "name": "Verify node and npm",
+                "run": "__tests__/verify-node.sh 14"
+              }
+            ]
+          },
+          "test-bypass-proxy": {
+            "runs-on": "ubuntu-latest",
+            "env": {
+              "https_proxy": "http://no-such-proxy:3128",
+              "no_proxy": "api.github.com,github.com,nodejs.org,registry.npmjs.org,*.s3.amazonaws.com,s3.amazonaws.com"
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v5"
+              },
+              {
+                "name": "Clear tool cache",
+                "run": "rm -rf $RUNNER_TOOL_CACHE/*"
+              },
+              {
+                "name": "Setup node 11",
+                "uses": "./",
+                "with": {
+                  "node-version": 11
+                }
+              },
+              {
+                "name": "Verify node and npm",
+                "run": "__tests__/verify-node.sh 11"
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

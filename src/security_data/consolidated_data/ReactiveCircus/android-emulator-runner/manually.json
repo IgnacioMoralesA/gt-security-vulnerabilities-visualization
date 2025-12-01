@@ -1,0 +1,1831 @@
+{
+  "repo_owner": "ReactiveCircus",
+  "repo_name": "android-emulator-runner",
+  "workflow_name": "manually",
+  "history": {
+    "2021-08-28T09-51-59Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-67203209-44d4-5957-9685-f98625a26260",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/manually__2021-08-28T09-51-59Z__d83fb3d4fbcb042912277363e51167d9646bdabd.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 35,
+                  "startColumn": 5,
+                  "endLine": 76,
+                  "endColumn": 51
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "ae2ac920d023c091:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "manually__2021-08-28T09-51-59Z__d83fb3d4fbcb042912277363e51167d9646bdabd.yml",
+          "workflow_name": "Manually triggered workflow",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 76,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "test": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 6
+            },
+            "jobs_with_timeout": 1,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 5,
+            "actions_used": [
+              "./",
+              "actions/cache@v2",
+              "actions/checkout@v2",
+              "actions/setup-java@v1",
+              "gradle/wrapper-validation-action@v1"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Manually triggered workflow",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "os": {
+                "description": "OS",
+                "required": true,
+                "default": "macos-latest"
+              },
+              "api-level": {
+                "description": "API level of the platform and system image",
+                "required": true,
+                "default": "30"
+              },
+              "target": {
+                "description": "target of the system image - default, google_apis, google_apis_playstore, android-wear, android-wear-cn, android-tv or google-tv",
+                "required": true,
+                "default": "default"
+              },
+              "arch": {
+                "description": "CPU architecture of the system image - x86, x86_64 or arm64-v8a",
+                "default": "x86"
+              },
+              "emulator-options": {
+                "description": "command-line options used when launching the emulator",
+                "default": "-no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim"
+              },
+              "emulator-build": {
+                "description": "build number of a specific version of the emulator binary to use"
+              },
+              "channel": {
+                "description": "Channel to download the SDK components from - `stable`, `beta`, `dev`, `canary`",
+                "default": "stable"
+              },
+              "script": {
+                "description": "custom script to run - e.g. `./gradlew connectedCheck`",
+                "required": true,
+                "default": "./gradlew connectedDebugAndroidTest"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "test": {
+            "runs-on": "${{ github.event.inputs.os }}",
+            "env": {
+              "JAVA_TOOL_OPTIONS": "-Xmx4g"
+            },
+            "timeout-minutes": 15,
+            "steps": [
+              {
+                "name": "checkout",
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "name": "validate gradle wrapper",
+                "uses": "gradle/wrapper-validation-action@v1"
+              },
+              {
+                "name": "build, test and lint",
+                "run": "npm install\nnpm run build\nnpm run lint\nnpm test\n"
+              },
+              {
+                "name": "Java 15",
+                "uses": "actions/setup-java@v1",
+                "with": {
+                  "java-version": 15
+                }
+              },
+              {
+                "uses": "actions/cache@v2",
+                "with": {
+                  "path": "~/.gradle/caches\n~/.gradle/wrapper\n",
+                  "key": "${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}"
+                }
+              },
+              {
+                "name": "run action",
+                "uses": "./",
+                "with": {
+                  "api-level": "${{ github.event.inputs.api-level }}",
+                  "target": "${{ github.event.inputs.target }}",
+                  "arch": "${{ github.event.inputs.arch }}",
+                  "profile": "Galaxy Nexus",
+                  "emulator-options": "${{ github.event.inputs.emulator-options }}",
+                  "emulator-build": "${{ github.event.inputs.emulator-build }}",
+                  "channel": "${{ github.event.inputs.channel }}",
+                  "working-directory": "./test-fixture/",
+                  "script": "${{ github.event.inputs.script }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2021-08-28T09-44-11Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-da04bdf3-f2b4-558b-8eb4-006d2659e1e6",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/manually__2021-08-28T09-44-11Z__1427331a6274c220bcf6b1160145cd7803a32418.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 36,
+                  "startColumn": 5,
+                  "endLine": 77,
+                  "endColumn": 51
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "ae2ac920d023c091:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "manually__2021-08-28T09-44-11Z__1427331a6274c220bcf6b1160145cd7803a32418.yml",
+          "workflow_name": "Manually triggered workflow",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 77,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "test": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 6
+            },
+            "jobs_with_timeout": 1,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 5,
+            "actions_used": [
+              "./",
+              "actions/cache@v2",
+              "actions/checkout@v2",
+              "actions/setup-java@v1",
+              "gradle/wrapper-validation-action@v1"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Manually triggered workflow",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "os": {
+                "description": "OS",
+                "required": true,
+                "default": "macos-latest"
+              },
+              "api-level": {
+                "description": "API level of the platform and system image",
+                "required": true,
+                "default": "30"
+              },
+              "target": {
+                "description": "CPU architecture of the system image - x86, x86_64 or arm64-v8a",
+                "required": true,
+                "default": "default"
+              },
+              "emulator-options": {
+                "description": "command-line options used when launching the emulator",
+                "default": "-no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim"
+              },
+              "emulator-build": {
+                "description": "build number of a specific version of the emulator binary to use"
+              },
+              "channel": {
+                "description": "Channel to download the SDK components from - `stable`, `beta`, `dev`, `canary`",
+                "default": "stable"
+              },
+              "script": {
+                "description": "custom script to run - e.g. `./gradlew connectedCheck`",
+                "required": true,
+                "default": "./gradlew connectedDebugAndroidTest"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "test": {
+            "runs-on": "${{ github.event.inputs.os }}",
+            "env": {
+              "JAVA_TOOL_OPTIONS": "-Xmx4g"
+            },
+            "timeout-minutes": 15,
+            "steps": [
+              {
+                "name": "checkout",
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "name": "validate gradle wrapper",
+                "uses": "gradle/wrapper-validation-action@v1"
+              },
+              {
+                "name": "build, test and lint",
+                "run": "npm install\nnpm run build\nnpm run lint\nnpm test\n"
+              },
+              {
+                "name": "Java 15",
+                "uses": "actions/setup-java@v1",
+                "with": {
+                  "java-version": 15
+                }
+              },
+              {
+                "uses": "actions/cache@v2",
+                "with": {
+                  "path": "~/.gradle/caches\n~/.gradle/wrapper\n",
+                  "key": "${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}"
+                }
+              },
+              {
+                "name": "run action",
+                "uses": "./",
+                "with": {
+                  "api-level": "${{ github.event.inputs.api-level }}",
+                  "target": "${{ github.event.inputs.target }}",
+                  "arch": "${{ github.event.inputs.arch }}",
+                  "profile": "Galaxy Nexus",
+                  "emulator-options": "${{ github.event.inputs.emulator-options }}",
+                  "emulator-build": "${{ github.event.inputs.emulator-build }}",
+                  "channel": "${{ github.event.inputs.channel }}",
+                  "working-directory": "./test-fixture/",
+                  "script": "${{ github.event.inputs.script }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2021-10-23T08-29-35Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-f89ab138-6eab-5133-8075-9da7bbdcc9d9",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/manually__2021-10-23T08-29-35Z__8f0c30aea25d737926fedb8cef84acbcac07fc0b.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 35,
+                  "startColumn": 5,
+                  "endLine": 76,
+                  "endColumn": 51
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "ae2ac920d023c091:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "manually__2021-10-23T08-29-35Z__8f0c30aea25d737926fedb8cef84acbcac07fc0b.yml",
+          "workflow_name": "Manually triggered workflow",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 76,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "test": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 6
+            },
+            "jobs_with_timeout": 1,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 5,
+            "actions_used": [
+              "./",
+              "actions/cache@v2",
+              "actions/checkout@v2",
+              "actions/setup-java@v1",
+              "gradle/wrapper-validation-action@v1"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Manually triggered workflow",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "os": {
+                "description": "OS",
+                "required": true,
+                "default": "macos-latest"
+              },
+              "api-level": {
+                "description": "API level of the platform and system image",
+                "required": true,
+                "default": "30"
+              },
+              "target": {
+                "description": "target of the system image - default, google_apis, google_apis_playstore, aosp_atd, google_atd, android-wear, android-wear-cn, android-tv or google-tv",
+                "required": true,
+                "default": "default"
+              },
+              "arch": {
+                "description": "CPU architecture of the system image - x86, x86_64 or arm64-v8a",
+                "default": "x86"
+              },
+              "emulator-options": {
+                "description": "command-line options used when launching the emulator",
+                "default": "-no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim"
+              },
+              "emulator-build": {
+                "description": "build number of a specific version of the emulator binary to use"
+              },
+              "channel": {
+                "description": "Channel to download the SDK components from - `stable`, `beta`, `dev`, `canary`",
+                "default": "stable"
+              },
+              "script": {
+                "description": "custom script to run - e.g. `./gradlew connectedCheck`",
+                "required": true,
+                "default": "./gradlew connectedDebugAndroidTest"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "test": {
+            "runs-on": "${{ github.event.inputs.os }}",
+            "env": {
+              "JAVA_TOOL_OPTIONS": "-Xmx4g"
+            },
+            "timeout-minutes": 15,
+            "steps": [
+              {
+                "name": "checkout",
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "name": "validate gradle wrapper",
+                "uses": "gradle/wrapper-validation-action@v1"
+              },
+              {
+                "name": "build, test and lint",
+                "run": "npm install\nnpm run build\nnpm run lint\nnpm test\n"
+              },
+              {
+                "name": "Java 15",
+                "uses": "actions/setup-java@v1",
+                "with": {
+                  "java-version": 15
+                }
+              },
+              {
+                "uses": "actions/cache@v2",
+                "with": {
+                  "path": "~/.gradle/caches\n~/.gradle/wrapper\n",
+                  "key": "${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}"
+                }
+              },
+              {
+                "name": "run action",
+                "uses": "./",
+                "with": {
+                  "api-level": "${{ github.event.inputs.api-level }}",
+                  "target": "${{ github.event.inputs.target }}",
+                  "arch": "${{ github.event.inputs.arch }}",
+                  "profile": "Galaxy Nexus",
+                  "emulator-options": "${{ github.event.inputs.emulator-options }}",
+                  "emulator-build": "${{ github.event.inputs.emulator-build }}",
+                  "channel": "${{ github.event.inputs.channel }}",
+                  "working-directory": "./test-fixture/",
+                  "script": "${{ github.event.inputs.script }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-04-06T14-43-35Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-42d8c684-b3e2-5755-99de-31187481b141",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/manually__2022-04-06T14-43-35Z__4ea6abdd76a4cb61cde5b218985eb8ab2b070f23.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 35,
+                  "startColumn": 5,
+                  "endLine": 77,
+                  "endColumn": 51
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "ae2ac920d023c091:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "manually__2022-04-06T14-43-35Z__4ea6abdd76a4cb61cde5b218985eb8ab2b070f23.yml",
+          "workflow_name": "Manually triggered workflow",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 77,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "test": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 6
+            },
+            "jobs_with_timeout": 1,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 5,
+            "actions_used": [
+              "./",
+              "actions/cache@v3",
+              "actions/checkout@v3",
+              "actions/setup-java@v3",
+              "gradle/wrapper-validation-action@v1"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Manually triggered workflow",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "os": {
+                "description": "OS",
+                "required": true,
+                "default": "macos-latest"
+              },
+              "api-level": {
+                "description": "API level of the platform and system image",
+                "required": true,
+                "default": "30"
+              },
+              "target": {
+                "description": "target of the system image - default, google_apis, google_apis_playstore, aosp_atd, google_atd, android-wear, android-wear-cn, android-tv or google-tv",
+                "required": true,
+                "default": "default"
+              },
+              "arch": {
+                "description": "CPU architecture of the system image - x86, x86_64 or arm64-v8a",
+                "default": "x86"
+              },
+              "emulator-options": {
+                "description": "command-line options used when launching the emulator",
+                "default": "-no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim"
+              },
+              "emulator-build": {
+                "description": "build number of a specific version of the emulator binary to use"
+              },
+              "channel": {
+                "description": "Channel to download the SDK components from - `stable`, `beta`, `dev`, `canary`",
+                "default": "stable"
+              },
+              "script": {
+                "description": "custom script to run - e.g. `./gradlew connectedCheck`",
+                "required": true,
+                "default": "./gradlew connectedDebugAndroidTest"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "test": {
+            "runs-on": "${{ github.event.inputs.os }}",
+            "env": {
+              "JAVA_TOOL_OPTIONS": "-Xmx4g"
+            },
+            "timeout-minutes": 15,
+            "steps": [
+              {
+                "name": "checkout",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "validate gradle wrapper",
+                "uses": "gradle/wrapper-validation-action@v1"
+              },
+              {
+                "name": "build, test and lint",
+                "run": "npm install\nnpm run build\nnpm run lint\nnpm test\n"
+              },
+              {
+                "name": "Java 15",
+                "uses": "actions/setup-java@v3",
+                "with": {
+                  "distribution": "zulu",
+                  "java-version": 15
+                }
+              },
+              {
+                "uses": "actions/cache@v3",
+                "with": {
+                  "path": "~/.gradle/caches\n~/.gradle/wrapper\n",
+                  "key": "${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}"
+                }
+              },
+              {
+                "name": "run action",
+                "uses": "./",
+                "with": {
+                  "api-level": "${{ github.event.inputs.api-level }}",
+                  "target": "${{ github.event.inputs.target }}",
+                  "arch": "${{ github.event.inputs.arch }}",
+                  "profile": "Galaxy Nexus",
+                  "emulator-options": "${{ github.event.inputs.emulator-options }}",
+                  "emulator-build": "${{ github.event.inputs.emulator-build }}",
+                  "channel": "${{ github.event.inputs.channel }}",
+                  "working-directory": "./test-fixture/",
+                  "script": "${{ github.event.inputs.script }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-03-18T08-38-37Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-3539fcd1-c75c-560c-ae4d-28aaebc179cf",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/manually__2023-03-18T08-38-37Z__a2c97ef57f560b0d39c90dd090a0e9cb02313855.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 35,
+                  "startColumn": 5,
+                  "endLine": 74,
+                  "endColumn": 51
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "ae2ac920d023c091:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "manually__2023-03-18T08-38-37Z__a2c97ef57f560b0d39c90dd090a0e9cb02313855.yml",
+          "workflow_name": "Manually triggered workflow",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 74,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "test": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 6
+            },
+            "jobs_with_timeout": 1,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 5,
+            "actions_used": [
+              "./",
+              "actions/checkout@v3",
+              "actions/setup-java@v3",
+              "gradle/gradle-build-action@v2",
+              "gradle/wrapper-validation-action@v1"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Manually triggered workflow",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "os": {
+                "description": "OS",
+                "required": true,
+                "default": "macos-latest"
+              },
+              "api-level": {
+                "description": "API level of the platform and system image",
+                "required": true,
+                "default": "30"
+              },
+              "target": {
+                "description": "target of the system image - default, google_apis, google_apis_playstore, aosp_atd, google_atd, android-wear, android-wear-cn, android-tv or google-tv",
+                "required": true,
+                "default": "default"
+              },
+              "arch": {
+                "description": "CPU architecture of the system image - x86, x86_64 or arm64-v8a",
+                "default": "x86"
+              },
+              "emulator-options": {
+                "description": "command-line options used when launching the emulator",
+                "default": "-no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim"
+              },
+              "emulator-build": {
+                "description": "build number of a specific version of the emulator binary to use"
+              },
+              "channel": {
+                "description": "Channel to download the SDK components from - `stable`, `beta`, `dev`, `canary`",
+                "default": "stable"
+              },
+              "script": {
+                "description": "custom script to run - e.g. `./gradlew connectedCheck`",
+                "required": true,
+                "default": "./gradlew connectedDebugAndroidTest"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "test": {
+            "runs-on": "${{ github.event.inputs.os }}",
+            "env": {
+              "JAVA_TOOL_OPTIONS": "-Xmx4g"
+            },
+            "timeout-minutes": 15,
+            "steps": [
+              {
+                "name": "checkout",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "validate gradle wrapper",
+                "uses": "gradle/wrapper-validation-action@v1"
+              },
+              {
+                "name": "build, test and lint",
+                "run": "npm install\nnpm run build\nnpm run lint\nnpm test\n"
+              },
+              {
+                "uses": "actions/setup-java@v3",
+                "with": {
+                  "distribution": "zulu",
+                  "java-version": 19
+                }
+              },
+              {
+                "uses": "gradle/gradle-build-action@v2",
+                "with": {
+                  "gradle-home-cache-cleanup": true
+                }
+              },
+              {
+                "name": "run action",
+                "uses": "./",
+                "with": {
+                  "api-level": "${{ github.event.inputs.api-level }}",
+                  "target": "${{ github.event.inputs.target }}",
+                  "arch": "${{ github.event.inputs.arch }}",
+                  "profile": "Galaxy Nexus",
+                  "emulator-options": "${{ github.event.inputs.emulator-options }}",
+                  "emulator-build": "${{ github.event.inputs.emulator-build }}",
+                  "channel": "${{ github.event.inputs.channel }}",
+                  "working-directory": "./test-fixture/",
+                  "script": "${{ github.event.inputs.script }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-01-19T06-38-35Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-0e637a6c-3f47-5063-a902-fc8bedfe25fc",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/manually__2024-01-19T06-38-35Z__c479bb6c0fb05202bee9d2725ad6ffae158bf815.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 35,
+                  "startColumn": 5,
+                  "endLine": 81,
+                  "endColumn": 51
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "ae2ac920d023c091:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "manually__2024-01-19T06-38-35Z__c479bb6c0fb05202bee9d2725ad6ffae158bf815.yml",
+          "workflow_name": "Manually triggered workflow",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 81,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "test": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 7
+            },
+            "jobs_with_timeout": 1,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 5,
+            "actions_used": [
+              "./",
+              "actions/checkout@v3",
+              "actions/setup-java@v3",
+              "gradle/gradle-build-action@v2",
+              "gradle/wrapper-validation-action@v1"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Manually triggered workflow",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "os": {
+                "description": "OS",
+                "required": true,
+                "default": "ubuntu-latest"
+              },
+              "api-level": {
+                "description": "API level of the platform and system image",
+                "required": true,
+                "default": "30"
+              },
+              "target": {
+                "description": "target of the system image - default, google_apis, google_apis_playstore, aosp_atd, google_atd, android-wear, android-wear-cn, android-tv or google-tv",
+                "required": true,
+                "default": "default"
+              },
+              "arch": {
+                "description": "CPU architecture of the system image - x86, x86_64 or arm64-v8a",
+                "default": "x86"
+              },
+              "emulator-options": {
+                "description": "command-line options used when launching the emulator",
+                "default": "-no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim"
+              },
+              "emulator-build": {
+                "description": "build number of a specific version of the emulator binary to use"
+              },
+              "channel": {
+                "description": "Channel to download the SDK components from - `stable`, `beta`, `dev`, `canary`",
+                "default": "stable"
+              },
+              "script": {
+                "description": "custom script to run - e.g. `./gradlew connectedCheck`",
+                "required": true,
+                "default": "./gradlew connectedDebugAndroidTest"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "test": {
+            "runs-on": "${{ github.event.inputs.os }}",
+            "env": {
+              "JAVA_TOOL_OPTIONS": "-Xmx4g"
+            },
+            "timeout-minutes": 15,
+            "steps": [
+              {
+                "name": "checkout",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "validate gradle wrapper",
+                "uses": "gradle/wrapper-validation-action@v1"
+              },
+              {
+                "name": "build, test and lint",
+                "run": "npm install\nnpm run build\nnpm run lint\nnpm test\n"
+              },
+              {
+                "uses": "actions/setup-java@v3",
+                "with": {
+                  "distribution": "zulu",
+                  "java-version": 21
+                }
+              },
+              {
+                "uses": "gradle/gradle-build-action@v2",
+                "with": {
+                  "gradle-home-cache-cleanup": true
+                }
+              },
+              {
+                "name": "enable KVM for linux runners",
+                "if": "runner.os == 'Linux'",
+                "run": "echo 'KERNEL==\"kvm\", GROUP=\"kvm\", MODE=\"0666\", OPTIONS+=\"static_node=kvm\"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules\nsudo udevadm control --reload-rules\nsudo udevadm trigger --name-match=kvm\n"
+              },
+              {
+                "name": "run action",
+                "uses": "./",
+                "with": {
+                  "api-level": "${{ github.event.inputs.api-level }}",
+                  "target": "${{ github.event.inputs.target }}",
+                  "arch": "${{ github.event.inputs.arch }}",
+                  "profile": "Galaxy Nexus",
+                  "emulator-options": "${{ github.event.inputs.emulator-options }}",
+                  "emulator-build": "${{ github.event.inputs.emulator-build }}",
+                  "channel": "${{ github.event.inputs.channel }}",
+                  "working-directory": "./test-fixture/",
+                  "script": "${{ github.event.inputs.script }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-01-27T12-11-47Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-98515fd6-e2f8-5a4a-8587-dc08967d000f",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/manually__2024-01-27T12-11-47Z__9d5d6236f44d786bfff168e4c7a2d1a2d16f0c6f.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 35,
+                  "startColumn": 5,
+                  "endLine": 81,
+                  "endColumn": 51
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "ae2ac920d023c091:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "manually__2024-01-27T12-11-47Z__9d5d6236f44d786bfff168e4c7a2d1a2d16f0c6f.yml",
+          "workflow_name": "Manually triggered workflow",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 81,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "test": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 7
+            },
+            "jobs_with_timeout": 1,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 5,
+            "actions_used": [
+              "./",
+              "actions/checkout@v4",
+              "actions/setup-java@v4",
+              "gradle/actions/setup-gradle@v3",
+              "gradle/wrapper-validation-action@v1"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Manually triggered workflow",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "os": {
+                "description": "OS",
+                "required": true,
+                "default": "ubuntu-latest"
+              },
+              "api-level": {
+                "description": "API level of the platform and system image",
+                "required": true,
+                "default": "30"
+              },
+              "target": {
+                "description": "target of the system image - default, google_apis, google_apis_playstore, aosp_atd, google_atd, android-wear, android-wear-cn, android-tv or google-tv",
+                "required": true,
+                "default": "default"
+              },
+              "arch": {
+                "description": "CPU architecture of the system image - x86, x86_64 or arm64-v8a",
+                "default": "x86"
+              },
+              "emulator-options": {
+                "description": "command-line options used when launching the emulator",
+                "default": "-no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim"
+              },
+              "emulator-build": {
+                "description": "build number of a specific version of the emulator binary to use"
+              },
+              "channel": {
+                "description": "Channel to download the SDK components from - `stable`, `beta`, `dev`, `canary`",
+                "default": "stable"
+              },
+              "script": {
+                "description": "custom script to run - e.g. `./gradlew connectedCheck`",
+                "required": true,
+                "default": "./gradlew connectedDebugAndroidTest"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "test": {
+            "runs-on": "${{ github.event.inputs.os }}",
+            "env": {
+              "JAVA_TOOL_OPTIONS": "-Xmx4g"
+            },
+            "timeout-minutes": 15,
+            "steps": [
+              {
+                "name": "checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "validate gradle wrapper",
+                "uses": "gradle/wrapper-validation-action@v1"
+              },
+              {
+                "name": "build, test and lint",
+                "run": "npm install\nnpm run build\nnpm run lint\nnpm test\n"
+              },
+              {
+                "uses": "actions/setup-java@v4",
+                "with": {
+                  "distribution": "zulu",
+                  "java-version": 21
+                }
+              },
+              {
+                "uses": "gradle/actions/setup-gradle@v3",
+                "with": {
+                  "gradle-home-cache-cleanup": true
+                }
+              },
+              {
+                "name": "enable KVM for linux runners",
+                "if": "runner.os == 'Linux'",
+                "run": "echo 'KERNEL==\"kvm\", GROUP=\"kvm\", MODE=\"0666\", OPTIONS+=\"static_node=kvm\"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules\nsudo udevadm control --reload-rules\nsudo udevadm trigger --name-match=kvm\n"
+              },
+              {
+                "name": "run action",
+                "uses": "./",
+                "with": {
+                  "api-level": "${{ github.event.inputs.api-level }}",
+                  "target": "${{ github.event.inputs.target }}",
+                  "arch": "${{ github.event.inputs.arch }}",
+                  "profile": "Galaxy Nexus",
+                  "emulator-options": "${{ github.event.inputs.emulator-options }}",
+                  "emulator-build": "${{ github.event.inputs.emulator-build }}",
+                  "channel": "${{ github.event.inputs.channel }}",
+                  "working-directory": "./test-fixture/",
+                  "script": "${{ github.event.inputs.script }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-10-06T13-50-35Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-0e20c2c8-f64c-5ade-8815-3b1cfab5c487",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/manually__2024-10-06T13-50-35Z__3a18f5021676582060c2652cb1bc92d9821ff212.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 35,
+                  "startColumn": 5,
+                  "endLine": 76,
+                  "endColumn": 51
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "ae2ac920d023c091:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "manually__2024-10-06T13-50-35Z__3a18f5021676582060c2652cb1bc92d9821ff212.yml",
+          "workflow_name": "Manually triggered workflow",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 76,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "test": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 6
+            },
+            "jobs_with_timeout": 1,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "./",
+              "actions/checkout@v4",
+              "actions/setup-java@v4",
+              "gradle/actions/setup-gradle@v4"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Manually triggered workflow",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "os": {
+                "description": "OS",
+                "required": true,
+                "default": "ubuntu-latest"
+              },
+              "api-level": {
+                "description": "API level of the platform and system image",
+                "required": true,
+                "default": "34"
+              },
+              "target": {
+                "description": "target of the system image - default, google_apis, google_apis_playstore, aosp_atd, google_atd, android-wear, android-wear-cn, android-tv or google-tv",
+                "required": true,
+                "default": "default"
+              },
+              "arch": {
+                "description": "CPU architecture of the system image - x86, x86_64 or arm64-v8a",
+                "default": "x86_64"
+              },
+              "emulator-options": {
+                "description": "command-line options used when launching the emulator",
+                "default": "-no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim"
+              },
+              "emulator-build": {
+                "description": "build number of a specific version of the emulator binary to use"
+              },
+              "channel": {
+                "description": "Channel to download the SDK components from - `stable`, `beta`, `dev`, `canary`",
+                "default": "stable"
+              },
+              "script": {
+                "description": "custom script to run - e.g. `./gradlew connectedCheck`",
+                "required": true,
+                "default": "./gradlew connectedDebugAndroidTest"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "test": {
+            "runs-on": "${{ github.event.inputs.os }}",
+            "env": {
+              "JAVA_TOOL_OPTIONS": "-Xmx4g"
+            },
+            "timeout-minutes": 15,
+            "steps": [
+              {
+                "name": "checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "build, test and lint",
+                "run": "npm install\nnpm run build\nnpm run lint\nnpm test\n"
+              },
+              {
+                "uses": "actions/setup-java@v4",
+                "with": {
+                  "distribution": "zulu",
+                  "java-version": 23
+                }
+              },
+              {
+                "uses": "gradle/actions/setup-gradle@v4"
+              },
+              {
+                "name": "enable KVM for linux runners",
+                "if": "runner.os == 'Linux'",
+                "run": "echo 'KERNEL==\"kvm\", GROUP=\"kvm\", MODE=\"0666\", OPTIONS+=\"static_node=kvm\"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules\nsudo udevadm control --reload-rules\nsudo udevadm trigger --name-match=kvm\n"
+              },
+              {
+                "name": "run action",
+                "uses": "./",
+                "with": {
+                  "api-level": "${{ github.event.inputs.api-level }}",
+                  "target": "${{ github.event.inputs.target }}",
+                  "arch": "${{ github.event.inputs.arch }}",
+                  "profile": "Galaxy Nexus",
+                  "emulator-options": "${{ github.event.inputs.emulator-options }}",
+                  "emulator-build": "${{ github.event.inputs.emulator-build }}",
+                  "channel": "${{ github.event.inputs.channel }}",
+                  "working-directory": "./test-fixture/",
+                  "script": "${{ github.event.inputs.script }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-01-29T21-34-22Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-e46c07d2-c6c4-5369-b5eb-ced3cc712f34",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/manually__2024-01-29T21-34-22Z__a0c0e7216b96d46a893deeb10fdd24eb890411fe.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 35,
+                  "startColumn": 5,
+                  "endLine": 81,
+                  "endColumn": 51
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "ae2ac920d023c091:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "manually__2024-01-29T21-34-22Z__a0c0e7216b96d46a893deeb10fdd24eb890411fe.yml",
+          "workflow_name": "Manually triggered workflow",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 81,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "test": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 7
+            },
+            "jobs_with_timeout": 1,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 5,
+            "actions_used": [
+              "./",
+              "actions/checkout@v4",
+              "actions/setup-java@v4",
+              "gradle/actions/setup-gradle@v3",
+              "gradle/wrapper-validation-action@v2"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Manually triggered workflow",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "os": {
+                "description": "OS",
+                "required": true,
+                "default": "ubuntu-latest"
+              },
+              "api-level": {
+                "description": "API level of the platform and system image",
+                "required": true,
+                "default": "30"
+              },
+              "target": {
+                "description": "target of the system image - default, google_apis, google_apis_playstore, aosp_atd, google_atd, android-wear, android-wear-cn, android-tv or google-tv",
+                "required": true,
+                "default": "default"
+              },
+              "arch": {
+                "description": "CPU architecture of the system image - x86, x86_64 or arm64-v8a",
+                "default": "x86"
+              },
+              "emulator-options": {
+                "description": "command-line options used when launching the emulator",
+                "default": "-no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim"
+              },
+              "emulator-build": {
+                "description": "build number of a specific version of the emulator binary to use"
+              },
+              "channel": {
+                "description": "Channel to download the SDK components from - `stable`, `beta`, `dev`, `canary`",
+                "default": "stable"
+              },
+              "script": {
+                "description": "custom script to run - e.g. `./gradlew connectedCheck`",
+                "required": true,
+                "default": "./gradlew connectedDebugAndroidTest"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "test": {
+            "runs-on": "${{ github.event.inputs.os }}",
+            "env": {
+              "JAVA_TOOL_OPTIONS": "-Xmx4g"
+            },
+            "timeout-minutes": 15,
+            "steps": [
+              {
+                "name": "checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "validate gradle wrapper",
+                "uses": "gradle/wrapper-validation-action@v2"
+              },
+              {
+                "name": "build, test and lint",
+                "run": "npm install\nnpm run build\nnpm run lint\nnpm test\n"
+              },
+              {
+                "uses": "actions/setup-java@v4",
+                "with": {
+                  "distribution": "zulu",
+                  "java-version": 21
+                }
+              },
+              {
+                "uses": "gradle/actions/setup-gradle@v3",
+                "with": {
+                  "gradle-home-cache-cleanup": true
+                }
+              },
+              {
+                "name": "enable KVM for linux runners",
+                "if": "runner.os == 'Linux'",
+                "run": "echo 'KERNEL==\"kvm\", GROUP=\"kvm\", MODE=\"0666\", OPTIONS+=\"static_node=kvm\"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules\nsudo udevadm control --reload-rules\nsudo udevadm trigger --name-match=kvm\n"
+              },
+              {
+                "name": "run action",
+                "uses": "./",
+                "with": {
+                  "api-level": "${{ github.event.inputs.api-level }}",
+                  "target": "${{ github.event.inputs.target }}",
+                  "arch": "${{ github.event.inputs.arch }}",
+                  "profile": "Galaxy Nexus",
+                  "emulator-options": "${{ github.event.inputs.emulator-options }}",
+                  "emulator-build": "${{ github.event.inputs.emulator-build }}",
+                  "channel": "${{ github.event.inputs.channel }}",
+                  "working-directory": "./test-fixture/",
+                  "script": "${{ github.event.inputs.script }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-03-28T14-04-02Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-5477a5f2-37f3-5c7a-ad7c-8ebedffacc3c",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/manually__2025-03-28T14-04-02Z__a173d652002acdec8ec6588de96aa74756330d57.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 37,
+                  "startColumn": 5,
+                  "endLine": 79,
+                  "endColumn": 51
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "ae2ac920d023c091:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "manually__2025-03-28T14-04-02Z__a173d652002acdec8ec6588de96aa74756330d57.yml",
+          "workflow_name": "Manually triggered workflow",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 79,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "test": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 6
+            },
+            "jobs_with_timeout": 1,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "./",
+              "actions/checkout@v4",
+              "actions/setup-java@v4",
+              "gradle/actions/setup-gradle@v4"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Manually triggered workflow",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "os": {
+                "description": "OS",
+                "required": true,
+                "default": "ubuntu-latest"
+              },
+              "api-level": {
+                "description": "API level of the platform and system image (if not overridden with system-image-api-level input) - e.g. 33, 35-ext15, Baklava",
+                "required": true,
+                "default": "34"
+              },
+              "system-image-api-level": {
+                "description": "API level of the system image - e.g. 34-ext10, 35-ext15"
+              },
+              "target": {
+                "description": "target of the system image - default, google_apis, google_apis_playstore, aosp_atd, google_atd, android-wear, android-wear-cn, android-tv, google-tv, android-automotive, android-automotive-playstore or android-desktop",
+                "required": true,
+                "default": "default"
+              },
+              "arch": {
+                "description": "CPU architecture of the system image - x86, x86_64 or arm64-v8a",
+                "default": "x86_64"
+              },
+              "emulator-options": {
+                "description": "command-line options used when launching the emulator",
+                "default": "-no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim"
+              },
+              "emulator-build": {
+                "description": "build number of a specific version of the emulator binary to use"
+              },
+              "channel": {
+                "description": "Channel to download the SDK components from - `stable`, `beta`, `dev`, `canary`",
+                "default": "stable"
+              },
+              "script": {
+                "description": "custom script to run - e.g. `./gradlew connectedCheck`",
+                "required": true,
+                "default": "./gradlew connectedDebugAndroidTest"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "test": {
+            "runs-on": "${{ github.event.inputs.os }}",
+            "env": {
+              "JAVA_TOOL_OPTIONS": "-Xmx4g"
+            },
+            "timeout-minutes": 15,
+            "steps": [
+              {
+                "name": "checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "build, test and lint",
+                "run": "npm install\nnpm run build\nnpm run lint\nnpm test\n"
+              },
+              {
+                "uses": "actions/setup-java@v4",
+                "with": {
+                  "distribution": "zulu",
+                  "java-version": 23
+                }
+              },
+              {
+                "uses": "gradle/actions/setup-gradle@v4"
+              },
+              {
+                "name": "enable KVM for linux runners",
+                "if": "runner.os == 'Linux'",
+                "run": "echo 'KERNEL==\"kvm\", GROUP=\"kvm\", MODE=\"0666\", OPTIONS+=\"static_node=kvm\"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules\nsudo udevadm control --reload-rules\nsudo udevadm trigger --name-match=kvm\n"
+              },
+              {
+                "name": "run action",
+                "uses": "./",
+                "with": {
+                  "api-level": "${{ github.event.inputs.api-level }}",
+                  "target": "${{ github.event.inputs.target }}",
+                  "arch": "${{ github.event.inputs.arch }}",
+                  "system-image-api-level": "${{ github.event.inputs.system-image-api-level }}",
+                  "profile": "Galaxy Nexus",
+                  "emulator-options": "${{ github.event.inputs.emulator-options }}",
+                  "emulator-build": "${{ github.event.inputs.emulator-build }}",
+                  "channel": "${{ github.event.inputs.channel }}",
+                  "working-directory": "./test-fixture/",
+                  "script": "${{ github.event.inputs.script }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,2926 @@
+{
+  "repo_owner": "crate-ci",
+  "repo_name": "typos",
+  "workflow_name": "maturin",
+  "history": {
+    "2023-03-07T08-01-04Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "maturin__2023-03-07T08-01-04Z__f2868fa76ee2c0993cf669c1b8d1f3142a31ebbc.yml",
+          "workflow_name": "maturin__2023-03-07T08-01-04Z__f2868fa76ee2c0993cf669c1b8d1f3142a31ebbc",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 106,
+          "num_jobs": 5,
+          "steps_per_job": {
+            "linux": 3,
+            "windows": 3,
+            "macos": 3,
+            "sdist": 3,
+            "release": 2
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 5,
+            "num_dependencies_between_jobs": 4,
+            "num_matrix_strategies": 3,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "linux": 3,
+              "windows": 3,
+              "macos": 3,
+              "sdist": 3,
+              "release": 2
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 3,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 14,
+            "actions_used": [
+              "PyO3/maturin-action@v1",
+              "actions/checkout@v3",
+              "actions/download-artifact@v3",
+              "actions/upload-artifact@v3"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "true": {
+          "push": {
+            "branches": [
+              "master"
+            ],
+            "tags": [
+              "v*.*.*",
+              "!varcon*"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "read"
+        },
+        "jobs": {
+          "linux": {
+            "runs-on": "ubuntu-latest",
+            "strategy": {
+              "matrix": {
+                "target": [
+                  "x86_64",
+                  "x86",
+                  "aarch64",
+                  "armv7",
+                  "s390x",
+                  "ppc64le"
+                ]
+              }
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Build wheels",
+                "uses": "PyO3/maturin-action@v1",
+                "with": {
+                  "target": "${{ matrix.target }}",
+                  "args": "--release --out dist",
+                  "sccache": "true",
+                  "manylinux": "auto"
+                }
+              },
+              {
+                "name": "Upload wheels",
+                "uses": "actions/upload-artifact@v3",
+                "with": {
+                  "name": "wheels",
+                  "path": "dist"
+                }
+              }
+            ]
+          },
+          "windows": {
+            "runs-on": "windows-latest",
+            "strategy": {
+              "matrix": {
+                "target": [
+                  "x64",
+                  "x86"
+                ]
+              }
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Build wheels",
+                "uses": "PyO3/maturin-action@v1",
+                "with": {
+                  "target": "${{ matrix.target }}",
+                  "args": "--release --out dist",
+                  "sccache": "true"
+                }
+              },
+              {
+                "name": "Upload wheels",
+                "uses": "actions/upload-artifact@v3",
+                "with": {
+                  "name": "wheels",
+                  "path": "dist"
+                }
+              }
+            ]
+          },
+          "macos": {
+            "runs-on": "macos-latest",
+            "strategy": {
+              "matrix": {
+                "target": [
+                  "x86_64",
+                  "aarch64"
+                ]
+              }
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Build wheels",
+                "uses": "PyO3/maturin-action@v1",
+                "with": {
+                  "target": "${{ matrix.target }}",
+                  "args": "--release --out dist",
+                  "sccache": "true"
+                }
+              },
+              {
+                "name": "Upload wheels",
+                "uses": "actions/upload-artifact@v3",
+                "with": {
+                  "name": "wheels",
+                  "path": "dist"
+                }
+              }
+            ]
+          },
+          "sdist": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Build sdist",
+                "uses": "PyO3/maturin-action@v1",
+                "with": {
+                  "command": "sdist",
+                  "args": "--out dist"
+                }
+              },
+              {
+                "name": "Upload sdist",
+                "uses": "actions/upload-artifact@v3",
+                "with": {
+                  "name": "wheels",
+                  "path": "dist"
+                }
+              }
+            ]
+          },
+          "release": {
+            "name": "Release",
+            "runs-on": "ubuntu-latest",
+            "if": "startsWith(github.ref, 'refs/tags/')",
+            "needs": [
+              "linux",
+              "windows",
+              "macos",
+              "sdist"
+            ],
+            "steps": [
+              {
+                "uses": "actions/download-artifact@v3",
+                "with": {
+                  "name": "wheels"
+                }
+              },
+              {
+                "name": "Publish to PyPI",
+                "uses": "PyO3/maturin-action@v1",
+                "env": {
+                  "MATURIN_PYPI_TOKEN": "${{ secrets.PYPI_API_TOKEN }}"
+                },
+                "with": {
+                  "command": "upload",
+                  "args": "--skip-existing *"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-03-07T09-02-47Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "maturin__2023-03-07T09-02-47Z__5f9d64bec0375b78363e0b1d6d7f53fdcca8cc53.yml",
+          "workflow_name": "maturin__2023-03-07T09-02-47Z__5f9d64bec0375b78363e0b1d6d7f53fdcca8cc53",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 107,
+          "num_jobs": 5,
+          "steps_per_job": {
+            "linux": 3,
+            "windows": 3,
+            "macos": 3,
+            "sdist": 3,
+            "release": 2
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 5,
+            "num_dependencies_between_jobs": 4,
+            "num_matrix_strategies": 3,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "linux": 3,
+              "windows": 3,
+              "macos": 3,
+              "sdist": 3,
+              "release": 2
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 3,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 14,
+            "actions_used": [
+              "PyO3/maturin-action@v1",
+              "actions/checkout@v3",
+              "actions/download-artifact@v3",
+              "actions/upload-artifact@v3"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "true": {
+          "push": {
+            "branches": [
+              "master"
+            ],
+            "tags": [
+              "v*.*.*",
+              "!varcon*"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "read"
+        },
+        "jobs": {
+          "linux": {
+            "runs-on": "ubuntu-latest",
+            "strategy": {
+              "matrix": {
+                "target": [
+                  "x86_64",
+                  "x86",
+                  "aarch64"
+                ]
+              }
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Build wheels",
+                "uses": "PyO3/maturin-action@v1",
+                "with": {
+                  "target": "${{ matrix.target }}",
+                  "args": "--release --out dist",
+                  "sccache": "true",
+                  "manylinux": "auto"
+                }
+              },
+              {
+                "name": "Upload wheels",
+                "uses": "actions/upload-artifact@v3",
+                "with": {
+                  "name": "wheels",
+                  "path": "dist"
+                }
+              }
+            ]
+          },
+          "windows": {
+            "runs-on": "windows-latest",
+            "strategy": {
+              "matrix": {
+                "target": [
+                  "x64",
+                  "x86"
+                ]
+              }
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Build wheels",
+                "uses": "PyO3/maturin-action@v1",
+                "with": {
+                  "target": "${{ matrix.target }}",
+                  "args": "--release --out dist",
+                  "sccache": "true"
+                }
+              },
+              {
+                "name": "Upload wheels",
+                "uses": "actions/upload-artifact@v3",
+                "with": {
+                  "name": "wheels",
+                  "path": "dist"
+                }
+              }
+            ]
+          },
+          "macos": {
+            "runs-on": "macos-latest",
+            "strategy": {
+              "matrix": {
+                "target": [
+                  "x86_64",
+                  "aarch64"
+                ]
+              }
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Build wheels",
+                "uses": "PyO3/maturin-action@v1",
+                "with": {
+                  "target": "${{ matrix.target }}",
+                  "args": "--release --out dist",
+                  "sccache": "true"
+                }
+              },
+              {
+                "name": "Upload wheels",
+                "uses": "actions/upload-artifact@v3",
+                "with": {
+                  "name": "wheels",
+                  "path": "dist"
+                }
+              }
+            ]
+          },
+          "sdist": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Build sdist",
+                "uses": "PyO3/maturin-action@v1",
+                "with": {
+                  "command": "sdist",
+                  "args": "--out dist"
+                }
+              },
+              {
+                "name": "Upload sdist",
+                "uses": "actions/upload-artifact@v3",
+                "with": {
+                  "name": "wheels",
+                  "path": "dist"
+                }
+              }
+            ]
+          },
+          "release": {
+            "name": "Release",
+            "runs-on": "ubuntu-latest",
+            "if": "startsWith(github.ref, 'refs/tags/')",
+            "needs": [
+              "linux",
+              "windows",
+              "macos",
+              "sdist"
+            ],
+            "steps": [
+              {
+                "uses": "actions/download-artifact@v3",
+                "with": {
+                  "name": "wheels"
+                }
+              },
+              {
+                "name": "Publish to PyPI",
+                "uses": "PyO3/maturin-action@v1",
+                "env": {
+                  "MATURIN_PYPI_TOKEN": "${{ secrets.PYPI_API_TOKEN }}"
+                },
+                "with": {
+                  "command": "upload",
+                  "args": "--skip-existing *"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-03-08T17-35-43Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "maturin__2023-03-08T17-35-43Z__0ea9454d3a82f087be58f7eb33dcb88f2ae12d60.yml",
+          "workflow_name": "maturin__2023-03-08T17-35-43Z__0ea9454d3a82f087be58f7eb33dcb88f2ae12d60",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 107,
+          "num_jobs": 5,
+          "steps_per_job": {
+            "linux": 3,
+            "windows": 3,
+            "macos": 3,
+            "sdist": 3,
+            "release": 2
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 5,
+            "num_dependencies_between_jobs": 4,
+            "num_matrix_strategies": 3,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "linux": 3,
+              "windows": 3,
+              "macos": 3,
+              "sdist": 3,
+              "release": 2
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 3,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 14,
+            "actions_used": [
+              "PyO3/maturin-action@v1",
+              "actions/checkout@v3",
+              "actions/download-artifact@v3",
+              "actions/upload-artifact@v3"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "true": {
+          "push": {
+            "branches": [
+              "master"
+            ],
+            "tags": [
+              "v*.*.*",
+              "!varcon*"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "read"
+        },
+        "jobs": {
+          "linux": {
+            "runs-on": "ubuntu-latest",
+            "strategy": {
+              "matrix": {
+                "target": [
+                  "x86_64",
+                  "x86",
+                  "aarch64"
+                ]
+              }
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Build wheels",
+                "uses": "PyO3/maturin-action@v1",
+                "with": {
+                  "target": "${{ matrix.target }}",
+                  "args": "--manifest-path crates/typos-cli/Cargo.toml --release --out dist",
+                  "sccache": "true",
+                  "manylinux": "auto"
+                }
+              },
+              {
+                "name": "Upload wheels",
+                "uses": "actions/upload-artifact@v3",
+                "with": {
+                  "name": "wheels",
+                  "path": "dist"
+                }
+              }
+            ]
+          },
+          "windows": {
+            "runs-on": "windows-latest",
+            "strategy": {
+              "matrix": {
+                "target": [
+                  "x64",
+                  "x86"
+                ]
+              }
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Build wheels",
+                "uses": "PyO3/maturin-action@v1",
+                "with": {
+                  "target": "${{ matrix.target }}",
+                  "args": "--manifest-path crates/typos-cli/Cargo.toml --release --out dist",
+                  "sccache": "true"
+                }
+              },
+              {
+                "name": "Upload wheels",
+                "uses": "actions/upload-artifact@v3",
+                "with": {
+                  "name": "wheels",
+                  "path": "dist"
+                }
+              }
+            ]
+          },
+          "macos": {
+            "runs-on": "macos-latest",
+            "strategy": {
+              "matrix": {
+                "target": [
+                  "x86_64",
+                  "aarch64"
+                ]
+              }
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Build wheels",
+                "uses": "PyO3/maturin-action@v1",
+                "with": {
+                  "target": "${{ matrix.target }}",
+                  "args": "--manifest-path crates/typos-cli/Cargo.toml --release --out dist",
+                  "sccache": "true"
+                }
+              },
+              {
+                "name": "Upload wheels",
+                "uses": "actions/upload-artifact@v3",
+                "with": {
+                  "name": "wheels",
+                  "path": "dist"
+                }
+              }
+            ]
+          },
+          "sdist": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Build sdist",
+                "uses": "PyO3/maturin-action@v1",
+                "with": {
+                  "command": "sdist",
+                  "args": "--manifest-path crates/typos-cli/Cargo.toml --out dist"
+                }
+              },
+              {
+                "name": "Upload sdist",
+                "uses": "actions/upload-artifact@v3",
+                "with": {
+                  "name": "wheels",
+                  "path": "dist"
+                }
+              }
+            ]
+          },
+          "release": {
+            "name": "Release",
+            "runs-on": "ubuntu-latest",
+            "if": "startsWith(github.ref, 'refs/tags/')",
+            "needs": [
+              "linux",
+              "windows",
+              "macos",
+              "sdist"
+            ],
+            "steps": [
+              {
+                "uses": "actions/download-artifact@v3",
+                "with": {
+                  "name": "wheels"
+                }
+              },
+              {
+                "name": "Publish to PyPI",
+                "uses": "PyO3/maturin-action@v1",
+                "env": {
+                  "MATURIN_PYPI_TOKEN": "${{ secrets.PYPI_API_TOKEN }}"
+                },
+                "with": {
+                  "command": "upload",
+                  "args": "--skip-existing *"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-04-19T14-46-47Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "maturin__2023-04-19T14-46-47Z__54042f2124fb174de8f1b07831b6edbe6e423da7.yml",
+          "workflow_name": "maturin__2023-04-19T14-46-47Z__54042f2124fb174de8f1b07831b6edbe6e423da7",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 127,
+          "num_jobs": 6,
+          "steps_per_job": {
+            "linux": 3,
+            "musllinux": 3,
+            "windows": 3,
+            "macos": 3,
+            "sdist": 3,
+            "release": 2
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 6,
+            "num_dependencies_between_jobs": 4,
+            "num_matrix_strategies": 4,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "linux": 3,
+              "musllinux": 3,
+              "windows": 3,
+              "macos": 3,
+              "sdist": 3,
+              "release": 2
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 3,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 17,
+            "actions_used": [
+              "PyO3/maturin-action@v1",
+              "actions/checkout@v3",
+              "actions/download-artifact@v3",
+              "actions/upload-artifact@v3"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "true": {
+          "push": {
+            "branches": [
+              "master"
+            ],
+            "tags": [
+              "v*.*.*",
+              "!varcon*"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "read"
+        },
+        "jobs": {
+          "linux": {
+            "runs-on": "ubuntu-latest",
+            "strategy": {
+              "matrix": {
+                "target": [
+                  "x86_64",
+                  "x86",
+                  "aarch64"
+                ]
+              }
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Build wheels",
+                "uses": "PyO3/maturin-action@v1",
+                "with": {
+                  "target": "${{ matrix.target }}",
+                  "args": "--manifest-path crates/typos-cli/Cargo.toml --release --out dist",
+                  "sccache": "true",
+                  "manylinux": "auto"
+                }
+              },
+              {
+                "name": "Upload wheels",
+                "uses": "actions/upload-artifact@v3",
+                "with": {
+                  "name": "wheels",
+                  "path": "dist"
+                }
+              }
+            ]
+          },
+          "musllinux": {
+            "runs-on": "ubuntu-latest",
+            "strategy": {
+              "matrix": {
+                "target": [
+                  "x86_64",
+                  "aarch64"
+                ]
+              }
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Build wheels",
+                "uses": "PyO3/maturin-action@v1",
+                "with": {
+                  "target": "${{ matrix.target }}",
+                  "args": "--manifest-path crates/typos-cli/Cargo.toml --release --out dist",
+                  "sccache": "true",
+                  "manylinux": "musllinux_1_2"
+                }
+              },
+              {
+                "name": "Upload wheels",
+                "uses": "actions/upload-artifact@v3",
+                "with": {
+                  "name": "wheels",
+                  "path": "dist"
+                }
+              }
+            ]
+          },
+          "windows": {
+            "runs-on": "windows-latest",
+            "strategy": {
+              "matrix": {
+                "target": [
+                  "x64",
+                  "x86"
+                ]
+              }
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Build wheels",
+                "uses": "PyO3/maturin-action@v1",
+                "with": {
+                  "target": "${{ matrix.target }}",
+                  "args": "--manifest-path crates/typos-cli/Cargo.toml --release --out dist",
+                  "sccache": "true"
+                }
+              },
+              {
+                "name": "Upload wheels",
+                "uses": "actions/upload-artifact@v3",
+                "with": {
+                  "name": "wheels",
+                  "path": "dist"
+                }
+              }
+            ]
+          },
+          "macos": {
+            "runs-on": "macos-latest",
+            "strategy": {
+              "matrix": {
+                "target": [
+                  "x86_64",
+                  "aarch64"
+                ]
+              }
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Build wheels",
+                "uses": "PyO3/maturin-action@v1",
+                "with": {
+                  "target": "${{ matrix.target }}",
+                  "args": "--manifest-path crates/typos-cli/Cargo.toml --release --out dist",
+                  "sccache": "true"
+                }
+              },
+              {
+                "name": "Upload wheels",
+                "uses": "actions/upload-artifact@v3",
+                "with": {
+                  "name": "wheels",
+                  "path": "dist"
+                }
+              }
+            ]
+          },
+          "sdist": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Build sdist",
+                "uses": "PyO3/maturin-action@v1",
+                "with": {
+                  "command": "sdist",
+                  "args": "--manifest-path crates/typos-cli/Cargo.toml --out dist"
+                }
+              },
+              {
+                "name": "Upload sdist",
+                "uses": "actions/upload-artifact@v3",
+                "with": {
+                  "name": "wheels",
+                  "path": "dist"
+                }
+              }
+            ]
+          },
+          "release": {
+            "name": "Release",
+            "runs-on": "ubuntu-latest",
+            "if": "startsWith(github.ref, 'refs/tags/')",
+            "needs": [
+              "linux",
+              "windows",
+              "macos",
+              "sdist"
+            ],
+            "steps": [
+              {
+                "uses": "actions/download-artifact@v3",
+                "with": {
+                  "name": "wheels"
+                }
+              },
+              {
+                "name": "Publish to PyPI",
+                "uses": "PyO3/maturin-action@v1",
+                "env": {
+                  "MATURIN_PYPI_TOKEN": "${{ secrets.PYPI_API_TOKEN }}"
+                },
+                "with": {
+                  "command": "upload",
+                  "args": "--skip-existing *"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-10-01T03-30-16Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "maturin__2023-10-01T03-30-16Z__bbddb182a0d180f76585b9aa3bb8ce823a529c81.yml",
+          "workflow_name": "maturin__2023-10-01T03-30-16Z__bbddb182a0d180f76585b9aa3bb8ce823a529c81",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 127,
+          "num_jobs": 6,
+          "steps_per_job": {
+            "linux": 3,
+            "musllinux": 3,
+            "windows": 3,
+            "macos": 3,
+            "sdist": 3,
+            "release": 2
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 6,
+            "num_dependencies_between_jobs": 4,
+            "num_matrix_strategies": 4,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "linux": 3,
+              "musllinux": 3,
+              "windows": 3,
+              "macos": 3,
+              "sdist": 3,
+              "release": 2
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 3,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 17,
+            "actions_used": [
+              "PyO3/maturin-action@v1",
+              "actions/checkout@v4",
+              "actions/download-artifact@v3",
+              "actions/upload-artifact@v3"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "true": {
+          "push": {
+            "branches": [
+              "master"
+            ],
+            "tags": [
+              "v*.*.*",
+              "!varcon*"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "read"
+        },
+        "jobs": {
+          "linux": {
+            "runs-on": "ubuntu-latest",
+            "strategy": {
+              "matrix": {
+                "target": [
+                  "x86_64",
+                  "x86",
+                  "aarch64"
+                ]
+              }
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Build wheels",
+                "uses": "PyO3/maturin-action@v1",
+                "with": {
+                  "target": "${{ matrix.target }}",
+                  "args": "--manifest-path crates/typos-cli/Cargo.toml --release --out dist",
+                  "sccache": "true",
+                  "manylinux": "auto"
+                }
+              },
+              {
+                "name": "Upload wheels",
+                "uses": "actions/upload-artifact@v3",
+                "with": {
+                  "name": "wheels",
+                  "path": "dist"
+                }
+              }
+            ]
+          },
+          "musllinux": {
+            "runs-on": "ubuntu-latest",
+            "strategy": {
+              "matrix": {
+                "target": [
+                  "x86_64",
+                  "aarch64"
+                ]
+              }
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Build wheels",
+                "uses": "PyO3/maturin-action@v1",
+                "with": {
+                  "target": "${{ matrix.target }}",
+                  "args": "--manifest-path crates/typos-cli/Cargo.toml --release --out dist",
+                  "sccache": "true",
+                  "manylinux": "musllinux_1_2"
+                }
+              },
+              {
+                "name": "Upload wheels",
+                "uses": "actions/upload-artifact@v3",
+                "with": {
+                  "name": "wheels",
+                  "path": "dist"
+                }
+              }
+            ]
+          },
+          "windows": {
+            "runs-on": "windows-latest",
+            "strategy": {
+              "matrix": {
+                "target": [
+                  "x64",
+                  "x86"
+                ]
+              }
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Build wheels",
+                "uses": "PyO3/maturin-action@v1",
+                "with": {
+                  "target": "${{ matrix.target }}",
+                  "args": "--manifest-path crates/typos-cli/Cargo.toml --release --out dist",
+                  "sccache": "true"
+                }
+              },
+              {
+                "name": "Upload wheels",
+                "uses": "actions/upload-artifact@v3",
+                "with": {
+                  "name": "wheels",
+                  "path": "dist"
+                }
+              }
+            ]
+          },
+          "macos": {
+            "runs-on": "macos-latest",
+            "strategy": {
+              "matrix": {
+                "target": [
+                  "x86_64",
+                  "aarch64"
+                ]
+              }
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Build wheels",
+                "uses": "PyO3/maturin-action@v1",
+                "with": {
+                  "target": "${{ matrix.target }}",
+                  "args": "--manifest-path crates/typos-cli/Cargo.toml --release --out dist",
+                  "sccache": "true"
+                }
+              },
+              {
+                "name": "Upload wheels",
+                "uses": "actions/upload-artifact@v3",
+                "with": {
+                  "name": "wheels",
+                  "path": "dist"
+                }
+              }
+            ]
+          },
+          "sdist": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Build sdist",
+                "uses": "PyO3/maturin-action@v1",
+                "with": {
+                  "command": "sdist",
+                  "args": "--manifest-path crates/typos-cli/Cargo.toml --out dist"
+                }
+              },
+              {
+                "name": "Upload sdist",
+                "uses": "actions/upload-artifact@v3",
+                "with": {
+                  "name": "wheels",
+                  "path": "dist"
+                }
+              }
+            ]
+          },
+          "release": {
+            "name": "Release",
+            "runs-on": "ubuntu-latest",
+            "if": "startsWith(github.ref, 'refs/tags/')",
+            "needs": [
+              "linux",
+              "windows",
+              "macos",
+              "sdist"
+            ],
+            "steps": [
+              {
+                "uses": "actions/download-artifact@v3",
+                "with": {
+                  "name": "wheels"
+                }
+              },
+              {
+                "name": "Publish to PyPI",
+                "uses": "PyO3/maturin-action@v1",
+                "env": {
+                  "MATURIN_PYPI_TOKEN": "${{ secrets.PYPI_API_TOKEN }}"
+                },
+                "with": {
+                  "command": "upload",
+                  "args": "--skip-existing *"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-01-01T01-35-50Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "maturin__2024-01-01T01-35-50Z__b95306fb0364d8fd24895343800700aee29a4995.yml",
+          "workflow_name": "maturin__2024-01-01T01-35-50Z__b95306fb0364d8fd24895343800700aee29a4995",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 127,
+          "num_jobs": 6,
+          "steps_per_job": {
+            "linux": 3,
+            "musllinux": 3,
+            "windows": 3,
+            "macos": 3,
+            "sdist": 3,
+            "release": 2
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 6,
+            "num_dependencies_between_jobs": 4,
+            "num_matrix_strategies": 4,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "linux": 3,
+              "musllinux": 3,
+              "windows": 3,
+              "macos": 3,
+              "sdist": 3,
+              "release": 2
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 3,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 17,
+            "actions_used": [
+              "PyO3/maturin-action@v1",
+              "actions/checkout@v4",
+              "actions/download-artifact@v4",
+              "actions/upload-artifact@v3"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "true": {
+          "push": {
+            "branches": [
+              "master"
+            ],
+            "tags": [
+              "v*.*.*",
+              "!varcon*"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "read"
+        },
+        "jobs": {
+          "linux": {
+            "runs-on": "ubuntu-latest",
+            "strategy": {
+              "matrix": {
+                "target": [
+                  "x86_64",
+                  "x86",
+                  "aarch64"
+                ]
+              }
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Build wheels",
+                "uses": "PyO3/maturin-action@v1",
+                "with": {
+                  "target": "${{ matrix.target }}",
+                  "args": "--manifest-path crates/typos-cli/Cargo.toml --release --out dist",
+                  "sccache": "true",
+                  "manylinux": "auto"
+                }
+              },
+              {
+                "name": "Upload wheels",
+                "uses": "actions/upload-artifact@v3",
+                "with": {
+                  "name": "wheels",
+                  "path": "dist"
+                }
+              }
+            ]
+          },
+          "musllinux": {
+            "runs-on": "ubuntu-latest",
+            "strategy": {
+              "matrix": {
+                "target": [
+                  "x86_64",
+                  "aarch64"
+                ]
+              }
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Build wheels",
+                "uses": "PyO3/maturin-action@v1",
+                "with": {
+                  "target": "${{ matrix.target }}",
+                  "args": "--manifest-path crates/typos-cli/Cargo.toml --release --out dist",
+                  "sccache": "true",
+                  "manylinux": "musllinux_1_2"
+                }
+              },
+              {
+                "name": "Upload wheels",
+                "uses": "actions/upload-artifact@v3",
+                "with": {
+                  "name": "wheels",
+                  "path": "dist"
+                }
+              }
+            ]
+          },
+          "windows": {
+            "runs-on": "windows-latest",
+            "strategy": {
+              "matrix": {
+                "target": [
+                  "x64",
+                  "x86"
+                ]
+              }
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Build wheels",
+                "uses": "PyO3/maturin-action@v1",
+                "with": {
+                  "target": "${{ matrix.target }}",
+                  "args": "--manifest-path crates/typos-cli/Cargo.toml --release --out dist",
+                  "sccache": "true"
+                }
+              },
+              {
+                "name": "Upload wheels",
+                "uses": "actions/upload-artifact@v3",
+                "with": {
+                  "name": "wheels",
+                  "path": "dist"
+                }
+              }
+            ]
+          },
+          "macos": {
+            "runs-on": "macos-latest",
+            "strategy": {
+              "matrix": {
+                "target": [
+                  "x86_64",
+                  "aarch64"
+                ]
+              }
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Build wheels",
+                "uses": "PyO3/maturin-action@v1",
+                "with": {
+                  "target": "${{ matrix.target }}",
+                  "args": "--manifest-path crates/typos-cli/Cargo.toml --release --out dist",
+                  "sccache": "true"
+                }
+              },
+              {
+                "name": "Upload wheels",
+                "uses": "actions/upload-artifact@v3",
+                "with": {
+                  "name": "wheels",
+                  "path": "dist"
+                }
+              }
+            ]
+          },
+          "sdist": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Build sdist",
+                "uses": "PyO3/maturin-action@v1",
+                "with": {
+                  "command": "sdist",
+                  "args": "--manifest-path crates/typos-cli/Cargo.toml --out dist"
+                }
+              },
+              {
+                "name": "Upload sdist",
+                "uses": "actions/upload-artifact@v3",
+                "with": {
+                  "name": "wheels",
+                  "path": "dist"
+                }
+              }
+            ]
+          },
+          "release": {
+            "name": "Release",
+            "runs-on": "ubuntu-latest",
+            "if": "startsWith(github.ref, 'refs/tags/')",
+            "needs": [
+              "linux",
+              "windows",
+              "macos",
+              "sdist"
+            ],
+            "steps": [
+              {
+                "uses": "actions/download-artifact@v4",
+                "with": {
+                  "name": "wheels"
+                }
+              },
+              {
+                "name": "Publish to PyPI",
+                "uses": "PyO3/maturin-action@v1",
+                "env": {
+                  "MATURIN_PYPI_TOKEN": "${{ secrets.PYPI_API_TOKEN }}"
+                },
+                "with": {
+                  "command": "upload",
+                  "args": "--skip-existing *"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-01-01T04-25-35Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "maturin__2024-01-01T04-25-35Z__53d69227c9a176cce24f8e50f4c415fa996819f3.yml",
+          "workflow_name": "maturin__2024-01-01T04-25-35Z__53d69227c9a176cce24f8e50f4c415fa996819f3",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 127,
+          "num_jobs": 6,
+          "steps_per_job": {
+            "linux": 3,
+            "musllinux": 3,
+            "windows": 3,
+            "macos": 3,
+            "sdist": 3,
+            "release": 2
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 6,
+            "num_dependencies_between_jobs": 4,
+            "num_matrix_strategies": 4,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "linux": 3,
+              "musllinux": 3,
+              "windows": 3,
+              "macos": 3,
+              "sdist": 3,
+              "release": 2
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 3,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 17,
+            "actions_used": [
+              "PyO3/maturin-action@v1",
+              "actions/checkout@v4",
+              "actions/download-artifact@v3",
+              "actions/upload-artifact@v4"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "true": {
+          "push": {
+            "branches": [
+              "master"
+            ],
+            "tags": [
+              "v*.*.*",
+              "!varcon*"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "read"
+        },
+        "jobs": {
+          "linux": {
+            "runs-on": "ubuntu-latest",
+            "strategy": {
+              "matrix": {
+                "target": [
+                  "x86_64",
+                  "x86",
+                  "aarch64"
+                ]
+              }
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Build wheels",
+                "uses": "PyO3/maturin-action@v1",
+                "with": {
+                  "target": "${{ matrix.target }}",
+                  "args": "--manifest-path crates/typos-cli/Cargo.toml --release --out dist",
+                  "sccache": "true",
+                  "manylinux": "auto"
+                }
+              },
+              {
+                "name": "Upload wheels",
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "wheels",
+                  "path": "dist"
+                }
+              }
+            ]
+          },
+          "musllinux": {
+            "runs-on": "ubuntu-latest",
+            "strategy": {
+              "matrix": {
+                "target": [
+                  "x86_64",
+                  "aarch64"
+                ]
+              }
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Build wheels",
+                "uses": "PyO3/maturin-action@v1",
+                "with": {
+                  "target": "${{ matrix.target }}",
+                  "args": "--manifest-path crates/typos-cli/Cargo.toml --release --out dist",
+                  "sccache": "true",
+                  "manylinux": "musllinux_1_2"
+                }
+              },
+              {
+                "name": "Upload wheels",
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "wheels",
+                  "path": "dist"
+                }
+              }
+            ]
+          },
+          "windows": {
+            "runs-on": "windows-latest",
+            "strategy": {
+              "matrix": {
+                "target": [
+                  "x64",
+                  "x86"
+                ]
+              }
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Build wheels",
+                "uses": "PyO3/maturin-action@v1",
+                "with": {
+                  "target": "${{ matrix.target }}",
+                  "args": "--manifest-path crates/typos-cli/Cargo.toml --release --out dist",
+                  "sccache": "true"
+                }
+              },
+              {
+                "name": "Upload wheels",
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "wheels",
+                  "path": "dist"
+                }
+              }
+            ]
+          },
+          "macos": {
+            "runs-on": "macos-latest",
+            "strategy": {
+              "matrix": {
+                "target": [
+                  "x86_64",
+                  "aarch64"
+                ]
+              }
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Build wheels",
+                "uses": "PyO3/maturin-action@v1",
+                "with": {
+                  "target": "${{ matrix.target }}",
+                  "args": "--manifest-path crates/typos-cli/Cargo.toml --release --out dist",
+                  "sccache": "true"
+                }
+              },
+              {
+                "name": "Upload wheels",
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "wheels",
+                  "path": "dist"
+                }
+              }
+            ]
+          },
+          "sdist": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Build sdist",
+                "uses": "PyO3/maturin-action@v1",
+                "with": {
+                  "command": "sdist",
+                  "args": "--manifest-path crates/typos-cli/Cargo.toml --out dist"
+                }
+              },
+              {
+                "name": "Upload sdist",
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "wheels",
+                  "path": "dist"
+                }
+              }
+            ]
+          },
+          "release": {
+            "name": "Release",
+            "runs-on": "ubuntu-latest",
+            "if": "startsWith(github.ref, 'refs/tags/')",
+            "needs": [
+              "linux",
+              "windows",
+              "macos",
+              "sdist"
+            ],
+            "steps": [
+              {
+                "uses": "actions/download-artifact@v3",
+                "with": {
+                  "name": "wheels"
+                }
+              },
+              {
+                "name": "Publish to PyPI",
+                "uses": "PyO3/maturin-action@v1",
+                "env": {
+                  "MATURIN_PYPI_TOKEN": "${{ secrets.PYPI_API_TOKEN }}"
+                },
+                "with": {
+                  "command": "upload",
+                  "args": "--skip-existing *"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-01-02T02-37-37Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "maturin__2024-01-02T02-37-37Z__b0a4e4218fc0d18e4cc42ca6bfa7db492188edda.yml",
+          "workflow_name": "maturin__2024-01-02T02-37-37Z__b0a4e4218fc0d18e4cc42ca6bfa7db492188edda",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 127,
+          "num_jobs": 6,
+          "steps_per_job": {
+            "linux": 3,
+            "musllinux": 3,
+            "windows": 3,
+            "macos": 3,
+            "sdist": 3,
+            "release": 2
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 6,
+            "num_dependencies_between_jobs": 4,
+            "num_matrix_strategies": 4,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "linux": 3,
+              "musllinux": 3,
+              "windows": 3,
+              "macos": 3,
+              "sdist": 3,
+              "release": 2
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 3,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 17,
+            "actions_used": [
+              "PyO3/maturin-action@v1",
+              "actions/checkout@v4",
+              "actions/download-artifact@v4",
+              "actions/upload-artifact@v4"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "true": {
+          "push": {
+            "branches": [
+              "master"
+            ],
+            "tags": [
+              "v*.*.*",
+              "!varcon*"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "read"
+        },
+        "jobs": {
+          "linux": {
+            "runs-on": "ubuntu-latest",
+            "strategy": {
+              "matrix": {
+                "target": [
+                  "x86_64",
+                  "x86",
+                  "aarch64"
+                ]
+              }
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Build wheels",
+                "uses": "PyO3/maturin-action@v1",
+                "with": {
+                  "target": "${{ matrix.target }}",
+                  "args": "--manifest-path crates/typos-cli/Cargo.toml --release --out dist",
+                  "sccache": "true",
+                  "manylinux": "auto"
+                }
+              },
+              {
+                "name": "Upload wheels",
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "wheels",
+                  "path": "dist"
+                }
+              }
+            ]
+          },
+          "musllinux": {
+            "runs-on": "ubuntu-latest",
+            "strategy": {
+              "matrix": {
+                "target": [
+                  "x86_64",
+                  "aarch64"
+                ]
+              }
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Build wheels",
+                "uses": "PyO3/maturin-action@v1",
+                "with": {
+                  "target": "${{ matrix.target }}",
+                  "args": "--manifest-path crates/typos-cli/Cargo.toml --release --out dist",
+                  "sccache": "true",
+                  "manylinux": "musllinux_1_2"
+                }
+              },
+              {
+                "name": "Upload wheels",
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "wheels",
+                  "path": "dist"
+                }
+              }
+            ]
+          },
+          "windows": {
+            "runs-on": "windows-latest",
+            "strategy": {
+              "matrix": {
+                "target": [
+                  "x64",
+                  "x86"
+                ]
+              }
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Build wheels",
+                "uses": "PyO3/maturin-action@v1",
+                "with": {
+                  "target": "${{ matrix.target }}",
+                  "args": "--manifest-path crates/typos-cli/Cargo.toml --release --out dist",
+                  "sccache": "true"
+                }
+              },
+              {
+                "name": "Upload wheels",
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "wheels",
+                  "path": "dist"
+                }
+              }
+            ]
+          },
+          "macos": {
+            "runs-on": "macos-latest",
+            "strategy": {
+              "matrix": {
+                "target": [
+                  "x86_64",
+                  "aarch64"
+                ]
+              }
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Build wheels",
+                "uses": "PyO3/maturin-action@v1",
+                "with": {
+                  "target": "${{ matrix.target }}",
+                  "args": "--manifest-path crates/typos-cli/Cargo.toml --release --out dist",
+                  "sccache": "true"
+                }
+              },
+              {
+                "name": "Upload wheels",
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "wheels",
+                  "path": "dist"
+                }
+              }
+            ]
+          },
+          "sdist": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Build sdist",
+                "uses": "PyO3/maturin-action@v1",
+                "with": {
+                  "command": "sdist",
+                  "args": "--manifest-path crates/typos-cli/Cargo.toml --out dist"
+                }
+              },
+              {
+                "name": "Upload sdist",
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "wheels",
+                  "path": "dist"
+                }
+              }
+            ]
+          },
+          "release": {
+            "name": "Release",
+            "runs-on": "ubuntu-latest",
+            "if": "startsWith(github.ref, 'refs/tags/')",
+            "needs": [
+              "linux",
+              "windows",
+              "macos",
+              "sdist"
+            ],
+            "steps": [
+              {
+                "uses": "actions/download-artifact@v4",
+                "with": {
+                  "name": "wheels"
+                }
+              },
+              {
+                "name": "Publish to PyPI",
+                "uses": "PyO3/maturin-action@v1",
+                "env": {
+                  "MATURIN_PYPI_TOKEN": "${{ secrets.PYPI_API_TOKEN }}"
+                },
+                "with": {
+                  "command": "upload",
+                  "args": "--skip-existing *"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-01-02T20-36-08Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "maturin__2024-01-02T20-36-08Z__4e0d75ac7df044c1a3516b15b696f3e03b2c49a9.yml",
+          "workflow_name": "maturin__2024-01-02T20-36-08Z__4e0d75ac7df044c1a3516b15b696f3e03b2c49a9",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 143,
+          "num_jobs": 6,
+          "steps_per_job": {
+            "linux": 4,
+            "musllinux": 4,
+            "windows": 4,
+            "macos": 4,
+            "sdist": 3,
+            "release": 2
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 6,
+            "num_dependencies_between_jobs": 4,
+            "num_matrix_strategies": 4,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "linux": 4,
+              "musllinux": 4,
+              "windows": 4,
+              "macos": 4,
+              "sdist": 3,
+              "release": 2
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 3,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 21,
+            "actions_used": [
+              "PyO3/maturin-action@v1",
+              "actions/checkout@v4",
+              "actions/download-artifact@v3",
+              "actions/upload-artifact@v3",
+              "dtolnay/rust-toolchain@stable"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "true": {
+          "push": {
+            "branches": [
+              "master"
+            ],
+            "tags": [
+              "v*.*.*",
+              "!varcon*"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "read"
+        },
+        "jobs": {
+          "linux": {
+            "runs-on": "ubuntu-latest",
+            "strategy": {
+              "matrix": {
+                "target": [
+                  "x86_64",
+                  "x86",
+                  "aarch64"
+                ]
+              }
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Install Rust",
+                "uses": "dtolnay/rust-toolchain@stable",
+                "with": {
+                  "toolchain": "stable"
+                }
+              },
+              {
+                "name": "Build wheels",
+                "uses": "PyO3/maturin-action@v1",
+                "with": {
+                  "target": "${{ matrix.target }}",
+                  "args": "--manifest-path crates/typos-cli/Cargo.toml --release --out dist",
+                  "sccache": "true",
+                  "manylinux": "auto"
+                }
+              },
+              {
+                "name": "Upload wheels",
+                "uses": "actions/upload-artifact@v3",
+                "with": {
+                  "name": "wheels",
+                  "path": "dist"
+                }
+              }
+            ]
+          },
+          "musllinux": {
+            "runs-on": "ubuntu-latest",
+            "strategy": {
+              "matrix": {
+                "target": [
+                  "x86_64",
+                  "aarch64"
+                ]
+              }
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Install Rust",
+                "uses": "dtolnay/rust-toolchain@stable",
+                "with": {
+                  "toolchain": "stable"
+                }
+              },
+              {
+                "name": "Build wheels",
+                "uses": "PyO3/maturin-action@v1",
+                "with": {
+                  "target": "${{ matrix.target }}",
+                  "args": "--manifest-path crates/typos-cli/Cargo.toml --release --out dist",
+                  "sccache": "true",
+                  "manylinux": "musllinux_1_2"
+                }
+              },
+              {
+                "name": "Upload wheels",
+                "uses": "actions/upload-artifact@v3",
+                "with": {
+                  "name": "wheels",
+                  "path": "dist"
+                }
+              }
+            ]
+          },
+          "windows": {
+            "runs-on": "windows-latest",
+            "strategy": {
+              "matrix": {
+                "target": [
+                  "x64",
+                  "x86"
+                ]
+              }
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Install Rust",
+                "uses": "dtolnay/rust-toolchain@stable",
+                "with": {
+                  "toolchain": "stable"
+                }
+              },
+              {
+                "name": "Build wheels",
+                "uses": "PyO3/maturin-action@v1",
+                "with": {
+                  "target": "${{ matrix.target }}",
+                  "args": "--manifest-path crates/typos-cli/Cargo.toml --release --out dist",
+                  "sccache": "true"
+                }
+              },
+              {
+                "name": "Upload wheels",
+                "uses": "actions/upload-artifact@v3",
+                "with": {
+                  "name": "wheels",
+                  "path": "dist"
+                }
+              }
+            ]
+          },
+          "macos": {
+            "runs-on": "macos-latest",
+            "strategy": {
+              "matrix": {
+                "target": [
+                  "x86_64",
+                  "aarch64"
+                ]
+              }
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Install Rust",
+                "uses": "dtolnay/rust-toolchain@stable",
+                "with": {
+                  "toolchain": "stable"
+                }
+              },
+              {
+                "name": "Build wheels",
+                "uses": "PyO3/maturin-action@v1",
+                "with": {
+                  "target": "${{ matrix.target }}",
+                  "args": "--manifest-path crates/typos-cli/Cargo.toml --release --out dist",
+                  "sccache": "true"
+                }
+              },
+              {
+                "name": "Upload wheels",
+                "uses": "actions/upload-artifact@v3",
+                "with": {
+                  "name": "wheels",
+                  "path": "dist"
+                }
+              }
+            ]
+          },
+          "sdist": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Build sdist",
+                "uses": "PyO3/maturin-action@v1",
+                "with": {
+                  "command": "sdist",
+                  "args": "--manifest-path crates/typos-cli/Cargo.toml --out dist"
+                }
+              },
+              {
+                "name": "Upload sdist",
+                "uses": "actions/upload-artifact@v3",
+                "with": {
+                  "name": "wheels",
+                  "path": "dist"
+                }
+              }
+            ]
+          },
+          "release": {
+            "name": "Release",
+            "runs-on": "ubuntu-latest",
+            "if": "startsWith(github.ref, 'refs/tags/')",
+            "needs": [
+              "linux",
+              "windows",
+              "macos",
+              "sdist"
+            ],
+            "steps": [
+              {
+                "uses": "actions/download-artifact@v3",
+                "with": {
+                  "name": "wheels"
+                }
+              },
+              {
+                "name": "Publish to PyPI",
+                "uses": "PyO3/maturin-action@v1",
+                "env": {
+                  "MATURIN_PYPI_TOKEN": "${{ secrets.PYPI_API_TOKEN }}"
+                },
+                "with": {
+                  "command": "upload",
+                  "args": "--skip-existing *"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-01-02T21-14-11Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "maturin__2024-01-02T21-14-11Z__654cdfafdbca44dc6a96432ffeb5e533778910bc.yml",
+          "workflow_name": "maturin__2024-01-02T21-14-11Z__654cdfafdbca44dc6a96432ffeb5e533778910bc",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 143,
+          "num_jobs": 6,
+          "steps_per_job": {
+            "linux": 4,
+            "musllinux": 4,
+            "windows": 4,
+            "macos": 4,
+            "sdist": 3,
+            "release": 2
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 6,
+            "num_dependencies_between_jobs": 4,
+            "num_matrix_strategies": 4,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "linux": 4,
+              "musllinux": 4,
+              "windows": 4,
+              "macos": 4,
+              "sdist": 3,
+              "release": 2
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 3,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 21,
+            "actions_used": [
+              "PyO3/maturin-action@v1",
+              "actions/checkout@v4",
+              "actions/download-artifact@v4",
+              "actions/upload-artifact@v4",
+              "dtolnay/rust-toolchain@stable"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "true": {
+          "push": {
+            "branches": [
+              "master"
+            ],
+            "tags": [
+              "v*.*.*",
+              "!varcon*"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "read"
+        },
+        "jobs": {
+          "linux": {
+            "runs-on": "ubuntu-latest",
+            "strategy": {
+              "matrix": {
+                "target": [
+                  "x86_64",
+                  "x86",
+                  "aarch64"
+                ]
+              }
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Install Rust",
+                "uses": "dtolnay/rust-toolchain@stable",
+                "with": {
+                  "toolchain": "stable"
+                }
+              },
+              {
+                "name": "Build wheels",
+                "uses": "PyO3/maturin-action@v1",
+                "with": {
+                  "target": "${{ matrix.target }}",
+                  "args": "--manifest-path crates/typos-cli/Cargo.toml --release --out dist",
+                  "sccache": "true",
+                  "manylinux": "auto"
+                }
+              },
+              {
+                "name": "Upload wheels",
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "wheels",
+                  "path": "dist"
+                }
+              }
+            ]
+          },
+          "musllinux": {
+            "runs-on": "ubuntu-latest",
+            "strategy": {
+              "matrix": {
+                "target": [
+                  "x86_64",
+                  "aarch64"
+                ]
+              }
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Install Rust",
+                "uses": "dtolnay/rust-toolchain@stable",
+                "with": {
+                  "toolchain": "stable"
+                }
+              },
+              {
+                "name": "Build wheels",
+                "uses": "PyO3/maturin-action@v1",
+                "with": {
+                  "target": "${{ matrix.target }}",
+                  "args": "--manifest-path crates/typos-cli/Cargo.toml --release --out dist",
+                  "sccache": "true",
+                  "manylinux": "musllinux_1_2"
+                }
+              },
+              {
+                "name": "Upload wheels",
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "wheels",
+                  "path": "dist"
+                }
+              }
+            ]
+          },
+          "windows": {
+            "runs-on": "windows-latest",
+            "strategy": {
+              "matrix": {
+                "target": [
+                  "x64",
+                  "x86"
+                ]
+              }
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Install Rust",
+                "uses": "dtolnay/rust-toolchain@stable",
+                "with": {
+                  "toolchain": "stable"
+                }
+              },
+              {
+                "name": "Build wheels",
+                "uses": "PyO3/maturin-action@v1",
+                "with": {
+                  "target": "${{ matrix.target }}",
+                  "args": "--manifest-path crates/typos-cli/Cargo.toml --release --out dist",
+                  "sccache": "true"
+                }
+              },
+              {
+                "name": "Upload wheels",
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "wheels",
+                  "path": "dist"
+                }
+              }
+            ]
+          },
+          "macos": {
+            "runs-on": "macos-latest",
+            "strategy": {
+              "matrix": {
+                "target": [
+                  "x86_64",
+                  "aarch64"
+                ]
+              }
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Install Rust",
+                "uses": "dtolnay/rust-toolchain@stable",
+                "with": {
+                  "toolchain": "stable"
+                }
+              },
+              {
+                "name": "Build wheels",
+                "uses": "PyO3/maturin-action@v1",
+                "with": {
+                  "target": "${{ matrix.target }}",
+                  "args": "--manifest-path crates/typos-cli/Cargo.toml --release --out dist",
+                  "sccache": "true"
+                }
+              },
+              {
+                "name": "Upload wheels",
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "wheels",
+                  "path": "dist"
+                }
+              }
+            ]
+          },
+          "sdist": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Build sdist",
+                "uses": "PyO3/maturin-action@v1",
+                "with": {
+                  "command": "sdist",
+                  "args": "--manifest-path crates/typos-cli/Cargo.toml --out dist"
+                }
+              },
+              {
+                "name": "Upload sdist",
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "wheels",
+                  "path": "dist"
+                }
+              }
+            ]
+          },
+          "release": {
+            "name": "Release",
+            "runs-on": "ubuntu-latest",
+            "if": "startsWith(github.ref, 'refs/tags/')",
+            "needs": [
+              "linux",
+              "windows",
+              "macos",
+              "sdist"
+            ],
+            "steps": [
+              {
+                "uses": "actions/download-artifact@v4",
+                "with": {
+                  "name": "wheels"
+                }
+              },
+              {
+                "name": "Publish to PyPI",
+                "uses": "PyO3/maturin-action@v1",
+                "env": {
+                  "MATURIN_PYPI_TOKEN": "${{ secrets.PYPI_API_TOKEN }}"
+                },
+                "with": {
+                  "command": "upload",
+                  "args": "--skip-existing *"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-01-02T21-29-42Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "maturin__2024-01-02T21-29-42Z__53eb27d813117c438e087f6cae38b8b6b38cda8f.yml",
+          "workflow_name": "maturin__2024-01-02T21-29-42Z__53eb27d813117c438e087f6cae38b8b6b38cda8f",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 143,
+          "num_jobs": 6,
+          "steps_per_job": {
+            "linux": 4,
+            "musllinux": 4,
+            "windows": 4,
+            "macos": 4,
+            "sdist": 3,
+            "release": 2
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 6,
+            "num_dependencies_between_jobs": 4,
+            "num_matrix_strategies": 4,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "linux": 4,
+              "musllinux": 4,
+              "windows": 4,
+              "macos": 4,
+              "sdist": 3,
+              "release": 2
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 3,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 21,
+            "actions_used": [
+              "PyO3/maturin-action@v1",
+              "actions/checkout@v4",
+              "actions/download-artifact@v4",
+              "actions/upload-artifact@v4",
+              "dtolnay/rust-toolchain@stable"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "true": {
+          "push": {
+            "branches": [
+              "master"
+            ],
+            "tags": [
+              "v*.*.*",
+              "!varcon*"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "read"
+        },
+        "jobs": {
+          "linux": {
+            "runs-on": "ubuntu-latest",
+            "strategy": {
+              "matrix": {
+                "target": [
+                  "x86_64",
+                  "x86",
+                  "aarch64"
+                ]
+              }
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Install Rust",
+                "uses": "dtolnay/rust-toolchain@stable",
+                "with": {
+                  "toolchain": "stable"
+                }
+              },
+              {
+                "name": "Build wheels",
+                "uses": "PyO3/maturin-action@v1",
+                "with": {
+                  "target": "${{ matrix.target }}",
+                  "args": "--manifest-path crates/typos-cli/Cargo.toml --release --out dist",
+                  "sccache": "true",
+                  "manylinux": "auto"
+                }
+              },
+              {
+                "name": "Upload wheels",
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "wheels-linux-${{ matrix.target }}",
+                  "path": "dist"
+                }
+              }
+            ]
+          },
+          "musllinux": {
+            "runs-on": "ubuntu-latest",
+            "strategy": {
+              "matrix": {
+                "target": [
+                  "x86_64",
+                  "aarch64"
+                ]
+              }
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Install Rust",
+                "uses": "dtolnay/rust-toolchain@stable",
+                "with": {
+                  "toolchain": "stable"
+                }
+              },
+              {
+                "name": "Build wheels",
+                "uses": "PyO3/maturin-action@v1",
+                "with": {
+                  "target": "${{ matrix.target }}",
+                  "args": "--manifest-path crates/typos-cli/Cargo.toml --release --out dist",
+                  "sccache": "true",
+                  "manylinux": "musllinux_1_2"
+                }
+              },
+              {
+                "name": "Upload wheels",
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "wheels-musllinux-${{ matrix.target }}",
+                  "path": "dist"
+                }
+              }
+            ]
+          },
+          "windows": {
+            "runs-on": "windows-latest",
+            "strategy": {
+              "matrix": {
+                "target": [
+                  "x64",
+                  "x86"
+                ]
+              }
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Install Rust",
+                "uses": "dtolnay/rust-toolchain@stable",
+                "with": {
+                  "toolchain": "stable"
+                }
+              },
+              {
+                "name": "Build wheels",
+                "uses": "PyO3/maturin-action@v1",
+                "with": {
+                  "target": "${{ matrix.target }}",
+                  "args": "--manifest-path crates/typos-cli/Cargo.toml --release --out dist",
+                  "sccache": "true"
+                }
+              },
+              {
+                "name": "Upload wheels",
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "wheels-windows-${{ matrix.target }}",
+                  "path": "dist"
+                }
+              }
+            ]
+          },
+          "macos": {
+            "runs-on": "macos-latest",
+            "strategy": {
+              "matrix": {
+                "target": [
+                  "x86_64",
+                  "aarch64"
+                ]
+              }
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Install Rust",
+                "uses": "dtolnay/rust-toolchain@stable",
+                "with": {
+                  "toolchain": "stable"
+                }
+              },
+              {
+                "name": "Build wheels",
+                "uses": "PyO3/maturin-action@v1",
+                "with": {
+                  "target": "${{ matrix.target }}",
+                  "args": "--manifest-path crates/typos-cli/Cargo.toml --release --out dist",
+                  "sccache": "true"
+                }
+              },
+              {
+                "name": "Upload wheels",
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "wheels-macos-${{ matrix.target }}",
+                  "path": "dist"
+                }
+              }
+            ]
+          },
+          "sdist": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Build sdist",
+                "uses": "PyO3/maturin-action@v1",
+                "with": {
+                  "command": "sdist",
+                  "args": "--manifest-path crates/typos-cli/Cargo.toml --out dist"
+                }
+              },
+              {
+                "name": "Upload sdist",
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "wheels-sdist",
+                  "path": "dist"
+                }
+              }
+            ]
+          },
+          "release": {
+            "name": "Release",
+            "runs-on": "ubuntu-latest",
+            "if": "startsWith(github.ref, 'refs/tags/')",
+            "needs": [
+              "linux",
+              "windows",
+              "macos",
+              "sdist"
+            ],
+            "steps": [
+              {
+                "uses": "actions/download-artifact@v4",
+                "with": {
+                  "merge-multiple": true
+                }
+              },
+              {
+                "name": "Publish to PyPI",
+                "uses": "PyO3/maturin-action@v1",
+                "env": {
+                  "MATURIN_PYPI_TOKEN": "${{ secrets.PYPI_API_TOKEN }}"
+                },
+                "with": {
+                  "command": "upload",
+                  "args": "--skip-existing *"
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

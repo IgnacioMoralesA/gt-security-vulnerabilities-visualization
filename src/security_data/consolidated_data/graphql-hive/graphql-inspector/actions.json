@@ -1,0 +1,1503 @@
+{
+  "repo_owner": "graphql-hive",
+  "repo_name": "graphql-inspector",
+  "workflow_name": "actions",
+  "history": {
+    "2020-04-08T19-48-16Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-a90eb592-1f16-5d7e-828c-bbfc00867814",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/actions__2020-04-08T19-48-16Z__c94a949097d18291e45fe936374713da65d3aa88.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 5,
+                  "startColumn": 5,
+                  "endLine": 26,
+                  "endColumn": 21
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "7b5d622b185d16a2:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "actions__2020-04-08T19-48-16Z__c94a949097d18291e45fe936374713da65d3aa88.yml",
+          "workflow_name": "Integration",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 26,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Action": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Action": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "./",
+              "actions/checkout@v2"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Integration",
+        "true": [
+          "push"
+        ],
+        "jobs": {
+          "Action": {
+            "name": "Test Inspector Action",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "name": "Make changes to schema",
+                "run": "sed -i 's/createdAt: String/createdAt: String!/g' ./example/schemas/schema.graphql\nsed -i 's/modifiedAt: String/modifiedAt: String!/g' ./example/schemas/schema.graphql\ncat ./example/schemas/schema.graphql\n"
+              },
+              {
+                "name": "Run Inspector",
+                "uses": "./",
+                "id": "inspector",
+                "with": {
+                  "schema": "master:example/schemas/schema.graphql",
+                  "github-token": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Validate result",
+                "if": "steps.inspector.outputs.changes != 3",
+                "run": "exit 1"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-03-27T12-49-38Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-a977c7fc-3d31-5211-83bc-50e492bad1ac",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/actions__2022-03-27T12-49-38Z__dc89be0131c2b7c0fd1ee2b9fccb311a43e6402b.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 11,
+                  "startColumn": 5,
+                  "endLine": 32,
+                  "endColumn": 98
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "7b5d622b185d16a2:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "actions__2022-03-27T12-49-38Z__dc89be0131c2b7c0fd1ee2b9fccb311a43e6402b.yml",
+          "workflow_name": "Integration",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 32,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Action": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Action": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "./",
+              "actions/checkout@v2"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Integration",
+        "true": {
+          "push": {
+            "branches-ignore": [
+              "master"
+            ]
+          },
+          "pull_request": {
+            "branches-ignore": [
+              "master"
+            ]
+          }
+        },
+        "jobs": {
+          "Action": {
+            "name": "Test Inspector Action",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "name": "Make changes to schema",
+                "run": "sed -i 's/createdAt: String/createdAt: String!/g' ./example/schemas/schema.graphql\nsed -i 's/modifiedAt: String/modifiedAt: String!/g' ./example/schemas/schema.graphql\nsed -i 's/post: Post!/post(id: ID): Post!/g' ./example/schemas/schema.graphql\ncat ./example/schemas/schema.graphql\n"
+              },
+              {
+                "name": "Run Inspector",
+                "uses": "./",
+                "id": "inspector",
+                "with": {
+                  "schema": "master:example/schemas/schema.graphql"
+                }
+              },
+              {
+                "name": "Validate result",
+                "if": "steps.inspector.outputs.changes != 3",
+                "run": "echo 'Expected 3 changes received ${{ steps.inspector.outputs.changes }}' && exit 1"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-12-09T14-55-48Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-6f9595d6-8f46-5972-9969-a101e83940fa",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/actions__2022-12-09T14-55-48Z__91341451ee8475acad4a0004cef1621c76e40379.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 11,
+                  "startColumn": 5,
+                  "endLine": 33,
+                  "endColumn": 98
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "7b5d622b185d16a2:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "actions__2022-12-09T14-55-48Z__91341451ee8475acad4a0004cef1621c76e40379.yml",
+          "workflow_name": "Integration",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 33,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Action": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Action": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "./",
+              "actions/checkout@v2"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Integration",
+        "true": {
+          "push": {
+            "branches-ignore": [
+              "master"
+            ]
+          },
+          "pull_request": {
+            "branches-ignore": [
+              "master"
+            ]
+          }
+        },
+        "jobs": {
+          "Action": {
+            "name": "Test Inspector Action",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "name": "Make changes to schema",
+                "run": "sed -i 's/createdAt: String/createdAt: String!/g' ./example/schemas/schema.graphql\nsed -i 's/modifiedAt: String/modifiedAt: String!/g' ./example/schemas/schema.graphql\nsed -i 's/post: Post!/post(id: ID): Post!/g' ./example/schemas/schema.graphql\ncat ./example/schemas/schema.graphql\n"
+              },
+              {
+                "name": "Run Inspector",
+                "uses": "./",
+                "id": "inspector",
+                "with": {
+                  "experimental_merge": false,
+                  "schema": "master:example/schemas/schema.graphql"
+                }
+              },
+              {
+                "name": "Validate result",
+                "if": "steps.inspector.outputs.changes != 3",
+                "run": "echo 'Expected 3 changes received ${{ steps.inspector.outputs.changes }}' && exit 1"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-01-04T14-17-50Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-efd51fd7-5cc4-5d53-a00c-8cc369b39d13",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/actions__2023-01-04T14-17-50Z__096863f00dc60449ac0b433dee61372a4b17dc28.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 11,
+                  "startColumn": 5,
+                  "endLine": 33,
+                  "endColumn": 98
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "7b5d622b185d16a2:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "actions__2023-01-04T14-17-50Z__096863f00dc60449ac0b433dee61372a4b17dc28.yml",
+          "workflow_name": "Integration",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 33,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Action": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Action": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "./",
+              "actions/checkout@v2"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Integration",
+        "true": {
+          "push": {
+            "branches-ignore": [
+              "master"
+            ]
+          },
+          "pull_request": {
+            "branches-ignore": [
+              "master"
+            ]
+          }
+        },
+        "jobs": {
+          "Action": {
+            "name": "Test Inspector Action",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "name": "Make changes to schema",
+                "run": "sed -i 's/createdAt: String/createdAt: String!/g' ./example/schemas/schema.graphql\nsed -i 's/modifiedAt: String/modifiedAt: String!/g' ./example/schemas/schema.graphql\nsed -i 's/post: Post!/post(id: ID): Post!/g' ./example/schemas/schema.graphql\ncat ./example/schemas/schema.graphql\n"
+              },
+              {
+                "name": "Run Inspector",
+                "uses": "./",
+                "id": "inspector",
+                "with": {
+                  "experimental_merge": false,
+                  "schema": "master:example/schemas/schema.graphql"
+                }
+              },
+              {
+                "name": "Validate result",
+                "if": "steps.inspector.outputs.changes != 3",
+                "run": "echo 'Expected 3 changes received ${{ steps.inspector.outputs.changes }}' && exit 1"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-02-07T15-41-26Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-81d25e1d-28c4-57f6-b628-8ccd5a5a5013",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/actions__2023-02-07T15-41-26Z__818c1771a0644ec82e92bdbdc045078e03e33dcc.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 11,
+                  "startColumn": 5,
+                  "endLine": 33,
+                  "endColumn": 98
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "7b5d624132be93af:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "actions__2023-02-07T15-41-26Z__818c1771a0644ec82e92bdbdc045078e03e33dcc.yml",
+          "workflow_name": "Integration",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 33,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Action": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Action": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "./",
+              "actions/checkout@v3"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Integration",
+        "true": {
+          "push": {
+            "branches-ignore": [
+              "master"
+            ]
+          },
+          "pull_request": {
+            "branches-ignore": [
+              "master"
+            ]
+          }
+        },
+        "jobs": {
+          "Action": {
+            "name": "Test Inspector Action",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Make changes to schema",
+                "run": "sed -i 's/createdAt: String/createdAt: String!/g' ./example/schemas/schema.graphql\nsed -i 's/modifiedAt: String/modifiedAt: String!/g' ./example/schemas/schema.graphql\nsed -i 's/post: Post!/post(id: ID): Post!/g' ./example/schemas/schema.graphql\ncat ./example/schemas/schema.graphql\n"
+              },
+              {
+                "name": "Run Inspector",
+                "uses": "./",
+                "id": "inspector",
+                "with": {
+                  "experimental_merge": false,
+                  "schema": "master:example/schemas/schema.graphql"
+                }
+              },
+              {
+                "name": "Validate result",
+                "if": "steps.inspector.outputs.changes != 3",
+                "run": "echo 'Expected 3 changes received ${{ steps.inspector.outputs.changes }}' && exit 1"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-02-27T11-33-52Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-945c2c9c-63e0-5deb-8c77-f65cdd7f2e0e",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/actions__2023-02-27T11-33-52Z__c55aa0c41f37c6cfc88eb9dae36505f4f335b6f0.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 11,
+                  "startColumn": 5,
+                  "endLine": 37,
+                  "endColumn": 98
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "7b5d624132be93af:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "actions__2023-02-27T11-33-52Z__c55aa0c41f37c6cfc88eb9dae36505f4f335b6f0.yml",
+          "workflow_name": "Integration",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 37,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Action": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Action": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "./",
+              "actions/checkout@v3"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Integration",
+        "true": {
+          "push": {
+            "branches-ignore": [
+              "master"
+            ]
+          },
+          "pull_request": {
+            "branches-ignore": [
+              "master"
+            ]
+          }
+        },
+        "jobs": {
+          "Action": {
+            "name": "Test Inspector Action",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Make changes to schema",
+                "run": "sed -i '/title: String @deprecated(reason: \"No more used\")/d' ./example/schemas/schema.graphql\nsed -i 's/createdAt: String/createdAt: String!/g' ./example/schemas/schema.graphql\nsed -i 's/modifiedAt: String/modifiedAt: String!/g' ./example/schemas/schema.graphql\nsed -i 's/post: Post!/post(id: ID): Post!/g' ./example/schemas/schema.graphql\ncat ./example/schemas/schema.graphql\n"
+              },
+              {
+                "name": "Run Inspector",
+                "uses": "./",
+                "id": "inspector",
+                "with": {
+                  "experimental_merge": false,
+                  "schema": "master:example/schemas/schema.graphql",
+                  "rules": "suppressRemovalOfDeprecatedField\n./example/rules/custom-rule.js\n"
+                }
+              },
+              {
+                "name": "Validate result",
+                "if": "steps.inspector.outputs.changes != 4",
+                "run": "echo 'Expected 4 changes received ${{ steps.inspector.outputs.changes }}' && exit 1"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-10-08T22-39-38Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-7b59ad53-2e91-5755-94a5-dd1ed84d72e6",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/actions__2023-10-08T22-39-38Z__70e1b91b3ef436add1e60ef1c504ceedc5b42bf5.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 11,
+                  "startColumn": 5,
+                  "endLine": 37,
+                  "endColumn": 98
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "7b5d62574d2010bc:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "actions__2023-10-08T22-39-38Z__70e1b91b3ef436add1e60ef1c504ceedc5b42bf5.yml",
+          "workflow_name": "Integration",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 37,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Action": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Action": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "./",
+              "actions/checkout@v4"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Integration",
+        "true": {
+          "push": {
+            "branches-ignore": [
+              "master"
+            ]
+          },
+          "pull_request": {
+            "branches-ignore": [
+              "master"
+            ]
+          }
+        },
+        "jobs": {
+          "Action": {
+            "name": "Test Inspector Action",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Make changes to schema",
+                "run": "sed -i '/title: String @deprecated(reason: \"No more used\")/d' ./example/schemas/schema.graphql\nsed -i 's/createdAt: String/createdAt: String!/g' ./example/schemas/schema.graphql\nsed -i 's/modifiedAt: String/modifiedAt: String!/g' ./example/schemas/schema.graphql\nsed -i 's/post: Post!/post(id: ID): Post!/g' ./example/schemas/schema.graphql\ncat ./example/schemas/schema.graphql\n"
+              },
+              {
+                "name": "Run Inspector",
+                "uses": "./",
+                "id": "inspector",
+                "with": {
+                  "experimental_merge": false,
+                  "schema": "master:example/schemas/schema.graphql",
+                  "rules": "suppressRemovalOfDeprecatedField\n./example/rules/custom-rule.js\n"
+                }
+              },
+              {
+                "name": "Validate result",
+                "if": "steps.inspector.outputs.changes != 4",
+                "run": "echo 'Expected 4 changes received ${{ steps.inspector.outputs.changes }}' && exit 1"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-03-20T07-06-51Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-55347893-9f2b-5d71-a13a-14b6f3cf04b9",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/actions__2025-03-20T07-06-51Z__264e1bcac1af557a0d9402bac829e785547d3941.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 11,
+                  "startColumn": 5,
+                  "endLine": 37,
+                  "endColumn": 98
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "7b5c85ddee742bbe:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "actions__2025-03-20T07-06-51Z__264e1bcac1af557a0d9402bac829e785547d3941.yml",
+          "workflow_name": "Integration",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 37,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Action": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Action": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "./",
+              "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Integration",
+        "true": {
+          "push": {
+            "branches-ignore": [
+              "master"
+            ]
+          },
+          "pull_request": {
+            "branches-ignore": [
+              "master"
+            ]
+          }
+        },
+        "jobs": {
+          "Action": {
+            "name": "Test Inspector Action",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
+              },
+              {
+                "name": "Make changes to schema",
+                "run": "sed -i '/title: String @deprecated(reason: \"No more used\")/d' ./example/schemas/schema.graphql\nsed -i 's/createdAt: String/createdAt: String!/g' ./example/schemas/schema.graphql\nsed -i 's/modifiedAt: String/modifiedAt: String!/g' ./example/schemas/schema.graphql\nsed -i 's/post: Post!/post(id: ID): Post!/g' ./example/schemas/schema.graphql\ncat ./example/schemas/schema.graphql\n"
+              },
+              {
+                "name": "Run Inspector",
+                "uses": "./",
+                "id": "inspector",
+                "with": {
+                  "experimental_merge": false,
+                  "schema": "master:example/schemas/schema.graphql",
+                  "rules": "suppressRemovalOfDeprecatedField\n./example/rules/custom-rule.js\n"
+                }
+              },
+              {
+                "name": "Validate result",
+                "if": "steps.inspector.outputs.changes != 4",
+                "run": "echo 'Expected 4 changes received ${{ steps.inspector.outputs.changes }}' && exit 1"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2020-04-08T19-51-04Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "actions__2020-04-08T19-51-04Z__eaa13aef1828fe78772600873d8daeb373a16bcb.yml",
+          "workflow_name": "Integration",
+          "triggers": {
+            "push": {
+              "branches-ignore": [
+                "master"
+              ]
+            }
+          },
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 29,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Action": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 1
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Action": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "./",
+              "actions/checkout@v2"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Integration",
+        "true": {
+          "push": {
+            "branches-ignore": [
+              "master"
+            ]
+          }
+        },
+        "jobs": {
+          "Action": {
+            "name": "Test Inspector Action",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "name": "Make changes to schema",
+                "run": "sed -i 's/createdAt: String/createdAt: String!/g' ./example/schemas/schema.graphql\nsed -i 's/modifiedAt: String/modifiedAt: String!/g' ./example/schemas/schema.graphql\ncat ./example/schemas/schema.graphql\n"
+              },
+              {
+                "name": "Run Inspector",
+                "uses": "./",
+                "id": "inspector",
+                "with": {
+                  "schema": "master:example/schemas/schema.graphql",
+                  "github-token": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Validate result",
+                "if": "steps.inspector.outputs.changes != 3",
+                "run": "exit 1"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2020-04-08T19-58-32Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "actions__2020-04-08T19-58-32Z__32eb8c2528417502bf6641d272eed360e8c9e44c.yml",
+          "workflow_name": "Integration",
+          "triggers": {
+            "push": {
+              "branches-ignore": [
+                "master"
+              ]
+            }
+          },
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 29,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Action": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 1
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Action": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "./",
+              "actions/checkout@v2"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Integration",
+        "true": {
+          "push": {
+            "branches-ignore": [
+              "master"
+            ]
+          }
+        },
+        "jobs": {
+          "Action": {
+            "name": "Test Inspector Action",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "name": "Make changes to schema",
+                "run": "sed -i 's/createdAt: String/createdAt: String!/g' ./example/schemas/schema.graphql\nsed -i 's/modifiedAt: String/modifiedAt: String!/g' ./example/schemas/schema.graphql\ncat ./example/schemas/schema.graphql\n"
+              },
+              {
+                "name": "Run Inspector",
+                "uses": "./",
+                "id": "inspector",
+                "with": {
+                  "schema": "master:example/schemas/schema.graphql",
+                  "github-token": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Validate result",
+                "if": "steps.inspector.outputs.changes != 2",
+                "run": "exit 1"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2020-04-10T10-10-24Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "actions__2020-04-10T10-10-24Z__d385e442134b052bd29503733f60bd21ec05b4c5.yml",
+          "workflow_name": "Integration",
+          "triggers": {
+            "push": {
+              "branches-ignore": [
+                "master"
+              ]
+            }
+          },
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 30,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Action": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 1
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Action": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "./",
+              "actions/checkout@v2"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Integration",
+        "true": {
+          "push": {
+            "branches-ignore": [
+              "master"
+            ]
+          }
+        },
+        "jobs": {
+          "Action": {
+            "name": "Test Inspector Action",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "name": "Make changes to schema",
+                "run": "sed -i 's/createdAt: String/createdAt: String!/g' ./example/schemas/schema.graphql\nsed -i 's/modifiedAt: String/modifiedAt: String!/g' ./example/schemas/schema.graphql\nsed -i 's/post: Post!/post(id: ID): Post!/g' ./example/schemas/schema.graphql\ncat ./example/schemas/schema.graphql\n"
+              },
+              {
+                "name": "Run Inspector",
+                "uses": "./",
+                "id": "inspector",
+                "with": {
+                  "schema": "master:example/schemas/schema.graphql",
+                  "github-token": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Validate result",
+                "if": "steps.inspector.outputs.changes != 3",
+                "run": "echo 'Expected 3 changes received ${{ steps.inspector.outputs.changes }}' && exit 1"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2020-08-11T07-30-12Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "actions__2020-08-11T07-30-12Z__02830a16997ac90510021455a93d86e497b7c616.yml",
+          "workflow_name": "Integration",
+          "triggers": {
+            "push": {
+              "branches-ignore": [
+                "master"
+              ]
+            },
+            "pull_request": {
+              "branches-ignore": [
+                "master"
+              ]
+            }
+          },
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 33,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Action": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 2
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Action": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "./",
+              "actions/checkout@v2"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Integration",
+        "true": {
+          "push": {
+            "branches-ignore": [
+              "master"
+            ]
+          },
+          "pull_request": {
+            "branches-ignore": [
+              "master"
+            ]
+          }
+        },
+        "jobs": {
+          "Action": {
+            "name": "Test Inspector Action",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "name": "Make changes to schema",
+                "run": "sed -i 's/createdAt: String/createdAt: String!/g' ./example/schemas/schema.graphql\nsed -i 's/modifiedAt: String/modifiedAt: String!/g' ./example/schemas/schema.graphql\nsed -i 's/post: Post!/post(id: ID): Post!/g' ./example/schemas/schema.graphql\ncat ./example/schemas/schema.graphql\n"
+              },
+              {
+                "name": "Run Inspector",
+                "uses": "./",
+                "id": "inspector",
+                "with": {
+                  "schema": "master:example/schemas/schema.graphql",
+                  "github-token": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Validate result",
+                "if": "steps.inspector.outputs.changes != 3",
+                "run": "echo 'Expected 3 changes received ${{ steps.inspector.outputs.changes }}' && exit 1"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2021-03-23T15-25-57Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "actions__2021-03-23T15-25-57Z__7e5b226a2a763ce085a0e7a645fa8e3b844a544e.yml",
+          "workflow_name": "Integration",
+          "triggers": {
+            "push": {
+              "branches-ignore": [
+                "master"
+              ]
+            },
+            "pull_request": {
+              "branches-ignore": [
+                "master"
+              ]
+            }
+          },
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 32,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Action": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 2
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Action": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "./",
+              "actions/checkout@v2"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Integration",
+        "true": {
+          "push": {
+            "branches-ignore": [
+              "master"
+            ]
+          },
+          "pull_request": {
+            "branches-ignore": [
+              "master"
+            ]
+          }
+        },
+        "jobs": {
+          "Action": {
+            "name": "Test Inspector Action",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "name": "Make changes to schema",
+                "run": "sed -i 's/createdAt: String/createdAt: String!/g' ./example/schemas/schema.graphql\nsed -i 's/modifiedAt: String/modifiedAt: String!/g' ./example/schemas/schema.graphql\nsed -i 's/post: Post!/post(id: ID): Post!/g' ./example/schemas/schema.graphql\ncat ./example/schemas/schema.graphql\n"
+              },
+              {
+                "name": "Run Inspector",
+                "uses": "./",
+                "id": "inspector",
+                "with": {
+                  "schema": "master:example/schemas/schema.graphql"
+                }
+              },
+              {
+                "name": "Validate result",
+                "if": "steps.inspector.outputs.changes != 3",
+                "run": "echo 'Expected 3 changes received ${{ steps.inspector.outputs.changes }}' && exit 1"
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,652 @@
+{
+  "repo_owner": "actions",
+  "repo_name": "checkout",
+  "workflow_name": "update-test-ubuntu-git",
+  "history": {
+    "2024-02-20T16-08-08Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "update-test-ubuntu-git__2024-02-20T16-08-08Z__473055ba18d6d2da209cd46110aadb9275e3194e.yml",
+          "workflow_name": "Publishes the test-ubuntu-git Container Image",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 56,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build-and-push-image": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build-and-push-image": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "docker/build-push-action@v5.1.0",
+              "docker/login-action@v3.0.0"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Publishes the test-ubuntu-git Container Image",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "publish": {
+                "description": "Publish to ghcr.io?",
+                "type": "boolean",
+                "required": true,
+                "default": false
+              }
+            }
+          }
+        },
+        "env": {
+          "REGISTRY": "ghcr.io",
+          "IMAGE_NAME": "actions/test-ubuntu-git"
+        },
+        "jobs": {
+          "build-and-push-image": {
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "contents": "read",
+              "packages": "write"
+            },
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Log in to the ghcr.io container registry",
+                "uses": "docker/login-action@v3.0.0",
+                "with": {
+                  "registry": "${{ env.REGISTRY }}",
+                  "username": "${{ github.actor }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Build and push Docker image",
+                "uses": "docker/build-push-action@v5.1.0",
+                "with": {
+                  "context": ".",
+                  "file": "images/test-ubuntu-git.Dockerfile",
+                  "push": "${{ inputs.publish }}",
+                  "tags": "${{ env.IMAGE_NAME }}:sha-${{ env.GITHUB_SHA }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-02-21T11-46-47Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "update-test-ubuntu-git__2024-02-21T11-46-47Z__df0bcddf6d6823307c716b56a7ef9c3b25078874.yml",
+          "workflow_name": "Publish test-ubuntu-git Container",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 55,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build-and-push-image": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build-and-push-image": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "docker/build-push-action@v5.1.0",
+              "docker/login-action@v3.0.0"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Publish test-ubuntu-git Container",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "publish": {
+                "description": "Publish to ghcr.io? (main branch only)",
+                "type": "boolean",
+                "required": true,
+                "default": false
+              }
+            }
+          }
+        },
+        "env": {
+          "REGISTRY": "ghcr.io",
+          "IMAGE_NAME": "actions/test-ubuntu-git"
+        },
+        "jobs": {
+          "build-and-push-image": {
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "contents": "read",
+              "packages": "write"
+            },
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Log in to the ghcr.io container registry",
+                "uses": "docker/login-action@v3.0.0",
+                "with": {
+                  "registry": "${{ env.REGISTRY }}",
+                  "username": "${{ github.actor }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Format Timestamp",
+                "id": "timestamp",
+                "run": "date -u \"+now=%Y%m%d.%H%M%S.%3NZ\" >> \"$GITHUB_OUTPUT\""
+              },
+              {
+                "name": "Build and push Docker image",
+                "uses": "docker/build-push-action@v5.1.0",
+                "with": {
+                  "context": ".",
+                  "file": "images/test-ubuntu-git.Dockerfile",
+                  "push": "${{ inputs.publish && github.ref_name == 'main' }}",
+                  "tags": "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.ref_name }}.${{ steps.timestamp.outputs.now }}\n"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-02-22T13-38-58Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "update-test-ubuntu-git__2024-02-22T13-38-58Z__b32f140b0c872d58512e0a66172253c302617b90.yml",
+          "workflow_name": "Publish test-ubuntu-git Container",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 59,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build-and-push-image": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build-and-push-image": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "docker/build-push-action@v5.1.0",
+              "docker/login-action@v3.0.0"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Publish test-ubuntu-git Container",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "publish": {
+                "description": "Publish to ghcr.io? (main branch only)",
+                "type": "boolean",
+                "required": true,
+                "default": false
+              }
+            }
+          }
+        },
+        "env": {
+          "REGISTRY": "ghcr.io",
+          "IMAGE_NAME": "actions/test-ubuntu-git"
+        },
+        "jobs": {
+          "build-and-push-image": {
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "contents": "read",
+              "packages": "write"
+            },
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Log in to the ghcr.io container registry",
+                "uses": "docker/login-action@v3.0.0",
+                "with": {
+                  "registry": "${{ env.REGISTRY }}",
+                  "username": "${{ github.actor }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Format Timestamp",
+                "id": "timestamp",
+                "run": "date -u \"+now=%Y%m%d.%H%M%S.%3NZ\" >> \"$GITHUB_OUTPUT\""
+              },
+              {
+                "name": "Issue Image Publish Warning",
+                "if": "${{ inputs.publish && github.ref_name != 'main' }}",
+                "run": "echo \"::warning::test-ubuntu-git images can only be published from the actions/checkout 'main' branch.  Workflow will continue with push/publish disabled.\""
+              },
+              {
+                "name": "Build Docker Image (with optional Push)",
+                "uses": "docker/build-push-action@v5.1.0",
+                "with": {
+                  "context": ".",
+                  "file": "images/test-ubuntu-git.Dockerfile",
+                  "push": "${{ inputs.publish && github.ref_name == 'main' }}",
+                  "tags": "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.ref_name }}.${{ steps.timestamp.outputs.now }}\n"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-04-23T17-14-23Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "update-test-ubuntu-git__2024-04-23T17-14-23Z__37b082107ba410260a3aaddf93122e04801ce631.yml",
+          "workflow_name": "Publish test-ubuntu-git Container",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 59,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build-and-push-image": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build-and-push-image": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "docker/build-push-action@v5.3.0",
+              "docker/login-action@v3.1.0"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Publish test-ubuntu-git Container",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "publish": {
+                "description": "Publish to ghcr.io? (main branch only)",
+                "type": "boolean",
+                "required": true,
+                "default": false
+              }
+            }
+          }
+        },
+        "env": {
+          "REGISTRY": "ghcr.io",
+          "IMAGE_NAME": "actions/test-ubuntu-git"
+        },
+        "jobs": {
+          "build-and-push-image": {
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "contents": "read",
+              "packages": "write"
+            },
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Log in to the ghcr.io container registry",
+                "uses": "docker/login-action@v3.1.0",
+                "with": {
+                  "registry": "${{ env.REGISTRY }}",
+                  "username": "${{ github.actor }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Format Timestamp",
+                "id": "timestamp",
+                "run": "date -u \"+now=%Y%m%d.%H%M%S.%3NZ\" >> \"$GITHUB_OUTPUT\""
+              },
+              {
+                "name": "Issue Image Publish Warning",
+                "if": "${{ inputs.publish && github.ref_name != 'main' }}",
+                "run": "echo \"::warning::test-ubuntu-git images can only be published from the actions/checkout 'main' branch.  Workflow will continue with push/publish disabled.\""
+              },
+              {
+                "name": "Build Docker Image (with optional Push)",
+                "uses": "docker/build-push-action@v5.3.0",
+                "with": {
+                  "context": ".",
+                  "file": "images/test-ubuntu-git.Dockerfile",
+                  "push": "${{ inputs.publish && github.ref_name == 'main' }}",
+                  "tags": "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.ref_name }}.${{ steps.timestamp.outputs.now }}\n"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-07-29T20-10-02Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "update-test-ubuntu-git__2024-07-29T20-10-02Z__dd960bd3c3f080561a1810e32349ac211ecec7d4.yml",
+          "workflow_name": "Publish test-ubuntu-git Container",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 59,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build-and-push-image": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build-and-push-image": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "docker/build-push-action@v5.3.0",
+              "docker/login-action@v3.3.0"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Publish test-ubuntu-git Container",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "publish": {
+                "description": "Publish to ghcr.io? (main branch only)",
+                "type": "boolean",
+                "required": true,
+                "default": false
+              }
+            }
+          }
+        },
+        "env": {
+          "REGISTRY": "ghcr.io",
+          "IMAGE_NAME": "actions/test-ubuntu-git"
+        },
+        "jobs": {
+          "build-and-push-image": {
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "contents": "read",
+              "packages": "write"
+            },
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Log in to the ghcr.io container registry",
+                "uses": "docker/login-action@v3.3.0",
+                "with": {
+                  "registry": "${{ env.REGISTRY }}",
+                  "username": "${{ github.actor }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Format Timestamp",
+                "id": "timestamp",
+                "run": "date -u \"+now=%Y%m%d.%H%M%S.%3NZ\" >> \"$GITHUB_OUTPUT\""
+              },
+              {
+                "name": "Issue Image Publish Warning",
+                "if": "${{ inputs.publish && github.ref_name != 'main' }}",
+                "run": "echo \"::warning::test-ubuntu-git images can only be published from the actions/checkout 'main' branch.  Workflow will continue with push/publish disabled.\""
+              },
+              {
+                "name": "Build Docker Image (with optional Push)",
+                "uses": "docker/build-push-action@v5.3.0",
+                "with": {
+                  "context": ".",
+                  "file": "images/test-ubuntu-git.Dockerfile",
+                  "push": "${{ inputs.publish && github.ref_name == 'main' }}",
+                  "tags": "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.ref_name }}.${{ steps.timestamp.outputs.now }}\n"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-07-29T20-10-36Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "update-test-ubuntu-git__2024-07-29T20-10-36Z__9a9194f87191a7e9055e3e9b95b8cfb13023bb08.yml",
+          "workflow_name": "Publish test-ubuntu-git Container",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 59,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build-and-push-image": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build-and-push-image": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "docker/build-push-action@v6.5.0",
+              "docker/login-action@v3.3.0"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Publish test-ubuntu-git Container",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "publish": {
+                "description": "Publish to ghcr.io? (main branch only)",
+                "type": "boolean",
+                "required": true,
+                "default": false
+              }
+            }
+          }
+        },
+        "env": {
+          "REGISTRY": "ghcr.io",
+          "IMAGE_NAME": "actions/test-ubuntu-git"
+        },
+        "jobs": {
+          "build-and-push-image": {
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "contents": "read",
+              "packages": "write"
+            },
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Log in to the ghcr.io container registry",
+                "uses": "docker/login-action@v3.3.0",
+                "with": {
+                  "registry": "${{ env.REGISTRY }}",
+                  "username": "${{ github.actor }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Format Timestamp",
+                "id": "timestamp",
+                "run": "date -u \"+now=%Y%m%d.%H%M%S.%3NZ\" >> \"$GITHUB_OUTPUT\""
+              },
+              {
+                "name": "Issue Image Publish Warning",
+                "if": "${{ inputs.publish && github.ref_name != 'main' }}",
+                "run": "echo \"::warning::test-ubuntu-git images can only be published from the actions/checkout 'main' branch.  Workflow will continue with push/publish disabled.\""
+              },
+              {
+                "name": "Build Docker Image (with optional Push)",
+                "uses": "docker/build-push-action@v6.5.0",
+                "with": {
+                  "context": ".",
+                  "file": "images/test-ubuntu-git.Dockerfile",
+                  "push": "${{ inputs.publish && github.ref_name == 'main' }}",
+                  "tags": "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.ref_name }}.${{ steps.timestamp.outputs.now }}\n"
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

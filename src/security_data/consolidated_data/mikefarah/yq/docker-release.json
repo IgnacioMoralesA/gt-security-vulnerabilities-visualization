@@ -1,0 +1,2587 @@
+{
+  "repo_owner": "mikefarah",
+  "repo_name": "yq",
+  "workflow_name": "docker-release",
+  "history": {
+    "2022-04-11T23-27-35Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-d61bb1a4-95fb-525b-bfb4-233353f289fa",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/docker-release__2022-04-11T23-27-35Z__217744bc9ae9984599c5e9eb1eda8a26ab4f75df.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 60,
+                  "endColumn": 15
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "46cdc55f7826b7e3:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "docker-release__2022-04-11T23-27-35Z__217744bc9ae9984599c5e9eb1eda8a26ab4f75df.yml",
+          "workflow_name": "Release Docker",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 60,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "publishDocker": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "publishDocker": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v3",
+              "docker/setup-buildx-action@v1",
+              "docker/setup-qemu-action@v1"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release Docker",
+        "true": {
+          "release": {
+            "types": [
+              "released"
+            ]
+          },
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "publishDocker": {
+            "environment": "dockerhub",
+            "env": {
+              "IMAGE_NAME": "mikefarah/yq"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Set up QEMU",
+                "uses": "docker/setup-qemu-action@v1",
+                "with": {
+                  "platforms": "all"
+                }
+              },
+              {
+                "name": "Set up Docker Buildx",
+                "id": "buildx",
+                "uses": "docker/setup-buildx-action@v1",
+                "with": {
+                  "version": "latest"
+                }
+              },
+              {
+                "name": "Available platforms",
+                "run": "echo ${{ steps.buildx.outputs.platforms }} && docker version"
+              },
+              {
+                "name": "Build and push image",
+                "run": "echo \"GithubRef: ${GITHUB_REF}\"\nIMAGE_VERSION=${GITHUB_REF:1}\necho \"IMAGE_VERSION: ${IMAGE_VERSION}\"\n\nPLATFORMS=\"linux/amd64,linux/ppc64le,linux/arm64\"\n\necho \"Building and pushing version ${IMAGE_VERSION} of image ${IMAGE_NAME}\"\necho '${{ secrets.DOCKER_PASSWORD }}' | docker login -u '${{ secrets.DOCKER_USERNAME }}' --password-stdin\ndocker buildx build \\\n  --label \"org.opencontainers.image.authors=https://github.com/mikefarah/yq/graphs/contributors\" \\\n  --label \"org.opencontainers.image.created=$(date --rfc-3339=seconds)\" \\\n  --label \"org.opencontainers.image.description=yq is a portable command-line YAML processor\" \\\n  --label \"org.opencontainers.image.documentation=https://mikefarah.gitbook.io/yq/\" \\\n  --label \"org.opencontainers.image.licenses=MIT\" \\\n  --label \"org.opencontainers.image.revision=$(git rev-parse HEAD)\" \\\n  --label \"org.opencontainers.image.source=https://github.com/mikefarah/yq\" \\\n  --label \"org.opencontainers.image.title=yq\" \\\n  --label \"org.opencontainers.image.url=https://mikefarah.gitbook.io/yq/\" \\\n  --label \"org.opencontainers.image.version=${IMAGE_VERSION}\" \\\n  --platform \"${PLATFORMS}\" \\\n  --pull \\\n  --push \\\n  -t \"${IMAGE_NAME}:${IMAGE_VERSION}\" \\\n  -t \"${IMAGE_NAME}:4\" \\\n  -t \"${IMAGE_NAME}:latest\" \\\n  .\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-04-11T23-35-18Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-e140ae82-752a-5840-a234-f7f5d6cc0706",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/docker-release__2022-04-11T23-35-18Z__454e563a0e83ad6914db209eef3224f58fe9cbd5.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 62,
+                  "endColumn": 15
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "46cdc55f7826b7e3:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "docker-release__2022-04-11T23-35-18Z__454e563a0e83ad6914db209eef3224f58fe9cbd5.yml",
+          "workflow_name": "Release Docker",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 62,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "publishDocker": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "publishDocker": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v3",
+              "docker/setup-buildx-action@v1",
+              "docker/setup-qemu-action@v1"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release Docker",
+        "true": {
+          "release": {
+            "types": [
+              "released"
+            ]
+          },
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "publishDocker": {
+            "environment": "dockerhub",
+            "env": {
+              "IMAGE_NAME": "mikefarah/yq"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Set up QEMU",
+                "uses": "docker/setup-qemu-action@v1",
+                "with": {
+                  "platforms": "all"
+                }
+              },
+              {
+                "name": "Set up Docker Buildx",
+                "id": "buildx",
+                "uses": "docker/setup-buildx-action@v1",
+                "with": {
+                  "version": "latest"
+                }
+              },
+              {
+                "name": "Available platforms",
+                "run": "echo ${{ steps.buildx.outputs.platforms }} && docker version"
+              },
+              {
+                "name": "Build and push image",
+                "run": "echo \"GithubRef: ${GITHUB_REF}\"\nVERSION::${GITHUB_REF##*/}\necho \"VERSION: ${VERSION}\"\nIMAGE_VERSION=${VERSION:1}\necho \"IMAGE_VERSION: ${IMAGE_VERSION}\"\n\nPLATFORMS=\"linux/amd64,linux/ppc64le,linux/arm64\"\n\necho \"Building and pushing version ${IMAGE_VERSION} of image ${IMAGE_NAME}\"\necho '${{ secrets.DOCKER_PASSWORD }}' | docker login -u '${{ secrets.DOCKER_USERNAME }}' --password-stdin\ndocker buildx build \\\n  --label \"org.opencontainers.image.authors=https://github.com/mikefarah/yq/graphs/contributors\" \\\n  --label \"org.opencontainers.image.created=$(date --rfc-3339=seconds)\" \\\n  --label \"org.opencontainers.image.description=yq is a portable command-line YAML processor\" \\\n  --label \"org.opencontainers.image.documentation=https://mikefarah.gitbook.io/yq/\" \\\n  --label \"org.opencontainers.image.licenses=MIT\" \\\n  --label \"org.opencontainers.image.revision=$(git rev-parse HEAD)\" \\\n  --label \"org.opencontainers.image.source=https://github.com/mikefarah/yq\" \\\n  --label \"org.opencontainers.image.title=yq\" \\\n  --label \"org.opencontainers.image.url=https://mikefarah.gitbook.io/yq/\" \\\n  --label \"org.opencontainers.image.version=${IMAGE_VERSION}\" \\\n  --platform \"${PLATFORMS}\" \\\n  --pull \\\n  --push \\\n  -t \"${IMAGE_NAME}:${IMAGE_VERSION}\" \\\n  -t \"${IMAGE_NAME}:4\" \\\n  -t \"${IMAGE_NAME}:latest\" \\\n  .\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-04-12T00-20-23Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-22a7006e-a45a-5cb7-9305-cd0f41f200bc",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/docker-release__2022-04-12T00-20-23Z__bcff465f1162ba5654e1616d68d2bd9cb18fc304.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 62,
+                  "endColumn": 15
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "46cdc55f7826b7e3:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "docker-release__2022-04-12T00-20-23Z__bcff465f1162ba5654e1616d68d2bd9cb18fc304.yml",
+          "workflow_name": "Release Docker",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 62,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "publishDocker": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "publishDocker": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v3",
+              "docker/setup-buildx-action@v1",
+              "docker/setup-qemu-action@v1"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release Docker",
+        "true": {
+          "release": {
+            "types": [
+              "released"
+            ]
+          },
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "publishDocker": {
+            "environment": "dockerhub",
+            "env": {
+              "IMAGE_NAME": "mikefarah/yq"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Set up QEMU",
+                "uses": "docker/setup-qemu-action@v1",
+                "with": {
+                  "platforms": "all"
+                }
+              },
+              {
+                "name": "Set up Docker Buildx",
+                "id": "buildx",
+                "uses": "docker/setup-buildx-action@v1",
+                "with": {
+                  "version": "latest"
+                }
+              },
+              {
+                "name": "Available platforms",
+                "run": "echo ${{ steps.buildx.outputs.platforms }} && docker version"
+              },
+              {
+                "name": "Build and push image",
+                "run": "echo \"GithubRef: ${GITHUB_REF}\"\nVERSION=${GITHUB_REF##*/}\necho \"VERSION: ${VERSION}\"\nIMAGE_VERSION=${VERSION:1}\necho \"IMAGE_VERSION: ${IMAGE_VERSION}\"\n\nPLATFORMS=\"linux/amd64,linux/ppc64le,linux/arm64\"\n\necho \"Building and pushing version ${IMAGE_VERSION} of image ${IMAGE_NAME}\"\necho '${{ secrets.DOCKER_PASSWORD }}' | docker login -u '${{ secrets.DOCKER_USERNAME }}' --password-stdin\ndocker buildx build \\\n  --label \"org.opencontainers.image.authors=https://github.com/mikefarah/yq/graphs/contributors\" \\\n  --label \"org.opencontainers.image.created=$(date --rfc-3339=seconds)\" \\\n  --label \"org.opencontainers.image.description=yq is a portable command-line YAML processor\" \\\n  --label \"org.opencontainers.image.documentation=https://mikefarah.gitbook.io/yq/\" \\\n  --label \"org.opencontainers.image.licenses=MIT\" \\\n  --label \"org.opencontainers.image.revision=$(git rev-parse HEAD)\" \\\n  --label \"org.opencontainers.image.source=https://github.com/mikefarah/yq\" \\\n  --label \"org.opencontainers.image.title=yq\" \\\n  --label \"org.opencontainers.image.url=https://mikefarah.gitbook.io/yq/\" \\\n  --label \"org.opencontainers.image.version=${IMAGE_VERSION}\" \\\n  --platform \"${PLATFORMS}\" \\\n  --pull \\\n  --push \\\n  -t \"${IMAGE_NAME}:${IMAGE_VERSION}\" \\\n  -t \"${IMAGE_NAME}:4\" \\\n  -t \"${IMAGE_NAME}:latest\" \\\n  .\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-05-12T08-57-27Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-c6502fba-aebd-5c6c-a6e2-bef1e791e080",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/docker-release__2022-05-12T08-57-27Z__3c46c9ff1e6bfaad5dc48864c288e4d408afd789.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 62,
+                  "endColumn": 15
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "46cdc55f7826b7e3:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "docker-release__2022-05-12T08-57-27Z__3c46c9ff1e6bfaad5dc48864c288e4d408afd789.yml",
+          "workflow_name": "Release Docker",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 62,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "publishDocker": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "publishDocker": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v3",
+              "docker/setup-buildx-action@v1",
+              "docker/setup-qemu-action@v2"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release Docker",
+        "true": {
+          "release": {
+            "types": [
+              "released"
+            ]
+          },
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "publishDocker": {
+            "environment": "dockerhub",
+            "env": {
+              "IMAGE_NAME": "mikefarah/yq"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Set up QEMU",
+                "uses": "docker/setup-qemu-action@v2",
+                "with": {
+                  "platforms": "all"
+                }
+              },
+              {
+                "name": "Set up Docker Buildx",
+                "id": "buildx",
+                "uses": "docker/setup-buildx-action@v1",
+                "with": {
+                  "version": "latest"
+                }
+              },
+              {
+                "name": "Available platforms",
+                "run": "echo ${{ steps.buildx.outputs.platforms }} && docker version"
+              },
+              {
+                "name": "Build and push image",
+                "run": "echo \"GithubRef: ${GITHUB_REF}\"\nVERSION=${GITHUB_REF##*/}\necho \"VERSION: ${VERSION}\"\nIMAGE_VERSION=${VERSION:1}\necho \"IMAGE_VERSION: ${IMAGE_VERSION}\"\n\nPLATFORMS=\"linux/amd64,linux/ppc64le,linux/arm64\"\n\necho \"Building and pushing version ${IMAGE_VERSION} of image ${IMAGE_NAME}\"\necho '${{ secrets.DOCKER_PASSWORD }}' | docker login -u '${{ secrets.DOCKER_USERNAME }}' --password-stdin\ndocker buildx build \\\n  --label \"org.opencontainers.image.authors=https://github.com/mikefarah/yq/graphs/contributors\" \\\n  --label \"org.opencontainers.image.created=$(date --rfc-3339=seconds)\" \\\n  --label \"org.opencontainers.image.description=yq is a portable command-line YAML processor\" \\\n  --label \"org.opencontainers.image.documentation=https://mikefarah.gitbook.io/yq/\" \\\n  --label \"org.opencontainers.image.licenses=MIT\" \\\n  --label \"org.opencontainers.image.revision=$(git rev-parse HEAD)\" \\\n  --label \"org.opencontainers.image.source=https://github.com/mikefarah/yq\" \\\n  --label \"org.opencontainers.image.title=yq\" \\\n  --label \"org.opencontainers.image.url=https://mikefarah.gitbook.io/yq/\" \\\n  --label \"org.opencontainers.image.version=${IMAGE_VERSION}\" \\\n  --platform \"${PLATFORMS}\" \\\n  --pull \\\n  --push \\\n  -t \"${IMAGE_NAME}:${IMAGE_VERSION}\" \\\n  -t \"${IMAGE_NAME}:4\" \\\n  -t \"${IMAGE_NAME}:latest\" \\\n  .\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-05-12T08-57-36Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-5bc91be7-959c-5135-934b-5ce9657066fd",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/docker-release__2022-05-12T08-57-36Z__9f0f29f0fc1a2eac56dd5e9845aec165265de4bc.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 62,
+                  "endColumn": 15
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "46cdc55f7826b7e3:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "docker-release__2022-05-12T08-57-36Z__9f0f29f0fc1a2eac56dd5e9845aec165265de4bc.yml",
+          "workflow_name": "Release Docker",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 62,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "publishDocker": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "publishDocker": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v3",
+              "docker/setup-buildx-action@v2",
+              "docker/setup-qemu-action@v2"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release Docker",
+        "true": {
+          "release": {
+            "types": [
+              "released"
+            ]
+          },
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "publishDocker": {
+            "environment": "dockerhub",
+            "env": {
+              "IMAGE_NAME": "mikefarah/yq"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Set up QEMU",
+                "uses": "docker/setup-qemu-action@v2",
+                "with": {
+                  "platforms": "all"
+                }
+              },
+              {
+                "name": "Set up Docker Buildx",
+                "id": "buildx",
+                "uses": "docker/setup-buildx-action@v2",
+                "with": {
+                  "version": "latest"
+                }
+              },
+              {
+                "name": "Available platforms",
+                "run": "echo ${{ steps.buildx.outputs.platforms }} && docker version"
+              },
+              {
+                "name": "Build and push image",
+                "run": "echo \"GithubRef: ${GITHUB_REF}\"\nVERSION=${GITHUB_REF##*/}\necho \"VERSION: ${VERSION}\"\nIMAGE_VERSION=${VERSION:1}\necho \"IMAGE_VERSION: ${IMAGE_VERSION}\"\n\nPLATFORMS=\"linux/amd64,linux/ppc64le,linux/arm64\"\n\necho \"Building and pushing version ${IMAGE_VERSION} of image ${IMAGE_NAME}\"\necho '${{ secrets.DOCKER_PASSWORD }}' | docker login -u '${{ secrets.DOCKER_USERNAME }}' --password-stdin\ndocker buildx build \\\n  --label \"org.opencontainers.image.authors=https://github.com/mikefarah/yq/graphs/contributors\" \\\n  --label \"org.opencontainers.image.created=$(date --rfc-3339=seconds)\" \\\n  --label \"org.opencontainers.image.description=yq is a portable command-line YAML processor\" \\\n  --label \"org.opencontainers.image.documentation=https://mikefarah.gitbook.io/yq/\" \\\n  --label \"org.opencontainers.image.licenses=MIT\" \\\n  --label \"org.opencontainers.image.revision=$(git rev-parse HEAD)\" \\\n  --label \"org.opencontainers.image.source=https://github.com/mikefarah/yq\" \\\n  --label \"org.opencontainers.image.title=yq\" \\\n  --label \"org.opencontainers.image.url=https://mikefarah.gitbook.io/yq/\" \\\n  --label \"org.opencontainers.image.version=${IMAGE_VERSION}\" \\\n  --platform \"${PLATFORMS}\" \\\n  --pull \\\n  --push \\\n  -t \"${IMAGE_NAME}:${IMAGE_VERSION}\" \\\n  -t \"${IMAGE_NAME}:4\" \\\n  -t \"${IMAGE_NAME}:latest\" \\\n  .\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-10-19T00-10-50Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-7d620921-4f57-5a58-8e9b-bf337e750053",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/docker-release__2022-10-19T00-10-50Z__600e132fb6cf9ec6819ca968b66dfe41fd516980.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 82,
+                  "endColumn": 15
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "46cdc55f7826b7e3:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "docker-release__2022-10-19T00-10-50Z__600e132fb6cf9ec6819ca968b66dfe41fd516980.yml",
+          "workflow_name": "Release Docker",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 82,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "publishDocker": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "publishDocker": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v3",
+              "docker/setup-buildx-action@v2",
+              "docker/setup-qemu-action@v2"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release Docker",
+        "true": {
+          "release": {
+            "types": [
+              "released"
+            ]
+          },
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "publishDocker": {
+            "environment": "dockerhub",
+            "env": {
+              "IMAGE_NAME": "mikefarah/yq"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Set up QEMU",
+                "uses": "docker/setup-qemu-action@v2",
+                "with": {
+                  "platforms": "all"
+                }
+              },
+              {
+                "name": "Set up Docker Buildx",
+                "id": "buildx",
+                "uses": "docker/setup-buildx-action@v2",
+                "with": {
+                  "version": "latest"
+                }
+              },
+              {
+                "name": "Available platforms",
+                "run": "echo ${{ steps.buildx.outputs.platforms }} && docker version"
+              },
+              {
+                "name": "Build and push image",
+                "run": "echo \"GithubRef: ${GITHUB_REF}\"\nVERSION=${GITHUB_REF##*/}\necho \"VERSION: ${VERSION}\"\nIMAGE_VERSION=${VERSION:1}\necho \"IMAGE_VERSION: ${IMAGE_VERSION}\"\n\nPLATFORMS=\"linux/amd64,linux/ppc64le,linux/arm64\"\n\necho \"Building and pushing version ${IMAGE_VERSION} of image ${IMAGE_NAME}\"\necho '${{ secrets.DOCKER_PASSWORD }}' | docker login -u '${{ secrets.DOCKER_USERNAME }}' --password-stdin\ndocker buildx build \\\n  --label \"org.opencontainers.image.authors=https://github.com/mikefarah/yq/graphs/contributors\" \\\n  --label \"org.opencontainers.image.created=$(date --rfc-3339=seconds)\" \\\n  --label \"org.opencontainers.image.description=yq is a portable command-line YAML processor\" \\\n  --label \"org.opencontainers.image.documentation=https://mikefarah.gitbook.io/yq/\" \\\n  --label \"org.opencontainers.image.licenses=MIT\" \\\n  --label \"org.opencontainers.image.revision=$(git rev-parse HEAD)\" \\\n  --label \"org.opencontainers.image.source=https://github.com/mikefarah/yq\" \\\n  --label \"org.opencontainers.image.title=yq\" \\\n  --label \"org.opencontainers.image.url=https://mikefarah.gitbook.io/yq/\" \\\n  --label \"org.opencontainers.image.version=${IMAGE_VERSION}\" \\\n  --platform \"${PLATFORMS}\" \\\n  --pull \\\n  --push \\\n  -t \"${IMAGE_NAME}:${IMAGE_VERSION}\" \\\n  -t \"${IMAGE_NAME}:4\" \\\n  -t \"${IMAGE_NAME}:latest\" \\\n  .\n\ncd github-action\ndocker buildx build \\\n  --label \"org.opencontainers.image.authors=https://github.com/mikefarah/yq/graphs/contributors\" \\\n  --label \"org.opencontainers.image.created=$(date --rfc-3339=seconds)\" \\\n  --label \"org.opencontainers.image.description=yq is a portable command-line YAML processor\" \\\n  --label \"org.opencontainers.image.documentation=https://mikefarah.gitbook.io/yq/\" \\\n  --label \"org.opencontainers.image.licenses=MIT\" \\\n  --label \"org.opencontainers.image.revision=$(git rev-parse HEAD)\" \\\n  --label \"org.opencontainers.image.source=https://github.com/mikefarah/yq\" \\\n  --label \"org.opencontainers.image.title=yq\" \\\n  --label \"org.opencontainers.image.url=https://mikefarah.gitbook.io/yq/\" \\\n  --label \"org.opencontainers.image.version=${IMAGE_VERSION}\" \\\n  --platform \"${PLATFORMS}\" \\\n  --pull \\\n  --push \\\n  -t \"${IMAGE_NAME}:${IMAGE_VERSION}-githubaction\" \\\n  -t \"${IMAGE_NAME}:4-githubaction\" \\\n  -t \"${IMAGE_NAME}:latest-githubaction\" \\\n  .\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-09-12T21-58-30Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-4a29ae2b-e5e1-5b5f-906d-64bd608cafac",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/docker-release__2023-09-12T21-58-30Z__0a0182da13a11616212535fa3f03006845606250.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 82,
+                  "endColumn": 15
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "46cdc55f7826b7e3:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "docker-release__2023-09-12T21-58-30Z__0a0182da13a11616212535fa3f03006845606250.yml",
+          "workflow_name": "Release Docker",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 82,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "publishDocker": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "publishDocker": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "docker/setup-buildx-action@v2",
+              "docker/setup-qemu-action@v2"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release Docker",
+        "true": {
+          "release": {
+            "types": [
+              "released"
+            ]
+          },
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "publishDocker": {
+            "environment": "dockerhub",
+            "env": {
+              "IMAGE_NAME": "mikefarah/yq"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Set up QEMU",
+                "uses": "docker/setup-qemu-action@v2",
+                "with": {
+                  "platforms": "all"
+                }
+              },
+              {
+                "name": "Set up Docker Buildx",
+                "id": "buildx",
+                "uses": "docker/setup-buildx-action@v2",
+                "with": {
+                  "version": "latest"
+                }
+              },
+              {
+                "name": "Available platforms",
+                "run": "echo ${{ steps.buildx.outputs.platforms }} && docker version"
+              },
+              {
+                "name": "Build and push image",
+                "run": "echo \"GithubRef: ${GITHUB_REF}\"\nVERSION=${GITHUB_REF##*/}\necho \"VERSION: ${VERSION}\"\nIMAGE_VERSION=${VERSION:1}\necho \"IMAGE_VERSION: ${IMAGE_VERSION}\"\n\nPLATFORMS=\"linux/amd64,linux/ppc64le,linux/arm64\"\n\necho \"Building and pushing version ${IMAGE_VERSION} of image ${IMAGE_NAME}\"\necho '${{ secrets.DOCKER_PASSWORD }}' | docker login -u '${{ secrets.DOCKER_USERNAME }}' --password-stdin\ndocker buildx build \\\n  --label \"org.opencontainers.image.authors=https://github.com/mikefarah/yq/graphs/contributors\" \\\n  --label \"org.opencontainers.image.created=$(date --rfc-3339=seconds)\" \\\n  --label \"org.opencontainers.image.description=yq is a portable command-line YAML processor\" \\\n  --label \"org.opencontainers.image.documentation=https://mikefarah.gitbook.io/yq/\" \\\n  --label \"org.opencontainers.image.licenses=MIT\" \\\n  --label \"org.opencontainers.image.revision=$(git rev-parse HEAD)\" \\\n  --label \"org.opencontainers.image.source=https://github.com/mikefarah/yq\" \\\n  --label \"org.opencontainers.image.title=yq\" \\\n  --label \"org.opencontainers.image.url=https://mikefarah.gitbook.io/yq/\" \\\n  --label \"org.opencontainers.image.version=${IMAGE_VERSION}\" \\\n  --platform \"${PLATFORMS}\" \\\n  --pull \\\n  --push \\\n  -t \"${IMAGE_NAME}:${IMAGE_VERSION}\" \\\n  -t \"${IMAGE_NAME}:4\" \\\n  -t \"${IMAGE_NAME}:latest\" \\\n  .\n\ncd github-action\ndocker buildx build \\\n  --label \"org.opencontainers.image.authors=https://github.com/mikefarah/yq/graphs/contributors\" \\\n  --label \"org.opencontainers.image.created=$(date --rfc-3339=seconds)\" \\\n  --label \"org.opencontainers.image.description=yq is a portable command-line YAML processor\" \\\n  --label \"org.opencontainers.image.documentation=https://mikefarah.gitbook.io/yq/\" \\\n  --label \"org.opencontainers.image.licenses=MIT\" \\\n  --label \"org.opencontainers.image.revision=$(git rev-parse HEAD)\" \\\n  --label \"org.opencontainers.image.source=https://github.com/mikefarah/yq\" \\\n  --label \"org.opencontainers.image.title=yq\" \\\n  --label \"org.opencontainers.image.url=https://mikefarah.gitbook.io/yq/\" \\\n  --label \"org.opencontainers.image.version=${IMAGE_VERSION}\" \\\n  --platform \"${PLATFORMS}\" \\\n  --pull \\\n  --push \\\n  -t \"${IMAGE_NAME}:${IMAGE_VERSION}-githubaction\" \\\n  -t \"${IMAGE_NAME}:4-githubaction\" \\\n  -t \"${IMAGE_NAME}:latest-githubaction\" \\\n  .\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-09-18T23-44-36Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-48101438-6b44-5bcd-bbd4-eee33afac059",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/docker-release__2023-09-18T23-44-36Z__fa8cfd0400fdf83fa729b648628ef2bb0e6de29d.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 82,
+                  "endColumn": 15
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "46cdc55f7826b7e3:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "docker-release__2023-09-18T23-44-36Z__fa8cfd0400fdf83fa729b648628ef2bb0e6de29d.yml",
+          "workflow_name": "Release Docker",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 82,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "publishDocker": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "publishDocker": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "docker/setup-buildx-action@v3",
+              "docker/setup-qemu-action@v2"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release Docker",
+        "true": {
+          "release": {
+            "types": [
+              "released"
+            ]
+          },
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "publishDocker": {
+            "environment": "dockerhub",
+            "env": {
+              "IMAGE_NAME": "mikefarah/yq"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Set up QEMU",
+                "uses": "docker/setup-qemu-action@v2",
+                "with": {
+                  "platforms": "all"
+                }
+              },
+              {
+                "name": "Set up Docker Buildx",
+                "id": "buildx",
+                "uses": "docker/setup-buildx-action@v3",
+                "with": {
+                  "version": "latest"
+                }
+              },
+              {
+                "name": "Available platforms",
+                "run": "echo ${{ steps.buildx.outputs.platforms }} && docker version"
+              },
+              {
+                "name": "Build and push image",
+                "run": "echo \"GithubRef: ${GITHUB_REF}\"\nVERSION=${GITHUB_REF##*/}\necho \"VERSION: ${VERSION}\"\nIMAGE_VERSION=${VERSION:1}\necho \"IMAGE_VERSION: ${IMAGE_VERSION}\"\n\nPLATFORMS=\"linux/amd64,linux/ppc64le,linux/arm64\"\n\necho \"Building and pushing version ${IMAGE_VERSION} of image ${IMAGE_NAME}\"\necho '${{ secrets.DOCKER_PASSWORD }}' | docker login -u '${{ secrets.DOCKER_USERNAME }}' --password-stdin\ndocker buildx build \\\n  --label \"org.opencontainers.image.authors=https://github.com/mikefarah/yq/graphs/contributors\" \\\n  --label \"org.opencontainers.image.created=$(date --rfc-3339=seconds)\" \\\n  --label \"org.opencontainers.image.description=yq is a portable command-line YAML processor\" \\\n  --label \"org.opencontainers.image.documentation=https://mikefarah.gitbook.io/yq/\" \\\n  --label \"org.opencontainers.image.licenses=MIT\" \\\n  --label \"org.opencontainers.image.revision=$(git rev-parse HEAD)\" \\\n  --label \"org.opencontainers.image.source=https://github.com/mikefarah/yq\" \\\n  --label \"org.opencontainers.image.title=yq\" \\\n  --label \"org.opencontainers.image.url=https://mikefarah.gitbook.io/yq/\" \\\n  --label \"org.opencontainers.image.version=${IMAGE_VERSION}\" \\\n  --platform \"${PLATFORMS}\" \\\n  --pull \\\n  --push \\\n  -t \"${IMAGE_NAME}:${IMAGE_VERSION}\" \\\n  -t \"${IMAGE_NAME}:4\" \\\n  -t \"${IMAGE_NAME}:latest\" \\\n  .\n\ncd github-action\ndocker buildx build \\\n  --label \"org.opencontainers.image.authors=https://github.com/mikefarah/yq/graphs/contributors\" \\\n  --label \"org.opencontainers.image.created=$(date --rfc-3339=seconds)\" \\\n  --label \"org.opencontainers.image.description=yq is a portable command-line YAML processor\" \\\n  --label \"org.opencontainers.image.documentation=https://mikefarah.gitbook.io/yq/\" \\\n  --label \"org.opencontainers.image.licenses=MIT\" \\\n  --label \"org.opencontainers.image.revision=$(git rev-parse HEAD)\" \\\n  --label \"org.opencontainers.image.source=https://github.com/mikefarah/yq\" \\\n  --label \"org.opencontainers.image.title=yq\" \\\n  --label \"org.opencontainers.image.url=https://mikefarah.gitbook.io/yq/\" \\\n  --label \"org.opencontainers.image.version=${IMAGE_VERSION}\" \\\n  --platform \"${PLATFORMS}\" \\\n  --pull \\\n  --push \\\n  -t \"${IMAGE_NAME}:${IMAGE_VERSION}-githubaction\" \\\n  -t \"${IMAGE_NAME}:4-githubaction\" \\\n  -t \"${IMAGE_NAME}:latest-githubaction\" \\\n  .\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-09-18T23-45-31Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-390fa860-97ec-5192-b36b-1869901bb50d",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/docker-release__2023-09-18T23-45-31Z__0667500b1b47140d60943cf708f6e4a9a76c93d0.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 82,
+                  "endColumn": 15
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "46cdc55f7826b7e3:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "docker-release__2023-09-18T23-45-31Z__0667500b1b47140d60943cf708f6e4a9a76c93d0.yml",
+          "workflow_name": "Release Docker",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 82,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "publishDocker": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "publishDocker": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "docker/setup-buildx-action@v3",
+              "docker/setup-qemu-action@v3"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release Docker",
+        "true": {
+          "release": {
+            "types": [
+              "released"
+            ]
+          },
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "publishDocker": {
+            "environment": "dockerhub",
+            "env": {
+              "IMAGE_NAME": "mikefarah/yq"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Set up QEMU",
+                "uses": "docker/setup-qemu-action@v3",
+                "with": {
+                  "platforms": "all"
+                }
+              },
+              {
+                "name": "Set up Docker Buildx",
+                "id": "buildx",
+                "uses": "docker/setup-buildx-action@v3",
+                "with": {
+                  "version": "latest"
+                }
+              },
+              {
+                "name": "Available platforms",
+                "run": "echo ${{ steps.buildx.outputs.platforms }} && docker version"
+              },
+              {
+                "name": "Build and push image",
+                "run": "echo \"GithubRef: ${GITHUB_REF}\"\nVERSION=${GITHUB_REF##*/}\necho \"VERSION: ${VERSION}\"\nIMAGE_VERSION=${VERSION:1}\necho \"IMAGE_VERSION: ${IMAGE_VERSION}\"\n\nPLATFORMS=\"linux/amd64,linux/ppc64le,linux/arm64\"\n\necho \"Building and pushing version ${IMAGE_VERSION} of image ${IMAGE_NAME}\"\necho '${{ secrets.DOCKER_PASSWORD }}' | docker login -u '${{ secrets.DOCKER_USERNAME }}' --password-stdin\ndocker buildx build \\\n  --label \"org.opencontainers.image.authors=https://github.com/mikefarah/yq/graphs/contributors\" \\\n  --label \"org.opencontainers.image.created=$(date --rfc-3339=seconds)\" \\\n  --label \"org.opencontainers.image.description=yq is a portable command-line YAML processor\" \\\n  --label \"org.opencontainers.image.documentation=https://mikefarah.gitbook.io/yq/\" \\\n  --label \"org.opencontainers.image.licenses=MIT\" \\\n  --label \"org.opencontainers.image.revision=$(git rev-parse HEAD)\" \\\n  --label \"org.opencontainers.image.source=https://github.com/mikefarah/yq\" \\\n  --label \"org.opencontainers.image.title=yq\" \\\n  --label \"org.opencontainers.image.url=https://mikefarah.gitbook.io/yq/\" \\\n  --label \"org.opencontainers.image.version=${IMAGE_VERSION}\" \\\n  --platform \"${PLATFORMS}\" \\\n  --pull \\\n  --push \\\n  -t \"${IMAGE_NAME}:${IMAGE_VERSION}\" \\\n  -t \"${IMAGE_NAME}:4\" \\\n  -t \"${IMAGE_NAME}:latest\" \\\n  .\n\ncd github-action\ndocker buildx build \\\n  --label \"org.opencontainers.image.authors=https://github.com/mikefarah/yq/graphs/contributors\" \\\n  --label \"org.opencontainers.image.created=$(date --rfc-3339=seconds)\" \\\n  --label \"org.opencontainers.image.description=yq is a portable command-line YAML processor\" \\\n  --label \"org.opencontainers.image.documentation=https://mikefarah.gitbook.io/yq/\" \\\n  --label \"org.opencontainers.image.licenses=MIT\" \\\n  --label \"org.opencontainers.image.revision=$(git rev-parse HEAD)\" \\\n  --label \"org.opencontainers.image.source=https://github.com/mikefarah/yq\" \\\n  --label \"org.opencontainers.image.title=yq\" \\\n  --label \"org.opencontainers.image.url=https://mikefarah.gitbook.io/yq/\" \\\n  --label \"org.opencontainers.image.version=${IMAGE_VERSION}\" \\\n  --platform \"${PLATFORMS}\" \\\n  --pull \\\n  --push \\\n  -t \"${IMAGE_NAME}:${IMAGE_VERSION}-githubaction\" \\\n  -t \"${IMAGE_NAME}:4-githubaction\" \\\n  -t \"${IMAGE_NAME}:latest-githubaction\" \\\n  .\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-11-30T04-32-21Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-0354e840-15cb-5828-972f-2dced73b6bbf",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/docker-release__2023-11-30T04-32-21Z__779b26310e6246fc7448e16e529bf9a83b35ead8.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 82,
+                  "endColumn": 15
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "46cdc55f7826b7e3:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "docker-release__2023-11-30T04-32-21Z__779b26310e6246fc7448e16e529bf9a83b35ead8.yml",
+          "workflow_name": "Release Docker",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 82,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "publishDocker": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "publishDocker": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "docker/setup-buildx-action@v3",
+              "docker/setup-qemu-action@v3"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release Docker",
+        "true": {
+          "release": {
+            "types": [
+              "released"
+            ]
+          },
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "publishDocker": {
+            "environment": "dockerhub",
+            "env": {
+              "IMAGE_NAME": "mikefarah/yq"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Set up QEMU",
+                "uses": "docker/setup-qemu-action@v3",
+                "with": {
+                  "platforms": "all"
+                }
+              },
+              {
+                "name": "Set up Docker Buildx",
+                "id": "buildx",
+                "uses": "docker/setup-buildx-action@v3",
+                "with": {
+                  "version": "latest"
+                }
+              },
+              {
+                "name": "Available platforms",
+                "run": "echo ${{ steps.buildx.outputs.platforms }} && docker version"
+              },
+              {
+                "name": "Build and push image",
+                "run": "echo \"GithubRef: ${GITHUB_REF}\"\nVERSION=${GITHUB_REF##*/}\necho \"VERSION: ${VERSION}\"\nIMAGE_VERSION=${VERSION:1}\necho \"IMAGE_VERSION: ${IMAGE_VERSION}\"\n\nPLATFORMS=\"linux/amd64,linux/ppc64le,linux/arm64\"\n\necho \"Building and pushing version ${IMAGE_VERSION} of image ${IMAGE_NAME}\"\necho '${{ secrets.DOCKER_PASSWORD }}' | docker login -u '${{ secrets.DOCKER_USERNAME }}' --password-stdin\ndocker buildx build \\\n  --label \"org.opencontainers.image.authors=https://github.com/mikefarah/yq/graphs/contributors\" \\\n  --label \"org.opencontainers.image.created=$(date --rfc-3339=seconds)\" \\\n  --label \"org.opencontainers.image.description=yq is a portable command-line data file processor\" \\\n  --label \"org.opencontainers.image.documentation=https://mikefarah.gitbook.io/yq/\" \\\n  --label \"org.opencontainers.image.licenses=MIT\" \\\n  --label \"org.opencontainers.image.revision=$(git rev-parse HEAD)\" \\\n  --label \"org.opencontainers.image.source=https://github.com/mikefarah/yq\" \\\n  --label \"org.opencontainers.image.title=yq\" \\\n  --label \"org.opencontainers.image.url=https://mikefarah.gitbook.io/yq/\" \\\n  --label \"org.opencontainers.image.version=${IMAGE_VERSION}\" \\\n  --platform \"${PLATFORMS}\" \\\n  --pull \\\n  --push \\\n  -t \"${IMAGE_NAME}:${IMAGE_VERSION}\" \\\n  -t \"${IMAGE_NAME}:4\" \\\n  -t \"${IMAGE_NAME}:latest\" \\\n  .\n\ncd github-action\ndocker buildx build \\\n  --label \"org.opencontainers.image.authors=https://github.com/mikefarah/yq/graphs/contributors\" \\\n  --label \"org.opencontainers.image.created=$(date --rfc-3339=seconds)\" \\\n  --label \"org.opencontainers.image.description=yq is a portable command-line data file processor\" \\\n  --label \"org.opencontainers.image.documentation=https://mikefarah.gitbook.io/yq/\" \\\n  --label \"org.opencontainers.image.licenses=MIT\" \\\n  --label \"org.opencontainers.image.revision=$(git rev-parse HEAD)\" \\\n  --label \"org.opencontainers.image.source=https://github.com/mikefarah/yq\" \\\n  --label \"org.opencontainers.image.title=yq\" \\\n  --label \"org.opencontainers.image.url=https://mikefarah.gitbook.io/yq/\" \\\n  --label \"org.opencontainers.image.version=${IMAGE_VERSION}\" \\\n  --platform \"${PLATFORMS}\" \\\n  --pull \\\n  --push \\\n  -t \"${IMAGE_NAME}:${IMAGE_VERSION}-githubaction\" \\\n  -t \"${IMAGE_NAME}:4-githubaction\" \\\n  -t \"${IMAGE_NAME}:latest-githubaction\" \\\n  .\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-08-20T03-09-12Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-47c14355-1d5a-51aa-9bc3-94e1a86f4290",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/docker-release__2024-08-20T03-09-12Z__c46c1a712882c2a0872e55b09a9b3d3c7d8ce7d7.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 82,
+                  "endColumn": 15
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "46cdc55f7826b7e3:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "docker-release__2024-08-20T03-09-12Z__c46c1a712882c2a0872e55b09a9b3d3c7d8ce7d7.yml",
+          "workflow_name": "Release Docker",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 82,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "publishDocker": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "publishDocker": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "docker/setup-buildx-action@v3",
+              "docker/setup-qemu-action@v3"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release Docker",
+        "true": {
+          "release": {
+            "types": [
+              "released"
+            ]
+          },
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "publishDocker": {
+            "environment": "dockerhub",
+            "env": {
+              "IMAGE_NAME": "mikefarah/yq"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Set up QEMU",
+                "uses": "docker/setup-qemu-action@v3",
+                "with": {
+                  "platforms": "all"
+                }
+              },
+              {
+                "name": "Set up Docker Buildx",
+                "id": "buildx",
+                "uses": "docker/setup-buildx-action@v3",
+                "with": {
+                  "version": "latest"
+                }
+              },
+              {
+                "name": "Available platforms",
+                "run": "echo ${{ steps.buildx.outputs.platforms }} && docker version"
+              },
+              {
+                "name": "Build and push image",
+                "run": "echo \"GithubRef: ${GITHUB_REF}\"\nVERSION=${GITHUB_REF##*/}\necho \"VERSION: ${VERSION}\"\nIMAGE_VERSION=${VERSION:1}\necho \"IMAGE_VERSION: ${IMAGE_VERSION}\"\n\nPLATFORMS=\"linux/amd64,linux/ppc64le,linux/arm64,linux/riscv64\"\n\necho \"Building and pushing version ${IMAGE_VERSION} of image ${IMAGE_NAME}\"\necho '${{ secrets.DOCKER_PASSWORD }}' | docker login -u '${{ secrets.DOCKER_USERNAME }}' --password-stdin\ndocker buildx build \\\n  --label \"org.opencontainers.image.authors=https://github.com/mikefarah/yq/graphs/contributors\" \\\n  --label \"org.opencontainers.image.created=$(date --rfc-3339=seconds)\" \\\n  --label \"org.opencontainers.image.description=yq is a portable command-line data file processor\" \\\n  --label \"org.opencontainers.image.documentation=https://mikefarah.gitbook.io/yq/\" \\\n  --label \"org.opencontainers.image.licenses=MIT\" \\\n  --label \"org.opencontainers.image.revision=$(git rev-parse HEAD)\" \\\n  --label \"org.opencontainers.image.source=https://github.com/mikefarah/yq\" \\\n  --label \"org.opencontainers.image.title=yq\" \\\n  --label \"org.opencontainers.image.url=https://mikefarah.gitbook.io/yq/\" \\\n  --label \"org.opencontainers.image.version=${IMAGE_VERSION}\" \\\n  --platform \"${PLATFORMS}\" \\\n  --pull \\\n  --push \\\n  -t \"${IMAGE_NAME}:${IMAGE_VERSION}\" \\\n  -t \"${IMAGE_NAME}:4\" \\\n  -t \"${IMAGE_NAME}:latest\" \\\n  .\n\ncd github-action\ndocker buildx build \\\n  --label \"org.opencontainers.image.authors=https://github.com/mikefarah/yq/graphs/contributors\" \\\n  --label \"org.opencontainers.image.created=$(date --rfc-3339=seconds)\" \\\n  --label \"org.opencontainers.image.description=yq is a portable command-line data file processor\" \\\n  --label \"org.opencontainers.image.documentation=https://mikefarah.gitbook.io/yq/\" \\\n  --label \"org.opencontainers.image.licenses=MIT\" \\\n  --label \"org.opencontainers.image.revision=$(git rev-parse HEAD)\" \\\n  --label \"org.opencontainers.image.source=https://github.com/mikefarah/yq\" \\\n  --label \"org.opencontainers.image.title=yq\" \\\n  --label \"org.opencontainers.image.url=https://mikefarah.gitbook.io/yq/\" \\\n  --label \"org.opencontainers.image.version=${IMAGE_VERSION}\" \\\n  --platform \"${PLATFORMS}\" \\\n  --pull \\\n  --push \\\n  -t \"${IMAGE_NAME}:${IMAGE_VERSION}-githubaction\" \\\n  -t \"${IMAGE_NAME}:4-githubaction\" \\\n  -t \"${IMAGE_NAME}:latest-githubaction\" \\\n  .\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-11-16T09-31-39Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-920cb5a0-617b-505b-beaa-5566b5fe76f9",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/docker-release__2024-11-16T09-31-39Z__d858ab1644d3cc3986e4ddb96b03602714bc126d.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 82,
+                  "endColumn": 15
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "46cdc55f7826b7e3:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "docker-release__2024-11-16T09-31-39Z__d858ab1644d3cc3986e4ddb96b03602714bc126d.yml",
+          "workflow_name": "Release Docker",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 82,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "publishDocker": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "publishDocker": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "docker/setup-buildx-action@v3",
+              "docker/setup-qemu-action@v3"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release Docker",
+        "true": {
+          "release": {
+            "types": [
+              "released"
+            ]
+          },
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "publishDocker": {
+            "environment": "dockerhub",
+            "env": {
+              "IMAGE_NAME": "mikefarah/yq"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Set up QEMU",
+                "uses": "docker/setup-qemu-action@v3",
+                "with": {
+                  "platforms": "all"
+                }
+              },
+              {
+                "name": "Set up Docker Buildx",
+                "id": "buildx",
+                "uses": "docker/setup-buildx-action@v3",
+                "with": {
+                  "version": "latest"
+                }
+              },
+              {
+                "name": "Available platforms",
+                "run": "echo ${{ steps.buildx.outputs.platforms }} && docker version"
+              },
+              {
+                "name": "Build and push image",
+                "run": "echo \"GithubRef: ${GITHUB_REF}\"\nVERSION=${GITHUB_REF##*/}\necho \"VERSION: ${VERSION}\"\nIMAGE_VERSION=${VERSION:1}\necho \"IMAGE_VERSION: ${IMAGE_VERSION}\"\n\nPLATFORMS=\"linux/amd64,linux/ppc64le,linux/arm64\"\n\necho \"Building and pushing version ${IMAGE_VERSION} of image ${IMAGE_NAME}\"\necho '${{ secrets.DOCKER_PASSWORD }}' | docker login -u '${{ secrets.DOCKER_USERNAME }}' --password-stdin\ndocker buildx build \\\n  --label \"org.opencontainers.image.authors=https://github.com/mikefarah/yq/graphs/contributors\" \\\n  --label \"org.opencontainers.image.created=$(date --rfc-3339=seconds)\" \\\n  --label \"org.opencontainers.image.description=yq is a portable command-line data file processor\" \\\n  --label \"org.opencontainers.image.documentation=https://mikefarah.gitbook.io/yq/\" \\\n  --label \"org.opencontainers.image.licenses=MIT\" \\\n  --label \"org.opencontainers.image.revision=$(git rev-parse HEAD)\" \\\n  --label \"org.opencontainers.image.source=https://github.com/mikefarah/yq\" \\\n  --label \"org.opencontainers.image.title=yq\" \\\n  --label \"org.opencontainers.image.url=https://mikefarah.gitbook.io/yq/\" \\\n  --label \"org.opencontainers.image.version=${IMAGE_VERSION}\" \\\n  --platform \"${PLATFORMS}\" \\\n  --pull \\\n  --push \\\n  -t \"${IMAGE_NAME}:${IMAGE_VERSION}\" \\\n  -t \"${IMAGE_NAME}:4\" \\\n  -t \"${IMAGE_NAME}:latest\" \\\n  .\n\ncd github-action\ndocker buildx build \\\n  --label \"org.opencontainers.image.authors=https://github.com/mikefarah/yq/graphs/contributors\" \\\n  --label \"org.opencontainers.image.created=$(date --rfc-3339=seconds)\" \\\n  --label \"org.opencontainers.image.description=yq is a portable command-line data file processor\" \\\n  --label \"org.opencontainers.image.documentation=https://mikefarah.gitbook.io/yq/\" \\\n  --label \"org.opencontainers.image.licenses=MIT\" \\\n  --label \"org.opencontainers.image.revision=$(git rev-parse HEAD)\" \\\n  --label \"org.opencontainers.image.source=https://github.com/mikefarah/yq\" \\\n  --label \"org.opencontainers.image.title=yq\" \\\n  --label \"org.opencontainers.image.url=https://mikefarah.gitbook.io/yq/\" \\\n  --label \"org.opencontainers.image.version=${IMAGE_VERSION}\" \\\n  --platform \"${PLATFORMS}\" \\\n  --pull \\\n  --push \\\n  -t \"${IMAGE_NAME}:${IMAGE_VERSION}-githubaction\" \\\n  -t \"${IMAGE_NAME}:4-githubaction\" \\\n  -t \"${IMAGE_NAME}:latest-githubaction\" \\\n  .\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-11-16T09-34-50Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-90a1e7b7-b94f-5069-a332-8846ca5f500f",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/docker-release__2024-11-16T09-34-50Z__839119373291888bd5a327814acf2bc4b4ce8a88.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 82,
+                  "endColumn": 15
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "46cdc55f7826b7e3:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "docker-release__2024-11-16T09-34-50Z__839119373291888bd5a327814acf2bc4b4ce8a88.yml",
+          "workflow_name": "Release Docker",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 82,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "publishDocker": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "publishDocker": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "docker/setup-buildx-action@v3",
+              "docker/setup-qemu-action@v3"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release Docker",
+        "true": {
+          "release": {
+            "types": [
+              "released"
+            ]
+          },
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "publishDocker": {
+            "environment": "dockerhub",
+            "env": {
+              "IMAGE_NAME": "mikefarah/yq"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Set up QEMU",
+                "uses": "docker/setup-qemu-action@v3",
+                "with": {
+                  "platforms": "all"
+                }
+              },
+              {
+                "name": "Set up Docker Buildx",
+                "id": "buildx",
+                "uses": "docker/setup-buildx-action@v3",
+                "with": {
+                  "version": "latest"
+                }
+              },
+              {
+                "name": "Available platforms",
+                "run": "echo ${{ steps.buildx.outputs.platforms }} && docker version"
+              },
+              {
+                "name": "Build and push image",
+                "run": "echo \"GithubRef: ${GITHUB_REF}\"\nVERSION=v4.44.5\necho \"VERSION: ${VERSION}\"\nIMAGE_VERSION=${VERSION:1}\necho \"IMAGE_VERSION: ${IMAGE_VERSION}\"\n\nPLATFORMS=\"linux/amd64,linux/ppc64le,linux/arm64\"\n\necho \"Building and pushing version ${IMAGE_VERSION} of image ${IMAGE_NAME}\"\necho '${{ secrets.DOCKER_PASSWORD }}' | docker login -u '${{ secrets.DOCKER_USERNAME }}' --password-stdin\ndocker buildx build \\\n  --label \"org.opencontainers.image.authors=https://github.com/mikefarah/yq/graphs/contributors\" \\\n  --label \"org.opencontainers.image.created=$(date --rfc-3339=seconds)\" \\\n  --label \"org.opencontainers.image.description=yq is a portable command-line data file processor\" \\\n  --label \"org.opencontainers.image.documentation=https://mikefarah.gitbook.io/yq/\" \\\n  --label \"org.opencontainers.image.licenses=MIT\" \\\n  --label \"org.opencontainers.image.revision=$(git rev-parse HEAD)\" \\\n  --label \"org.opencontainers.image.source=https://github.com/mikefarah/yq\" \\\n  --label \"org.opencontainers.image.title=yq\" \\\n  --label \"org.opencontainers.image.url=https://mikefarah.gitbook.io/yq/\" \\\n  --label \"org.opencontainers.image.version=${IMAGE_VERSION}\" \\\n  --platform \"${PLATFORMS}\" \\\n  --pull \\\n  --push \\\n  -t \"${IMAGE_NAME}:${IMAGE_VERSION}\" \\\n  -t \"${IMAGE_NAME}:4\" \\\n  -t \"${IMAGE_NAME}:latest\" \\\n  .\n\ncd github-action\ndocker buildx build \\\n  --label \"org.opencontainers.image.authors=https://github.com/mikefarah/yq/graphs/contributors\" \\\n  --label \"org.opencontainers.image.created=$(date --rfc-3339=seconds)\" \\\n  --label \"org.opencontainers.image.description=yq is a portable command-line data file processor\" \\\n  --label \"org.opencontainers.image.documentation=https://mikefarah.gitbook.io/yq/\" \\\n  --label \"org.opencontainers.image.licenses=MIT\" \\\n  --label \"org.opencontainers.image.revision=$(git rev-parse HEAD)\" \\\n  --label \"org.opencontainers.image.source=https://github.com/mikefarah/yq\" \\\n  --label \"org.opencontainers.image.title=yq\" \\\n  --label \"org.opencontainers.image.url=https://mikefarah.gitbook.io/yq/\" \\\n  --label \"org.opencontainers.image.version=${IMAGE_VERSION}\" \\\n  --platform \"${PLATFORMS}\" \\\n  --pull \\\n  --push \\\n  -t \"${IMAGE_NAME}:${IMAGE_VERSION}-githubaction\" \\\n  -t \"${IMAGE_NAME}:4-githubaction\" \\\n  -t \"${IMAGE_NAME}:latest-githubaction\" \\\n  .\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-11-16T09-37-27Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-53c1f6b8-3f06-5f5c-9e23-a871ce522f93",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/docker-release__2024-11-16T09-37-27Z__80310eaaaccb16c8ba6efe8c017c5eb623a4bf65.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 82,
+                  "endColumn": 15
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "46cdc55f7826b7e3:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "docker-release__2024-11-16T09-37-27Z__80310eaaaccb16c8ba6efe8c017c5eb623a4bf65.yml",
+          "workflow_name": "Release Docker",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 82,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "publishDocker": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "publishDocker": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "docker/setup-buildx-action@v3",
+              "docker/setup-qemu-action@v3"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release Docker",
+        "true": {
+          "release": {
+            "types": [
+              "released"
+            ]
+          },
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "publishDocker": {
+            "environment": "dockerhub",
+            "env": {
+              "IMAGE_NAME": "mikefarah/yq"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Set up QEMU",
+                "uses": "docker/setup-qemu-action@v3",
+                "with": {
+                  "platforms": "all"
+                }
+              },
+              {
+                "name": "Set up Docker Buildx",
+                "id": "buildx",
+                "uses": "docker/setup-buildx-action@v3",
+                "with": {
+                  "version": "latest"
+                }
+              },
+              {
+                "name": "Available platforms",
+                "run": "echo ${{ steps.buildx.outputs.platforms }} && docker version"
+              },
+              {
+                "name": "Build and push image",
+                "run": "echo \"GithubRef: ${GITHUB_REF}\"\nVERSION=${GITHUB_REF##*/}\necho \"VERSION: ${VERSION}\"\nIMAGE_VERSION=${VERSION:1}\necho \"IMAGE_VERSION: ${IMAGE_VERSION}\"\n\nPLATFORMS=\"linux/amd64,linux/ppc64le,linux/arm64\"\n\necho \"Building and pushing version ${IMAGE_VERSION} of image ${IMAGE_NAME}\"\necho '${{ secrets.DOCKER_PASSWORD }}' | docker login -u '${{ secrets.DOCKER_USERNAME }}' --password-stdin\ndocker buildx build \\\n  --label \"org.opencontainers.image.authors=https://github.com/mikefarah/yq/graphs/contributors\" \\\n  --label \"org.opencontainers.image.created=$(date --rfc-3339=seconds)\" \\\n  --label \"org.opencontainers.image.description=yq is a portable command-line data file processor\" \\\n  --label \"org.opencontainers.image.documentation=https://mikefarah.gitbook.io/yq/\" \\\n  --label \"org.opencontainers.image.licenses=MIT\" \\\n  --label \"org.opencontainers.image.revision=$(git rev-parse HEAD)\" \\\n  --label \"org.opencontainers.image.source=https://github.com/mikefarah/yq\" \\\n  --label \"org.opencontainers.image.title=yq\" \\\n  --label \"org.opencontainers.image.url=https://mikefarah.gitbook.io/yq/\" \\\n  --label \"org.opencontainers.image.version=${IMAGE_VERSION}\" \\\n  --platform \"${PLATFORMS}\" \\\n  --pull \\\n  --push \\\n  -t \"${IMAGE_NAME}:${IMAGE_VERSION}\" \\\n  -t \"${IMAGE_NAME}:4\" \\\n  -t \"${IMAGE_NAME}:latest\" \\\n  .\n\ncd github-action\ndocker buildx build \\\n  --label \"org.opencontainers.image.authors=https://github.com/mikefarah/yq/graphs/contributors\" \\\n  --label \"org.opencontainers.image.created=$(date --rfc-3339=seconds)\" \\\n  --label \"org.opencontainers.image.description=yq is a portable command-line data file processor\" \\\n  --label \"org.opencontainers.image.documentation=https://mikefarah.gitbook.io/yq/\" \\\n  --label \"org.opencontainers.image.licenses=MIT\" \\\n  --label \"org.opencontainers.image.revision=$(git rev-parse HEAD)\" \\\n  --label \"org.opencontainers.image.source=https://github.com/mikefarah/yq\" \\\n  --label \"org.opencontainers.image.title=yq\" \\\n  --label \"org.opencontainers.image.url=https://mikefarah.gitbook.io/yq/\" \\\n  --label \"org.opencontainers.image.version=${IMAGE_VERSION}\" \\\n  --platform \"${PLATFORMS}\" \\\n  --pull \\\n  --push \\\n  -t \"${IMAGE_NAME}:${IMAGE_VERSION}-githubaction\" \\\n  -t \"${IMAGE_NAME}:4-githubaction\" \\\n  -t \"${IMAGE_NAME}:latest-githubaction\" \\\n  .\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-12-07T00-10-20Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-f5c4ba86-9a43-5017-857a-0ea6c00f84b9",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/docker-release__2024-12-07T00-10-20Z__f76815959a83b08374645bc23dbfa08a7a0961ed.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 82,
+                  "endColumn": 15
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "46cdc55f7826b7e3:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "docker-release__2024-12-07T00-10-20Z__f76815959a83b08374645bc23dbfa08a7a0961ed.yml",
+          "workflow_name": "Release Docker",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 82,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "publishDocker": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "publishDocker": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "docker/setup-buildx-action@v3",
+              "docker/setup-qemu-action@v3"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release Docker",
+        "true": {
+          "release": {
+            "types": [
+              "released"
+            ]
+          },
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "publishDocker": {
+            "environment": "dockerhub",
+            "env": {
+              "IMAGE_NAME": "mikefarah/yq"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Set up QEMU",
+                "uses": "docker/setup-qemu-action@v3",
+                "with": {
+                  "platforms": "all"
+                }
+              },
+              {
+                "name": "Set up Docker Buildx",
+                "id": "buildx",
+                "uses": "docker/setup-buildx-action@v3",
+                "with": {
+                  "version": "latest"
+                }
+              },
+              {
+                "name": "Available platforms",
+                "run": "echo ${{ steps.buildx.outputs.platforms }} && docker version"
+              },
+              {
+                "name": "Build and push image",
+                "run": "echo \"GithubRef: ${GITHUB_REF}\"\nVERSION=${GITHUB_REF##*/}\necho \"VERSION: ${VERSION}\"\nIMAGE_VERSION=${VERSION:1}\necho \"IMAGE_VERSION: ${IMAGE_VERSION}\"\n\nPLATFORMS=\"linux/amd64,linux/ppc64le,linux/arm64,linux/arm/v7\"\n\necho \"Building and pushing version ${IMAGE_VERSION} of image ${IMAGE_NAME}\"\necho '${{ secrets.DOCKER_PASSWORD }}' | docker login -u '${{ secrets.DOCKER_USERNAME }}' --password-stdin\ndocker buildx build \\\n  --label \"org.opencontainers.image.authors=https://github.com/mikefarah/yq/graphs/contributors\" \\\n  --label \"org.opencontainers.image.created=$(date --rfc-3339=seconds)\" \\\n  --label \"org.opencontainers.image.description=yq is a portable command-line data file processor\" \\\n  --label \"org.opencontainers.image.documentation=https://mikefarah.gitbook.io/yq/\" \\\n  --label \"org.opencontainers.image.licenses=MIT\" \\\n  --label \"org.opencontainers.image.revision=$(git rev-parse HEAD)\" \\\n  --label \"org.opencontainers.image.source=https://github.com/mikefarah/yq\" \\\n  --label \"org.opencontainers.image.title=yq\" \\\n  --label \"org.opencontainers.image.url=https://mikefarah.gitbook.io/yq/\" \\\n  --label \"org.opencontainers.image.version=${IMAGE_VERSION}\" \\\n  --platform \"${PLATFORMS}\" \\\n  --pull \\\n  --push \\\n  -t \"${IMAGE_NAME}:${IMAGE_VERSION}\" \\\n  -t \"${IMAGE_NAME}:4\" \\\n  -t \"${IMAGE_NAME}:latest\" \\\n  .\n\ncd github-action\ndocker buildx build \\\n  --label \"org.opencontainers.image.authors=https://github.com/mikefarah/yq/graphs/contributors\" \\\n  --label \"org.opencontainers.image.created=$(date --rfc-3339=seconds)\" \\\n  --label \"org.opencontainers.image.description=yq is a portable command-line data file processor\" \\\n  --label \"org.opencontainers.image.documentation=https://mikefarah.gitbook.io/yq/\" \\\n  --label \"org.opencontainers.image.licenses=MIT\" \\\n  --label \"org.opencontainers.image.revision=$(git rev-parse HEAD)\" \\\n  --label \"org.opencontainers.image.source=https://github.com/mikefarah/yq\" \\\n  --label \"org.opencontainers.image.title=yq\" \\\n  --label \"org.opencontainers.image.url=https://mikefarah.gitbook.io/yq/\" \\\n  --label \"org.opencontainers.image.version=${IMAGE_VERSION}\" \\\n  --platform \"${PLATFORMS}\" \\\n  --pull \\\n  --push \\\n  -t \"${IMAGE_NAME}:${IMAGE_VERSION}-githubaction\" \\\n  -t \"${IMAGE_NAME}:4-githubaction\" \\\n  -t \"${IMAGE_NAME}:latest-githubaction\" \\\n  .\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-03-25T04-45-15Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-700be4c4-3508-5c73-b153-a59428609741",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/docker-release__2025-03-25T04-45-15Z__c9766c1cabb350352e0797a2f01492404aef85f7.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 100,
+                  "endColumn": 15
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "46cdc55f7826b7e3:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "docker-release__2025-03-25T04-45-15Z__c9766c1cabb350352e0797a2f01492404aef85f7.yml",
+          "workflow_name": "Release Docker",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 100,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "publishDocker": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "publishDocker": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 5,
+            "actions_used": [
+              "actions/checkout@v4",
+              "docker/login-action@v3",
+              "docker/setup-buildx-action@v3",
+              "docker/setup-qemu-action@v3"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release Docker",
+        "true": {
+          "release": {
+            "types": [
+              "released"
+            ]
+          },
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "publishDocker": {
+            "environment": "dockerhub",
+            "env": {
+              "IMAGE_NAME": "mikefarah/yq"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Set up QEMU",
+                "uses": "docker/setup-qemu-action@v3",
+                "with": {
+                  "platforms": "all"
+                }
+              },
+              {
+                "name": "Set up Docker Buildx",
+                "id": "buildx",
+                "uses": "docker/setup-buildx-action@v3",
+                "with": {
+                  "version": "latest"
+                }
+              },
+              {
+                "name": "Available platforms",
+                "run": "echo ${{ steps.buildx.outputs.platforms }} && docker version"
+              },
+              {
+                "name": "Login to Docker Hub",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "username": "${{ secrets.DOCKER_USERNAME }}",
+                  "password": "${{ secrets.DOCKER_PASSWORD }}"
+                }
+              },
+              {
+                "name": "Login to GitHub Container Registry",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.actor }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Build and push image",
+                "run": "echo \"GithubRef: ${GITHUB_REF}\"\nVERSION=${GITHUB_REF##*/}\necho \"VERSION: ${VERSION}\"\nIMAGE_VERSION=${VERSION:1}\necho \"IMAGE_VERSION: ${IMAGE_VERSION}\"\n\nPLATFORMS=\"linux/amd64,linux/ppc64le,linux/arm64,linux/arm/v7\"\n\necho \"Building and pushing version ${IMAGE_VERSION} of image ${IMAGE_NAME}\"\ndocker buildx build \\\n  --label \"org.opencontainers.image.authors=https://github.com/mikefarah/yq/graphs/contributors\" \\\n  --label \"org.opencontainers.image.created=$(date --rfc-3339=seconds)\" \\\n  --label \"org.opencontainers.image.description=yq is a portable command-line data file processor\" \\\n  --label \"org.opencontainers.image.documentation=https://mikefarah.gitbook.io/yq/\" \\\n  --label \"org.opencontainers.image.licenses=MIT\" \\\n  --label \"org.opencontainers.image.revision=$(git rev-parse HEAD)\" \\\n  --label \"org.opencontainers.image.source=https://github.com/mikefarah/yq\" \\\n  --label \"org.opencontainers.image.title=yq\" \\\n  --label \"org.opencontainers.image.url=https://mikefarah.gitbook.io/yq/\" \\\n  --label \"org.opencontainers.image.version=${IMAGE_VERSION}\" \\\n  --platform \"${PLATFORMS}\" \\\n  --pull \\\n  --push \\\n  -t \"${IMAGE_NAME}:${IMAGE_VERSION}\" \\\n  -t \"${IMAGE_NAME}:4\" \\\n  -t \"${IMAGE_NAME}:latest\" \\\n  -t \"ghcr.io/${IMAGE_NAME}:${IMAGE_VERSION}\" \\\n  -t \"ghcr.io/${IMAGE_NAME}:4\" \\\n  -t \"ghcr.io/${IMAGE_NAME}:latest\" \\\n  .\n\ncd github-action\ndocker buildx build \\\n  --label \"org.opencontainers.image.authors=https://github.com/mikefarah/yq/graphs/contributors\" \\\n  --label \"org.opencontainers.image.created=$(date --rfc-3339=seconds)\" \\\n  --label \"org.opencontainers.image.description=yq is a portable command-line data file processor\" \\\n  --label \"org.opencontainers.image.documentation=https://mikefarah.gitbook.io/yq/\" \\\n  --label \"org.opencontainers.image.licenses=MIT\" \\\n  --label \"org.opencontainers.image.revision=$(git rev-parse HEAD)\" \\\n  --label \"org.opencontainers.image.source=https://github.com/mikefarah/yq\" \\\n  --label \"org.opencontainers.image.title=yq\" \\\n  --label \"org.opencontainers.image.url=https://mikefarah.gitbook.io/yq/\" \\\n  --label \"org.opencontainers.image.version=${IMAGE_VERSION}\" \\\n  --platform \"${PLATFORMS}\" \\\n  --pull \\\n  --push \\\n  -t \"${IMAGE_NAME}:${IMAGE_VERSION}-githubaction\" \\\n  -t \"${IMAGE_NAME}:4-githubaction\" \\\n  -t \"${IMAGE_NAME}:latest-githubaction\" \\\n  -t \"ghcr.io/${IMAGE_NAME}:${IMAGE_VERSION}-githubaction\" \\\n  -t \"ghrc.io/${IMAGE_NAME}:4-githubaction\" \\\n  -t \"ghcr.io/${IMAGE_NAME}:latest-githubaction\" \\\n  .\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-04-05T09-18-39Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-d150ca07-e584-546a-b8e0-c15abd477ca8",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/docker-release__2025-04-05T09-18-39Z__fe06096514ec8ce5df9238c7df2dd237eb82b06a.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 100,
+                  "endColumn": 15
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "46cdc55f7826b7e3:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "docker-release__2025-04-05T09-18-39Z__fe06096514ec8ce5df9238c7df2dd237eb82b06a.yml",
+          "workflow_name": "Release Docker",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 100,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "publishDocker": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "publishDocker": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 5,
+            "actions_used": [
+              "actions/checkout@v4",
+              "docker/login-action@v3",
+              "docker/setup-buildx-action@v3",
+              "docker/setup-qemu-action@v3"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release Docker",
+        "true": {
+          "release": {
+            "types": [
+              "released"
+            ]
+          },
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "publishDocker": {
+            "environment": "dockerhub",
+            "env": {
+              "IMAGE_NAME": "mikefarah/yq"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Set up QEMU",
+                "uses": "docker/setup-qemu-action@v3",
+                "with": {
+                  "platforms": "all"
+                }
+              },
+              {
+                "name": "Set up Docker Buildx",
+                "id": "buildx",
+                "uses": "docker/setup-buildx-action@v3",
+                "with": {
+                  "version": "latest"
+                }
+              },
+              {
+                "name": "Available platforms",
+                "run": "echo ${{ steps.buildx.outputs.platforms }} && docker version"
+              },
+              {
+                "name": "Login to Docker Hub",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "username": "${{ secrets.DOCKER_USERNAME }}",
+                  "password": "${{ secrets.DOCKER_PASSWORD }}"
+                }
+              },
+              {
+                "name": "Login to GitHub Container Registry",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.actor }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Build and push image",
+                "run": "echo \"GithubRef: ${GITHUB_REF}\"\nVERSION=${GITHUB_REF##*/}\necho \"VERSION: ${VERSION}\"\nIMAGE_VERSION=${VERSION:1}\necho \"IMAGE_VERSION: ${IMAGE_VERSION}\"\n\nPLATFORMS=\"linux/amd64,linux/ppc64le,linux/arm64,linux/arm/v7,linux/s390x\"\n\necho \"Building and pushing version ${IMAGE_VERSION} of image ${IMAGE_NAME}\"\ndocker buildx build \\\n  --label \"org.opencontainers.image.authors=https://github.com/mikefarah/yq/graphs/contributors\" \\\n  --label \"org.opencontainers.image.created=$(date --rfc-3339=seconds)\" \\\n  --label \"org.opencontainers.image.description=yq is a portable command-line data file processor\" \\\n  --label \"org.opencontainers.image.documentation=https://mikefarah.gitbook.io/yq/\" \\\n  --label \"org.opencontainers.image.licenses=MIT\" \\\n  --label \"org.opencontainers.image.revision=$(git rev-parse HEAD)\" \\\n  --label \"org.opencontainers.image.source=https://github.com/mikefarah/yq\" \\\n  --label \"org.opencontainers.image.title=yq\" \\\n  --label \"org.opencontainers.image.url=https://mikefarah.gitbook.io/yq/\" \\\n  --label \"org.opencontainers.image.version=${IMAGE_VERSION}\" \\\n  --platform \"${PLATFORMS}\" \\\n  --pull \\\n  --push \\\n  -t \"${IMAGE_NAME}:${IMAGE_VERSION}\" \\\n  -t \"${IMAGE_NAME}:4\" \\\n  -t \"${IMAGE_NAME}:latest\" \\\n  -t \"ghcr.io/${IMAGE_NAME}:${IMAGE_VERSION}\" \\\n  -t \"ghcr.io/${IMAGE_NAME}:4\" \\\n  -t \"ghcr.io/${IMAGE_NAME}:latest\" \\\n  .\n\ncd github-action\ndocker buildx build \\\n  --label \"org.opencontainers.image.authors=https://github.com/mikefarah/yq/graphs/contributors\" \\\n  --label \"org.opencontainers.image.created=$(date --rfc-3339=seconds)\" \\\n  --label \"org.opencontainers.image.description=yq is a portable command-line data file processor\" \\\n  --label \"org.opencontainers.image.documentation=https://mikefarah.gitbook.io/yq/\" \\\n  --label \"org.opencontainers.image.licenses=MIT\" \\\n  --label \"org.opencontainers.image.revision=$(git rev-parse HEAD)\" \\\n  --label \"org.opencontainers.image.source=https://github.com/mikefarah/yq\" \\\n  --label \"org.opencontainers.image.title=yq\" \\\n  --label \"org.opencontainers.image.url=https://mikefarah.gitbook.io/yq/\" \\\n  --label \"org.opencontainers.image.version=${IMAGE_VERSION}\" \\\n  --platform \"${PLATFORMS}\" \\\n  --pull \\\n  --push \\\n  -t \"${IMAGE_NAME}:${IMAGE_VERSION}-githubaction\" \\\n  -t \"${IMAGE_NAME}:4-githubaction\" \\\n  -t \"${IMAGE_NAME}:latest-githubaction\" \\\n  -t \"ghcr.io/${IMAGE_NAME}:${IMAGE_VERSION}-githubaction\" \\\n  -t \"ghrc.io/${IMAGE_NAME}:4-githubaction\" \\\n  -t \"ghcr.io/${IMAGE_NAME}:latest-githubaction\" \\\n  .\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-08-26T22-23-00Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-1171b5a4-56b3-583e-b25b-588c0f32ac2f",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/docker-release__2025-08-26T22-23-00Z__76c817009f99310f7719fc006e833b00036e8108.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 100,
+                  "endColumn": 15
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "46cdc55f7826b7e3:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "docker-release__2025-08-26T22-23-00Z__76c817009f99310f7719fc006e833b00036e8108.yml",
+          "workflow_name": "Release Docker",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 100,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "publishDocker": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "publishDocker": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 5,
+            "actions_used": [
+              "actions/checkout@v4",
+              "docker/login-action@v3",
+              "docker/setup-buildx-action@v3",
+              "docker/setup-qemu-action@v3"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release Docker",
+        "true": {
+          "release": {
+            "types": [
+              "released"
+            ]
+          },
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "publishDocker": {
+            "environment": "dockerhub",
+            "env": {
+              "IMAGE_NAME": "mikefarah/yq"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Set up QEMU",
+                "uses": "docker/setup-qemu-action@v3",
+                "with": {
+                  "platforms": "all"
+                }
+              },
+              {
+                "name": "Set up Docker Buildx",
+                "id": "buildx",
+                "uses": "docker/setup-buildx-action@v3",
+                "with": {
+                  "version": "latest"
+                }
+              },
+              {
+                "name": "Available platforms",
+                "run": "echo ${{ steps.buildx.outputs.platforms }} && docker version"
+              },
+              {
+                "name": "Login to Docker Hub",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "username": "${{ secrets.DOCKER_USERNAME }}",
+                  "password": "${{ secrets.DOCKER_PASSWORD }}"
+                }
+              },
+              {
+                "name": "Login to GitHub Container Registry",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.actor }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Build and push image",
+                "run": "echo \"GithubRef: ${GITHUB_REF}\"\nVERSION=${GITHUB_REF##*/}\necho \"VERSION: ${VERSION}\"\nIMAGE_VERSION=${VERSION:1}\necho \"IMAGE_VERSION: ${IMAGE_VERSION}\"\n\nPLATFORMS=\"linux/amd64,linux/ppc64le,linux/arm64,linux/arm/v7,linux/s390x\"\n\necho \"Building and pushing version ${IMAGE_VERSION} of image ${IMAGE_NAME}\"\ndocker buildx build \\\n  --label \"org.opencontainers.image.authors=https://github.com/mikefarah/yq/graphs/contributors\" \\\n  --label \"org.opencontainers.image.created=$(date --rfc-3339=seconds)\" \\\n  --label \"org.opencontainers.image.description=yq is a portable command-line data file processor\" \\\n  --label \"org.opencontainers.image.documentation=https://mikefarah.gitbook.io/yq/\" \\\n  --label \"org.opencontainers.image.licenses=MIT\" \\\n  --label \"org.opencontainers.image.revision=$(git rev-parse HEAD)\" \\\n  --label \"org.opencontainers.image.source=https://github.com/mikefarah/yq\" \\\n  --label \"org.opencontainers.image.title=yq\" \\\n  --label \"org.opencontainers.image.url=https://mikefarah.gitbook.io/yq/\" \\\n  --label \"org.opencontainers.image.version=${IMAGE_VERSION}\" \\\n  --platform \"${PLATFORMS}\" \\\n  --pull \\\n  --push \\\n  -t \"${IMAGE_NAME}:${IMAGE_VERSION}\" \\\n  -t \"${IMAGE_NAME}:4\" \\\n  -t \"${IMAGE_NAME}:latest\" \\\n  -t \"ghcr.io/${IMAGE_NAME}:${IMAGE_VERSION}\" \\\n  -t \"ghcr.io/${IMAGE_NAME}:4\" \\\n  -t \"ghcr.io/${IMAGE_NAME}:latest\" \\\n  .\n\ncd github-action\ndocker buildx build \\\n  --label \"org.opencontainers.image.authors=https://github.com/mikefarah/yq/graphs/contributors\" \\\n  --label \"org.opencontainers.image.created=$(date --rfc-3339=seconds)\" \\\n  --label \"org.opencontainers.image.description=yq is a portable command-line data file processor\" \\\n  --label \"org.opencontainers.image.documentation=https://mikefarah.gitbook.io/yq/\" \\\n  --label \"org.opencontainers.image.licenses=MIT\" \\\n  --label \"org.opencontainers.image.revision=$(git rev-parse HEAD)\" \\\n  --label \"org.opencontainers.image.source=https://github.com/mikefarah/yq\" \\\n  --label \"org.opencontainers.image.title=yq\" \\\n  --label \"org.opencontainers.image.url=https://mikefarah.gitbook.io/yq/\" \\\n  --label \"org.opencontainers.image.version=${IMAGE_VERSION}\" \\\n  --platform \"${PLATFORMS}\" \\\n  --pull \\\n  --push \\\n  -t \"${IMAGE_NAME}:${IMAGE_VERSION}-githubaction\" \\\n  -t \"${IMAGE_NAME}:4-githubaction\" \\\n  -t \"${IMAGE_NAME}:latest-githubaction\" \\\n  -t \"ghcr.io/${IMAGE_NAME}:${IMAGE_VERSION}-githubaction\" \\\n  -t \"ghcr.io/${IMAGE_NAME}:4-githubaction\" \\\n  -t \"ghcr.io/${IMAGE_NAME}:latest-githubaction\" \\\n  .\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-09-04T04-18-19Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-d6c9b5fe-cdc6-5729-961f-084228016ff3",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/docker-release__2025-09-04T04-18-19Z__c34edcf983a21f24c4f2bc49b71b2ce5d81bcd44.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 100,
+                  "endColumn": 15
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "46cdc55f7826b7e3:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "docker-release__2025-09-04T04-18-19Z__c34edcf983a21f24c4f2bc49b71b2ce5d81bcd44.yml",
+          "workflow_name": "Release Docker",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 100,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "publishDocker": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "publishDocker": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 5,
+            "actions_used": [
+              "actions/checkout@v5",
+              "docker/login-action@v3",
+              "docker/setup-buildx-action@v3",
+              "docker/setup-qemu-action@v3"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release Docker",
+        "true": {
+          "release": {
+            "types": [
+              "released"
+            ]
+          },
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "publishDocker": {
+            "environment": "dockerhub",
+            "env": {
+              "IMAGE_NAME": "mikefarah/yq"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v5"
+              },
+              {
+                "name": "Set up QEMU",
+                "uses": "docker/setup-qemu-action@v3",
+                "with": {
+                  "platforms": "all"
+                }
+              },
+              {
+                "name": "Set up Docker Buildx",
+                "id": "buildx",
+                "uses": "docker/setup-buildx-action@v3",
+                "with": {
+                  "version": "latest"
+                }
+              },
+              {
+                "name": "Available platforms",
+                "run": "echo ${{ steps.buildx.outputs.platforms }} && docker version"
+              },
+              {
+                "name": "Login to Docker Hub",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "username": "${{ secrets.DOCKER_USERNAME }}",
+                  "password": "${{ secrets.DOCKER_PASSWORD }}"
+                }
+              },
+              {
+                "name": "Login to GitHub Container Registry",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.actor }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Build and push image",
+                "run": "echo \"GithubRef: ${GITHUB_REF}\"\nVERSION=${GITHUB_REF##*/}\necho \"VERSION: ${VERSION}\"\nIMAGE_VERSION=${VERSION:1}\necho \"IMAGE_VERSION: ${IMAGE_VERSION}\"\n\nPLATFORMS=\"linux/amd64,linux/ppc64le,linux/arm64,linux/arm/v7,linux/s390x\"\n\necho \"Building and pushing version ${IMAGE_VERSION} of image ${IMAGE_NAME}\"\ndocker buildx build \\\n  --label \"org.opencontainers.image.authors=https://github.com/mikefarah/yq/graphs/contributors\" \\\n  --label \"org.opencontainers.image.created=$(date --rfc-3339=seconds)\" \\\n  --label \"org.opencontainers.image.description=yq is a portable command-line data file processor\" \\\n  --label \"org.opencontainers.image.documentation=https://mikefarah.gitbook.io/yq/\" \\\n  --label \"org.opencontainers.image.licenses=MIT\" \\\n  --label \"org.opencontainers.image.revision=$(git rev-parse HEAD)\" \\\n  --label \"org.opencontainers.image.source=https://github.com/mikefarah/yq\" \\\n  --label \"org.opencontainers.image.title=yq\" \\\n  --label \"org.opencontainers.image.url=https://mikefarah.gitbook.io/yq/\" \\\n  --label \"org.opencontainers.image.version=${IMAGE_VERSION}\" \\\n  --platform \"${PLATFORMS}\" \\\n  --pull \\\n  --push \\\n  -t \"${IMAGE_NAME}:${IMAGE_VERSION}\" \\\n  -t \"${IMAGE_NAME}:4\" \\\n  -t \"${IMAGE_NAME}:latest\" \\\n  -t \"ghcr.io/${IMAGE_NAME}:${IMAGE_VERSION}\" \\\n  -t \"ghcr.io/${IMAGE_NAME}:4\" \\\n  -t \"ghcr.io/${IMAGE_NAME}:latest\" \\\n  .\n\ncd github-action\ndocker buildx build \\\n  --label \"org.opencontainers.image.authors=https://github.com/mikefarah/yq/graphs/contributors\" \\\n  --label \"org.opencontainers.image.created=$(date --rfc-3339=seconds)\" \\\n  --label \"org.opencontainers.image.description=yq is a portable command-line data file processor\" \\\n  --label \"org.opencontainers.image.documentation=https://mikefarah.gitbook.io/yq/\" \\\n  --label \"org.opencontainers.image.licenses=MIT\" \\\n  --label \"org.opencontainers.image.revision=$(git rev-parse HEAD)\" \\\n  --label \"org.opencontainers.image.source=https://github.com/mikefarah/yq\" \\\n  --label \"org.opencontainers.image.title=yq\" \\\n  --label \"org.opencontainers.image.url=https://mikefarah.gitbook.io/yq/\" \\\n  --label \"org.opencontainers.image.version=${IMAGE_VERSION}\" \\\n  --platform \"${PLATFORMS}\" \\\n  --pull \\\n  --push \\\n  -t \"${IMAGE_NAME}:${IMAGE_VERSION}-githubaction\" \\\n  -t \"${IMAGE_NAME}:4-githubaction\" \\\n  -t \"${IMAGE_NAME}:latest-githubaction\" \\\n  -t \"ghcr.io/${IMAGE_NAME}:${IMAGE_VERSION}-githubaction\" \\\n  -t \"ghcr.io/${IMAGE_NAME}:4-githubaction\" \\\n  -t \"ghcr.io/${IMAGE_NAME}:latest-githubaction\" \\\n  .\n"
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

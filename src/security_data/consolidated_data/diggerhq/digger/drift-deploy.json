@@ -1,0 +1,121 @@
+{
+  "repo_owner": "diggerhq",
+  "repo_name": "digger",
+  "workflow_name": "drift-deploy",
+  "history": {
+    "2025-07-17T20-24-52Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-08f25658-4d2f-5655-8286-a469aa9fa5b0",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/drift-deploy__2025-07-17T20-24-52Z__31c12fd05b0b10ecbf63ed4ba3da4088f6820b8e.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 10,
+                  "startColumn": 5,
+                  "endLine": 19,
+                  "endColumn": 59
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "17f51428102cb8b:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "drift-deploy__2025-07-17T20-24-52Z__31c12fd05b0b10ecbf63ed4ba3da4088f6820b8e.yml",
+          "workflow_name": "Deploy drift backend",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 19,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "deploy": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "deploy": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "actions/checkout@v4",
+              "superfly/flyctl-actions/setup-flyctl@master"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Deploy drift backend",
+        "true": {
+          "push": {
+            "branches": [
+              "develop"
+            ]
+          }
+        },
+        "jobs": {
+          "deploy": {
+            "name": "Deploy drift backend",
+            "runs-on": "ubuntu-latest",
+            "concurrency": "drift-deploy",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "uses": "superfly/flyctl-actions/setup-flyctl@master"
+              },
+              {
+                "run": "flyctl deploy --remote-only --config fly-drift.toml",
+                "env": {
+                  "FLY_API_TOKEN": "${{ secrets.FLYIO_DRIFT_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,790 @@
+{
+  "repo_owner": "cargo-bins",
+  "repo_name": "cargo-binstall",
+  "workflow_name": "cache-cleanup",
+  "history": {
+    "2023-03-22T13-50-13Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-7955eeb2-f4d6-564d-86e8-ad47d42f6d63",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/cache-cleanup__2023-03-22T13-50-13Z__9a59119163b4b4223fbd3561c746d11cd91b6d92.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 9,
+                  "startColumn": 5,
+                  "endLine": 38,
+                  "endColumn": 49
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "ac057899e1e33099:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "cache-cleanup__2023-03-22T13-50-13Z__9a59119163b4b4223fbd3561c746d11cd91b6d92.yml",
+          "workflow_name": "Cleanup caches for closed PRs",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 38,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "cleanup": 2
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "cleanup": 2
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 1,
+            "actions_used": [
+              "actions/checkout@v3"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Cleanup caches for closed PRs",
+        "true": {
+          "pull_request": {
+            "types": [
+              "closed"
+            ]
+          }
+        },
+        "jobs": {
+          "cleanup": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Cleanup",
+                "run": "gh extension install actions/gh-actions-cache\n\nREPO=\"${{ github.repository }}\"\nBRANCH=\"refs/pull/${{ github.event.pull_request.number }}/merge\"\n\nwhile true; do\n    echo \"Fetching list of cache key\"\n    cacheKeysForPR=\"$(gh actions-cache list -R \"$REPO\" -B \"$BRANCH\" -L 100 | cut -f 1 )\"\n\n    if [ -z \"$cacheKeysForPR\" ]; then\n        break\n    fi\n\n    ## Setting this to not fail the workflow while deleting cache keys. \n    set +e\n    echo \"Deleting caches...\"\n    for cacheKey in $cacheKeysForPR\n    do\n        echo Removing \"$cacheKey\"\n        gh actions-cache delete \"$cacheKey\" -R \"$REPO\" -B \"$BRANCH\" --confirm\n    done\ndone\necho \"Done\"\n",
+                "env": {
+                  "GH_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-03-15T04-44-06Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-11f4f7cd-a968-5379-845a-a4b9807d11cd",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/cache-cleanup__2023-03-15T04-44-06Z__48b85cc38f9fa6ad50c84139d41695fd1d92dadd.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 9,
+                  "startColumn": 5,
+                  "endLine": 31,
+                  "endColumn": 49
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "ac057899e1e33099:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "cache-cleanup__2023-03-15T04-44-06Z__48b85cc38f9fa6ad50c84139d41695fd1d92dadd.yml",
+          "workflow_name": "Cleanup caches for closed PRs",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 31,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "cleanup": 2
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "cleanup": 2
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 1,
+            "actions_used": [
+              "actions/checkout@v3"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Cleanup caches for closed PRs",
+        "true": {
+          "pull_request": {
+            "types": [
+              "closed"
+            ]
+          }
+        },
+        "jobs": {
+          "cleanup": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Cleanup",
+                "run": "gh extension install actions/gh-actions-cache\n\nREPO=${{ github.repository }}\nBRANCH=\"refs/pull/${{ github.event.pull_request.number }}/merge\"\n\necho \"Fetching list of cache key\"\ncacheKeysForPR=$(gh actions-cache list -R $REPO -B $BRANCH | cut -f 1 )\n\n## Setting this to not fail the workflow while deleting cache keys. \nset +e\necho \"Deleting caches...\"\nfor cacheKey in $cacheKeysForPR\ndo\n    gh actions-cache delete $cacheKey -R $REPO -B $BRANCH --confirm\ndone\necho \"Done\"\n",
+                "env": {
+                  "GH_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-06-05T12-54-01Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-8b21ae7b-838c-520e-82ae-794f74b7971e",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/cache-cleanup__2023-06-05T12-54-01Z__cc87fe062da81e7f1b8f905ef5a6adbc7a8b1587.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 13,
+                  "startColumn": 5,
+                  "endLine": 40,
+                  "endColumn": 49
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "bdabd472e572e9a0:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "cache-cleanup__2023-06-05T12-54-01Z__cc87fe062da81e7f1b8f905ef5a6adbc7a8b1587.yml",
+          "workflow_name": "Cleanup caches for closed PRs",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 40,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "cleanup": 2
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "cleanup": 2
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 1,
+            "actions_used": [
+              "actions/checkout@v3"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Cleanup caches for closed PRs",
+        "true": {
+          "schedule": [
+            {
+              "cron": "0 17 * * *"
+            },
+            {
+              "cron": "30 18 * * *"
+            }
+          ],
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "cleanup": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Cleanup",
+                "run": "set -euxo pipefail\n\ngh extension install actions/gh-actions-cache\n\nexport REPO=\"${{ github.repository }}\"\n\n# Setting this to not fail the workflow while deleting cache keys.\nset +e\n\n# Remove pull requests cache, since they cannot be reused\ngh pr list --state closed -L 20 --json number --jq '.[]|.number' | (\n    while IFS='$\\n' read -r closed_pr; do\n        BRANCH=\"refs/pull/${closed_pr}/merge\" ./cleanup-cache.sh\n    done\n)\n# Remove merge queue cache, since they cannot be reused\ngh actions-cache list -L 100 | cut -f 3 | grep 'gh-readonly-queue' | sort -u | (\n    while IFS='$\\n' read -r branch; do\n        BRANCH=\"$branch\" ./cleanup-cache.sh\n    done\n)\n",
+                "env": {
+                  "GH_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-03-23T07-10-30Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-44f34566-4772-565d-afd2-3320231bcd56",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/cache-cleanup__2023-03-23T07-10-30Z__47d4aeaa96cd478fdd6cc97165b70240da44497b.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 13,
+                  "startColumn": 5,
+                  "endLine": 28,
+                  "endColumn": 49
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "ac057899e1e33099:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "cache-cleanup__2023-03-23T07-10-30Z__47d4aeaa96cd478fdd6cc97165b70240da44497b.yml",
+          "workflow_name": "Cleanup caches for closed PRs",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 28,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "cleanup": 2
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "cleanup": 2
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 1,
+            "actions_used": [
+              "actions/checkout@v3"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Cleanup caches for closed PRs",
+        "true": {
+          "schedule": [
+            {
+              "cron": "0 17 * * *"
+            },
+            {
+              "cron": "30 18 * * *"
+            }
+          ],
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "cleanup": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Cleanup",
+                "run": "gh extension install actions/gh-actions-cache\n\nexport REPO=\"${{ github.repository }}\"\n\ngh pr list --state closed -L 20 --json number --jq '.[]|.number' | (\n    while IFS='$\\n' read -r closed_pr; do\n        BRANCH=\"refs/pull/${closed_pr}/merge\" ./cleanup-cache.sh\n    done\n)\n",
+                "env": {
+                  "GH_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-06-06T04-09-05Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-2586c4fb-1962-551e-9031-e0c801da4d89",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/cache-cleanup__2023-06-06T04-09-05Z__e62049d59dba72f46c22b9b0185bf1b55b5acfd2.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 13,
+                  "startColumn": 5,
+                  "endLine": 40,
+                  "endColumn": 49
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "bdabd472e572e9a0:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "cache-cleanup__2023-06-06T04-09-05Z__e62049d59dba72f46c22b9b0185bf1b55b5acfd2.yml",
+          "workflow_name": "Cleanup caches for closed PRs",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 40,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "cleanup": 2
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "cleanup": 2
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 1,
+            "actions_used": [
+              "actions/checkout@v3"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Cleanup caches for closed PRs",
+        "true": {
+          "schedule": [
+            {
+              "cron": "0 17 * * *"
+            },
+            {
+              "cron": "30 18 * * *"
+            }
+          ],
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "cleanup": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Cleanup",
+                "run": "set -euxo pipefail\n\ngh extension install actions/gh-actions-cache\n\nexport REPO=\"${{ github.repository }}\"\n\n# Setting this to not fail the workflow while deleting cache keys.\nset +e\n\n# Remove pull requests cache, since they cannot be reused\ngh pr list --state closed -L 20 --json number --jq '.[]|.number' | (\n    while IFS='$\\n' read -r closed_pr; do\n        BRANCH=\"refs/pull/${closed_pr}/merge\" ./cleanup-cache.sh\n    done\n)\n# Remove merge queue cache, since they cannot be reused\ngh actions-cache list -L 100 | cut -f 3 | (grep 'gh-readonly-queue' || true) | sort -u | (\n    while IFS='$\\n' read -r branch; do\n        BRANCH=\"$branch\" ./cleanup-cache.sh\n    done\n)\n",
+                "env": {
+                  "GH_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-09-05T02-10-48Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-74b02cbf-2743-563f-9a45-c782b9c356b2",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/cache-cleanup__2023-09-05T02-10-48Z__d657fbe5186cc90a6b6f1a29f0760da929e57074.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 13,
+                  "startColumn": 5,
+                  "endLine": 40,
+                  "endColumn": 49
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "bef902c22072cbc9:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "cache-cleanup__2023-09-05T02-10-48Z__d657fbe5186cc90a6b6f1a29f0760da929e57074.yml",
+          "workflow_name": "Cleanup caches for closed PRs",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 40,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "cleanup": 2
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "cleanup": 2
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 1,
+            "actions_used": [
+              "actions/checkout@v4"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Cleanup caches for closed PRs",
+        "true": {
+          "schedule": [
+            {
+              "cron": "0 17 * * *"
+            },
+            {
+              "cron": "30 18 * * *"
+            }
+          ],
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "cleanup": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Cleanup",
+                "run": "set -euxo pipefail\n\ngh extension install actions/gh-actions-cache\n\nexport REPO=\"${{ github.repository }}\"\n\n# Setting this to not fail the workflow while deleting cache keys.\nset +e\n\n# Remove pull requests cache, since they cannot be reused\ngh pr list --state closed -L 20 --json number --jq '.[]|.number' | (\n    while IFS='$\\n' read -r closed_pr; do\n        BRANCH=\"refs/pull/${closed_pr}/merge\" ./cleanup-cache.sh\n    done\n)\n# Remove merge queue cache, since they cannot be reused\ngh actions-cache list -L 100 | cut -f 3 | (grep 'gh-readonly-queue' || true) | sort -u | (\n    while IFS='$\\n' read -r branch; do\n        BRANCH=\"$branch\" ./cleanup-cache.sh\n    done\n)\n",
+                "env": {
+                  "GH_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-08-12T10-20-16Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-5ee469dc-354a-5dfa-99a6-6cdf17455264",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/cache-cleanup__2025-08-12T10-20-16Z__d7c6cbb9117fafe02055796f96f1a7ae7046f32a.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 13,
+                  "startColumn": 5,
+                  "endLine": 40,
+                  "endColumn": 49
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "c04631115b72adf2:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "cache-cleanup__2025-08-12T10-20-16Z__d7c6cbb9117fafe02055796f96f1a7ae7046f32a.yml",
+          "workflow_name": "Cleanup caches for closed PRs",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 40,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "cleanup": 2
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "cleanup": 2
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 1,
+            "actions_used": [
+              "actions/checkout@v5"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Cleanup caches for closed PRs",
+        "true": {
+          "schedule": [
+            {
+              "cron": "0 17 * * *"
+            },
+            {
+              "cron": "30 18 * * *"
+            }
+          ],
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "cleanup": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v5"
+              },
+              {
+                "name": "Cleanup",
+                "run": "set -euxo pipefail\n\ngh extension install actions/gh-actions-cache\n\nexport REPO=\"${{ github.repository }}\"\n\n# Setting this to not fail the workflow while deleting cache keys.\nset +e\n\n# Remove pull requests cache, since they cannot be reused\ngh pr list --state closed -L 20 --json number --jq '.[]|.number' | (\n    while IFS='$\\n' read -r closed_pr; do\n        BRANCH=\"refs/pull/${closed_pr}/merge\" ./cleanup-cache.sh\n    done\n)\n# Remove merge queue cache, since they cannot be reused\ngh actions-cache list -L 100 | cut -f 3 | (grep 'gh-readonly-queue' || true) | sort -u | (\n    while IFS='$\\n' read -r branch; do\n        BRANCH=\"$branch\" ./cleanup-cache.sh\n    done\n)\n",
+                "env": {
+                  "GH_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

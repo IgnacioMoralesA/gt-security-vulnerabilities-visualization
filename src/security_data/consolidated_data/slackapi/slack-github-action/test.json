@@ -1,0 +1,3710 @@
+{
+  "repo_owner": "slackapi",
+  "repo_name": "slack-github-action",
+  "workflow_name": "test",
+  "history": {
+    "2024-12-04T02-07-26Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-38e43040-b9bc-5278-8210-ee31d41e21f0",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/test__2024-12-04T02-07-26Z__c77439f6734fcf40349d974b1eb3fc323b161091.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 11,
+                  "startColumn": 5,
+                  "endLine": 232,
+                  "endColumn": 24
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "860d3ddc5ae64b8e:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2024-12-04T02-07-26Z__c77439f6734fcf40349d974b1eb3fc323b161091.yml",
+          "workflow_name": "Tests",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 232,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "tests": 30
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "tests": 30
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 14,
+            "actions_used": [
+              "./",
+              "actions/checkout@v4",
+              "actions/setup-node@v4",
+              "codecov/codecov-action@v5.0.7",
+              "slackapi/slack-health-score@v0.1.1"
+            ],
+            "num_run_commands": 16,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Tests",
+        "true": {
+          "pull_request_target": null,
+          "push": {
+            "branches": [
+              "main"
+            ]
+          },
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "tests": {
+            "name": "Run tests",
+            "runs-on": "ubuntu-latest",
+            "environment": "staging",
+            "steps": [
+              {
+                "name": "build: checkout the latest changes",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "ref": "${{ github.event.pull_request.head.sha }}"
+                }
+              },
+              {
+                "name": "build: setup the node runtime",
+                "uses": "actions/setup-node@v4",
+                "with": {
+                  "cache": "npm",
+                  "cache-dependency-path": "package-lock.json",
+                  "node-version-file": ".nvmrc"
+                }
+              },
+              {
+                "name": "build: install the required dependencies",
+                "run": "npm ci"
+              },
+              {
+                "name": "unit(test): perform lints and formatting checks",
+                "run": "npm run lint"
+              },
+              {
+                "name": "unit(test): perform check of typings",
+                "run": "npm run check"
+              },
+              {
+                "name": "unit(test): perform unit test checks",
+                "run": "npm test"
+              },
+              {
+                "name": "unit(test): upload coverage to CodeCov",
+                "uses": "codecov/codecov-action@v5.0.7",
+                "with": {
+                  "directory": "./coverage",
+                  "token": "${{ secrets.CODECOV_TOKEN }}"
+                }
+              },
+              {
+                "name": "build: package code for distribution",
+                "run": "npm run build"
+              },
+              {
+                "name": "pretest(inputs): save the push event trigger commit URL",
+                "if": "contains(github.event_name, 'push')",
+                "run": "url=${{ github.event.head_commit.url }}\necho \"EVENT_URL=$url\" >> \"$GITHUB_ENV\"\n"
+              },
+              {
+                "name": "pretest(inputs): save the pull request event trigger commit URL",
+                "if": "contains(github.event_name, 'pull_request')",
+                "run": "url=${{ github.event.pull_request.html_url }}\necho \"EVENT_URL=$url\" >> \"$GITHUB_ENV\"\n"
+              },
+              {
+                "name": "integration(wfb): send a payload to workflow builder via webhook trigger",
+                "id": "wfb",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "webhook": "${{ secrets.SLACK_WEBHOOK_TRIGGER }}",
+                  "webhook-type": "webhook-trigger",
+                  "payload": "author: ${{ github.event.sender.login }}\nchannel_id: ${{ secrets.SLACK_CHANNEL_ID }}\nevent_url: ${{ env.EVENT_URL}}\nrepo_name: ${{ github.event.repository.full_name }}\nstatus: ${{ job.status }}\n"
+                }
+              },
+              {
+                "name": "integration(wfb): confirm a payload was sent",
+                "run": "test -n \"${{ steps.wfb.outputs.time }}\""
+              },
+              {
+                "name": "integration(botToken): post a message to channel",
+                "id": "message",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.postMessage",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\ntext: \":checkered_flag: Action happens at <https://github.com/${{ github.repository }}>\"\n"
+                }
+              },
+              {
+                "name": "integration(method): confirm a message was posted",
+                "run": "test -n \"${{ steps.message.outputs.ts }}\""
+              },
+              {
+                "name": "integration(method): post a message with blocks",
+                "id": "blocks",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.postMessage",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\ntext: \":eyes: Event received...\"\nattachments:\n  - color: \"dbab09\"\n    fields:\n      - title: \"Status\"\n        short: true\n        value: \"Processing\"\n"
+                }
+              },
+              {
+                "name": "integration(method): confirm the blocks were posted",
+                "run": "test -n \"${{ steps.blocks.outputs.ts }}\""
+              },
+              {
+                "name": "integration(method): post a threaded message",
+                "id": "timer",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.postMessage",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\ntext: \"Started at `${{ steps.blocks.outputs.time }}`\"\nthread_ts: \"${{ steps.blocks.outputs.ts }}\"\n"
+                }
+              },
+              {
+                "name": "integration(incoming): confirm the thread started",
+                "run": "test -n \"${{ steps.timer.outputs.time }}\""
+              },
+              {
+                "name": "integration(method): wait to mock event processing",
+                "run": "sleep 3"
+              },
+              {
+                "name": "integration(method): update the original message",
+                "id": "finished",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.update",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\nts: \"${{ steps.blocks.outputs.ts }}\"\ntext: \":gear: Event processed!\"\nattachments:\n  - color: \"28a745\"\n    fields:\n      - title: \"Status\"\n        short: true\n        value: \"Completed\"\n"
+                }
+              },
+              {
+                "name": "integration(method): post another threaded message",
+                "id": "done",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.postMessage",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ steps.blocks.outputs.channel_id }}\ntext: \"Finished at `${{ steps.finished.outputs.time }}`\"\nthread_ts: \"${{ steps.timer.outputs.thread_ts }}\"\n"
+                }
+              },
+              {
+                "name": "integration(method): post a file into a channel",
+                "id": "file",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "files.uploadV2",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel_id: ${{ secrets.SLACK_CHANNEL_ID }}\ninitial_comment: \":robot_face: The codes exists here\"\nfile: .github/workflows/test.yml\nfilename: action.yml\n"
+                }
+              },
+              {
+                "name": "integration(method): react to the completed update message",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "reactions.add",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\ntimestamp: ${{ steps.blocks.outputs.ts }}\nname: \"tada\"\n"
+                }
+              },
+              {
+                "name": "integration(method): confirm the thread ended",
+                "run": "test -n \"${{ steps.done.outputs.time }}\""
+              },
+              {
+                "name": "integration(incoming): post a message via incoming webhook",
+                "id": "incoming",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "webhook": "${{ secrets.SLACK_INCOMING_WEBHOOK }}",
+                  "webhook-type": "incoming-webhook",
+                  "payload": "text: \"Incoming webhook test for slack send\"\nblocks:\n  - type: section\n    text:\n      type: plain_text\n      text: \":link: A message was received via incoming webhook\"\n      emoji: true\n"
+                }
+              },
+              {
+                "name": "integration(incoming): confirm a webhook was posted",
+                "run": "test -n \"${{ steps.incoming.outputs.time }}\""
+              },
+              {
+                "name": "integration(incoming): reveal contents of the github payload",
+                "run": "echo $JSON",
+                "env": {
+                  "JSON": "${{ toJSON(github) }}"
+                }
+              },
+              {
+                "name": "integration(incoming): post a message via payload file",
+                "id": "payload_file",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "payload-file-path": "./.github/resources/.slack/incoming-webhook.json",
+                  "payload-templated": true,
+                  "webhook": "${{ secrets.SLACK_INCOMING_WEBHOOK }}",
+                  "webhook-type": "incoming-webhook"
+                },
+                "env": {
+                  "JOB_STATUS": "${{ job.status }}",
+                  "ATTACHMENT_COLOR": "${{ (job.status == 'success' && 'good') || (job.status == 'failure' && 'danger') || 'warning' }}"
+                }
+              },
+              {
+                "name": "integration(incoming): confirm a payload file was posted",
+                "run": "test -n \"${{ steps.payload_file.outputs.time }}\""
+              },
+              {
+                "name": "chore(health): check up on recent changes to the health score",
+                "uses": "slackapi/slack-health-score@v0.1.1",
+                "with": {
+                  "codecov_token": "${{ secrets.CODECOV_TOKEN }}",
+                  "github_token": "${{ secrets.GITHUB_TOKEN }}",
+                  "extension": "js",
+                  "include": "src"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-11-14T20-48-36Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-6f8c3592-c690-5ac8-abad-0590c89d8e2e",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/test__2024-11-14T20-48-36Z__e9b3a6beef047e819b8fb417da538f97a93a2ec8.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 11,
+                  "startColumn": 5,
+                  "endLine": 232,
+                  "endColumn": 24
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "860d3ddc5ae64b8e:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2024-11-14T20-48-36Z__e9b3a6beef047e819b8fb417da538f97a93a2ec8.yml",
+          "workflow_name": "Tests",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 232,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "tests": 30
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "tests": 30
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 14,
+            "actions_used": [
+              "./",
+              "actions/checkout@v4",
+              "actions/setup-node@v4",
+              "codecov/codecov-action@v4.6.0",
+              "slackapi/slack-health-score@v0.1.1"
+            ],
+            "num_run_commands": 16,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Tests",
+        "true": {
+          "pull_request_target": null,
+          "push": {
+            "branches": [
+              "main"
+            ]
+          },
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "tests": {
+            "name": "Run tests",
+            "runs-on": "ubuntu-latest",
+            "environment": "staging",
+            "steps": [
+              {
+                "name": "build: checkout the latest changes",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "ref": "${{ github.event.pull_request.head.sha }}"
+                }
+              },
+              {
+                "name": "build: setup the node runtime",
+                "uses": "actions/setup-node@v4",
+                "with": {
+                  "cache": "npm",
+                  "cache-dependency-path": "package-lock.json",
+                  "node-version-file": ".nvmrc"
+                }
+              },
+              {
+                "name": "build: install the required dependencies",
+                "run": "npm ci"
+              },
+              {
+                "name": "unit(test): perform lints and formatting checks",
+                "run": "npm run lint"
+              },
+              {
+                "name": "unit(test): perform check of typings",
+                "run": "npm run check"
+              },
+              {
+                "name": "unit(test): perform unit test checks",
+                "run": "npm test"
+              },
+              {
+                "name": "build: package code for distribution",
+                "run": "npm run build"
+              },
+              {
+                "name": "unit(test): upload coverage to CodeCov",
+                "uses": "codecov/codecov-action@v4.6.0",
+                "with": {
+                  "directory": "./coverage",
+                  "token": "${{ secrets.CODECOV_TOKEN }}"
+                }
+              },
+              {
+                "name": "pretest(inputs): save the push event trigger commit URL",
+                "if": "contains(github.event_name, 'push')",
+                "run": "url=${{ github.event.head_commit.url }}\necho \"EVENT_URL=$url\" >> \"$GITHUB_ENV\"\n"
+              },
+              {
+                "name": "pretest(inputs): save the pull request event trigger commit URL",
+                "if": "contains(github.event_name, 'pull_request')",
+                "run": "url=${{ github.event.pull_request.html_url }}\necho \"EVENT_URL=$url\" >> \"$GITHUB_ENV\"\n"
+              },
+              {
+                "name": "integration(wfb): send a payload to workflow builder via webhook trigger",
+                "id": "wfb",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "webhook": "${{ secrets.SLACK_WEBHOOK_TRIGGER }}",
+                  "webhook-type": "webhook-trigger",
+                  "payload": "author: ${{ github.event.sender.login }}\nchannel_id: ${{ secrets.SLACK_CHANNEL_ID }}\nevent_url: ${{ env.EVENT_URL}}\nrepo_name: ${{ github.event.repository.full_name }}\nstatus: ${{ job.status }}\n"
+                }
+              },
+              {
+                "name": "integration(wfb): confirm a payload was sent",
+                "run": "test -n \"${{ steps.wfb.outputs.time }}\""
+              },
+              {
+                "name": "integration(botToken): post a message to channel",
+                "id": "message",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.postMessage",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\ntext: \":checkered_flag: Action happens at <https://github.com/${{ github.repository }}>\"\n"
+                }
+              },
+              {
+                "name": "integration(method): confirm a message was posted",
+                "run": "test -n \"${{ steps.message.outputs.ts }}\""
+              },
+              {
+                "name": "integration(method): post a message with blocks",
+                "id": "blocks",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.postMessage",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\ntext: \":eyes: Event received...\"\nattachments:\n  - color: \"dbab09\"\n    fields:\n      - title: \"Status\"\n        short: true\n        value: \"Processing\"\n"
+                }
+              },
+              {
+                "name": "integration(method): confirm the blocks were posted",
+                "run": "test -n \"${{ steps.blocks.outputs.ts }}\""
+              },
+              {
+                "name": "integration(method): post a threaded message",
+                "id": "timer",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.postMessage",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\ntext: \"Started at `${{ steps.blocks.outputs.time }}`\"\nthread_ts: \"${{ steps.blocks.outputs.ts }}\"\n"
+                }
+              },
+              {
+                "name": "integration(incoming): confirm the thread started",
+                "run": "test -n \"${{ steps.timer.outputs.time }}\""
+              },
+              {
+                "name": "integration(method): wait to mock event processing",
+                "run": "sleep 3"
+              },
+              {
+                "name": "integration(method): update the original message",
+                "id": "finished",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.update",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\nts: \"${{ steps.blocks.outputs.ts }}\"\ntext: \":gear: Event processed!\"\nattachments:\n  - color: \"28a745\"\n    fields:\n      - title: \"Status\"\n        short: true\n        value: \"Completed\"\n"
+                }
+              },
+              {
+                "name": "integration(method): post another threaded message",
+                "id": "done",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.postMessage",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ steps.blocks.outputs.channel_id }}\ntext: \"Finished at `${{ steps.finished.outputs.time }}`\"\nthread_ts: \"${{ steps.timer.outputs.thread_ts }}\"\n"
+                }
+              },
+              {
+                "name": "integration(method): post a file into a channel",
+                "id": "file",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "files.uploadV2",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel_id: ${{ secrets.SLACK_CHANNEL_ID }}\ninitial_comment: \":robot_face: The codes exists here\"\nfile: .github/workflows/test.yml\nfilename: action.yml\n"
+                }
+              },
+              {
+                "name": "integration(method): react to the completed update message",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "reactions.add",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\ntimestamp: ${{ steps.blocks.outputs.ts }}\nname: \"tada\"\n"
+                }
+              },
+              {
+                "name": "integration(method): confirm the thread ended",
+                "run": "test -n \"${{ steps.done.outputs.time }}\""
+              },
+              {
+                "name": "integration(incoming): post a message via incoming webhook",
+                "id": "incoming",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "webhook": "${{ secrets.SLACK_INCOMING_WEBHOOK }}",
+                  "webhook-type": "incoming-webhook",
+                  "payload": "text: \"Incoming webhook test for slack send\"\nblocks:\n  - type: section\n    text:\n      type: plain_text\n      text: \":link: A message was received via incoming webhook\"\n      emoji: true\n"
+                }
+              },
+              {
+                "name": "integration(incoming): confirm a webhook was posted",
+                "run": "test -n \"${{ steps.incoming.outputs.time }}\""
+              },
+              {
+                "name": "integration(incoming): reveal contents of the github payload",
+                "run": "echo $JSON",
+                "env": {
+                  "JSON": "${{ toJSON(github) }}"
+                }
+              },
+              {
+                "name": "integration(incoming): post a message via payload file",
+                "id": "payload_file",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "payload-file-path": "./.github/resources/.slack/incoming-webhook.json",
+                  "payload-templated": true,
+                  "webhook": "${{ secrets.SLACK_INCOMING_WEBHOOK }}",
+                  "webhook-type": "incoming-webhook"
+                },
+                "env": {
+                  "JOB_STATUS": "${{ job.status }}",
+                  "ATTACHMENT_COLOR": "${{ (job.status == 'success' && 'good') || (job.status == 'failure' && 'danger') || 'warning' }}"
+                }
+              },
+              {
+                "name": "integration(incoming): confirm a payload file was posted",
+                "run": "test -n \"${{ steps.payload_file.outputs.time }}\""
+              },
+              {
+                "name": "chore(health): check up on recent changes to the health score",
+                "uses": "slackapi/slack-health-score@v0.1.1",
+                "with": {
+                  "codecov_token": "${{ secrets.CODECOV_TOKEN }}",
+                  "github_token": "${{ secrets.GITHUB_TOKEN }}",
+                  "extension": "js",
+                  "include": "src"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-12-13T21-55-51Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2024-12-13T21-55-51Z__6a5a811bd01cc60076b5e3a94f1b3a0d1352084e.yml",
+          "workflow_name": "Tests",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 235,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "tests": 30
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "tests": 30
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 14,
+            "actions_used": [
+              "./",
+              "actions/checkout@v4",
+              "actions/setup-node@v4",
+              "codecov/codecov-action@v5.0.7",
+              "slackapi/slack-health-score@v0.1.1"
+            ],
+            "num_run_commands": 16,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Tests",
+        "true": {
+          "pull_request_target": null,
+          "push": {
+            "branches": [
+              "main"
+            ]
+          },
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "tests": {
+            "name": "Run tests",
+            "runs-on": "ubuntu-latest",
+            "environment": "staging",
+            "permissions": {
+              "checks": "write"
+            },
+            "steps": [
+              {
+                "name": "build: checkout the latest changes",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "persist-credentials": false,
+                  "ref": "${{ github.event.pull_request.head.sha }}"
+                }
+              },
+              {
+                "name": "build: setup the node runtime",
+                "uses": "actions/setup-node@v4",
+                "with": {
+                  "cache": "npm",
+                  "cache-dependency-path": "package-lock.json",
+                  "node-version-file": ".nvmrc"
+                }
+              },
+              {
+                "name": "build: install the required dependencies",
+                "run": "npm ci"
+              },
+              {
+                "name": "unit(test): perform lints and formatting checks",
+                "run": "npm run lint"
+              },
+              {
+                "name": "unit(test): perform check of typings",
+                "run": "npm run check"
+              },
+              {
+                "name": "unit(test): perform unit test checks",
+                "run": "npm test"
+              },
+              {
+                "name": "unit(test): upload coverage to CodeCov",
+                "uses": "codecov/codecov-action@v5.0.7",
+                "with": {
+                  "directory": "./coverage",
+                  "token": "${{ secrets.CODECOV_TOKEN }}"
+                }
+              },
+              {
+                "name": "build: package code for distribution",
+                "run": "npm run build"
+              },
+              {
+                "name": "pretest(inputs): save the push event trigger commit URL",
+                "if": "contains(github.event_name, 'push')",
+                "run": "url=${{ github.event.head_commit.url }}\necho \"EVENT_URL=$url\" >> \"$GITHUB_ENV\"\n"
+              },
+              {
+                "name": "pretest(inputs): save the pull request event trigger commit URL",
+                "if": "contains(github.event_name, 'pull_request')",
+                "run": "url=${{ github.event.pull_request.html_url }}\necho \"EVENT_URL=$url\" >> \"$GITHUB_ENV\"\n"
+              },
+              {
+                "name": "integration(wfb): send a payload to workflow builder via webhook trigger",
+                "id": "wfb",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "webhook": "${{ secrets.SLACK_WEBHOOK_TRIGGER }}",
+                  "webhook-type": "webhook-trigger",
+                  "payload": "author: ${{ github.event.sender.login }}\nchannel_id: ${{ secrets.SLACK_CHANNEL_ID }}\nevent_url: ${{ env.EVENT_URL}}\nrepo_name: ${{ github.event.repository.full_name }}\nstatus: ${{ job.status }}\n"
+                }
+              },
+              {
+                "name": "integration(wfb): confirm a payload was sent",
+                "run": "test -n \"${{ steps.wfb.outputs.time }}\""
+              },
+              {
+                "name": "integration(botToken): post a message to channel",
+                "id": "message",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.postMessage",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\ntext: \":checkered_flag: Action happens at <https://github.com/${{ github.repository }}>\"\n"
+                }
+              },
+              {
+                "name": "integration(method): confirm a message was posted",
+                "run": "test -n \"${{ steps.message.outputs.ts }}\""
+              },
+              {
+                "name": "integration(method): post a message with blocks",
+                "id": "blocks",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.postMessage",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\ntext: \":eyes: Event received...\"\nattachments:\n  - color: \"dbab09\"\n    fields:\n      - title: \"Status\"\n        short: true\n        value: \"Processing\"\n"
+                }
+              },
+              {
+                "name": "integration(method): confirm the blocks were posted",
+                "run": "test -n \"${{ steps.blocks.outputs.ts }}\""
+              },
+              {
+                "name": "integration(method): post a threaded message",
+                "id": "timer",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.postMessage",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\ntext: \"Started at `${{ steps.blocks.outputs.time }}`\"\nthread_ts: \"${{ steps.blocks.outputs.ts }}\"\n"
+                }
+              },
+              {
+                "name": "integration(incoming): confirm the thread started",
+                "run": "test -n \"${{ steps.timer.outputs.time }}\""
+              },
+              {
+                "name": "integration(method): wait to mock event processing",
+                "run": "sleep 3"
+              },
+              {
+                "name": "integration(method): update the original message",
+                "id": "finished",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.update",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\nts: \"${{ steps.blocks.outputs.ts }}\"\ntext: \":gear: Event processed!\"\nattachments:\n  - color: \"28a745\"\n    fields:\n      - title: \"Status\"\n        short: true\n        value: \"Completed\"\n"
+                }
+              },
+              {
+                "name": "integration(method): post another threaded message",
+                "id": "done",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.postMessage",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ steps.blocks.outputs.channel_id }}\ntext: \"Finished at `${{ steps.finished.outputs.time }}`\"\nthread_ts: \"${{ steps.timer.outputs.thread_ts }}\"\n"
+                }
+              },
+              {
+                "name": "integration(method): post a file into a channel",
+                "id": "file",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "files.uploadV2",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel_id: ${{ secrets.SLACK_CHANNEL_ID }}\ninitial_comment: \":robot_face: The codes exists here\"\nfile: .github/workflows/test.yml\nfilename: action.yml\n"
+                }
+              },
+              {
+                "name": "integration(method): react to the completed update message",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "reactions.add",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\ntimestamp: ${{ steps.blocks.outputs.ts }}\nname: \"tada\"\n"
+                }
+              },
+              {
+                "name": "integration(method): confirm the thread ended",
+                "run": "test -n \"${{ steps.done.outputs.time }}\""
+              },
+              {
+                "name": "integration(incoming): post a message via incoming webhook",
+                "id": "incoming",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "webhook": "${{ secrets.SLACK_INCOMING_WEBHOOK }}",
+                  "webhook-type": "incoming-webhook",
+                  "payload": "text: \"Incoming webhook test for slack send\"\nblocks:\n  - type: section\n    text:\n      type: plain_text\n      text: \":link: A message was received via incoming webhook\"\n      emoji: true\n"
+                }
+              },
+              {
+                "name": "integration(incoming): confirm a webhook was posted",
+                "run": "test -n \"${{ steps.incoming.outputs.time }}\""
+              },
+              {
+                "name": "integration(incoming): reveal contents of the github payload",
+                "run": "echo $JSON",
+                "env": {
+                  "JSON": "${{ toJSON(github) }}"
+                }
+              },
+              {
+                "name": "integration(incoming): post a message via payload file",
+                "id": "payload_file",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "payload-file-path": "./.github/resources/.slack/incoming-webhook.json",
+                  "payload-templated": true,
+                  "webhook": "${{ secrets.SLACK_INCOMING_WEBHOOK }}",
+                  "webhook-type": "incoming-webhook"
+                },
+                "env": {
+                  "JOB_STATUS": "${{ job.status }}",
+                  "ATTACHMENT_COLOR": "${{ (job.status == 'success' && 'good') || (job.status == 'failure' && 'danger') || 'warning' }}"
+                }
+              },
+              {
+                "name": "integration(incoming): confirm a payload file was posted",
+                "run": "test -n \"${{ steps.payload_file.outputs.time }}\""
+              },
+              {
+                "name": "chore(health): check up on recent changes to the health score",
+                "uses": "slackapi/slack-health-score@v0.1.1",
+                "with": {
+                  "codecov_token": "${{ secrets.CODECOV_API_TOKEN }}",
+                  "github_token": "${{ secrets.GITHUB_TOKEN }}",
+                  "extension": "js",
+                  "include": "src"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-01-03T01-42-47Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2025-01-03T01-42-47Z__453a84bba2948704b69b46ed887bc5d696da76fc.yml",
+          "workflow_name": "Tests",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 235,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "tests": 30
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "tests": 30
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 14,
+            "actions_used": [
+              "./",
+              "actions/checkout@v4",
+              "actions/setup-node@v4",
+              "codecov/codecov-action@v5.1.2",
+              "slackapi/slack-health-score@v0.1.1"
+            ],
+            "num_run_commands": 16,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Tests",
+        "true": {
+          "pull_request_target": null,
+          "push": {
+            "branches": [
+              "main"
+            ]
+          },
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "tests": {
+            "name": "Run tests",
+            "runs-on": "ubuntu-latest",
+            "environment": "staging",
+            "permissions": {
+              "checks": "write"
+            },
+            "steps": [
+              {
+                "name": "build: checkout the latest changes",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "persist-credentials": false,
+                  "ref": "${{ github.event.pull_request.head.sha }}"
+                }
+              },
+              {
+                "name": "build: setup the node runtime",
+                "uses": "actions/setup-node@v4",
+                "with": {
+                  "cache": "npm",
+                  "cache-dependency-path": "package-lock.json",
+                  "node-version-file": ".nvmrc"
+                }
+              },
+              {
+                "name": "build: install the required dependencies",
+                "run": "npm ci"
+              },
+              {
+                "name": "unit(test): perform lints and formatting checks",
+                "run": "npm run lint"
+              },
+              {
+                "name": "unit(test): perform check of typings",
+                "run": "npm run check"
+              },
+              {
+                "name": "unit(test): perform unit test checks",
+                "run": "npm test"
+              },
+              {
+                "name": "unit(test): upload coverage to CodeCov",
+                "uses": "codecov/codecov-action@v5.1.2",
+                "with": {
+                  "directory": "./coverage",
+                  "token": "${{ secrets.CODECOV_TOKEN }}"
+                }
+              },
+              {
+                "name": "build: package code for distribution",
+                "run": "npm run build"
+              },
+              {
+                "name": "pretest(inputs): save the push event trigger commit URL",
+                "if": "contains(github.event_name, 'push')",
+                "run": "url=${{ github.event.head_commit.url }}\necho \"EVENT_URL=$url\" >> \"$GITHUB_ENV\"\n"
+              },
+              {
+                "name": "pretest(inputs): save the pull request event trigger commit URL",
+                "if": "contains(github.event_name, 'pull_request')",
+                "run": "url=${{ github.event.pull_request.html_url }}\necho \"EVENT_URL=$url\" >> \"$GITHUB_ENV\"\n"
+              },
+              {
+                "name": "integration(wfb): send a payload to workflow builder via webhook trigger",
+                "id": "wfb",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "webhook": "${{ secrets.SLACK_WEBHOOK_TRIGGER }}",
+                  "webhook-type": "webhook-trigger",
+                  "payload": "author: ${{ github.event.sender.login }}\nchannel_id: ${{ secrets.SLACK_CHANNEL_ID }}\nevent_url: ${{ env.EVENT_URL}}\nrepo_name: ${{ github.event.repository.full_name }}\nstatus: ${{ job.status }}\n"
+                }
+              },
+              {
+                "name": "integration(wfb): confirm a payload was sent",
+                "run": "test -n \"${{ steps.wfb.outputs.time }}\""
+              },
+              {
+                "name": "integration(botToken): post a message to channel",
+                "id": "message",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.postMessage",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\ntext: \":checkered_flag: Action happens at <https://github.com/${{ github.repository }}>\"\n"
+                }
+              },
+              {
+                "name": "integration(method): confirm a message was posted",
+                "run": "test -n \"${{ steps.message.outputs.ts }}\""
+              },
+              {
+                "name": "integration(method): post a message with blocks",
+                "id": "blocks",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.postMessage",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\ntext: \":eyes: Event received...\"\nattachments:\n  - color: \"dbab09\"\n    fields:\n      - title: \"Status\"\n        short: true\n        value: \"Processing\"\n"
+                }
+              },
+              {
+                "name": "integration(method): confirm the blocks were posted",
+                "run": "test -n \"${{ steps.blocks.outputs.ts }}\""
+              },
+              {
+                "name": "integration(method): post a threaded message",
+                "id": "timer",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.postMessage",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\ntext: \"Started at `${{ steps.blocks.outputs.time }}`\"\nthread_ts: \"${{ steps.blocks.outputs.ts }}\"\n"
+                }
+              },
+              {
+                "name": "integration(incoming): confirm the thread started",
+                "run": "test -n \"${{ steps.timer.outputs.time }}\""
+              },
+              {
+                "name": "integration(method): wait to mock event processing",
+                "run": "sleep 3"
+              },
+              {
+                "name": "integration(method): update the original message",
+                "id": "finished",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.update",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\nts: \"${{ steps.blocks.outputs.ts }}\"\ntext: \":gear: Event processed!\"\nattachments:\n  - color: \"28a745\"\n    fields:\n      - title: \"Status\"\n        short: true\n        value: \"Completed\"\n"
+                }
+              },
+              {
+                "name": "integration(method): post another threaded message",
+                "id": "done",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.postMessage",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ steps.blocks.outputs.channel_id }}\ntext: \"Finished at `${{ steps.finished.outputs.time }}`\"\nthread_ts: \"${{ steps.timer.outputs.thread_ts }}\"\n"
+                }
+              },
+              {
+                "name": "integration(method): post a file into a channel",
+                "id": "file",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "files.uploadV2",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel_id: ${{ secrets.SLACK_CHANNEL_ID }}\ninitial_comment: \":robot_face: The codes exists here\"\nfile: .github/workflows/test.yml\nfilename: action.yml\n"
+                }
+              },
+              {
+                "name": "integration(method): react to the completed update message",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "reactions.add",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\ntimestamp: ${{ steps.blocks.outputs.ts }}\nname: \"tada\"\n"
+                }
+              },
+              {
+                "name": "integration(method): confirm the thread ended",
+                "run": "test -n \"${{ steps.done.outputs.time }}\""
+              },
+              {
+                "name": "integration(incoming): post a message via incoming webhook",
+                "id": "incoming",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "webhook": "${{ secrets.SLACK_INCOMING_WEBHOOK }}",
+                  "webhook-type": "incoming-webhook",
+                  "payload": "text: \"Incoming webhook test for slack send\"\nblocks:\n  - type: section\n    text:\n      type: plain_text\n      text: \":link: A message was received via incoming webhook\"\n      emoji: true\n"
+                }
+              },
+              {
+                "name": "integration(incoming): confirm a webhook was posted",
+                "run": "test -n \"${{ steps.incoming.outputs.time }}\""
+              },
+              {
+                "name": "integration(incoming): reveal contents of the github payload",
+                "run": "echo $JSON",
+                "env": {
+                  "JSON": "${{ toJSON(github) }}"
+                }
+              },
+              {
+                "name": "integration(incoming): post a message via payload file",
+                "id": "payload_file",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "payload-file-path": "./.github/resources/.slack/incoming-webhook.json",
+                  "payload-templated": true,
+                  "webhook": "${{ secrets.SLACK_INCOMING_WEBHOOK }}",
+                  "webhook-type": "incoming-webhook"
+                },
+                "env": {
+                  "JOB_STATUS": "${{ job.status }}",
+                  "ATTACHMENT_COLOR": "${{ (job.status == 'success' && 'good') || (job.status == 'failure' && 'danger') || 'warning' }}"
+                }
+              },
+              {
+                "name": "integration(incoming): confirm a payload file was posted",
+                "run": "test -n \"${{ steps.payload_file.outputs.time }}\""
+              },
+              {
+                "name": "chore(health): check up on recent changes to the health score",
+                "uses": "slackapi/slack-health-score@v0.1.1",
+                "with": {
+                  "codecov_token": "${{ secrets.CODECOV_API_TOKEN }}",
+                  "github_token": "${{ secrets.GITHUB_TOKEN }}",
+                  "extension": "js",
+                  "include": "src"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-02-03T20-09-16Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2025-02-03T20-09-16Z__c4edfa7c0e3ca6e02b362573f2780d3838af5c5d.yml",
+          "workflow_name": "Tests",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 235,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "tests": 30
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "tests": 30
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 14,
+            "actions_used": [
+              "./",
+              "actions/checkout@v4",
+              "actions/setup-node@v4",
+              "codecov/codecov-action@v5.3.1",
+              "slackapi/slack-health-score@v0.1.1"
+            ],
+            "num_run_commands": 16,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Tests",
+        "true": {
+          "pull_request_target": null,
+          "push": {
+            "branches": [
+              "main"
+            ]
+          },
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "tests": {
+            "name": "Run tests",
+            "runs-on": "ubuntu-latest",
+            "environment": "staging",
+            "permissions": {
+              "checks": "write"
+            },
+            "steps": [
+              {
+                "name": "build: checkout the latest changes",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "persist-credentials": false,
+                  "ref": "${{ github.event.pull_request.head.sha }}"
+                }
+              },
+              {
+                "name": "build: setup the node runtime",
+                "uses": "actions/setup-node@v4",
+                "with": {
+                  "cache": "npm",
+                  "cache-dependency-path": "package-lock.json",
+                  "node-version-file": ".nvmrc"
+                }
+              },
+              {
+                "name": "build: install the required dependencies",
+                "run": "npm ci"
+              },
+              {
+                "name": "unit(test): perform lints and formatting checks",
+                "run": "npm run lint"
+              },
+              {
+                "name": "unit(test): perform check of typings",
+                "run": "npm run check"
+              },
+              {
+                "name": "unit(test): perform unit test checks",
+                "run": "npm test"
+              },
+              {
+                "name": "unit(test): upload coverage to CodeCov",
+                "uses": "codecov/codecov-action@v5.3.1",
+                "with": {
+                  "directory": "./coverage",
+                  "token": "${{ secrets.CODECOV_TOKEN }}"
+                }
+              },
+              {
+                "name": "build: package code for distribution",
+                "run": "npm run build"
+              },
+              {
+                "name": "pretest(inputs): save the push event trigger commit URL",
+                "if": "contains(github.event_name, 'push')",
+                "run": "url=${{ github.event.head_commit.url }}\necho \"EVENT_URL=$url\" >> \"$GITHUB_ENV\"\n"
+              },
+              {
+                "name": "pretest(inputs): save the pull request event trigger commit URL",
+                "if": "contains(github.event_name, 'pull_request')",
+                "run": "url=${{ github.event.pull_request.html_url }}\necho \"EVENT_URL=$url\" >> \"$GITHUB_ENV\"\n"
+              },
+              {
+                "name": "integration(wfb): send a payload to workflow builder via webhook trigger",
+                "id": "wfb",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "webhook": "${{ secrets.SLACK_WEBHOOK_TRIGGER }}",
+                  "webhook-type": "webhook-trigger",
+                  "payload": "author: ${{ github.event.sender.login }}\nchannel_id: ${{ secrets.SLACK_CHANNEL_ID }}\nevent_url: ${{ env.EVENT_URL}}\nrepo_name: ${{ github.event.repository.full_name }}\nstatus: ${{ job.status }}\n"
+                }
+              },
+              {
+                "name": "integration(wfb): confirm a payload was sent",
+                "run": "test -n \"${{ steps.wfb.outputs.time }}\""
+              },
+              {
+                "name": "integration(botToken): post a message to channel",
+                "id": "message",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.postMessage",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\ntext: \":checkered_flag: Action happens at <https://github.com/${{ github.repository }}>\"\n"
+                }
+              },
+              {
+                "name": "integration(method): confirm a message was posted",
+                "run": "test -n \"${{ steps.message.outputs.ts }}\""
+              },
+              {
+                "name": "integration(method): post a message with blocks",
+                "id": "blocks",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.postMessage",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\ntext: \":eyes: Event received...\"\nattachments:\n  - color: \"dbab09\"\n    fields:\n      - title: \"Status\"\n        short: true\n        value: \"Processing\"\n"
+                }
+              },
+              {
+                "name": "integration(method): confirm the blocks were posted",
+                "run": "test -n \"${{ steps.blocks.outputs.ts }}\""
+              },
+              {
+                "name": "integration(method): post a threaded message",
+                "id": "timer",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.postMessage",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\ntext: \"Started at `${{ steps.blocks.outputs.time }}`\"\nthread_ts: \"${{ steps.blocks.outputs.ts }}\"\n"
+                }
+              },
+              {
+                "name": "integration(incoming): confirm the thread started",
+                "run": "test -n \"${{ steps.timer.outputs.time }}\""
+              },
+              {
+                "name": "integration(method): wait to mock event processing",
+                "run": "sleep 3"
+              },
+              {
+                "name": "integration(method): update the original message",
+                "id": "finished",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.update",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\nts: \"${{ steps.blocks.outputs.ts }}\"\ntext: \":gear: Event processed!\"\nattachments:\n  - color: \"28a745\"\n    fields:\n      - title: \"Status\"\n        short: true\n        value: \"Completed\"\n"
+                }
+              },
+              {
+                "name": "integration(method): post another threaded message",
+                "id": "done",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.postMessage",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ steps.blocks.outputs.channel_id }}\ntext: \"Finished at `${{ steps.finished.outputs.time }}`\"\nthread_ts: \"${{ steps.timer.outputs.thread_ts }}\"\n"
+                }
+              },
+              {
+                "name": "integration(method): post a file into a channel",
+                "id": "file",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "files.uploadV2",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel_id: ${{ secrets.SLACK_CHANNEL_ID }}\ninitial_comment: \":robot_face: The codes exists here\"\nfile: .github/workflows/test.yml\nfilename: action.yml\n"
+                }
+              },
+              {
+                "name": "integration(method): react to the completed update message",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "reactions.add",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\ntimestamp: ${{ steps.blocks.outputs.ts }}\nname: \"tada\"\n"
+                }
+              },
+              {
+                "name": "integration(method): confirm the thread ended",
+                "run": "test -n \"${{ steps.done.outputs.time }}\""
+              },
+              {
+                "name": "integration(incoming): post a message via incoming webhook",
+                "id": "incoming",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "webhook": "${{ secrets.SLACK_INCOMING_WEBHOOK }}",
+                  "webhook-type": "incoming-webhook",
+                  "payload": "text: \"Incoming webhook test for slack send\"\nblocks:\n  - type: section\n    text:\n      type: plain_text\n      text: \":link: A message was received via incoming webhook\"\n      emoji: true\n"
+                }
+              },
+              {
+                "name": "integration(incoming): confirm a webhook was posted",
+                "run": "test -n \"${{ steps.incoming.outputs.time }}\""
+              },
+              {
+                "name": "integration(incoming): reveal contents of the github payload",
+                "run": "echo $JSON",
+                "env": {
+                  "JSON": "${{ toJSON(github) }}"
+                }
+              },
+              {
+                "name": "integration(incoming): post a message via payload file",
+                "id": "payload_file",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "payload-file-path": "./.github/resources/.slack/incoming-webhook.json",
+                  "payload-templated": true,
+                  "webhook": "${{ secrets.SLACK_INCOMING_WEBHOOK }}",
+                  "webhook-type": "incoming-webhook"
+                },
+                "env": {
+                  "JOB_STATUS": "${{ job.status }}",
+                  "ATTACHMENT_COLOR": "${{ (job.status == 'success' && 'good') || (job.status == 'failure' && 'danger') || 'warning' }}"
+                }
+              },
+              {
+                "name": "integration(incoming): confirm a payload file was posted",
+                "run": "test -n \"${{ steps.payload_file.outputs.time }}\""
+              },
+              {
+                "name": "chore(health): check up on recent changes to the health score",
+                "uses": "slackapi/slack-health-score@v0.1.1",
+                "with": {
+                  "codecov_token": "${{ secrets.CODECOV_API_TOKEN }}",
+                  "github_token": "${{ secrets.GITHUB_TOKEN }}",
+                  "extension": "js",
+                  "include": "src"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-03-03T15-37-35Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2025-03-03T15-37-35Z__3696a8e98991656f625f32d18306ffd586adb99e.yml",
+          "workflow_name": "Tests",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 235,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "tests": 30
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "tests": 30
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 14,
+            "actions_used": [
+              "./",
+              "actions/checkout@v4",
+              "actions/setup-node@v4",
+              "codecov/codecov-action@v5.4.0",
+              "slackapi/slack-health-score@v0.1.1"
+            ],
+            "num_run_commands": 16,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Tests",
+        "true": {
+          "pull_request_target": null,
+          "push": {
+            "branches": [
+              "main"
+            ]
+          },
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "tests": {
+            "name": "Run tests",
+            "runs-on": "ubuntu-latest",
+            "environment": "staging",
+            "permissions": {
+              "checks": "write"
+            },
+            "steps": [
+              {
+                "name": "build: checkout the latest changes",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "persist-credentials": false,
+                  "ref": "${{ github.event.pull_request.head.sha }}"
+                }
+              },
+              {
+                "name": "build: setup the node runtime",
+                "uses": "actions/setup-node@v4",
+                "with": {
+                  "cache": "npm",
+                  "cache-dependency-path": "package-lock.json",
+                  "node-version-file": ".nvmrc"
+                }
+              },
+              {
+                "name": "build: install the required dependencies",
+                "run": "npm ci"
+              },
+              {
+                "name": "unit(test): perform lints and formatting checks",
+                "run": "npm run lint"
+              },
+              {
+                "name": "unit(test): perform check of typings",
+                "run": "npm run check"
+              },
+              {
+                "name": "unit(test): perform unit test checks",
+                "run": "npm test"
+              },
+              {
+                "name": "unit(test): upload coverage to CodeCov",
+                "uses": "codecov/codecov-action@v5.4.0",
+                "with": {
+                  "directory": "./coverage",
+                  "token": "${{ secrets.CODECOV_TOKEN }}"
+                }
+              },
+              {
+                "name": "build: package code for distribution",
+                "run": "npm run build"
+              },
+              {
+                "name": "pretest(inputs): save the push event trigger commit URL",
+                "if": "contains(github.event_name, 'push')",
+                "run": "url=${{ github.event.head_commit.url }}\necho \"EVENT_URL=$url\" >> \"$GITHUB_ENV\"\n"
+              },
+              {
+                "name": "pretest(inputs): save the pull request event trigger commit URL",
+                "if": "contains(github.event_name, 'pull_request')",
+                "run": "url=${{ github.event.pull_request.html_url }}\necho \"EVENT_URL=$url\" >> \"$GITHUB_ENV\"\n"
+              },
+              {
+                "name": "integration(wfb): send a payload to workflow builder via webhook trigger",
+                "id": "wfb",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "webhook": "${{ secrets.SLACK_WEBHOOK_TRIGGER }}",
+                  "webhook-type": "webhook-trigger",
+                  "payload": "author: ${{ github.event.sender.login }}\nchannel_id: ${{ secrets.SLACK_CHANNEL_ID }}\nevent_url: ${{ env.EVENT_URL}}\nrepo_name: ${{ github.event.repository.full_name }}\nstatus: ${{ job.status }}\n"
+                }
+              },
+              {
+                "name": "integration(wfb): confirm a payload was sent",
+                "run": "test -n \"${{ steps.wfb.outputs.time }}\""
+              },
+              {
+                "name": "integration(botToken): post a message to channel",
+                "id": "message",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.postMessage",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\ntext: \":checkered_flag: Action happens at <https://github.com/${{ github.repository }}>\"\n"
+                }
+              },
+              {
+                "name": "integration(method): confirm a message was posted",
+                "run": "test -n \"${{ steps.message.outputs.ts }}\""
+              },
+              {
+                "name": "integration(method): post a message with blocks",
+                "id": "blocks",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.postMessage",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\ntext: \":eyes: Event received...\"\nattachments:\n  - color: \"dbab09\"\n    fields:\n      - title: \"Status\"\n        short: true\n        value: \"Processing\"\n"
+                }
+              },
+              {
+                "name": "integration(method): confirm the blocks were posted",
+                "run": "test -n \"${{ steps.blocks.outputs.ts }}\""
+              },
+              {
+                "name": "integration(method): post a threaded message",
+                "id": "timer",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.postMessage",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\ntext: \"Started at `${{ steps.blocks.outputs.time }}`\"\nthread_ts: \"${{ steps.blocks.outputs.ts }}\"\n"
+                }
+              },
+              {
+                "name": "integration(incoming): confirm the thread started",
+                "run": "test -n \"${{ steps.timer.outputs.time }}\""
+              },
+              {
+                "name": "integration(method): wait to mock event processing",
+                "run": "sleep 3"
+              },
+              {
+                "name": "integration(method): update the original message",
+                "id": "finished",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.update",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\nts: \"${{ steps.blocks.outputs.ts }}\"\ntext: \":gear: Event processed!\"\nattachments:\n  - color: \"28a745\"\n    fields:\n      - title: \"Status\"\n        short: true\n        value: \"Completed\"\n"
+                }
+              },
+              {
+                "name": "integration(method): post another threaded message",
+                "id": "done",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.postMessage",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ steps.blocks.outputs.channel_id }}\ntext: \"Finished at `${{ steps.finished.outputs.time }}`\"\nthread_ts: \"${{ steps.timer.outputs.thread_ts }}\"\n"
+                }
+              },
+              {
+                "name": "integration(method): post a file into a channel",
+                "id": "file",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "files.uploadV2",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel_id: ${{ secrets.SLACK_CHANNEL_ID }}\ninitial_comment: \":robot_face: The codes exists here\"\nfile: .github/workflows/test.yml\nfilename: action.yml\n"
+                }
+              },
+              {
+                "name": "integration(method): react to the completed update message",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "reactions.add",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\ntimestamp: ${{ steps.blocks.outputs.ts }}\nname: \"tada\"\n"
+                }
+              },
+              {
+                "name": "integration(method): confirm the thread ended",
+                "run": "test -n \"${{ steps.done.outputs.time }}\""
+              },
+              {
+                "name": "integration(incoming): post a message via incoming webhook",
+                "id": "incoming",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "webhook": "${{ secrets.SLACK_INCOMING_WEBHOOK }}",
+                  "webhook-type": "incoming-webhook",
+                  "payload": "text: \"Incoming webhook test for slack send\"\nblocks:\n  - type: section\n    text:\n      type: plain_text\n      text: \":link: A message was received via incoming webhook\"\n      emoji: true\n"
+                }
+              },
+              {
+                "name": "integration(incoming): confirm a webhook was posted",
+                "run": "test -n \"${{ steps.incoming.outputs.time }}\""
+              },
+              {
+                "name": "integration(incoming): reveal contents of the github payload",
+                "run": "echo $JSON",
+                "env": {
+                  "JSON": "${{ toJSON(github) }}"
+                }
+              },
+              {
+                "name": "integration(incoming): post a message via payload file",
+                "id": "payload_file",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "payload-file-path": "./.github/resources/.slack/incoming-webhook.json",
+                  "payload-templated": true,
+                  "webhook": "${{ secrets.SLACK_INCOMING_WEBHOOK }}",
+                  "webhook-type": "incoming-webhook"
+                },
+                "env": {
+                  "JOB_STATUS": "${{ job.status }}",
+                  "ATTACHMENT_COLOR": "${{ (job.status == 'success' && 'good') || (job.status == 'failure' && 'danger') || 'warning' }}"
+                }
+              },
+              {
+                "name": "integration(incoming): confirm a payload file was posted",
+                "run": "test -n \"${{ steps.payload_file.outputs.time }}\""
+              },
+              {
+                "name": "chore(health): check up on recent changes to the health score",
+                "uses": "slackapi/slack-health-score@v0.1.1",
+                "with": {
+                  "codecov_token": "${{ secrets.CODECOV_API_TOKEN }}",
+                  "github_token": "${{ secrets.GITHUB_TOKEN }}",
+                  "extension": "js",
+                  "include": "src"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-05-01T14-07-20Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2025-05-01T14-07-20Z__4fc20beee51dfdd9af584651f75c9d33485fd8be.yml",
+          "workflow_name": "Tests",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 235,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "tests": 30
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "tests": 30
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 14,
+            "actions_used": [
+              "./",
+              "actions/checkout@v4",
+              "actions/setup-node@v4",
+              "codecov/codecov-action@v5.4.2",
+              "slackapi/slack-health-score@v0.1.1"
+            ],
+            "num_run_commands": 16,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Tests",
+        "true": {
+          "pull_request_target": null,
+          "push": {
+            "branches": [
+              "main"
+            ]
+          },
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "tests": {
+            "name": "Run tests",
+            "runs-on": "ubuntu-latest",
+            "environment": "staging",
+            "permissions": {
+              "checks": "write"
+            },
+            "steps": [
+              {
+                "name": "build: checkout the latest changes",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "persist-credentials": false,
+                  "ref": "${{ github.event.pull_request.head.sha }}"
+                }
+              },
+              {
+                "name": "build: setup the node runtime",
+                "uses": "actions/setup-node@v4",
+                "with": {
+                  "cache": "npm",
+                  "cache-dependency-path": "package-lock.json",
+                  "node-version-file": ".nvmrc"
+                }
+              },
+              {
+                "name": "build: install the required dependencies",
+                "run": "npm ci"
+              },
+              {
+                "name": "unit(test): perform lints and formatting checks",
+                "run": "npm run lint"
+              },
+              {
+                "name": "unit(test): perform check of typings",
+                "run": "npm run check"
+              },
+              {
+                "name": "unit(test): perform unit test checks",
+                "run": "npm test"
+              },
+              {
+                "name": "unit(test): upload coverage to CodeCov",
+                "uses": "codecov/codecov-action@v5.4.2",
+                "with": {
+                  "directory": "./coverage",
+                  "token": "${{ secrets.CODECOV_TOKEN }}"
+                }
+              },
+              {
+                "name": "build: package code for distribution",
+                "run": "npm run build"
+              },
+              {
+                "name": "pretest(inputs): save the push event trigger commit URL",
+                "if": "contains(github.event_name, 'push')",
+                "run": "url=${{ github.event.head_commit.url }}\necho \"EVENT_URL=$url\" >> \"$GITHUB_ENV\"\n"
+              },
+              {
+                "name": "pretest(inputs): save the pull request event trigger commit URL",
+                "if": "contains(github.event_name, 'pull_request')",
+                "run": "url=${{ github.event.pull_request.html_url }}\necho \"EVENT_URL=$url\" >> \"$GITHUB_ENV\"\n"
+              },
+              {
+                "name": "integration(wfb): send a payload to workflow builder via webhook trigger",
+                "id": "wfb",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "webhook": "${{ secrets.SLACK_WEBHOOK_TRIGGER }}",
+                  "webhook-type": "webhook-trigger",
+                  "payload": "author: ${{ github.event.sender.login }}\nchannel_id: ${{ secrets.SLACK_CHANNEL_ID }}\nevent_url: ${{ env.EVENT_URL}}\nrepo_name: ${{ github.event.repository.full_name }}\nstatus: ${{ job.status }}\n"
+                }
+              },
+              {
+                "name": "integration(wfb): confirm a payload was sent",
+                "run": "test -n \"${{ steps.wfb.outputs.time }}\""
+              },
+              {
+                "name": "integration(botToken): post a message to channel",
+                "id": "message",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.postMessage",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\ntext: \":checkered_flag: Action happens at <https://github.com/${{ github.repository }}>\"\n"
+                }
+              },
+              {
+                "name": "integration(method): confirm a message was posted",
+                "run": "test -n \"${{ steps.message.outputs.ts }}\""
+              },
+              {
+                "name": "integration(method): post a message with blocks",
+                "id": "blocks",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.postMessage",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\ntext: \":eyes: Event received...\"\nattachments:\n  - color: \"dbab09\"\n    fields:\n      - title: \"Status\"\n        short: true\n        value: \"Processing\"\n"
+                }
+              },
+              {
+                "name": "integration(method): confirm the blocks were posted",
+                "run": "test -n \"${{ steps.blocks.outputs.ts }}\""
+              },
+              {
+                "name": "integration(method): post a threaded message",
+                "id": "timer",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.postMessage",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\ntext: \"Started at `${{ steps.blocks.outputs.time }}`\"\nthread_ts: \"${{ steps.blocks.outputs.ts }}\"\n"
+                }
+              },
+              {
+                "name": "integration(incoming): confirm the thread started",
+                "run": "test -n \"${{ steps.timer.outputs.time }}\""
+              },
+              {
+                "name": "integration(method): wait to mock event processing",
+                "run": "sleep 3"
+              },
+              {
+                "name": "integration(method): update the original message",
+                "id": "finished",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.update",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\nts: \"${{ steps.blocks.outputs.ts }}\"\ntext: \":gear: Event processed!\"\nattachments:\n  - color: \"28a745\"\n    fields:\n      - title: \"Status\"\n        short: true\n        value: \"Completed\"\n"
+                }
+              },
+              {
+                "name": "integration(method): post another threaded message",
+                "id": "done",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.postMessage",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ steps.blocks.outputs.channel_id }}\ntext: \"Finished at `${{ steps.finished.outputs.time }}`\"\nthread_ts: \"${{ steps.timer.outputs.thread_ts }}\"\n"
+                }
+              },
+              {
+                "name": "integration(method): post a file into a channel",
+                "id": "file",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "files.uploadV2",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel_id: ${{ secrets.SLACK_CHANNEL_ID }}\ninitial_comment: \":robot_face: The codes exists here\"\nfile: .github/workflows/test.yml\nfilename: action.yml\n"
+                }
+              },
+              {
+                "name": "integration(method): react to the completed update message",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "reactions.add",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\ntimestamp: ${{ steps.blocks.outputs.ts }}\nname: \"tada\"\n"
+                }
+              },
+              {
+                "name": "integration(method): confirm the thread ended",
+                "run": "test -n \"${{ steps.done.outputs.time }}\""
+              },
+              {
+                "name": "integration(incoming): post a message via incoming webhook",
+                "id": "incoming",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "webhook": "${{ secrets.SLACK_INCOMING_WEBHOOK }}",
+                  "webhook-type": "incoming-webhook",
+                  "payload": "text: \"Incoming webhook test for slack send\"\nblocks:\n  - type: section\n    text:\n      type: plain_text\n      text: \":link: A message was received via incoming webhook\"\n      emoji: true\n"
+                }
+              },
+              {
+                "name": "integration(incoming): confirm a webhook was posted",
+                "run": "test -n \"${{ steps.incoming.outputs.time }}\""
+              },
+              {
+                "name": "integration(incoming): reveal contents of the github payload",
+                "run": "echo $JSON",
+                "env": {
+                  "JSON": "${{ toJSON(github) }}"
+                }
+              },
+              {
+                "name": "integration(incoming): post a message via payload file",
+                "id": "payload_file",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "payload-file-path": "./.github/resources/.slack/incoming-webhook.json",
+                  "payload-templated": true,
+                  "webhook": "${{ secrets.SLACK_INCOMING_WEBHOOK }}",
+                  "webhook-type": "incoming-webhook"
+                },
+                "env": {
+                  "JOB_STATUS": "${{ job.status }}",
+                  "ATTACHMENT_COLOR": "${{ (job.status == 'success' && 'good') || (job.status == 'failure' && 'danger') || 'warning' }}"
+                }
+              },
+              {
+                "name": "integration(incoming): confirm a payload file was posted",
+                "run": "test -n \"${{ steps.payload_file.outputs.time }}\""
+              },
+              {
+                "name": "chore(health): check up on recent changes to the health score",
+                "uses": "slackapi/slack-health-score@v0.1.1",
+                "with": {
+                  "codecov_token": "${{ secrets.CODECOV_API_TOKEN }}",
+                  "github_token": "${{ secrets.GITHUB_TOKEN }}",
+                  "extension": "js",
+                  "include": "src"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-05-17T00-01-56Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2025-05-17T00-01-56Z__ab28db9b5bded4962358ca51a278e180db3559ad.yml",
+          "workflow_name": "Tests",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 253,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "tests": 30
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "tests": 30
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 14,
+            "actions_used": [
+              "./",
+              "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+              "actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+              "codecov/codecov-action@ad3126e916f78f00edff4ed0317cf185271ccc2d",
+              "slackapi/slack-health-score@d58a419f15cdaff97e9aa7f09f95772830ab66f7"
+            ],
+            "num_run_commands": 16,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Tests",
+        "true": {
+          "pull_request_target": null,
+          "push": {
+            "branches": [
+              "main"
+            ]
+          },
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "tests": {
+            "name": "Run tests",
+            "runs-on": "ubuntu-latest",
+            "environment": "staging",
+            "permissions": {
+              "checks": "write"
+            },
+            "steps": [
+              {
+                "name": "build: checkout the latest changes",
+                "uses": "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+                "with": {
+                  "persist-credentials": false,
+                  "ref": "${{ github.event.pull_request.head.sha }}"
+                }
+              },
+              {
+                "name": "build: setup the node runtime",
+                "uses": "actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+                "with": {
+                  "cache": "npm",
+                  "cache-dependency-path": "package-lock.json",
+                  "node-version-file": ".nvmrc"
+                }
+              },
+              {
+                "name": "build: install the required dependencies",
+                "run": "npm ci"
+              },
+              {
+                "name": "unit(test): perform lints and formatting checks",
+                "run": "npm run lint"
+              },
+              {
+                "name": "unit(test): perform check of typings",
+                "run": "npm run check"
+              },
+              {
+                "name": "unit(test): perform unit test checks",
+                "run": "npm test"
+              },
+              {
+                "name": "unit(test): upload coverage to CodeCov",
+                "uses": "codecov/codecov-action@ad3126e916f78f00edff4ed0317cf185271ccc2d",
+                "with": {
+                  "directory": "./coverage",
+                  "token": "${{ secrets.CODECOV_TOKEN }}"
+                }
+              },
+              {
+                "name": "build: package code for distribution",
+                "run": "npm run build"
+              },
+              {
+                "name": "pretest(inputs): save the push event trigger commit URL",
+                "if": "contains(github.event_name, 'push')",
+                "id": "push",
+                "run": "echo \"url=$URL\" >> \"$GITHUB_OUTPUT\"\n",
+                "env": {
+                  "URL": "${{ github.event.head_commit.url }}"
+                }
+              },
+              {
+                "name": "pretest(inputs): save the pull request event trigger commit URL",
+                "if": "contains(github.event_name, 'pull_request')",
+                "id": "pull_request",
+                "run": "echo \"url=$URL\" >> \"$GITHUB_OUTPUT\"\n",
+                "env": {
+                  "URL": "${{ github.event.pull_request.html_url }}"
+                }
+              },
+              {
+                "name": "integration(wfb): send a payload to workflow builder via webhook trigger",
+                "id": "wfb",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "webhook": "${{ secrets.SLACK_WEBHOOK_TRIGGER }}",
+                  "webhook-type": "webhook-trigger",
+                  "payload": "author: ${{ github.event.sender.login }}\nchannel_id: ${{ secrets.SLACK_CHANNEL_ID }}\nevent_url: ${{ steps.push.outputs.url || steps.pull_request.outputs.url }}\nrepo_name: ${{ github.event.repository.full_name }}\nstatus: ${{ job.status }}\n"
+                }
+              },
+              {
+                "name": "integration(wfb): confirm a payload was sent",
+                "run": "test -n \"$WFB_OUTPUT_TIME\"",
+                "env": {
+                  "WFB_OUTPUT_TIME": "${{ steps.wfb.outputs.time }}"
+                }
+              },
+              {
+                "name": "integration(botToken): post a message to channel",
+                "id": "message",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.postMessage",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\ntext: \":checkered_flag: Action happens at <https://github.com/${{ github.repository }}>\"\n"
+                }
+              },
+              {
+                "name": "integration(method): confirm a message was posted",
+                "run": "test -n \"$MESSAGE_OUTPUT_TS\"",
+                "env": {
+                  "MESSAGE_OUTPUT_TS": "${{ steps.message.outputs.ts }}"
+                }
+              },
+              {
+                "name": "integration(method): post a message with blocks",
+                "id": "blocks",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.postMessage",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\ntext: \":eyes: Event received...\"\nattachments:\n  - color: \"dbab09\"\n    fields:\n      - title: \"Status\"\n        short: true\n        value: \"Processing\"\n"
+                }
+              },
+              {
+                "name": "integration(method): confirm the blocks were posted",
+                "run": "test -n \"$BLOCKS_OUTPUT_TS\"",
+                "env": {
+                  "BLOCKS_OUTPUT_TS": "${{ steps.blocks.outputs.ts }}"
+                }
+              },
+              {
+                "name": "integration(method): post a threaded message",
+                "id": "timer",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.postMessage",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\ntext: \"Started at `${{ steps.blocks.outputs.time }}`\"\nthread_ts: \"${{ steps.blocks.outputs.ts }}\"\n"
+                }
+              },
+              {
+                "name": "integration(incoming): confirm the thread started",
+                "run": "test -n \"$TIMER_OUTPUT_TIME\"",
+                "env": {
+                  "TIMER_OUTPUT_TIME": "${{ steps.timer.outputs.time }}"
+                }
+              },
+              {
+                "name": "integration(method): wait to mock event processing",
+                "run": "sleep 3"
+              },
+              {
+                "name": "integration(method): update the original message",
+                "id": "finished",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.update",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\nts: \"${{ steps.blocks.outputs.ts }}\"\ntext: \":gear: Event processed!\"\nattachments:\n  - color: \"28a745\"\n    fields:\n      - title: \"Status\"\n        short: true\n        value: \"Completed\"\n"
+                }
+              },
+              {
+                "name": "integration(method): post another threaded message",
+                "id": "done",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.postMessage",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ steps.blocks.outputs.channel_id }}\ntext: \"Finished at `${{ steps.finished.outputs.time }}`\"\nthread_ts: \"${{ steps.timer.outputs.thread_ts }}\"\n"
+                }
+              },
+              {
+                "name": "integration(method): post a file into a channel",
+                "id": "file",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "files.uploadV2",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel_id: ${{ secrets.SLACK_CHANNEL_ID }}\ninitial_comment: \":robot_face: The codes exists here\"\nfile: .github/workflows/test.yml\nfilename: action.yml\n"
+                }
+              },
+              {
+                "name": "integration(method): react to the completed update message",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "reactions.add",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\ntimestamp: ${{ steps.blocks.outputs.ts }}\nname: \"tada\"\n"
+                }
+              },
+              {
+                "name": "integration(method): confirm the thread ended",
+                "run": "test -n \"$DONE_OUTPUT_TIME\"",
+                "env": {
+                  "DONE_OUTPUT_TIME": "${{ steps.done.outputs.time }}"
+                }
+              },
+              {
+                "name": "integration(incoming): post a message via incoming webhook",
+                "id": "incoming",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "webhook": "${{ secrets.SLACK_INCOMING_WEBHOOK }}",
+                  "webhook-type": "incoming-webhook",
+                  "payload": "text: \"Incoming webhook test for slack send\"\nblocks:\n  - type: section\n    text:\n      type: plain_text\n      text: \":link: A message was received via incoming webhook\"\n      emoji: true\n"
+                }
+              },
+              {
+                "name": "integration(incoming): confirm a webhook was posted",
+                "run": "test -n \"$INCOMING_WEBHOOK_OUTPUT_TIME\"",
+                "env": {
+                  "INCOMING_WEBHOOK_OUTPUT_TIME": "${{ steps.incoming.outputs.time }}"
+                }
+              },
+              {
+                "name": "integration(incoming): reveal contents of the github payload",
+                "run": "echo \"$JSON\"",
+                "env": {
+                  "JSON": "${{ toJSON(github) }}"
+                }
+              },
+              {
+                "name": "integration(incoming): post a message via payload file",
+                "id": "payload_file",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "payload-file-path": "./.github/resources/.slack/incoming-webhook.json",
+                  "payload-templated": true,
+                  "webhook": "${{ secrets.SLACK_INCOMING_WEBHOOK }}",
+                  "webhook-type": "incoming-webhook"
+                },
+                "env": {
+                  "JOB_STATUS": "${{ job.status }}",
+                  "ATTACHMENT_COLOR": "${{ (job.status == 'success' && 'good') || (job.status == 'failure' && 'danger') || 'warning' }}"
+                }
+              },
+              {
+                "name": "integration(incoming): confirm a payload file was posted",
+                "run": "test -n \"$PAYLOAD_FILE_OUTPUT_TIME\"",
+                "env": {
+                  "PAYLOAD_FILE_OUTPUT_TIME": "${{ steps.payload_file.outputs.time }}"
+                }
+              },
+              {
+                "name": "chore(health): check up on recent changes to the health score",
+                "uses": "slackapi/slack-health-score@d58a419f15cdaff97e9aa7f09f95772830ab66f7",
+                "with": {
+                  "codecov_token": "${{ secrets.CODECOV_API_TOKEN }}",
+                  "github_token": "${{ secrets.GITHUB_TOKEN }}",
+                  "extension": "js",
+                  "include": "src"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-05-17T00-08-46Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2025-05-17T00-08-46Z__f234e852e1ff9c0a5f1d26da7fce48631c5cc199.yml",
+          "workflow_name": "Tests",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 253,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "tests": 30
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "tests": 30
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 14,
+            "actions_used": [
+              "./",
+              "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+              "actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+              "codecov/codecov-action@18283e04ce6e62d37312384ff67231eb8fd56d24",
+              "slackapi/slack-health-score@d58a419f15cdaff97e9aa7f09f95772830ab66f7"
+            ],
+            "num_run_commands": 16,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Tests",
+        "true": {
+          "pull_request_target": null,
+          "push": {
+            "branches": [
+              "main"
+            ]
+          },
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "tests": {
+            "name": "Run tests",
+            "runs-on": "ubuntu-latest",
+            "environment": "staging",
+            "permissions": {
+              "checks": "write"
+            },
+            "steps": [
+              {
+                "name": "build: checkout the latest changes",
+                "uses": "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+                "with": {
+                  "persist-credentials": false,
+                  "ref": "${{ github.event.pull_request.head.sha }}"
+                }
+              },
+              {
+                "name": "build: setup the node runtime",
+                "uses": "actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+                "with": {
+                  "cache": "npm",
+                  "cache-dependency-path": "package-lock.json",
+                  "node-version-file": ".nvmrc"
+                }
+              },
+              {
+                "name": "build: install the required dependencies",
+                "run": "npm ci"
+              },
+              {
+                "name": "unit(test): perform lints and formatting checks",
+                "run": "npm run lint"
+              },
+              {
+                "name": "unit(test): perform check of typings",
+                "run": "npm run check"
+              },
+              {
+                "name": "unit(test): perform unit test checks",
+                "run": "npm test"
+              },
+              {
+                "name": "unit(test): upload coverage to CodeCov",
+                "uses": "codecov/codecov-action@18283e04ce6e62d37312384ff67231eb8fd56d24",
+                "with": {
+                  "directory": "./coverage",
+                  "token": "${{ secrets.CODECOV_TOKEN }}"
+                }
+              },
+              {
+                "name": "build: package code for distribution",
+                "run": "npm run build"
+              },
+              {
+                "name": "pretest(inputs): save the push event trigger commit URL",
+                "if": "contains(github.event_name, 'push')",
+                "id": "push",
+                "run": "echo \"url=$URL\" >> \"$GITHUB_OUTPUT\"\n",
+                "env": {
+                  "URL": "${{ github.event.head_commit.url }}"
+                }
+              },
+              {
+                "name": "pretest(inputs): save the pull request event trigger commit URL",
+                "if": "contains(github.event_name, 'pull_request')",
+                "id": "pull_request",
+                "run": "echo \"url=$URL\" >> \"$GITHUB_OUTPUT\"\n",
+                "env": {
+                  "URL": "${{ github.event.pull_request.html_url }}"
+                }
+              },
+              {
+                "name": "integration(wfb): send a payload to workflow builder via webhook trigger",
+                "id": "wfb",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "webhook": "${{ secrets.SLACK_WEBHOOK_TRIGGER }}",
+                  "webhook-type": "webhook-trigger",
+                  "payload": "author: ${{ github.event.sender.login }}\nchannel_id: ${{ secrets.SLACK_CHANNEL_ID }}\nevent_url: ${{ steps.push.outputs.url || steps.pull_request.outputs.url }}\nrepo_name: ${{ github.event.repository.full_name }}\nstatus: ${{ job.status }}\n"
+                }
+              },
+              {
+                "name": "integration(wfb): confirm a payload was sent",
+                "run": "test -n \"$WFB_OUTPUT_TIME\"",
+                "env": {
+                  "WFB_OUTPUT_TIME": "${{ steps.wfb.outputs.time }}"
+                }
+              },
+              {
+                "name": "integration(botToken): post a message to channel",
+                "id": "message",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.postMessage",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\ntext: \":checkered_flag: Action happens at <https://github.com/${{ github.repository }}>\"\n"
+                }
+              },
+              {
+                "name": "integration(method): confirm a message was posted",
+                "run": "test -n \"$MESSAGE_OUTPUT_TS\"",
+                "env": {
+                  "MESSAGE_OUTPUT_TS": "${{ steps.message.outputs.ts }}"
+                }
+              },
+              {
+                "name": "integration(method): post a message with blocks",
+                "id": "blocks",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.postMessage",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\ntext: \":eyes: Event received...\"\nattachments:\n  - color: \"dbab09\"\n    fields:\n      - title: \"Status\"\n        short: true\n        value: \"Processing\"\n"
+                }
+              },
+              {
+                "name": "integration(method): confirm the blocks were posted",
+                "run": "test -n \"$BLOCKS_OUTPUT_TS\"",
+                "env": {
+                  "BLOCKS_OUTPUT_TS": "${{ steps.blocks.outputs.ts }}"
+                }
+              },
+              {
+                "name": "integration(method): post a threaded message",
+                "id": "timer",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.postMessage",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\ntext: \"Started at `${{ steps.blocks.outputs.time }}`\"\nthread_ts: \"${{ steps.blocks.outputs.ts }}\"\n"
+                }
+              },
+              {
+                "name": "integration(incoming): confirm the thread started",
+                "run": "test -n \"$TIMER_OUTPUT_TIME\"",
+                "env": {
+                  "TIMER_OUTPUT_TIME": "${{ steps.timer.outputs.time }}"
+                }
+              },
+              {
+                "name": "integration(method): wait to mock event processing",
+                "run": "sleep 3"
+              },
+              {
+                "name": "integration(method): update the original message",
+                "id": "finished",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.update",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\nts: \"${{ steps.blocks.outputs.ts }}\"\ntext: \":gear: Event processed!\"\nattachments:\n  - color: \"28a745\"\n    fields:\n      - title: \"Status\"\n        short: true\n        value: \"Completed\"\n"
+                }
+              },
+              {
+                "name": "integration(method): post another threaded message",
+                "id": "done",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.postMessage",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ steps.blocks.outputs.channel_id }}\ntext: \"Finished at `${{ steps.finished.outputs.time }}`\"\nthread_ts: \"${{ steps.timer.outputs.thread_ts }}\"\n"
+                }
+              },
+              {
+                "name": "integration(method): post a file into a channel",
+                "id": "file",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "files.uploadV2",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel_id: ${{ secrets.SLACK_CHANNEL_ID }}\ninitial_comment: \":robot_face: The codes exists here\"\nfile: .github/workflows/test.yml\nfilename: action.yml\n"
+                }
+              },
+              {
+                "name": "integration(method): react to the completed update message",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "reactions.add",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\ntimestamp: ${{ steps.blocks.outputs.ts }}\nname: \"tada\"\n"
+                }
+              },
+              {
+                "name": "integration(method): confirm the thread ended",
+                "run": "test -n \"$DONE_OUTPUT_TIME\"",
+                "env": {
+                  "DONE_OUTPUT_TIME": "${{ steps.done.outputs.time }}"
+                }
+              },
+              {
+                "name": "integration(incoming): post a message via incoming webhook",
+                "id": "incoming",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "webhook": "${{ secrets.SLACK_INCOMING_WEBHOOK }}",
+                  "webhook-type": "incoming-webhook",
+                  "payload": "text: \"Incoming webhook test for slack send\"\nblocks:\n  - type: section\n    text:\n      type: plain_text\n      text: \":link: A message was received via incoming webhook\"\n      emoji: true\n"
+                }
+              },
+              {
+                "name": "integration(incoming): confirm a webhook was posted",
+                "run": "test -n \"$INCOMING_WEBHOOK_OUTPUT_TIME\"",
+                "env": {
+                  "INCOMING_WEBHOOK_OUTPUT_TIME": "${{ steps.incoming.outputs.time }}"
+                }
+              },
+              {
+                "name": "integration(incoming): reveal contents of the github payload",
+                "run": "echo \"$JSON\"",
+                "env": {
+                  "JSON": "${{ toJSON(github) }}"
+                }
+              },
+              {
+                "name": "integration(incoming): post a message via payload file",
+                "id": "payload_file",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "payload-file-path": "./.github/resources/.slack/incoming-webhook.json",
+                  "payload-templated": true,
+                  "webhook": "${{ secrets.SLACK_INCOMING_WEBHOOK }}",
+                  "webhook-type": "incoming-webhook"
+                },
+                "env": {
+                  "JOB_STATUS": "${{ job.status }}",
+                  "ATTACHMENT_COLOR": "${{ (job.status == 'success' && 'good') || (job.status == 'failure' && 'danger') || 'warning' }}"
+                }
+              },
+              {
+                "name": "integration(incoming): confirm a payload file was posted",
+                "run": "test -n \"$PAYLOAD_FILE_OUTPUT_TIME\"",
+                "env": {
+                  "PAYLOAD_FILE_OUTPUT_TIME": "${{ steps.payload_file.outputs.time }}"
+                }
+              },
+              {
+                "name": "chore(health): check up on recent changes to the health score",
+                "uses": "slackapi/slack-health-score@d58a419f15cdaff97e9aa7f09f95772830ab66f7",
+                "with": {
+                  "codecov_token": "${{ secrets.CODECOV_API_TOKEN }}",
+                  "github_token": "${{ secrets.GITHUB_TOKEN }}",
+                  "extension": "js",
+                  "include": "src"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-10-01T13-44-07Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2025-10-01T13-44-07Z__daf3fa45409cc1bf9be43d1e332513d37f86f167.yml",
+          "workflow_name": "Tests",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 253,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "tests": 30
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "tests": 30
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 14,
+            "actions_used": [
+              "./",
+              "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+              "actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444",
+              "codecov/codecov-action@18283e04ce6e62d37312384ff67231eb8fd56d24",
+              "slackapi/slack-health-score@d58a419f15cdaff97e9aa7f09f95772830ab66f7"
+            ],
+            "num_run_commands": 16,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Tests",
+        "true": {
+          "pull_request_target": null,
+          "push": {
+            "branches": [
+              "main"
+            ]
+          },
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "tests": {
+            "name": "Run tests",
+            "runs-on": "ubuntu-latest",
+            "environment": "staging",
+            "permissions": {
+              "checks": "write"
+            },
+            "steps": [
+              {
+                "name": "build: checkout the latest changes",
+                "uses": "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+                "with": {
+                  "persist-credentials": false,
+                  "ref": "${{ github.event.pull_request.head.sha }}"
+                }
+              },
+              {
+                "name": "build: setup the node runtime",
+                "uses": "actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444",
+                "with": {
+                  "cache": "npm",
+                  "cache-dependency-path": "package-lock.json",
+                  "node-version-file": ".nvmrc"
+                }
+              },
+              {
+                "name": "build: install the required dependencies",
+                "run": "npm ci"
+              },
+              {
+                "name": "unit(test): perform lints and formatting checks",
+                "run": "npm run lint"
+              },
+              {
+                "name": "unit(test): perform check of typings",
+                "run": "npm run check"
+              },
+              {
+                "name": "unit(test): perform unit test checks",
+                "run": "npm test"
+              },
+              {
+                "name": "unit(test): upload coverage to CodeCov",
+                "uses": "codecov/codecov-action@18283e04ce6e62d37312384ff67231eb8fd56d24",
+                "with": {
+                  "directory": "./coverage",
+                  "token": "${{ secrets.CODECOV_TOKEN }}"
+                }
+              },
+              {
+                "name": "build: package code for distribution",
+                "run": "npm run build"
+              },
+              {
+                "name": "pretest(inputs): save the push event trigger commit URL",
+                "if": "contains(github.event_name, 'push')",
+                "id": "push",
+                "run": "echo \"url=$URL\" >> \"$GITHUB_OUTPUT\"\n",
+                "env": {
+                  "URL": "${{ github.event.head_commit.url }}"
+                }
+              },
+              {
+                "name": "pretest(inputs): save the pull request event trigger commit URL",
+                "if": "contains(github.event_name, 'pull_request')",
+                "id": "pull_request",
+                "run": "echo \"url=$URL\" >> \"$GITHUB_OUTPUT\"\n",
+                "env": {
+                  "URL": "${{ github.event.pull_request.html_url }}"
+                }
+              },
+              {
+                "name": "integration(wfb): send a payload to workflow builder via webhook trigger",
+                "id": "wfb",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "webhook": "${{ secrets.SLACK_WEBHOOK_TRIGGER }}",
+                  "webhook-type": "webhook-trigger",
+                  "payload": "author: ${{ github.event.sender.login }}\nchannel_id: ${{ secrets.SLACK_CHANNEL_ID }}\nevent_url: ${{ steps.push.outputs.url || steps.pull_request.outputs.url }}\nrepo_name: ${{ github.event.repository.full_name }}\nstatus: ${{ job.status }}\n"
+                }
+              },
+              {
+                "name": "integration(wfb): confirm a payload was sent",
+                "run": "test -n \"$WFB_OUTPUT_TIME\"",
+                "env": {
+                  "WFB_OUTPUT_TIME": "${{ steps.wfb.outputs.time }}"
+                }
+              },
+              {
+                "name": "integration(botToken): post a message to channel",
+                "id": "message",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.postMessage",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\ntext: \":checkered_flag: Action happens at <https://github.com/${{ github.repository }}>\"\n"
+                }
+              },
+              {
+                "name": "integration(method): confirm a message was posted",
+                "run": "test -n \"$MESSAGE_OUTPUT_TS\"",
+                "env": {
+                  "MESSAGE_OUTPUT_TS": "${{ steps.message.outputs.ts }}"
+                }
+              },
+              {
+                "name": "integration(method): post a message with blocks",
+                "id": "blocks",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.postMessage",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\ntext: \":eyes: Event received...\"\nattachments:\n  - color: \"dbab09\"\n    fields:\n      - title: \"Status\"\n        short: true\n        value: \"Processing\"\n"
+                }
+              },
+              {
+                "name": "integration(method): confirm the blocks were posted",
+                "run": "test -n \"$BLOCKS_OUTPUT_TS\"",
+                "env": {
+                  "BLOCKS_OUTPUT_TS": "${{ steps.blocks.outputs.ts }}"
+                }
+              },
+              {
+                "name": "integration(method): post a threaded message",
+                "id": "timer",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.postMessage",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\ntext: \"Started at `${{ steps.blocks.outputs.time }}`\"\nthread_ts: \"${{ steps.blocks.outputs.ts }}\"\n"
+                }
+              },
+              {
+                "name": "integration(incoming): confirm the thread started",
+                "run": "test -n \"$TIMER_OUTPUT_TIME\"",
+                "env": {
+                  "TIMER_OUTPUT_TIME": "${{ steps.timer.outputs.time }}"
+                }
+              },
+              {
+                "name": "integration(method): wait to mock event processing",
+                "run": "sleep 3"
+              },
+              {
+                "name": "integration(method): update the original message",
+                "id": "finished",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.update",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\nts: \"${{ steps.blocks.outputs.ts }}\"\ntext: \":gear: Event processed!\"\nattachments:\n  - color: \"28a745\"\n    fields:\n      - title: \"Status\"\n        short: true\n        value: \"Completed\"\n"
+                }
+              },
+              {
+                "name": "integration(method): post another threaded message",
+                "id": "done",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.postMessage",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ steps.blocks.outputs.channel_id }}\ntext: \"Finished at `${{ steps.finished.outputs.time }}`\"\nthread_ts: \"${{ steps.timer.outputs.thread_ts }}\"\n"
+                }
+              },
+              {
+                "name": "integration(method): post a file into a channel",
+                "id": "file",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "files.uploadV2",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel_id: ${{ secrets.SLACK_CHANNEL_ID }}\ninitial_comment: \":robot_face: The codes exists here\"\nfile: .github/workflows/test.yml\nfilename: action.yml\n"
+                }
+              },
+              {
+                "name": "integration(method): react to the completed update message",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "reactions.add",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\ntimestamp: ${{ steps.blocks.outputs.ts }}\nname: \"tada\"\n"
+                }
+              },
+              {
+                "name": "integration(method): confirm the thread ended",
+                "run": "test -n \"$DONE_OUTPUT_TIME\"",
+                "env": {
+                  "DONE_OUTPUT_TIME": "${{ steps.done.outputs.time }}"
+                }
+              },
+              {
+                "name": "integration(incoming): post a message via incoming webhook",
+                "id": "incoming",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "webhook": "${{ secrets.SLACK_INCOMING_WEBHOOK }}",
+                  "webhook-type": "incoming-webhook",
+                  "payload": "text: \"Incoming webhook test for slack send\"\nblocks:\n  - type: section\n    text:\n      type: plain_text\n      text: \":link: A message was received via incoming webhook\"\n      emoji: true\n"
+                }
+              },
+              {
+                "name": "integration(incoming): confirm a webhook was posted",
+                "run": "test -n \"$INCOMING_WEBHOOK_OUTPUT_TIME\"",
+                "env": {
+                  "INCOMING_WEBHOOK_OUTPUT_TIME": "${{ steps.incoming.outputs.time }}"
+                }
+              },
+              {
+                "name": "integration(incoming): reveal contents of the github payload",
+                "run": "echo \"$JSON\"",
+                "env": {
+                  "JSON": "${{ toJSON(github) }}"
+                }
+              },
+              {
+                "name": "integration(incoming): post a message via payload file",
+                "id": "payload_file",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "payload-file-path": "./.github/resources/.slack/incoming-webhook.json",
+                  "payload-templated": true,
+                  "webhook": "${{ secrets.SLACK_INCOMING_WEBHOOK }}",
+                  "webhook-type": "incoming-webhook"
+                },
+                "env": {
+                  "JOB_STATUS": "${{ job.status }}",
+                  "ATTACHMENT_COLOR": "${{ (job.status == 'success' && 'good') || (job.status == 'failure' && 'danger') || 'warning' }}"
+                }
+              },
+              {
+                "name": "integration(incoming): confirm a payload file was posted",
+                "run": "test -n \"$PAYLOAD_FILE_OUTPUT_TIME\"",
+                "env": {
+                  "PAYLOAD_FILE_OUTPUT_TIME": "${{ steps.payload_file.outputs.time }}"
+                }
+              },
+              {
+                "name": "chore(health): check up on recent changes to the health score",
+                "uses": "slackapi/slack-health-score@d58a419f15cdaff97e9aa7f09f95772830ab66f7",
+                "with": {
+                  "codecov_token": "${{ secrets.CODECOV_API_TOKEN }}",
+                  "github_token": "${{ secrets.GITHUB_TOKEN }}",
+                  "extension": "js",
+                  "include": "src"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-10-01T13-44-35Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2025-10-01T13-44-35Z__e2e9063c789fda51836da4c45401204e5d80e6ee.yml",
+          "workflow_name": "Tests",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 253,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "tests": 30
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "tests": 30
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 14,
+            "actions_used": [
+              "./",
+              "actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8",
+              "actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444",
+              "codecov/codecov-action@18283e04ce6e62d37312384ff67231eb8fd56d24",
+              "slackapi/slack-health-score@d58a419f15cdaff97e9aa7f09f95772830ab66f7"
+            ],
+            "num_run_commands": 16,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Tests",
+        "true": {
+          "pull_request_target": null,
+          "push": {
+            "branches": [
+              "main"
+            ]
+          },
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "tests": {
+            "name": "Run tests",
+            "runs-on": "ubuntu-latest",
+            "environment": "staging",
+            "permissions": {
+              "checks": "write"
+            },
+            "steps": [
+              {
+                "name": "build: checkout the latest changes",
+                "uses": "actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8",
+                "with": {
+                  "persist-credentials": false,
+                  "ref": "${{ github.event.pull_request.head.sha }}"
+                }
+              },
+              {
+                "name": "build: setup the node runtime",
+                "uses": "actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444",
+                "with": {
+                  "cache": "npm",
+                  "cache-dependency-path": "package-lock.json",
+                  "node-version-file": ".nvmrc"
+                }
+              },
+              {
+                "name": "build: install the required dependencies",
+                "run": "npm ci"
+              },
+              {
+                "name": "unit(test): perform lints and formatting checks",
+                "run": "npm run lint"
+              },
+              {
+                "name": "unit(test): perform check of typings",
+                "run": "npm run check"
+              },
+              {
+                "name": "unit(test): perform unit test checks",
+                "run": "npm test"
+              },
+              {
+                "name": "unit(test): upload coverage to CodeCov",
+                "uses": "codecov/codecov-action@18283e04ce6e62d37312384ff67231eb8fd56d24",
+                "with": {
+                  "directory": "./coverage",
+                  "token": "${{ secrets.CODECOV_TOKEN }}"
+                }
+              },
+              {
+                "name": "build: package code for distribution",
+                "run": "npm run build"
+              },
+              {
+                "name": "pretest(inputs): save the push event trigger commit URL",
+                "if": "contains(github.event_name, 'push')",
+                "id": "push",
+                "run": "echo \"url=$URL\" >> \"$GITHUB_OUTPUT\"\n",
+                "env": {
+                  "URL": "${{ github.event.head_commit.url }}"
+                }
+              },
+              {
+                "name": "pretest(inputs): save the pull request event trigger commit URL",
+                "if": "contains(github.event_name, 'pull_request')",
+                "id": "pull_request",
+                "run": "echo \"url=$URL\" >> \"$GITHUB_OUTPUT\"\n",
+                "env": {
+                  "URL": "${{ github.event.pull_request.html_url }}"
+                }
+              },
+              {
+                "name": "integration(wfb): send a payload to workflow builder via webhook trigger",
+                "id": "wfb",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "webhook": "${{ secrets.SLACK_WEBHOOK_TRIGGER }}",
+                  "webhook-type": "webhook-trigger",
+                  "payload": "author: ${{ github.event.sender.login }}\nchannel_id: ${{ secrets.SLACK_CHANNEL_ID }}\nevent_url: ${{ steps.push.outputs.url || steps.pull_request.outputs.url }}\nrepo_name: ${{ github.event.repository.full_name }}\nstatus: ${{ job.status }}\n"
+                }
+              },
+              {
+                "name": "integration(wfb): confirm a payload was sent",
+                "run": "test -n \"$WFB_OUTPUT_TIME\"",
+                "env": {
+                  "WFB_OUTPUT_TIME": "${{ steps.wfb.outputs.time }}"
+                }
+              },
+              {
+                "name": "integration(botToken): post a message to channel",
+                "id": "message",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.postMessage",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\ntext: \":checkered_flag: Action happens at <https://github.com/${{ github.repository }}>\"\n"
+                }
+              },
+              {
+                "name": "integration(method): confirm a message was posted",
+                "run": "test -n \"$MESSAGE_OUTPUT_TS\"",
+                "env": {
+                  "MESSAGE_OUTPUT_TS": "${{ steps.message.outputs.ts }}"
+                }
+              },
+              {
+                "name": "integration(method): post a message with blocks",
+                "id": "blocks",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.postMessage",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\ntext: \":eyes: Event received...\"\nattachments:\n  - color: \"dbab09\"\n    fields:\n      - title: \"Status\"\n        short: true\n        value: \"Processing\"\n"
+                }
+              },
+              {
+                "name": "integration(method): confirm the blocks were posted",
+                "run": "test -n \"$BLOCKS_OUTPUT_TS\"",
+                "env": {
+                  "BLOCKS_OUTPUT_TS": "${{ steps.blocks.outputs.ts }}"
+                }
+              },
+              {
+                "name": "integration(method): post a threaded message",
+                "id": "timer",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.postMessage",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\ntext: \"Started at `${{ steps.blocks.outputs.time }}`\"\nthread_ts: \"${{ steps.blocks.outputs.ts }}\"\n"
+                }
+              },
+              {
+                "name": "integration(incoming): confirm the thread started",
+                "run": "test -n \"$TIMER_OUTPUT_TIME\"",
+                "env": {
+                  "TIMER_OUTPUT_TIME": "${{ steps.timer.outputs.time }}"
+                }
+              },
+              {
+                "name": "integration(method): wait to mock event processing",
+                "run": "sleep 3"
+              },
+              {
+                "name": "integration(method): update the original message",
+                "id": "finished",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.update",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\nts: \"${{ steps.blocks.outputs.ts }}\"\ntext: \":gear: Event processed!\"\nattachments:\n  - color: \"28a745\"\n    fields:\n      - title: \"Status\"\n        short: true\n        value: \"Completed\"\n"
+                }
+              },
+              {
+                "name": "integration(method): post another threaded message",
+                "id": "done",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.postMessage",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ steps.blocks.outputs.channel_id }}\ntext: \"Finished at `${{ steps.finished.outputs.time }}`\"\nthread_ts: \"${{ steps.timer.outputs.thread_ts }}\"\n"
+                }
+              },
+              {
+                "name": "integration(method): post a file into a channel",
+                "id": "file",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "files.uploadV2",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel_id: ${{ secrets.SLACK_CHANNEL_ID }}\ninitial_comment: \":robot_face: The codes exists here\"\nfile: .github/workflows/test.yml\nfilename: action.yml\n"
+                }
+              },
+              {
+                "name": "integration(method): react to the completed update message",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "reactions.add",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\ntimestamp: ${{ steps.blocks.outputs.ts }}\nname: \"tada\"\n"
+                }
+              },
+              {
+                "name": "integration(method): confirm the thread ended",
+                "run": "test -n \"$DONE_OUTPUT_TIME\"",
+                "env": {
+                  "DONE_OUTPUT_TIME": "${{ steps.done.outputs.time }}"
+                }
+              },
+              {
+                "name": "integration(incoming): post a message via incoming webhook",
+                "id": "incoming",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "webhook": "${{ secrets.SLACK_INCOMING_WEBHOOK }}",
+                  "webhook-type": "incoming-webhook",
+                  "payload": "text: \"Incoming webhook test for slack send\"\nblocks:\n  - type: section\n    text:\n      type: plain_text\n      text: \":link: A message was received via incoming webhook\"\n      emoji: true\n"
+                }
+              },
+              {
+                "name": "integration(incoming): confirm a webhook was posted",
+                "run": "test -n \"$INCOMING_WEBHOOK_OUTPUT_TIME\"",
+                "env": {
+                  "INCOMING_WEBHOOK_OUTPUT_TIME": "${{ steps.incoming.outputs.time }}"
+                }
+              },
+              {
+                "name": "integration(incoming): reveal contents of the github payload",
+                "run": "echo \"$JSON\"",
+                "env": {
+                  "JSON": "${{ toJSON(github) }}"
+                }
+              },
+              {
+                "name": "integration(incoming): post a message via payload file",
+                "id": "payload_file",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "payload-file-path": "./.github/resources/.slack/incoming-webhook.json",
+                  "payload-templated": true,
+                  "webhook": "${{ secrets.SLACK_INCOMING_WEBHOOK }}",
+                  "webhook-type": "incoming-webhook"
+                },
+                "env": {
+                  "JOB_STATUS": "${{ job.status }}",
+                  "ATTACHMENT_COLOR": "${{ (job.status == 'success' && 'good') || (job.status == 'failure' && 'danger') || 'warning' }}"
+                }
+              },
+              {
+                "name": "integration(incoming): confirm a payload file was posted",
+                "run": "test -n \"$PAYLOAD_FILE_OUTPUT_TIME\"",
+                "env": {
+                  "PAYLOAD_FILE_OUTPUT_TIME": "${{ steps.payload_file.outputs.time }}"
+                }
+              },
+              {
+                "name": "chore(health): check up on recent changes to the health score",
+                "uses": "slackapi/slack-health-score@d58a419f15cdaff97e9aa7f09f95772830ab66f7",
+                "with": {
+                  "codecov_token": "${{ secrets.CODECOV_API_TOKEN }}",
+                  "github_token": "${{ secrets.GITHUB_TOKEN }}",
+                  "extension": "js",
+                  "include": "src"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-10-01T13-44-56Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2025-10-01T13-44-56Z__b83c1765704352e7e376d9a31a4f0a191ed53a0e.yml",
+          "workflow_name": "Tests",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 253,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "tests": 30
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "tests": 30
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 14,
+            "actions_used": [
+              "./",
+              "actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8",
+              "actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444",
+              "codecov/codecov-action@5a1091511ad55cbe89839c7260b706298ca349f7",
+              "slackapi/slack-health-score@d58a419f15cdaff97e9aa7f09f95772830ab66f7"
+            ],
+            "num_run_commands": 16,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Tests",
+        "true": {
+          "pull_request_target": null,
+          "push": {
+            "branches": [
+              "main"
+            ]
+          },
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "tests": {
+            "name": "Run tests",
+            "runs-on": "ubuntu-latest",
+            "environment": "staging",
+            "permissions": {
+              "checks": "write"
+            },
+            "steps": [
+              {
+                "name": "build: checkout the latest changes",
+                "uses": "actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8",
+                "with": {
+                  "persist-credentials": false,
+                  "ref": "${{ github.event.pull_request.head.sha }}"
+                }
+              },
+              {
+                "name": "build: setup the node runtime",
+                "uses": "actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444",
+                "with": {
+                  "cache": "npm",
+                  "cache-dependency-path": "package-lock.json",
+                  "node-version-file": ".nvmrc"
+                }
+              },
+              {
+                "name": "build: install the required dependencies",
+                "run": "npm ci"
+              },
+              {
+                "name": "unit(test): perform lints and formatting checks",
+                "run": "npm run lint"
+              },
+              {
+                "name": "unit(test): perform check of typings",
+                "run": "npm run check"
+              },
+              {
+                "name": "unit(test): perform unit test checks",
+                "run": "npm test"
+              },
+              {
+                "name": "unit(test): upload coverage to CodeCov",
+                "uses": "codecov/codecov-action@5a1091511ad55cbe89839c7260b706298ca349f7",
+                "with": {
+                  "directory": "./coverage",
+                  "token": "${{ secrets.CODECOV_TOKEN }}"
+                }
+              },
+              {
+                "name": "build: package code for distribution",
+                "run": "npm run build"
+              },
+              {
+                "name": "pretest(inputs): save the push event trigger commit URL",
+                "if": "contains(github.event_name, 'push')",
+                "id": "push",
+                "run": "echo \"url=$URL\" >> \"$GITHUB_OUTPUT\"\n",
+                "env": {
+                  "URL": "${{ github.event.head_commit.url }}"
+                }
+              },
+              {
+                "name": "pretest(inputs): save the pull request event trigger commit URL",
+                "if": "contains(github.event_name, 'pull_request')",
+                "id": "pull_request",
+                "run": "echo \"url=$URL\" >> \"$GITHUB_OUTPUT\"\n",
+                "env": {
+                  "URL": "${{ github.event.pull_request.html_url }}"
+                }
+              },
+              {
+                "name": "integration(wfb): send a payload to workflow builder via webhook trigger",
+                "id": "wfb",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "webhook": "${{ secrets.SLACK_WEBHOOK_TRIGGER }}",
+                  "webhook-type": "webhook-trigger",
+                  "payload": "author: ${{ github.event.sender.login }}\nchannel_id: ${{ secrets.SLACK_CHANNEL_ID }}\nevent_url: ${{ steps.push.outputs.url || steps.pull_request.outputs.url }}\nrepo_name: ${{ github.event.repository.full_name }}\nstatus: ${{ job.status }}\n"
+                }
+              },
+              {
+                "name": "integration(wfb): confirm a payload was sent",
+                "run": "test -n \"$WFB_OUTPUT_TIME\"",
+                "env": {
+                  "WFB_OUTPUT_TIME": "${{ steps.wfb.outputs.time }}"
+                }
+              },
+              {
+                "name": "integration(botToken): post a message to channel",
+                "id": "message",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.postMessage",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\ntext: \":checkered_flag: Action happens at <https://github.com/${{ github.repository }}>\"\n"
+                }
+              },
+              {
+                "name": "integration(method): confirm a message was posted",
+                "run": "test -n \"$MESSAGE_OUTPUT_TS\"",
+                "env": {
+                  "MESSAGE_OUTPUT_TS": "${{ steps.message.outputs.ts }}"
+                }
+              },
+              {
+                "name": "integration(method): post a message with blocks",
+                "id": "blocks",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.postMessage",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\ntext: \":eyes: Event received...\"\nattachments:\n  - color: \"dbab09\"\n    fields:\n      - title: \"Status\"\n        short: true\n        value: \"Processing\"\n"
+                }
+              },
+              {
+                "name": "integration(method): confirm the blocks were posted",
+                "run": "test -n \"$BLOCKS_OUTPUT_TS\"",
+                "env": {
+                  "BLOCKS_OUTPUT_TS": "${{ steps.blocks.outputs.ts }}"
+                }
+              },
+              {
+                "name": "integration(method): post a threaded message",
+                "id": "timer",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.postMessage",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\ntext: \"Started at `${{ steps.blocks.outputs.time }}`\"\nthread_ts: \"${{ steps.blocks.outputs.ts }}\"\n"
+                }
+              },
+              {
+                "name": "integration(incoming): confirm the thread started",
+                "run": "test -n \"$TIMER_OUTPUT_TIME\"",
+                "env": {
+                  "TIMER_OUTPUT_TIME": "${{ steps.timer.outputs.time }}"
+                }
+              },
+              {
+                "name": "integration(method): wait to mock event processing",
+                "run": "sleep 3"
+              },
+              {
+                "name": "integration(method): update the original message",
+                "id": "finished",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.update",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\nts: \"${{ steps.blocks.outputs.ts }}\"\ntext: \":gear: Event processed!\"\nattachments:\n  - color: \"28a745\"\n    fields:\n      - title: \"Status\"\n        short: true\n        value: \"Completed\"\n"
+                }
+              },
+              {
+                "name": "integration(method): post another threaded message",
+                "id": "done",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.postMessage",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ steps.blocks.outputs.channel_id }}\ntext: \"Finished at `${{ steps.finished.outputs.time }}`\"\nthread_ts: \"${{ steps.timer.outputs.thread_ts }}\"\n"
+                }
+              },
+              {
+                "name": "integration(method): post a file into a channel",
+                "id": "file",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "files.uploadV2",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel_id: ${{ secrets.SLACK_CHANNEL_ID }}\ninitial_comment: \":robot_face: The codes exists here\"\nfile: .github/workflows/test.yml\nfilename: action.yml\n"
+                }
+              },
+              {
+                "name": "integration(method): react to the completed update message",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "reactions.add",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\ntimestamp: ${{ steps.blocks.outputs.ts }}\nname: \"tada\"\n"
+                }
+              },
+              {
+                "name": "integration(method): confirm the thread ended",
+                "run": "test -n \"$DONE_OUTPUT_TIME\"",
+                "env": {
+                  "DONE_OUTPUT_TIME": "${{ steps.done.outputs.time }}"
+                }
+              },
+              {
+                "name": "integration(incoming): post a message via incoming webhook",
+                "id": "incoming",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "webhook": "${{ secrets.SLACK_INCOMING_WEBHOOK }}",
+                  "webhook-type": "incoming-webhook",
+                  "payload": "text: \"Incoming webhook test for slack send\"\nblocks:\n  - type: section\n    text:\n      type: plain_text\n      text: \":link: A message was received via incoming webhook\"\n      emoji: true\n"
+                }
+              },
+              {
+                "name": "integration(incoming): confirm a webhook was posted",
+                "run": "test -n \"$INCOMING_WEBHOOK_OUTPUT_TIME\"",
+                "env": {
+                  "INCOMING_WEBHOOK_OUTPUT_TIME": "${{ steps.incoming.outputs.time }}"
+                }
+              },
+              {
+                "name": "integration(incoming): reveal contents of the github payload",
+                "run": "echo \"$JSON\"",
+                "env": {
+                  "JSON": "${{ toJSON(github) }}"
+                }
+              },
+              {
+                "name": "integration(incoming): post a message via payload file",
+                "id": "payload_file",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "payload-file-path": "./.github/resources/.slack/incoming-webhook.json",
+                  "payload-templated": true,
+                  "webhook": "${{ secrets.SLACK_INCOMING_WEBHOOK }}",
+                  "webhook-type": "incoming-webhook"
+                },
+                "env": {
+                  "JOB_STATUS": "${{ job.status }}",
+                  "ATTACHMENT_COLOR": "${{ (job.status == 'success' && 'good') || (job.status == 'failure' && 'danger') || 'warning' }}"
+                }
+              },
+              {
+                "name": "integration(incoming): confirm a payload file was posted",
+                "run": "test -n \"$PAYLOAD_FILE_OUTPUT_TIME\"",
+                "env": {
+                  "PAYLOAD_FILE_OUTPUT_TIME": "${{ steps.payload_file.outputs.time }}"
+                }
+              },
+              {
+                "name": "chore(health): check up on recent changes to the health score",
+                "uses": "slackapi/slack-health-score@d58a419f15cdaff97e9aa7f09f95772830ab66f7",
+                "with": {
+                  "codecov_token": "${{ secrets.CODECOV_API_TOKEN }}",
+                  "github_token": "${{ secrets.GITHUB_TOKEN }}",
+                  "extension": "js",
+                  "include": "src"
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

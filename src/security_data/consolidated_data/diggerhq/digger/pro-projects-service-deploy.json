@@ -1,0 +1,121 @@
+{
+  "repo_owner": "diggerhq",
+  "repo_name": "digger",
+  "workflow_name": "pro-projects-service-deploy",
+  "history": {
+    "2025-07-07T19-58-10Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-ff856a4b-bfd7-5030-aaa0-59e774186b06",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/pro-projects-service-deploy__2025-07-07T19-58-10Z__8668ee17b69970b5b8dc6c0f8e24c7c9497f5931.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 10,
+                  "startColumn": 5,
+                  "endLine": 19,
+                  "endColumn": 74
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "d5ce30bac8fed365:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "pro-projects-service-deploy__2025-07-07T19-58-10Z__8668ee17b69970b5b8dc6c0f8e24c7c9497f5931.yml",
+          "workflow_name": "Deploy projects-refresh-service",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 19,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "deploy": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "deploy": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "actions/checkout@v4",
+              "superfly/flyctl-actions/setup-flyctl@master"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Deploy projects-refresh-service",
+        "true": {
+          "push": {
+            "branches": [
+              "develop"
+            ]
+          }
+        },
+        "jobs": {
+          "deploy": {
+            "name": "Deploy projects-refresh-service app",
+            "runs-on": "ubuntu-latest",
+            "concurrency": "projects-refresh",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "uses": "superfly/flyctl-actions/setup-flyctl@master"
+              },
+              {
+                "run": "flyctl deploy --remote-only --config fly-projects-refresh-service.toml --image-label latest",
+                "env": {
+                  "FLY_API_TOKEN": "${{ secrets.FLYIO_PROJECTS_REFRESH_SVC_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

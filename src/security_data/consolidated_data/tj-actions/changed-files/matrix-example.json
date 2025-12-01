@@ -1,0 +1,480 @@
+{
+  "repo_owner": "tj-actions",
+  "repo_name": "changed-files",
+  "workflow_name": "matrix-example",
+  "history": {
+    "2024-01-21T05-54-00Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "matrix-example__2024-01-21T05-54-00Z__c6543c497aea61c2263b735dece03b23383441f0.yml",
+          "workflow_name": "Matrix Example",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 46,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "changed-files": 3,
+            "matrix-job": 2
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 1,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "changed-files": 3,
+              "matrix-job": 2
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "./",
+              "actions/checkout@v4"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Matrix Example",
+        "permissions": {
+          "contents": "read"
+        },
+        "true": {
+          "workflow_dispatch": null,
+          "pull_request": {
+            "branches": [
+              "main"
+            ]
+          }
+        },
+        "jobs": {
+          "changed-files": {
+            "name": "Get changed files",
+            "runs-on": "ubuntu-latest",
+            "outputs": {
+              "matrix": "${{ steps.changed-files.outputs.all_changed_files }}"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Get changed files",
+                "id": "changed-files",
+                "uses": "./",
+                "with": {
+                  "json": true,
+                  "escape_json": false
+                }
+              },
+              {
+                "name": "List all changed files",
+                "run": "echo '${{ steps.changed-files.outputs.all_changed_files }}'"
+              }
+            ]
+          },
+          "matrix-job": {
+            "name": "Run Matrix Job",
+            "runs-on": "ubuntu-latest",
+            "needs": [
+              "changed-files"
+            ],
+            "strategy": {
+              "matrix": {
+                "files": "${{ fromJSON(needs.changed-files.outputs.matrix) }}"
+              },
+              "max-parallel": 4,
+              "fail-fast": false
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Test",
+                "run": "echo ${{ matrix.files }}\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-03-09T01-20-45Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "matrix-example__2024-03-09T01-20-45Z__008ba8ceec9f1757264e0512542d5ecab6d87ae6.yml",
+          "workflow_name": "Matrix Example",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 45,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "changed-files": 3,
+            "matrix-job": 2
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 1,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "changed-files": 3,
+              "matrix-job": 2
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "./",
+              "actions/checkout@v4"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Matrix Example",
+        "permissions": {
+          "contents": "read"
+        },
+        "true": {
+          "workflow_dispatch": null,
+          "pull_request": {
+            "branches": [
+              "main"
+            ]
+          }
+        },
+        "jobs": {
+          "changed-files": {
+            "name": "Get changed files",
+            "runs-on": "ubuntu-latest",
+            "outputs": {
+              "matrix": "${{ steps.changed-files.outputs.all_changed_files }}"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Get changed files",
+                "id": "changed-files",
+                "uses": "./",
+                "with": {
+                  "matrix": true
+                }
+              },
+              {
+                "name": "List all changed files",
+                "run": "echo '${{ steps.changed-files.outputs.all_changed_files }}'"
+              }
+            ]
+          },
+          "matrix-job": {
+            "name": "Run Matrix Job",
+            "runs-on": "ubuntu-latest",
+            "needs": [
+              "changed-files"
+            ],
+            "strategy": {
+              "matrix": {
+                "files": "${{ fromJSON(needs.changed-files.outputs.matrix) }}"
+              },
+              "max-parallel": 4,
+              "fail-fast": false
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Test",
+                "run": "echo ${{ matrix.files }}\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-03-22T22-03-14Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "matrix-example__2025-03-22T22-03-14Z__7a369a71758acce79205e5145cb728a08ae607fb.yml",
+          "workflow_name": "Matrix Example",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 45,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "changed-files": 3,
+            "matrix-job": 2
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 1,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "changed-files": 3,
+              "matrix-job": 2
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "./",
+              "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Matrix Example",
+        "permissions": {
+          "contents": "read"
+        },
+        "true": {
+          "workflow_dispatch": null,
+          "pull_request": {
+            "branches": [
+              "main"
+            ]
+          }
+        },
+        "jobs": {
+          "changed-files": {
+            "name": "Get changed files",
+            "runs-on": "ubuntu-latest",
+            "outputs": {
+              "matrix": "${{ steps.changed-files.outputs.all_changed_files }}"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Get changed files",
+                "id": "changed-files",
+                "uses": "./",
+                "with": {
+                  "matrix": true
+                }
+              },
+              {
+                "name": "List all changed files",
+                "run": "echo '${{ steps.changed-files.outputs.all_changed_files }}'"
+              }
+            ]
+          },
+          "matrix-job": {
+            "name": "Run Matrix Job",
+            "runs-on": "ubuntu-latest",
+            "needs": [
+              "changed-files"
+            ],
+            "strategy": {
+              "matrix": {
+                "files": "${{ fromJSON(needs.changed-files.outputs.matrix) }}"
+              },
+              "max-parallel": 4,
+              "fail-fast": false
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
+              },
+              {
+                "name": "Test",
+                "run": "echo ${{ matrix.files }}\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-08-12T22-31-21Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "matrix-example__2025-08-12T22-31-21Z__5107f3abcc0c3737db51e2949f181e2c197d4d5b.yml",
+          "workflow_name": "Matrix Example",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 45,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "changed-files": 3,
+            "matrix-job": 2
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 1,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "changed-files": 3,
+              "matrix-job": 2
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "./",
+              "actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Matrix Example",
+        "permissions": {
+          "contents": "read"
+        },
+        "true": {
+          "workflow_dispatch": null,
+          "pull_request": {
+            "branches": [
+              "main"
+            ]
+          }
+        },
+        "jobs": {
+          "changed-files": {
+            "name": "Get changed files",
+            "runs-on": "ubuntu-latest",
+            "outputs": {
+              "matrix": "${{ steps.changed-files.outputs.all_changed_files }}"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Get changed files",
+                "id": "changed-files",
+                "uses": "./",
+                "with": {
+                  "matrix": true
+                }
+              },
+              {
+                "name": "List all changed files",
+                "run": "echo '${{ steps.changed-files.outputs.all_changed_files }}'"
+              }
+            ]
+          },
+          "matrix-job": {
+            "name": "Run Matrix Job",
+            "runs-on": "ubuntu-latest",
+            "needs": [
+              "changed-files"
+            ],
+            "strategy": {
+              "matrix": {
+                "files": "${{ fromJSON(needs.changed-files.outputs.matrix) }}"
+              },
+              "max-parallel": 4,
+              "fail-fast": false
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8"
+              },
+              {
+                "name": "Test",
+                "run": "echo ${{ matrix.files }}\n"
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

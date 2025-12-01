@@ -1,0 +1,4300 @@
+{
+  "repo_owner": "cargo-bins",
+  "repo_name": "cargo-binstall",
+  "workflow_name": "release-cli",
+  "history": {
+    "2023-09-26T11-17-17Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-cli__2023-09-26T11-17-17Z__5d4333d5c8eb39abb27ce8400e5803eafe73dd0b.yml",
+          "workflow_name": "Release CLI",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 108,
+          "num_jobs": 4,
+          "steps_per_job": {
+            "tag": 2,
+            "keygen": 6,
+            "package": 0,
+            "publish": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 4,
+            "num_dependencies_between_jobs": 3,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "tag": 2,
+              "keygen": 6,
+              "package": 0,
+              "publish": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 10,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/download-artifact@v3",
+              "actions/upload-artifact@v3",
+              "cargo-bins/cargo-binstall@main",
+              "geekyeggo/delete-artifact@v2",
+              "mathieudutour/github-tag-action@v6.1",
+              "svenstaro/upload-release-action@v2"
+            ],
+            "num_run_commands": 5,
+            "steps_with_conditionals": 5,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release CLI",
+        "true": {
+          "workflow_call": {
+            "inputs": {
+              "info": {
+                "description": "The release metadata JSON",
+                "required": true,
+                "type": "string"
+              },
+              "CARGO_PROFILE_RELEASE_LTO": {
+                "description": "Used to speed up CI",
+                "required": false,
+                "type": "string"
+              },
+              "CARGO_PROFILE_RELEASE_CODEGEN_UNITS": {
+                "description": "Used to speed up CI",
+                "required": false,
+                "type": "string"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "tag": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Push cli release tag",
+                "uses": "mathieudutour/github-tag-action@v6.1",
+                "with": {
+                  "github_token": "${{ secrets.GITHUB_TOKEN }}",
+                  "custom_tag": "${{ fromJSON(inputs.info).version }}",
+                  "tag_prefix": "v"
+                }
+              }
+            ]
+          },
+          "keygen": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "uses": "cargo-bins/cargo-binstall@main"
+              },
+              {
+                "name": "Create ephemeral keypair",
+                "id": "keypair",
+                "env": {
+                  "AGE_KEY_PUBLIC": "${{ vars.AGE_KEY_PUBLIC }}"
+                },
+                "run": ".github/scripts/ephemeral-gen.sh"
+              },
+              {
+                "uses": "actions/upload-artifact@v3",
+                "with": {
+                  "name": "minisign.pub",
+                  "path": "minisign.pub"
+                }
+              },
+              {
+                "uses": "actions/upload-artifact@v3",
+                "with": {
+                  "name": "minisign.key.age",
+                  "path": "minisign.key.age",
+                  "retention-days": 1
+                }
+              },
+              {
+                "name": "Check that key can be decrypted",
+                "env": {
+                  "AGE_KEY_SECRET": "${{ secrets.AGE_KEY_SECRET }}"
+                },
+                "shell": "bash",
+                "run": ".github/scripts/ephemeral-sign.sh minisign.pub"
+              }
+            ]
+          },
+          "package": {
+            "needs": [
+              "tag",
+              "keygen"
+            ],
+            "uses": "./.github/workflows/release-packages.yml",
+            "secrets": "inherit",
+            "with": {
+              "publish": "${{ inputs.info }}",
+              "CARGO_PROFILE_RELEASE_LTO": "${{ inputs.CARGO_PROFILE_RELEASE_LTO }}",
+              "CARGO_PROFILE_RELEASE_CODEGEN_UNITS": "${{ inputs.CARGO_PROFILE_RELEASE_CODEGEN_UNITS }}"
+            }
+          },
+          "publish": {
+            "needs": "package",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "uses": "actions/download-artifact@v3",
+                "with": {
+                  "name": "minisign.pub"
+                }
+              },
+              {
+                "run": ".github/scripts/ephemeral-crate.sh"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release != 'true'",
+                "name": "DRY-RUN Publish to crates.io",
+                "env": {
+                  "crate": "${{ fromJSON(inputs.info).crate }}",
+                  "CARGO_REGISTRY_TOKEN": "${{ secrets.CARGO_REGISTRY_TOKEN }}"
+                },
+                "run": "cargo publish -p \"$crate\" --allow-dirty --dry-run"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Publish to crates.io",
+                "env": {
+                  "crate": "${{ fromJSON(inputs.info).crate }}",
+                  "CARGO_REGISTRY_TOKEN": "${{ secrets.CARGO_REGISTRY_TOKEN }}"
+                },
+                "run": "cargo publish -p \"$crate\" --allow-dirty"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Make release latest",
+                "uses": "svenstaro/upload-release-action@v2",
+                "with": {
+                  "repo_token": "${{ secrets.GITHUB_TOKEN }}",
+                  "release_name": "v${{ fromJSON(inputs.info).version }}",
+                  "tag": "v${{ fromJSON(inputs.info).version }}",
+                  "body": "${{ fromJSON(inputs.info).notes }}",
+                  "promote": true,
+                  "file": "minisign.pub"
+                }
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Delete signing key artifact",
+                "uses": "geekyeggo/delete-artifact@v2",
+                "with": {
+                  "name": "minisign.key.age",
+                  "failOnError": false
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-09-26T13-30-47Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-cli__2023-09-26T13-30-47Z__499e6b07fac7e151e579786ef54898625b7913e6.yml",
+          "workflow_name": "Release CLI",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 117,
+          "num_jobs": 4,
+          "steps_per_job": {
+            "tag": 2,
+            "keygen": 6,
+            "package": 0,
+            "publish": 8
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 4,
+            "num_dependencies_between_jobs": 3,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "tag": 2,
+              "keygen": 6,
+              "package": 0,
+              "publish": 8
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 11,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/download-artifact@v3",
+              "actions/upload-artifact@v3",
+              "cargo-bins/cargo-binstall@main",
+              "geekyeggo/delete-artifact@v2",
+              "mathieudutour/github-tag-action@v6.1",
+              "svenstaro/upload-release-action@v2"
+            ],
+            "num_run_commands": 5,
+            "steps_with_conditionals": 6,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release CLI",
+        "true": {
+          "workflow_call": {
+            "inputs": {
+              "info": {
+                "description": "The release metadata JSON",
+                "required": true,
+                "type": "string"
+              },
+              "CARGO_PROFILE_RELEASE_LTO": {
+                "description": "Used to speed up CI",
+                "required": false,
+                "type": "string"
+              },
+              "CARGO_PROFILE_RELEASE_CODEGEN_UNITS": {
+                "description": "Used to speed up CI",
+                "required": false,
+                "type": "string"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "tag": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Push cli release tag",
+                "uses": "mathieudutour/github-tag-action@v6.1",
+                "with": {
+                  "github_token": "${{ secrets.GITHUB_TOKEN }}",
+                  "custom_tag": "${{ fromJSON(inputs.info).version }}",
+                  "tag_prefix": "v"
+                }
+              }
+            ]
+          },
+          "keygen": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "uses": "cargo-bins/cargo-binstall@main"
+              },
+              {
+                "name": "Create ephemeral keypair",
+                "id": "keypair",
+                "env": {
+                  "AGE_KEY_PUBLIC": "${{ vars.AGE_KEY_PUBLIC }}"
+                },
+                "run": ".github/scripts/ephemeral-gen.sh"
+              },
+              {
+                "uses": "actions/upload-artifact@v3",
+                "with": {
+                  "name": "minisign.pub",
+                  "path": "minisign.pub"
+                }
+              },
+              {
+                "uses": "actions/upload-artifact@v3",
+                "with": {
+                  "name": "minisign.key.age",
+                  "path": "minisign.key.age",
+                  "retention-days": 1
+                }
+              },
+              {
+                "name": "Check that key can be decrypted",
+                "env": {
+                  "AGE_KEY_SECRET": "${{ secrets.AGE_KEY_SECRET }}"
+                },
+                "shell": "bash",
+                "run": ".github/scripts/ephemeral-sign.sh minisign.pub"
+              }
+            ]
+          },
+          "package": {
+            "needs": [
+              "tag",
+              "keygen"
+            ],
+            "uses": "./.github/workflows/release-packages.yml",
+            "secrets": "inherit",
+            "with": {
+              "publish": "${{ inputs.info }}",
+              "CARGO_PROFILE_RELEASE_LTO": "${{ inputs.CARGO_PROFILE_RELEASE_LTO }}",
+              "CARGO_PROFILE_RELEASE_CODEGEN_UNITS": "${{ inputs.CARGO_PROFILE_RELEASE_CODEGEN_UNITS }}"
+            }
+          },
+          "publish": {
+            "needs": "package",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "uses": "actions/download-artifact@v3",
+                "with": {
+                  "name": "minisign.pub"
+                }
+              },
+              {
+                "run": ".github/scripts/ephemeral-crate.sh"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release != 'true'",
+                "name": "DRY-RUN Publish to crates.io",
+                "env": {
+                  "crate": "${{ fromJSON(inputs.info).crate }}",
+                  "CARGO_REGISTRY_TOKEN": "${{ secrets.CARGO_REGISTRY_TOKEN }}"
+                },
+                "run": "set -ex\ncargo publish -p \"$crate\" --allow-dirty --dry-run\ncargo package --no-verify -p \"$crate\" --allow-dirty\n"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release != 'true'",
+                "name": "Upload crate package as artifact",
+                "uses": "actions/upload-artifact@v3",
+                "with": {
+                  "name": "crate-package",
+                  "path": "target/package/*.crate"
+                }
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Publish to crates.io",
+                "env": {
+                  "crate": "${{ fromJSON(inputs.info).crate }}",
+                  "CARGO_REGISTRY_TOKEN": "${{ secrets.CARGO_REGISTRY_TOKEN }}"
+                },
+                "run": "cargo publish -p \"$crate\" --allow-dirty"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Make release latest",
+                "uses": "svenstaro/upload-release-action@v2",
+                "with": {
+                  "repo_token": "${{ secrets.GITHUB_TOKEN }}",
+                  "release_name": "v${{ fromJSON(inputs.info).version }}",
+                  "tag": "v${{ fromJSON(inputs.info).version }}",
+                  "body": "${{ fromJSON(inputs.info).notes }}",
+                  "promote": true,
+                  "file": "minisign.pub"
+                }
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Delete signing key artifact",
+                "uses": "geekyeggo/delete-artifact@v2",
+                "with": {
+                  "name": "minisign.key.age",
+                  "failOnError": false
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-09-26T21-57-51Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-cli__2023-09-26T21-57-51Z__216d548fd42ac23987ad7ce0f3deec4dc10e5d83.yml",
+          "workflow_name": "Release CLI",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 121,
+          "num_jobs": 4,
+          "steps_per_job": {
+            "tag": 2,
+            "keygen": 6,
+            "package": 0,
+            "publish": 8
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 4,
+            "num_dependencies_between_jobs": 3,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "tag": 2,
+              "keygen": 6,
+              "package": 0,
+              "publish": 8
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 11,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/download-artifact@v3",
+              "actions/upload-artifact@v3",
+              "cargo-bins/cargo-binstall@main",
+              "geekyeggo/delete-artifact@v2",
+              "mathieudutour/github-tag-action@v6.1",
+              "svenstaro/upload-release-action@v2"
+            ],
+            "num_run_commands": 5,
+            "steps_with_conditionals": 6,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release CLI",
+        "true": {
+          "workflow_call": {
+            "inputs": {
+              "info": {
+                "description": "The release metadata JSON",
+                "required": true,
+                "type": "string"
+              },
+              "CARGO_PROFILE_RELEASE_LTO": {
+                "description": "Used to speed up CI",
+                "required": false,
+                "type": "string"
+              },
+              "CARGO_PROFILE_RELEASE_CODEGEN_UNITS": {
+                "description": "Used to speed up CI",
+                "required": false,
+                "type": "string"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "tag": {
+            "permissions": {
+              "contents": "write"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Push cli release tag",
+                "uses": "mathieudutour/github-tag-action@v6.1",
+                "with": {
+                  "github_token": "${{ secrets.GITHUB_TOKEN }}",
+                  "custom_tag": "${{ fromJSON(inputs.info).version }}",
+                  "tag_prefix": "v"
+                }
+              }
+            ]
+          },
+          "keygen": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "uses": "cargo-bins/cargo-binstall@main"
+              },
+              {
+                "name": "Create ephemeral keypair",
+                "id": "keypair",
+                "env": {
+                  "AGE_KEY_PUBLIC": "${{ vars.AGE_KEY_PUBLIC }}"
+                },
+                "run": ".github/scripts/ephemeral-gen.sh"
+              },
+              {
+                "uses": "actions/upload-artifact@v3",
+                "with": {
+                  "name": "minisign.pub",
+                  "path": "minisign.pub"
+                }
+              },
+              {
+                "uses": "actions/upload-artifact@v3",
+                "with": {
+                  "name": "minisign.key.age",
+                  "path": "minisign.key.age",
+                  "retention-days": 1
+                }
+              },
+              {
+                "name": "Check that key can be decrypted",
+                "env": {
+                  "AGE_KEY_SECRET": "${{ secrets.AGE_KEY_SECRET }}"
+                },
+                "shell": "bash",
+                "run": ".github/scripts/ephemeral-sign.sh minisign.pub"
+              }
+            ]
+          },
+          "package": {
+            "needs": [
+              "tag",
+              "keygen"
+            ],
+            "uses": "./.github/workflows/release-packages.yml",
+            "secrets": "inherit",
+            "with": {
+              "publish": "${{ inputs.info }}",
+              "CARGO_PROFILE_RELEASE_LTO": "${{ inputs.CARGO_PROFILE_RELEASE_LTO }}",
+              "CARGO_PROFILE_RELEASE_CODEGEN_UNITS": "${{ inputs.CARGO_PROFILE_RELEASE_CODEGEN_UNITS }}"
+            }
+          },
+          "publish": {
+            "needs": "package",
+            "permissions": {
+              "contents": "write"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "uses": "actions/download-artifact@v3",
+                "with": {
+                  "name": "minisign.pub"
+                }
+              },
+              {
+                "run": ".github/scripts/ephemeral-crate.sh"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release != 'true'",
+                "name": "DRY-RUN Publish to crates.io",
+                "env": {
+                  "crate": "${{ fromJSON(inputs.info).crate }}",
+                  "CARGO_REGISTRY_TOKEN": "${{ secrets.CARGO_REGISTRY_TOKEN }}"
+                },
+                "run": "set -ex\ncargo publish -p \"$crate\" --allow-dirty --dry-run\ncargo package --no-verify -p \"$crate\" --allow-dirty\n"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release != 'true'",
+                "name": "Upload crate package as artifact",
+                "uses": "actions/upload-artifact@v3",
+                "with": {
+                  "name": "crate-package",
+                  "path": "target/package/*.crate"
+                }
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Publish to crates.io",
+                "env": {
+                  "crate": "${{ fromJSON(inputs.info).crate }}",
+                  "CARGO_REGISTRY_TOKEN": "${{ secrets.CARGO_REGISTRY_TOKEN }}"
+                },
+                "run": "cargo publish -p \"$crate\" --allow-dirty"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Make release latest",
+                "uses": "svenstaro/upload-release-action@v2",
+                "with": {
+                  "repo_token": "${{ secrets.GITHUB_TOKEN }}",
+                  "release_name": "v${{ fromJSON(inputs.info).version }}",
+                  "tag": "v${{ fromJSON(inputs.info).version }}",
+                  "body": "${{ fromJSON(inputs.info).notes }}",
+                  "promote": true,
+                  "file": "minisign.pub"
+                }
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Delete signing key artifact",
+                "uses": "geekyeggo/delete-artifact@v2",
+                "with": {
+                  "name": "minisign.key.age",
+                  "failOnError": false
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-09-29T02-49-43Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-cli__2023-09-29T02-49-43Z__3d68641a6d087484ea42d9a97e9e99f61ca49d43.yml",
+          "workflow_name": "Release CLI",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 127,
+          "num_jobs": 4,
+          "steps_per_job": {
+            "tag": 2,
+            "keygen": 7,
+            "package": 0,
+            "publish": 8
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 4,
+            "num_dependencies_between_jobs": 3,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "tag": 2,
+              "keygen": 7,
+              "package": 0,
+              "publish": 8
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 11,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/download-artifact@v3",
+              "actions/upload-artifact@v3",
+              "cargo-bins/cargo-binstall@main",
+              "geekyeggo/delete-artifact@v2",
+              "mathieudutour/github-tag-action@v6.1",
+              "svenstaro/upload-release-action@v2"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 6,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release CLI",
+        "true": {
+          "workflow_call": {
+            "inputs": {
+              "info": {
+                "description": "The release metadata JSON",
+                "required": true,
+                "type": "string"
+              },
+              "CARGO_PROFILE_RELEASE_LTO": {
+                "description": "Used to speed up CI",
+                "required": false,
+                "type": "string"
+              },
+              "CARGO_PROFILE_RELEASE_CODEGEN_UNITS": {
+                "description": "Used to speed up CI",
+                "required": false,
+                "type": "string"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "tag": {
+            "permissions": {
+              "contents": "write"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Push cli release tag",
+                "uses": "mathieudutour/github-tag-action@v6.1",
+                "with": {
+                  "github_token": "${{ secrets.GITHUB_TOKEN }}",
+                  "custom_tag": "${{ fromJSON(inputs.info).version }}",
+                  "tag_prefix": "v"
+                }
+              }
+            ]
+          },
+          "keygen": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "uses": "cargo-bins/cargo-binstall@main"
+              },
+              {
+                "name": "Install binaries required",
+                "run": "cargo binstall -y --force rsign2 rage",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Create ephemeral keypair",
+                "id": "keypair",
+                "env": {
+                  "AGE_KEY_PUBLIC": "${{ vars.AGE_KEY_PUBLIC }}"
+                },
+                "run": ".github/scripts/ephemeral-gen.sh"
+              },
+              {
+                "uses": "actions/upload-artifact@v3",
+                "with": {
+                  "name": "minisign.pub",
+                  "path": "minisign.pub"
+                }
+              },
+              {
+                "uses": "actions/upload-artifact@v3",
+                "with": {
+                  "name": "minisign.key.age",
+                  "path": "minisign.key.age",
+                  "retention-days": 1
+                }
+              },
+              {
+                "name": "Check that key can be decrypted",
+                "env": {
+                  "AGE_KEY_SECRET": "${{ secrets.AGE_KEY_SECRET }}"
+                },
+                "shell": "bash",
+                "run": ".github/scripts/ephemeral-sign.sh minisign.pub"
+              }
+            ]
+          },
+          "package": {
+            "needs": [
+              "tag",
+              "keygen"
+            ],
+            "uses": "./.github/workflows/release-packages.yml",
+            "secrets": "inherit",
+            "with": {
+              "publish": "${{ inputs.info }}",
+              "CARGO_PROFILE_RELEASE_LTO": "${{ inputs.CARGO_PROFILE_RELEASE_LTO }}",
+              "CARGO_PROFILE_RELEASE_CODEGEN_UNITS": "${{ inputs.CARGO_PROFILE_RELEASE_CODEGEN_UNITS }}"
+            }
+          },
+          "publish": {
+            "needs": "package",
+            "permissions": {
+              "contents": "write"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "uses": "actions/download-artifact@v3",
+                "with": {
+                  "name": "minisign.pub"
+                }
+              },
+              {
+                "run": ".github/scripts/ephemeral-crate.sh"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release != 'true'",
+                "name": "DRY-RUN Publish to crates.io",
+                "env": {
+                  "crate": "${{ fromJSON(inputs.info).crate }}",
+                  "CARGO_REGISTRY_TOKEN": "${{ secrets.CARGO_REGISTRY_TOKEN }}"
+                },
+                "run": "set -ex\ncargo publish -p \"$crate\" --allow-dirty --dry-run\ncargo package --no-verify -p \"$crate\" --allow-dirty\n"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release != 'true'",
+                "name": "Upload crate package as artifact",
+                "uses": "actions/upload-artifact@v3",
+                "with": {
+                  "name": "crate-package",
+                  "path": "target/package/*.crate"
+                }
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Publish to crates.io",
+                "env": {
+                  "crate": "${{ fromJSON(inputs.info).crate }}",
+                  "CARGO_REGISTRY_TOKEN": "${{ secrets.CARGO_REGISTRY_TOKEN }}"
+                },
+                "run": "cargo publish -p \"$crate\" --allow-dirty"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Make release latest",
+                "uses": "svenstaro/upload-release-action@v2",
+                "with": {
+                  "repo_token": "${{ secrets.GITHUB_TOKEN }}",
+                  "release_name": "v${{ fromJSON(inputs.info).version }}",
+                  "tag": "v${{ fromJSON(inputs.info).version }}",
+                  "body": "${{ fromJSON(inputs.info).notes }}",
+                  "promote": true,
+                  "file": "minisign.pub"
+                }
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Delete signing key artifact",
+                "uses": "geekyeggo/delete-artifact@v2",
+                "with": {
+                  "name": "minisign.key.age",
+                  "failOnError": false
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-11-11T11-11-09Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-cli__2023-11-11T11-11-09Z__26b6db2244dce2b044547d8602db66bf26660519.yml",
+          "workflow_name": "Release CLI",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 127,
+          "num_jobs": 4,
+          "steps_per_job": {
+            "tag": 2,
+            "keygen": 7,
+            "package": 0,
+            "publish": 9
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 4,
+            "num_dependencies_between_jobs": 3,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "tag": 2,
+              "keygen": 7,
+              "package": 0,
+              "publish": 9
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 12,
+            "actions_used": [
+              "./.github/actions/just-setup",
+              "actions/checkout@v4",
+              "actions/download-artifact@v3",
+              "actions/upload-artifact@v3",
+              "cargo-bins/cargo-binstall@main",
+              "geekyeggo/delete-artifact@v2",
+              "mathieudutour/github-tag-action@v6.1",
+              "svenstaro/upload-release-action@v2"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 6,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release CLI",
+        "true": {
+          "workflow_call": {
+            "inputs": {
+              "info": {
+                "description": "The release metadata JSON",
+                "required": true,
+                "type": "string"
+              },
+              "CARGO_PROFILE_RELEASE_LTO": {
+                "description": "Used to speed up CI",
+                "required": false,
+                "type": "string"
+              },
+              "CARGO_PROFILE_RELEASE_CODEGEN_UNITS": {
+                "description": "Used to speed up CI",
+                "required": false,
+                "type": "string"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "tag": {
+            "permissions": {
+              "contents": "write"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Push cli release tag",
+                "uses": "mathieudutour/github-tag-action@v6.1",
+                "with": {
+                  "github_token": "${{ secrets.GITHUB_TOKEN }}",
+                  "custom_tag": "${{ fromJSON(inputs.info).version }}",
+                  "tag_prefix": "v"
+                }
+              }
+            ]
+          },
+          "keygen": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "uses": "cargo-bins/cargo-binstall@main"
+              },
+              {
+                "name": "Install binaries required",
+                "run": "cargo binstall -y --force rsign2 rage",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Create ephemeral keypair",
+                "id": "keypair",
+                "env": {
+                  "AGE_KEY_PUBLIC": "${{ vars.AGE_KEY_PUBLIC }}"
+                },
+                "run": ".github/scripts/ephemeral-gen.sh"
+              },
+              {
+                "uses": "actions/upload-artifact@v3",
+                "with": {
+                  "name": "minisign.pub",
+                  "path": "minisign.pub"
+                }
+              },
+              {
+                "uses": "actions/upload-artifact@v3",
+                "with": {
+                  "name": "minisign.key.age",
+                  "path": "minisign.key.age",
+                  "retention-days": 1
+                }
+              },
+              {
+                "name": "Check that key can be decrypted",
+                "env": {
+                  "AGE_KEY_SECRET": "${{ secrets.AGE_KEY_SECRET }}"
+                },
+                "shell": "bash",
+                "run": ".github/scripts/ephemeral-sign.sh minisign.pub"
+              }
+            ]
+          },
+          "package": {
+            "needs": [
+              "tag",
+              "keygen"
+            ],
+            "uses": "./.github/workflows/release-packages.yml",
+            "secrets": "inherit",
+            "with": {
+              "publish": "${{ inputs.info }}",
+              "CARGO_PROFILE_RELEASE_LTO": "${{ inputs.CARGO_PROFILE_RELEASE_LTO }}",
+              "CARGO_PROFILE_RELEASE_CODEGEN_UNITS": "${{ inputs.CARGO_PROFILE_RELEASE_CODEGEN_UNITS }}"
+            }
+          },
+          "publish": {
+            "needs": "package",
+            "permissions": {
+              "contents": "write"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "uses": "actions/download-artifact@v3",
+                "with": {
+                  "name": "minisign.pub"
+                }
+              },
+              {
+                "uses": "./.github/actions/just-setup"
+              },
+              {
+                "run": ".github/scripts/ephemeral-crate.sh"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release != 'true'",
+                "name": "DRY-RUN Publish to crates.io",
+                "env": {
+                  "crate": "${{ fromJSON(inputs.info).crate }}",
+                  "CARGO_REGISTRY_TOKEN": "${{ secrets.CARGO_REGISTRY_TOKEN }}"
+                },
+                "run": "cargo package -p \"$crate\" --allow-dirty --no-default-features"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release != 'true'",
+                "name": "Upload crate package as artifact",
+                "uses": "actions/upload-artifact@v3",
+                "with": {
+                  "name": "crate-package",
+                  "path": "target/package/*.crate"
+                }
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Publish to crates.io",
+                "env": {
+                  "crate": "${{ fromJSON(inputs.info).crate }}",
+                  "CARGO_REGISTRY_TOKEN": "${{ secrets.CARGO_REGISTRY_TOKEN }}"
+                },
+                "run": "cargo publish -p \"$crate\" --allow-dirty  --no-default-features"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Make release latest",
+                "uses": "svenstaro/upload-release-action@v2",
+                "with": {
+                  "repo_token": "${{ secrets.GITHUB_TOKEN }}",
+                  "release_name": "v${{ fromJSON(inputs.info).version }}",
+                  "tag": "v${{ fromJSON(inputs.info).version }}",
+                  "body": "${{ fromJSON(inputs.info).notes }}",
+                  "promote": true,
+                  "file": "minisign.pub"
+                }
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Delete signing key artifact",
+                "uses": "geekyeggo/delete-artifact@v2",
+                "with": {
+                  "name": "minisign.key.age",
+                  "failOnError": false
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-11-11T14-17-16Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-cli__2023-11-11T14-17-16Z__4599a7083915af16b6e94fc2363c93d379fcbe41.yml",
+          "workflow_name": "Release CLI",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 125,
+          "num_jobs": 4,
+          "steps_per_job": {
+            "tag": 2,
+            "keygen": 7,
+            "package": 0,
+            "publish": 8
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 4,
+            "num_dependencies_between_jobs": 3,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "tag": 2,
+              "keygen": 7,
+              "package": 0,
+              "publish": 8
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 11,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/download-artifact@v3",
+              "actions/upload-artifact@v3",
+              "cargo-bins/cargo-binstall@main",
+              "geekyeggo/delete-artifact@v2",
+              "mathieudutour/github-tag-action@v6.1",
+              "svenstaro/upload-release-action@v2"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 6,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release CLI",
+        "true": {
+          "workflow_call": {
+            "inputs": {
+              "info": {
+                "description": "The release metadata JSON",
+                "required": true,
+                "type": "string"
+              },
+              "CARGO_PROFILE_RELEASE_LTO": {
+                "description": "Used to speed up CI",
+                "required": false,
+                "type": "string"
+              },
+              "CARGO_PROFILE_RELEASE_CODEGEN_UNITS": {
+                "description": "Used to speed up CI",
+                "required": false,
+                "type": "string"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "tag": {
+            "permissions": {
+              "contents": "write"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Push cli release tag",
+                "uses": "mathieudutour/github-tag-action@v6.1",
+                "with": {
+                  "github_token": "${{ secrets.GITHUB_TOKEN }}",
+                  "custom_tag": "${{ fromJSON(inputs.info).version }}",
+                  "tag_prefix": "v"
+                }
+              }
+            ]
+          },
+          "keygen": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "uses": "cargo-bins/cargo-binstall@main"
+              },
+              {
+                "name": "Install binaries required",
+                "run": "cargo binstall -y --force rsign2 rage",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Create ephemeral keypair",
+                "id": "keypair",
+                "env": {
+                  "AGE_KEY_PUBLIC": "${{ vars.AGE_KEY_PUBLIC }}"
+                },
+                "run": ".github/scripts/ephemeral-gen.sh"
+              },
+              {
+                "uses": "actions/upload-artifact@v3",
+                "with": {
+                  "name": "minisign.pub",
+                  "path": "minisign.pub"
+                }
+              },
+              {
+                "uses": "actions/upload-artifact@v3",
+                "with": {
+                  "name": "minisign.key.age",
+                  "path": "minisign.key.age",
+                  "retention-days": 1
+                }
+              },
+              {
+                "name": "Check that key can be decrypted",
+                "env": {
+                  "AGE_KEY_SECRET": "${{ secrets.AGE_KEY_SECRET }}"
+                },
+                "shell": "bash",
+                "run": ".github/scripts/ephemeral-sign.sh minisign.pub"
+              }
+            ]
+          },
+          "package": {
+            "needs": [
+              "tag",
+              "keygen"
+            ],
+            "uses": "./.github/workflows/release-packages.yml",
+            "secrets": "inherit",
+            "with": {
+              "publish": "${{ inputs.info }}",
+              "CARGO_PROFILE_RELEASE_LTO": "${{ inputs.CARGO_PROFILE_RELEASE_LTO }}",
+              "CARGO_PROFILE_RELEASE_CODEGEN_UNITS": "${{ inputs.CARGO_PROFILE_RELEASE_CODEGEN_UNITS }}"
+            }
+          },
+          "publish": {
+            "needs": "package",
+            "permissions": {
+              "contents": "write"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "uses": "actions/download-artifact@v3",
+                "with": {
+                  "name": "minisign.pub"
+                }
+              },
+              {
+                "run": ".github/scripts/ephemeral-crate.sh"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release != 'true' && fromJSON(inputs.info).crate != ''",
+                "name": "DRY-RUN Publish to crates.io",
+                "env": {
+                  "crate": "${{ fromJSON(inputs.info).crate }}",
+                  "CARGO_REGISTRY_TOKEN": "${{ secrets.CARGO_REGISTRY_TOKEN }}"
+                },
+                "run": "cargo publish --dry-run -p \"$crate\" --allow-dirty --no-default-features"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release != 'true' && fromJSON(inputs.info).crate != ''",
+                "name": "Upload crate package as artifact",
+                "uses": "actions/upload-artifact@v3",
+                "with": {
+                  "name": "crate-package",
+                  "path": "target/package/*.crate"
+                }
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Publish to crates.io",
+                "env": {
+                  "crate": "${{ fromJSON(inputs.info).crate }}",
+                  "CARGO_REGISTRY_TOKEN": "${{ secrets.CARGO_REGISTRY_TOKEN }}"
+                },
+                "run": "cargo publish -p \"$crate\" --allow-dirty  --no-default-features"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Make release latest",
+                "uses": "svenstaro/upload-release-action@v2",
+                "with": {
+                  "repo_token": "${{ secrets.GITHUB_TOKEN }}",
+                  "release_name": "v${{ fromJSON(inputs.info).version }}",
+                  "tag": "v${{ fromJSON(inputs.info).version }}",
+                  "body": "${{ fromJSON(inputs.info).notes }}",
+                  "promote": true,
+                  "file": "minisign.pub"
+                }
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Delete signing key artifact",
+                "uses": "geekyeggo/delete-artifact@v2",
+                "with": {
+                  "name": "minisign.key.age",
+                  "failOnError": false
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-12-19T09-37-26Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-cli__2023-12-19T09-37-26Z__fea489032a1a50176ceb0dcd2716a77cc117665a.yml",
+          "workflow_name": "Release CLI",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 125,
+          "num_jobs": 4,
+          "steps_per_job": {
+            "tag": 2,
+            "keygen": 7,
+            "package": 0,
+            "publish": 8
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 4,
+            "num_dependencies_between_jobs": 3,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "tag": 2,
+              "keygen": 7,
+              "package": 0,
+              "publish": 8
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 11,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/download-artifact@v4",
+              "actions/upload-artifact@v4",
+              "cargo-bins/cargo-binstall@main",
+              "geekyeggo/delete-artifact@v2",
+              "mathieudutour/github-tag-action@v6.1",
+              "svenstaro/upload-release-action@v2"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 6,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release CLI",
+        "true": {
+          "workflow_call": {
+            "inputs": {
+              "info": {
+                "description": "The release metadata JSON",
+                "required": true,
+                "type": "string"
+              },
+              "CARGO_PROFILE_RELEASE_LTO": {
+                "description": "Used to speed up CI",
+                "required": false,
+                "type": "string"
+              },
+              "CARGO_PROFILE_RELEASE_CODEGEN_UNITS": {
+                "description": "Used to speed up CI",
+                "required": false,
+                "type": "string"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "tag": {
+            "permissions": {
+              "contents": "write"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Push cli release tag",
+                "uses": "mathieudutour/github-tag-action@v6.1",
+                "with": {
+                  "github_token": "${{ secrets.GITHUB_TOKEN }}",
+                  "custom_tag": "${{ fromJSON(inputs.info).version }}",
+                  "tag_prefix": "v"
+                }
+              }
+            ]
+          },
+          "keygen": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "uses": "cargo-bins/cargo-binstall@main"
+              },
+              {
+                "name": "Install binaries required",
+                "run": "cargo binstall -y --force rsign2 rage",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Create ephemeral keypair",
+                "id": "keypair",
+                "env": {
+                  "AGE_KEY_PUBLIC": "${{ vars.AGE_KEY_PUBLIC }}"
+                },
+                "run": ".github/scripts/ephemeral-gen.sh"
+              },
+              {
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "minisign.pub",
+                  "path": "minisign.pub"
+                }
+              },
+              {
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "minisign.key.age",
+                  "path": "minisign.key.age",
+                  "retention-days": 1
+                }
+              },
+              {
+                "name": "Check that key can be decrypted",
+                "env": {
+                  "AGE_KEY_SECRET": "${{ secrets.AGE_KEY_SECRET }}"
+                },
+                "shell": "bash",
+                "run": ".github/scripts/ephemeral-sign.sh minisign.pub"
+              }
+            ]
+          },
+          "package": {
+            "needs": [
+              "tag",
+              "keygen"
+            ],
+            "uses": "./.github/workflows/release-packages.yml",
+            "secrets": "inherit",
+            "with": {
+              "publish": "${{ inputs.info }}",
+              "CARGO_PROFILE_RELEASE_LTO": "${{ inputs.CARGO_PROFILE_RELEASE_LTO }}",
+              "CARGO_PROFILE_RELEASE_CODEGEN_UNITS": "${{ inputs.CARGO_PROFILE_RELEASE_CODEGEN_UNITS }}"
+            }
+          },
+          "publish": {
+            "needs": "package",
+            "permissions": {
+              "contents": "write"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "uses": "actions/download-artifact@v4",
+                "with": {
+                  "name": "minisign.pub"
+                }
+              },
+              {
+                "run": ".github/scripts/ephemeral-crate.sh"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release != 'true' && fromJSON(inputs.info).crate != ''",
+                "name": "DRY-RUN Publish to crates.io",
+                "env": {
+                  "crate": "${{ fromJSON(inputs.info).crate }}",
+                  "CARGO_REGISTRY_TOKEN": "${{ secrets.CARGO_REGISTRY_TOKEN }}"
+                },
+                "run": "cargo publish --dry-run -p \"$crate\" --allow-dirty --no-default-features"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release != 'true' && fromJSON(inputs.info).crate != ''",
+                "name": "Upload crate package as artifact",
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "crate-package",
+                  "path": "target/package/*.crate"
+                }
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Publish to crates.io",
+                "env": {
+                  "crate": "${{ fromJSON(inputs.info).crate }}",
+                  "CARGO_REGISTRY_TOKEN": "${{ secrets.CARGO_REGISTRY_TOKEN }}"
+                },
+                "run": "cargo publish -p \"$crate\" --allow-dirty  --no-default-features"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Make release latest",
+                "uses": "svenstaro/upload-release-action@v2",
+                "with": {
+                  "repo_token": "${{ secrets.GITHUB_TOKEN }}",
+                  "release_name": "v${{ fromJSON(inputs.info).version }}",
+                  "tag": "v${{ fromJSON(inputs.info).version }}",
+                  "body": "${{ fromJSON(inputs.info).notes }}",
+                  "promote": true,
+                  "file": "minisign.pub"
+                }
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Delete signing key artifact",
+                "uses": "geekyeggo/delete-artifact@v2",
+                "with": {
+                  "name": "minisign.key.age",
+                  "failOnError": false
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-12-25T04-12-29Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-cli__2023-12-25T04-12-29Z__55bb7f380570f8edcf95024d36e4443f221ac4ce.yml",
+          "workflow_name": "Release CLI",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 125,
+          "num_jobs": 4,
+          "steps_per_job": {
+            "tag": 2,
+            "keygen": 7,
+            "package": 0,
+            "publish": 8
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 4,
+            "num_dependencies_between_jobs": 3,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "tag": 2,
+              "keygen": 7,
+              "package": 0,
+              "publish": 8
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 11,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/download-artifact@v4",
+              "actions/upload-artifact@v4",
+              "cargo-bins/cargo-binstall@main",
+              "geekyeggo/delete-artifact@v4",
+              "mathieudutour/github-tag-action@v6.1",
+              "svenstaro/upload-release-action@v2"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 6,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release CLI",
+        "true": {
+          "workflow_call": {
+            "inputs": {
+              "info": {
+                "description": "The release metadata JSON",
+                "required": true,
+                "type": "string"
+              },
+              "CARGO_PROFILE_RELEASE_LTO": {
+                "description": "Used to speed up CI",
+                "required": false,
+                "type": "string"
+              },
+              "CARGO_PROFILE_RELEASE_CODEGEN_UNITS": {
+                "description": "Used to speed up CI",
+                "required": false,
+                "type": "string"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "tag": {
+            "permissions": {
+              "contents": "write"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Push cli release tag",
+                "uses": "mathieudutour/github-tag-action@v6.1",
+                "with": {
+                  "github_token": "${{ secrets.GITHUB_TOKEN }}",
+                  "custom_tag": "${{ fromJSON(inputs.info).version }}",
+                  "tag_prefix": "v"
+                }
+              }
+            ]
+          },
+          "keygen": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "uses": "cargo-bins/cargo-binstall@main"
+              },
+              {
+                "name": "Install binaries required",
+                "run": "cargo binstall -y --force rsign2 rage",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Create ephemeral keypair",
+                "id": "keypair",
+                "env": {
+                  "AGE_KEY_PUBLIC": "${{ vars.AGE_KEY_PUBLIC }}"
+                },
+                "run": ".github/scripts/ephemeral-gen.sh"
+              },
+              {
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "minisign.pub",
+                  "path": "minisign.pub"
+                }
+              },
+              {
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "minisign.key.age",
+                  "path": "minisign.key.age",
+                  "retention-days": 1
+                }
+              },
+              {
+                "name": "Check that key can be decrypted",
+                "env": {
+                  "AGE_KEY_SECRET": "${{ secrets.AGE_KEY_SECRET }}"
+                },
+                "shell": "bash",
+                "run": ".github/scripts/ephemeral-sign.sh minisign.pub"
+              }
+            ]
+          },
+          "package": {
+            "needs": [
+              "tag",
+              "keygen"
+            ],
+            "uses": "./.github/workflows/release-packages.yml",
+            "secrets": "inherit",
+            "with": {
+              "publish": "${{ inputs.info }}",
+              "CARGO_PROFILE_RELEASE_LTO": "${{ inputs.CARGO_PROFILE_RELEASE_LTO }}",
+              "CARGO_PROFILE_RELEASE_CODEGEN_UNITS": "${{ inputs.CARGO_PROFILE_RELEASE_CODEGEN_UNITS }}"
+            }
+          },
+          "publish": {
+            "needs": "package",
+            "permissions": {
+              "contents": "write"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "uses": "actions/download-artifact@v4",
+                "with": {
+                  "name": "minisign.pub"
+                }
+              },
+              {
+                "run": ".github/scripts/ephemeral-crate.sh"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release != 'true' && fromJSON(inputs.info).crate != ''",
+                "name": "DRY-RUN Publish to crates.io",
+                "env": {
+                  "crate": "${{ fromJSON(inputs.info).crate }}",
+                  "CARGO_REGISTRY_TOKEN": "${{ secrets.CARGO_REGISTRY_TOKEN }}"
+                },
+                "run": "cargo publish --dry-run -p \"$crate\" --allow-dirty --no-default-features"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release != 'true' && fromJSON(inputs.info).crate != ''",
+                "name": "Upload crate package as artifact",
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "crate-package",
+                  "path": "target/package/*.crate"
+                }
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Publish to crates.io",
+                "env": {
+                  "crate": "${{ fromJSON(inputs.info).crate }}",
+                  "CARGO_REGISTRY_TOKEN": "${{ secrets.CARGO_REGISTRY_TOKEN }}"
+                },
+                "run": "cargo publish -p \"$crate\" --allow-dirty  --no-default-features"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Make release latest",
+                "uses": "svenstaro/upload-release-action@v2",
+                "with": {
+                  "repo_token": "${{ secrets.GITHUB_TOKEN }}",
+                  "release_name": "v${{ fromJSON(inputs.info).version }}",
+                  "tag": "v${{ fromJSON(inputs.info).version }}",
+                  "body": "${{ fromJSON(inputs.info).notes }}",
+                  "promote": true,
+                  "file": "minisign.pub"
+                }
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Delete signing key artifact",
+                "uses": "geekyeggo/delete-artifact@v4",
+                "with": {
+                  "name": "minisign.key.age",
+                  "failOnError": false
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-01-07T14-46-30Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-cli__2024-01-07T14-46-30Z__f5da25cc56cc7fd1b7c13f93ea559d7b60b742bc.yml",
+          "workflow_name": "Release CLI",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 125,
+          "num_jobs": 4,
+          "steps_per_job": {
+            "tag": 2,
+            "keygen": 7,
+            "package": 0,
+            "publish": 8
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 4,
+            "num_dependencies_between_jobs": 3,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "tag": 2,
+              "keygen": 7,
+              "package": 0,
+              "publish": 8
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 11,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/download-artifact@v3",
+              "actions/upload-artifact@v3",
+              "cargo-bins/cargo-binstall@main",
+              "geekyeggo/delete-artifact@v4",
+              "mathieudutour/github-tag-action@v6.1",
+              "svenstaro/upload-release-action@v2"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 6,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release CLI",
+        "true": {
+          "workflow_call": {
+            "inputs": {
+              "info": {
+                "description": "The release metadata JSON",
+                "required": true,
+                "type": "string"
+              },
+              "CARGO_PROFILE_RELEASE_LTO": {
+                "description": "Used to speed up CI",
+                "required": false,
+                "type": "string"
+              },
+              "CARGO_PROFILE_RELEASE_CODEGEN_UNITS": {
+                "description": "Used to speed up CI",
+                "required": false,
+                "type": "string"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "tag": {
+            "permissions": {
+              "contents": "write"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Push cli release tag",
+                "uses": "mathieudutour/github-tag-action@v6.1",
+                "with": {
+                  "github_token": "${{ secrets.GITHUB_TOKEN }}",
+                  "custom_tag": "${{ fromJSON(inputs.info).version }}",
+                  "tag_prefix": "v"
+                }
+              }
+            ]
+          },
+          "keygen": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "uses": "cargo-bins/cargo-binstall@main"
+              },
+              {
+                "name": "Install binaries required",
+                "run": "cargo binstall -y --force rsign2 rage",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Create ephemeral keypair",
+                "id": "keypair",
+                "env": {
+                  "AGE_KEY_PUBLIC": "${{ vars.AGE_KEY_PUBLIC }}"
+                },
+                "run": ".github/scripts/ephemeral-gen.sh"
+              },
+              {
+                "uses": "actions/upload-artifact@v3",
+                "with": {
+                  "name": "minisign.pub",
+                  "path": "minisign.pub"
+                }
+              },
+              {
+                "uses": "actions/upload-artifact@v3",
+                "with": {
+                  "name": "minisign.key.age",
+                  "path": "minisign.key.age",
+                  "retention-days": 1
+                }
+              },
+              {
+                "name": "Check that key can be decrypted",
+                "env": {
+                  "AGE_KEY_SECRET": "${{ secrets.AGE_KEY_SECRET }}"
+                },
+                "shell": "bash",
+                "run": ".github/scripts/ephemeral-sign.sh minisign.pub"
+              }
+            ]
+          },
+          "package": {
+            "needs": [
+              "tag",
+              "keygen"
+            ],
+            "uses": "./.github/workflows/release-packages.yml",
+            "secrets": "inherit",
+            "with": {
+              "publish": "${{ inputs.info }}",
+              "CARGO_PROFILE_RELEASE_LTO": "${{ inputs.CARGO_PROFILE_RELEASE_LTO }}",
+              "CARGO_PROFILE_RELEASE_CODEGEN_UNITS": "${{ inputs.CARGO_PROFILE_RELEASE_CODEGEN_UNITS }}"
+            }
+          },
+          "publish": {
+            "needs": "package",
+            "permissions": {
+              "contents": "write"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "uses": "actions/download-artifact@v3",
+                "with": {
+                  "name": "minisign.pub"
+                }
+              },
+              {
+                "run": ".github/scripts/ephemeral-crate.sh"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release != 'true' && fromJSON(inputs.info).crate != ''",
+                "name": "DRY-RUN Publish to crates.io",
+                "env": {
+                  "crate": "${{ fromJSON(inputs.info).crate }}",
+                  "CARGO_REGISTRY_TOKEN": "${{ secrets.CARGO_REGISTRY_TOKEN }}"
+                },
+                "run": "cargo publish --dry-run -p \"$crate\" --allow-dirty --no-default-features"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release != 'true' && fromJSON(inputs.info).crate != ''",
+                "name": "Upload crate package as artifact",
+                "uses": "actions/upload-artifact@v3",
+                "with": {
+                  "name": "crate-package",
+                  "path": "target/package/*.crate"
+                }
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Publish to crates.io",
+                "env": {
+                  "crate": "${{ fromJSON(inputs.info).crate }}",
+                  "CARGO_REGISTRY_TOKEN": "${{ secrets.CARGO_REGISTRY_TOKEN }}"
+                },
+                "run": "cargo publish -p \"$crate\" --allow-dirty  --no-default-features"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Make release latest",
+                "uses": "svenstaro/upload-release-action@v2",
+                "with": {
+                  "repo_token": "${{ secrets.GITHUB_TOKEN }}",
+                  "release_name": "v${{ fromJSON(inputs.info).version }}",
+                  "tag": "v${{ fromJSON(inputs.info).version }}",
+                  "body": "${{ fromJSON(inputs.info).notes }}",
+                  "promote": true,
+                  "file": "minisign.pub"
+                }
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Delete signing key artifact",
+                "uses": "geekyeggo/delete-artifact@v4",
+                "with": {
+                  "name": "minisign.key.age",
+                  "failOnError": false
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-01-31T14-26-11Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-cli__2024-01-31T14-26-11Z__dba9dd5ff07cf8abeec838910e76eeb234de3fef.yml",
+          "workflow_name": "Release CLI",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 125,
+          "num_jobs": 4,
+          "steps_per_job": {
+            "tag": 2,
+            "keygen": 7,
+            "package": 0,
+            "publish": 8
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 4,
+            "num_dependencies_between_jobs": 3,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "tag": 2,
+              "keygen": 7,
+              "package": 0,
+              "publish": 8
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 11,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/download-artifact@v4",
+              "actions/upload-artifact@v4",
+              "cargo-bins/cargo-binstall@main",
+              "geekyeggo/delete-artifact@v4",
+              "mathieudutour/github-tag-action@v6.1",
+              "svenstaro/upload-release-action@v2"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 6,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release CLI",
+        "true": {
+          "workflow_call": {
+            "inputs": {
+              "info": {
+                "description": "The release metadata JSON",
+                "required": true,
+                "type": "string"
+              },
+              "CARGO_PROFILE_RELEASE_LTO": {
+                "description": "Used to speed up CI",
+                "required": false,
+                "type": "string"
+              },
+              "CARGO_PROFILE_RELEASE_CODEGEN_UNITS": {
+                "description": "Used to speed up CI",
+                "required": false,
+                "type": "string"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "tag": {
+            "permissions": {
+              "contents": "write"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Push cli release tag",
+                "uses": "mathieudutour/github-tag-action@v6.1",
+                "with": {
+                  "github_token": "${{ secrets.GITHUB_TOKEN }}",
+                  "custom_tag": "${{ fromJSON(inputs.info).version }}",
+                  "tag_prefix": "v"
+                }
+              }
+            ]
+          },
+          "keygen": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "uses": "cargo-bins/cargo-binstall@main"
+              },
+              {
+                "name": "Install binaries required",
+                "run": "cargo binstall -y --force rsign2 rage",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Create ephemeral keypair",
+                "id": "keypair",
+                "env": {
+                  "AGE_KEY_PUBLIC": "${{ vars.AGE_KEY_PUBLIC }}"
+                },
+                "run": ".github/scripts/ephemeral-gen.sh"
+              },
+              {
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "minisign.pub",
+                  "path": "minisign.pub"
+                }
+              },
+              {
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "minisign.key.age",
+                  "path": "minisign.key.age",
+                  "retention-days": 1
+                }
+              },
+              {
+                "name": "Check that key can be decrypted",
+                "env": {
+                  "AGE_KEY_SECRET": "${{ secrets.AGE_KEY_SECRET }}"
+                },
+                "shell": "bash",
+                "run": ".github/scripts/ephemeral-sign.sh minisign.pub"
+              }
+            ]
+          },
+          "package": {
+            "needs": [
+              "tag",
+              "keygen"
+            ],
+            "uses": "./.github/workflows/release-packages.yml",
+            "secrets": "inherit",
+            "with": {
+              "publish": "${{ inputs.info }}",
+              "CARGO_PROFILE_RELEASE_LTO": "${{ inputs.CARGO_PROFILE_RELEASE_LTO }}",
+              "CARGO_PROFILE_RELEASE_CODEGEN_UNITS": "${{ inputs.CARGO_PROFILE_RELEASE_CODEGEN_UNITS }}"
+            }
+          },
+          "publish": {
+            "needs": "package",
+            "permissions": {
+              "contents": "write"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "uses": "actions/download-artifact@v4",
+                "with": {
+                  "name": "minisign.pub"
+                }
+              },
+              {
+                "run": ".github/scripts/ephemeral-crate.sh"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release != 'true' && fromJSON(inputs.info).crate != ''",
+                "name": "DRY-RUN Publish to crates.io",
+                "env": {
+                  "crate": "${{ fromJSON(inputs.info).crate }}",
+                  "CARGO_REGISTRY_TOKEN": "${{ secrets.CARGO_REGISTRY_TOKEN }}"
+                },
+                "run": "cargo publish --dry-run -p \"$crate\" --allow-dirty --no-default-features"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release != 'true' && fromJSON(inputs.info).crate != ''",
+                "name": "Upload crate package as artifact",
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "crate-package",
+                  "path": "target/package/*.crate"
+                }
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Publish to crates.io",
+                "env": {
+                  "crate": "${{ fromJSON(inputs.info).crate }}",
+                  "CARGO_REGISTRY_TOKEN": "${{ secrets.CARGO_REGISTRY_TOKEN }}"
+                },
+                "run": "cargo publish -p \"$crate\" --allow-dirty  --no-default-features"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Make release latest",
+                "uses": "svenstaro/upload-release-action@v2",
+                "with": {
+                  "repo_token": "${{ secrets.GITHUB_TOKEN }}",
+                  "release_name": "v${{ fromJSON(inputs.info).version }}",
+                  "tag": "v${{ fromJSON(inputs.info).version }}",
+                  "body": "${{ fromJSON(inputs.info).notes }}",
+                  "promote": true,
+                  "file": "minisign.pub"
+                }
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Delete signing key artifact",
+                "uses": "geekyeggo/delete-artifact@v4",
+                "with": {
+                  "name": "minisign.key.age",
+                  "failOnError": false
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-03-12T02-11-47Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-cli__2024-03-12T02-11-47Z__cf2473129b56806bdcbe07a6dd1b61ca33fc6c23.yml",
+          "workflow_name": "Release CLI",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 125,
+          "num_jobs": 4,
+          "steps_per_job": {
+            "tag": 2,
+            "keygen": 7,
+            "package": 0,
+            "publish": 8
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 4,
+            "num_dependencies_between_jobs": 3,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "tag": 2,
+              "keygen": 7,
+              "package": 0,
+              "publish": 8
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 11,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/download-artifact@v4",
+              "actions/upload-artifact@v4",
+              "cargo-bins/cargo-binstall@main",
+              "geekyeggo/delete-artifact@v4",
+              "mathieudutour/github-tag-action@v6.2",
+              "svenstaro/upload-release-action@v2"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 6,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release CLI",
+        "true": {
+          "workflow_call": {
+            "inputs": {
+              "info": {
+                "description": "The release metadata JSON",
+                "required": true,
+                "type": "string"
+              },
+              "CARGO_PROFILE_RELEASE_LTO": {
+                "description": "Used to speed up CI",
+                "required": false,
+                "type": "string"
+              },
+              "CARGO_PROFILE_RELEASE_CODEGEN_UNITS": {
+                "description": "Used to speed up CI",
+                "required": false,
+                "type": "string"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "tag": {
+            "permissions": {
+              "contents": "write"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Push cli release tag",
+                "uses": "mathieudutour/github-tag-action@v6.2",
+                "with": {
+                  "github_token": "${{ secrets.GITHUB_TOKEN }}",
+                  "custom_tag": "${{ fromJSON(inputs.info).version }}",
+                  "tag_prefix": "v"
+                }
+              }
+            ]
+          },
+          "keygen": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "uses": "cargo-bins/cargo-binstall@main"
+              },
+              {
+                "name": "Install binaries required",
+                "run": "cargo binstall -y --force rsign2 rage",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Create ephemeral keypair",
+                "id": "keypair",
+                "env": {
+                  "AGE_KEY_PUBLIC": "${{ vars.AGE_KEY_PUBLIC }}"
+                },
+                "run": ".github/scripts/ephemeral-gen.sh"
+              },
+              {
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "minisign.pub",
+                  "path": "minisign.pub"
+                }
+              },
+              {
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "minisign.key.age",
+                  "path": "minisign.key.age",
+                  "retention-days": 1
+                }
+              },
+              {
+                "name": "Check that key can be decrypted",
+                "env": {
+                  "AGE_KEY_SECRET": "${{ secrets.AGE_KEY_SECRET }}"
+                },
+                "shell": "bash",
+                "run": ".github/scripts/ephemeral-sign.sh minisign.pub"
+              }
+            ]
+          },
+          "package": {
+            "needs": [
+              "tag",
+              "keygen"
+            ],
+            "uses": "./.github/workflows/release-packages.yml",
+            "secrets": "inherit",
+            "with": {
+              "publish": "${{ inputs.info }}",
+              "CARGO_PROFILE_RELEASE_LTO": "${{ inputs.CARGO_PROFILE_RELEASE_LTO }}",
+              "CARGO_PROFILE_RELEASE_CODEGEN_UNITS": "${{ inputs.CARGO_PROFILE_RELEASE_CODEGEN_UNITS }}"
+            }
+          },
+          "publish": {
+            "needs": "package",
+            "permissions": {
+              "contents": "write"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "uses": "actions/download-artifact@v4",
+                "with": {
+                  "name": "minisign.pub"
+                }
+              },
+              {
+                "run": ".github/scripts/ephemeral-crate.sh"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release != 'true' && fromJSON(inputs.info).crate != ''",
+                "name": "DRY-RUN Publish to crates.io",
+                "env": {
+                  "crate": "${{ fromJSON(inputs.info).crate }}",
+                  "CARGO_REGISTRY_TOKEN": "${{ secrets.CARGO_REGISTRY_TOKEN }}"
+                },
+                "run": "cargo publish --dry-run -p \"$crate\" --allow-dirty --no-default-features"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release != 'true' && fromJSON(inputs.info).crate != ''",
+                "name": "Upload crate package as artifact",
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "crate-package",
+                  "path": "target/package/*.crate"
+                }
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Publish to crates.io",
+                "env": {
+                  "crate": "${{ fromJSON(inputs.info).crate }}",
+                  "CARGO_REGISTRY_TOKEN": "${{ secrets.CARGO_REGISTRY_TOKEN }}"
+                },
+                "run": "cargo publish -p \"$crate\" --allow-dirty  --no-default-features"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Make release latest",
+                "uses": "svenstaro/upload-release-action@v2",
+                "with": {
+                  "repo_token": "${{ secrets.GITHUB_TOKEN }}",
+                  "release_name": "v${{ fromJSON(inputs.info).version }}",
+                  "tag": "v${{ fromJSON(inputs.info).version }}",
+                  "body": "${{ fromJSON(inputs.info).notes }}",
+                  "promote": true,
+                  "file": "minisign.pub"
+                }
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Delete signing key artifact",
+                "uses": "geekyeggo/delete-artifact@v4",
+                "with": {
+                  "name": "minisign.key.age",
+                  "failOnError": false
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-03-19T07-47-44Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-cli__2024-03-19T07-47-44Z__0e9e50569795561afcf19ea4efe03839273a6f40.yml",
+          "workflow_name": "Release CLI",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 125,
+          "num_jobs": 4,
+          "steps_per_job": {
+            "tag": 2,
+            "keygen": 7,
+            "package": 0,
+            "publish": 8
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 4,
+            "num_dependencies_between_jobs": 3,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "tag": 2,
+              "keygen": 7,
+              "package": 0,
+              "publish": 8
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 11,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/download-artifact@v4",
+              "actions/upload-artifact@v4",
+              "cargo-bins/cargo-binstall@main",
+              "geekyeggo/delete-artifact@v5",
+              "mathieudutour/github-tag-action@v6.2",
+              "svenstaro/upload-release-action@v2"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 6,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release CLI",
+        "true": {
+          "workflow_call": {
+            "inputs": {
+              "info": {
+                "description": "The release metadata JSON",
+                "required": true,
+                "type": "string"
+              },
+              "CARGO_PROFILE_RELEASE_LTO": {
+                "description": "Used to speed up CI",
+                "required": false,
+                "type": "string"
+              },
+              "CARGO_PROFILE_RELEASE_CODEGEN_UNITS": {
+                "description": "Used to speed up CI",
+                "required": false,
+                "type": "string"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "tag": {
+            "permissions": {
+              "contents": "write"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Push cli release tag",
+                "uses": "mathieudutour/github-tag-action@v6.2",
+                "with": {
+                  "github_token": "${{ secrets.GITHUB_TOKEN }}",
+                  "custom_tag": "${{ fromJSON(inputs.info).version }}",
+                  "tag_prefix": "v"
+                }
+              }
+            ]
+          },
+          "keygen": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "uses": "cargo-bins/cargo-binstall@main"
+              },
+              {
+                "name": "Install binaries required",
+                "run": "cargo binstall -y --force rsign2 rage",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Create ephemeral keypair",
+                "id": "keypair",
+                "env": {
+                  "AGE_KEY_PUBLIC": "${{ vars.AGE_KEY_PUBLIC }}"
+                },
+                "run": ".github/scripts/ephemeral-gen.sh"
+              },
+              {
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "minisign.pub",
+                  "path": "minisign.pub"
+                }
+              },
+              {
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "minisign.key.age",
+                  "path": "minisign.key.age",
+                  "retention-days": 1
+                }
+              },
+              {
+                "name": "Check that key can be decrypted",
+                "env": {
+                  "AGE_KEY_SECRET": "${{ secrets.AGE_KEY_SECRET }}"
+                },
+                "shell": "bash",
+                "run": ".github/scripts/ephemeral-sign.sh minisign.pub"
+              }
+            ]
+          },
+          "package": {
+            "needs": [
+              "tag",
+              "keygen"
+            ],
+            "uses": "./.github/workflows/release-packages.yml",
+            "secrets": "inherit",
+            "with": {
+              "publish": "${{ inputs.info }}",
+              "CARGO_PROFILE_RELEASE_LTO": "${{ inputs.CARGO_PROFILE_RELEASE_LTO }}",
+              "CARGO_PROFILE_RELEASE_CODEGEN_UNITS": "${{ inputs.CARGO_PROFILE_RELEASE_CODEGEN_UNITS }}"
+            }
+          },
+          "publish": {
+            "needs": "package",
+            "permissions": {
+              "contents": "write"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "uses": "actions/download-artifact@v4",
+                "with": {
+                  "name": "minisign.pub"
+                }
+              },
+              {
+                "run": ".github/scripts/ephemeral-crate.sh"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release != 'true' && fromJSON(inputs.info).crate != ''",
+                "name": "DRY-RUN Publish to crates.io",
+                "env": {
+                  "crate": "${{ fromJSON(inputs.info).crate }}",
+                  "CARGO_REGISTRY_TOKEN": "${{ secrets.CARGO_REGISTRY_TOKEN }}"
+                },
+                "run": "cargo publish --dry-run -p \"$crate\" --allow-dirty --no-default-features"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release != 'true' && fromJSON(inputs.info).crate != ''",
+                "name": "Upload crate package as artifact",
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "crate-package",
+                  "path": "target/package/*.crate"
+                }
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Publish to crates.io",
+                "env": {
+                  "crate": "${{ fromJSON(inputs.info).crate }}",
+                  "CARGO_REGISTRY_TOKEN": "${{ secrets.CARGO_REGISTRY_TOKEN }}"
+                },
+                "run": "cargo publish -p \"$crate\" --allow-dirty  --no-default-features"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Make release latest",
+                "uses": "svenstaro/upload-release-action@v2",
+                "with": {
+                  "repo_token": "${{ secrets.GITHUB_TOKEN }}",
+                  "release_name": "v${{ fromJSON(inputs.info).version }}",
+                  "tag": "v${{ fromJSON(inputs.info).version }}",
+                  "body": "${{ fromJSON(inputs.info).notes }}",
+                  "promote": true,
+                  "file": "minisign.pub"
+                }
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Delete signing key artifact",
+                "uses": "geekyeggo/delete-artifact@v5",
+                "with": {
+                  "name": "minisign.key.age",
+                  "failOnError": false
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-06-14T11-33-20Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-cli__2024-06-14T11-33-20Z__540fa79c6b2dcdf5ab8efd84530e18f6c8a9994c.yml",
+          "workflow_name": "Release CLI",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 127,
+          "num_jobs": 4,
+          "steps_per_job": {
+            "tag": 2,
+            "keygen": 7,
+            "package": 0,
+            "publish": 9
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 4,
+            "num_dependencies_between_jobs": 3,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "tag": 2,
+              "keygen": 7,
+              "package": 0,
+              "publish": 9
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 11,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/download-artifact@v4",
+              "actions/upload-artifact@v4",
+              "cargo-bins/cargo-binstall@main",
+              "geekyeggo/delete-artifact@v5",
+              "mathieudutour/github-tag-action@v6.2",
+              "svenstaro/upload-release-action@v2"
+            ],
+            "num_run_commands": 7,
+            "steps_with_conditionals": 6,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release CLI",
+        "true": {
+          "workflow_call": {
+            "inputs": {
+              "info": {
+                "description": "The release metadata JSON",
+                "required": true,
+                "type": "string"
+              },
+              "CARGO_PROFILE_RELEASE_LTO": {
+                "description": "Used to speed up CI",
+                "required": false,
+                "type": "string"
+              },
+              "CARGO_PROFILE_RELEASE_CODEGEN_UNITS": {
+                "description": "Used to speed up CI",
+                "required": false,
+                "type": "string"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "tag": {
+            "permissions": {
+              "contents": "write"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Push cli release tag",
+                "uses": "mathieudutour/github-tag-action@v6.2",
+                "with": {
+                  "github_token": "${{ secrets.GITHUB_TOKEN }}",
+                  "custom_tag": "${{ fromJSON(inputs.info).version }}",
+                  "tag_prefix": "v"
+                }
+              }
+            ]
+          },
+          "keygen": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "uses": "cargo-bins/cargo-binstall@main"
+              },
+              {
+                "name": "Install binaries required",
+                "run": "cargo binstall -y --force rsign2 rage",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Create ephemeral keypair",
+                "id": "keypair",
+                "env": {
+                  "AGE_KEY_PUBLIC": "${{ vars.AGE_KEY_PUBLIC }}"
+                },
+                "run": ".github/scripts/ephemeral-gen.sh"
+              },
+              {
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "minisign.pub",
+                  "path": "minisign.pub"
+                }
+              },
+              {
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "minisign.key.age",
+                  "path": "minisign.key.age",
+                  "retention-days": 1
+                }
+              },
+              {
+                "name": "Check that key can be decrypted",
+                "env": {
+                  "AGE_KEY_SECRET": "${{ secrets.AGE_KEY_SECRET }}"
+                },
+                "shell": "bash",
+                "run": ".github/scripts/ephemeral-sign.sh minisign.pub"
+              }
+            ]
+          },
+          "package": {
+            "needs": [
+              "tag",
+              "keygen"
+            ],
+            "uses": "./.github/workflows/release-packages.yml",
+            "secrets": "inherit",
+            "with": {
+              "publish": "${{ inputs.info }}",
+              "CARGO_PROFILE_RELEASE_LTO": "${{ inputs.CARGO_PROFILE_RELEASE_LTO }}",
+              "CARGO_PROFILE_RELEASE_CODEGEN_UNITS": "${{ inputs.CARGO_PROFILE_RELEASE_CODEGEN_UNITS }}"
+            }
+          },
+          "publish": {
+            "needs": "package",
+            "permissions": {
+              "contents": "write"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "uses": "actions/download-artifact@v4",
+                "with": {
+                  "name": "minisign.pub"
+                }
+              },
+              {
+                "run": "rustup toolchain install stable --no-self-update --profile minimal"
+              },
+              {
+                "run": ".github/scripts/ephemeral-crate.sh"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release != 'true' && fromJSON(inputs.info).crate != ''",
+                "name": "DRY-RUN Publish to crates.io",
+                "env": {
+                  "crate": "${{ fromJSON(inputs.info).crate }}",
+                  "CARGO_REGISTRY_TOKEN": "${{ secrets.CARGO_REGISTRY_TOKEN }}"
+                },
+                "run": "cargo publish --dry-run -p \"$crate\" --allow-dirty --no-default-features"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release != 'true' && fromJSON(inputs.info).crate != ''",
+                "name": "Upload crate package as artifact",
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "crate-package",
+                  "path": "target/package/*.crate"
+                }
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Publish to crates.io",
+                "env": {
+                  "crate": "${{ fromJSON(inputs.info).crate }}",
+                  "CARGO_REGISTRY_TOKEN": "${{ secrets.CARGO_REGISTRY_TOKEN }}"
+                },
+                "run": "cargo publish -p \"$crate\" --allow-dirty  --no-default-features"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Make release latest",
+                "uses": "svenstaro/upload-release-action@v2",
+                "with": {
+                  "repo_token": "${{ secrets.GITHUB_TOKEN }}",
+                  "release_name": "v${{ fromJSON(inputs.info).version }}",
+                  "tag": "v${{ fromJSON(inputs.info).version }}",
+                  "body": "${{ fromJSON(inputs.info).notes }}",
+                  "promote": true,
+                  "file": "minisign.pub"
+                }
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Delete signing key artifact",
+                "uses": "geekyeggo/delete-artifact@v5",
+                "with": {
+                  "name": "minisign.key.age",
+                  "failOnError": false
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-08-03T04-40-18Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-cli__2024-08-03T04-40-18Z__5d57d4506e1c92051317cbf40a98c88f50519fa2.yml",
+          "workflow_name": "Release CLI",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 129,
+          "num_jobs": 4,
+          "steps_per_job": {
+            "tag": 2,
+            "keygen": 7,
+            "package": 0,
+            "publish": 9
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 4,
+            "num_dependencies_between_jobs": 3,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "tag": 2,
+              "keygen": 7,
+              "package": 0,
+              "publish": 9
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 11,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/download-artifact@v4",
+              "actions/upload-artifact@v4",
+              "cargo-bins/cargo-binstall@main",
+              "geekyeggo/delete-artifact@v5",
+              "mathieudutour/github-tag-action@v6.2",
+              "svenstaro/upload-release-action@v2"
+            ],
+            "num_run_commands": 7,
+            "steps_with_conditionals": 6,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release CLI",
+        "true": {
+          "workflow_call": {
+            "inputs": {
+              "info": {
+                "description": "The release metadata JSON",
+                "required": true,
+                "type": "string"
+              },
+              "CARGO_PROFILE_RELEASE_LTO": {
+                "description": "Used to speed up CI",
+                "required": false,
+                "type": "string"
+              },
+              "CARGO_PROFILE_RELEASE_CODEGEN_UNITS": {
+                "description": "Used to speed up CI",
+                "required": false,
+                "type": "string"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "tag": {
+            "permissions": {
+              "contents": "write"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Push cli release tag",
+                "uses": "mathieudutour/github-tag-action@v6.2",
+                "with": {
+                  "github_token": "${{ secrets.GITHUB_TOKEN }}",
+                  "custom_tag": "${{ fromJSON(inputs.info).version }}",
+                  "tag_prefix": "v"
+                }
+              }
+            ]
+          },
+          "keygen": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "uses": "cargo-bins/cargo-binstall@main",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.CI_RELEASE_TEST_GITHUB_TOKEN || secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Install binaries required",
+                "run": "cargo binstall -y --force rsign2 rage",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.CI_RELEASE_TEST_GITHUB_TOKEN || secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Create ephemeral keypair",
+                "id": "keypair",
+                "env": {
+                  "AGE_KEY_PUBLIC": "${{ vars.AGE_KEY_PUBLIC }}"
+                },
+                "run": ".github/scripts/ephemeral-gen.sh"
+              },
+              {
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "minisign.pub",
+                  "path": "minisign.pub"
+                }
+              },
+              {
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "minisign.key.age",
+                  "path": "minisign.key.age",
+                  "retention-days": 1
+                }
+              },
+              {
+                "name": "Check that key can be decrypted",
+                "env": {
+                  "AGE_KEY_SECRET": "${{ secrets.AGE_KEY_SECRET }}"
+                },
+                "shell": "bash",
+                "run": ".github/scripts/ephemeral-sign.sh minisign.pub"
+              }
+            ]
+          },
+          "package": {
+            "needs": [
+              "tag",
+              "keygen"
+            ],
+            "uses": "./.github/workflows/release-packages.yml",
+            "secrets": "inherit",
+            "with": {
+              "publish": "${{ inputs.info }}",
+              "CARGO_PROFILE_RELEASE_LTO": "${{ inputs.CARGO_PROFILE_RELEASE_LTO }}",
+              "CARGO_PROFILE_RELEASE_CODEGEN_UNITS": "${{ inputs.CARGO_PROFILE_RELEASE_CODEGEN_UNITS }}"
+            }
+          },
+          "publish": {
+            "needs": "package",
+            "permissions": {
+              "contents": "write"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "uses": "actions/download-artifact@v4",
+                "with": {
+                  "name": "minisign.pub"
+                }
+              },
+              {
+                "run": "rustup toolchain install stable --no-self-update --profile minimal"
+              },
+              {
+                "run": ".github/scripts/ephemeral-crate.sh"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release != 'true' && fromJSON(inputs.info).crate != ''",
+                "name": "DRY-RUN Publish to crates.io",
+                "env": {
+                  "crate": "${{ fromJSON(inputs.info).crate }}",
+                  "CARGO_REGISTRY_TOKEN": "${{ secrets.CARGO_REGISTRY_TOKEN }}"
+                },
+                "run": "cargo publish --dry-run -p \"$crate\" --allow-dirty --no-default-features"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release != 'true' && fromJSON(inputs.info).crate != ''",
+                "name": "Upload crate package as artifact",
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "crate-package",
+                  "path": "target/package/*.crate"
+                }
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Publish to crates.io",
+                "env": {
+                  "crate": "${{ fromJSON(inputs.info).crate }}",
+                  "CARGO_REGISTRY_TOKEN": "${{ secrets.CARGO_REGISTRY_TOKEN }}"
+                },
+                "run": "cargo publish -p \"$crate\" --allow-dirty  --no-default-features"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Make release latest",
+                "uses": "svenstaro/upload-release-action@v2",
+                "with": {
+                  "repo_token": "${{ secrets.GITHUB_TOKEN }}",
+                  "release_name": "v${{ fromJSON(inputs.info).version }}",
+                  "tag": "v${{ fromJSON(inputs.info).version }}",
+                  "body": "${{ fromJSON(inputs.info).notes }}",
+                  "promote": true,
+                  "file": "minisign.pub"
+                }
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Delete signing key artifact",
+                "uses": "geekyeggo/delete-artifact@v5",
+                "with": {
+                  "name": "minisign.key.age",
+                  "failOnError": false
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-08-12T13-57-22Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-cli__2024-08-12T13-57-22Z__d02d7b2a69827ea979a9b2dc07967c80de161d19.yml",
+          "workflow_name": "Release CLI",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 135,
+          "num_jobs": 4,
+          "steps_per_job": {
+            "tag": 2,
+            "keygen": 7,
+            "package": 0,
+            "publish": 10
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 4,
+            "num_dependencies_between_jobs": 3,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "tag": 2,
+              "keygen": 7,
+              "package": 0,
+              "publish": 10
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 11,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/download-artifact@v4",
+              "actions/upload-artifact@v4",
+              "cargo-bins/cargo-binstall@main",
+              "geekyeggo/delete-artifact@v5",
+              "mathieudutour/github-tag-action@v6.2",
+              "svenstaro/upload-release-action@v2"
+            ],
+            "num_run_commands": 8,
+            "steps_with_conditionals": 7,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release CLI",
+        "true": {
+          "workflow_call": {
+            "inputs": {
+              "info": {
+                "description": "The release metadata JSON",
+                "required": true,
+                "type": "string"
+              },
+              "CARGO_PROFILE_RELEASE_LTO": {
+                "description": "Used to speed up CI",
+                "required": false,
+                "type": "string"
+              },
+              "CARGO_PROFILE_RELEASE_CODEGEN_UNITS": {
+                "description": "Used to speed up CI",
+                "required": false,
+                "type": "string"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "tag": {
+            "permissions": {
+              "contents": "write"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Push cli release tag",
+                "uses": "mathieudutour/github-tag-action@v6.2",
+                "with": {
+                  "github_token": "${{ secrets.GITHUB_TOKEN }}",
+                  "custom_tag": "${{ fromJSON(inputs.info).version }}",
+                  "tag_prefix": "v"
+                }
+              }
+            ]
+          },
+          "keygen": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "uses": "cargo-bins/cargo-binstall@main",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.CI_RELEASE_TEST_GITHUB_TOKEN || secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Install binaries required",
+                "run": "cargo binstall -y --force rsign2 rage",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.CI_RELEASE_TEST_GITHUB_TOKEN || secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Create ephemeral keypair",
+                "id": "keypair",
+                "env": {
+                  "AGE_KEY_PUBLIC": "${{ vars.AGE_KEY_PUBLIC }}"
+                },
+                "run": ".github/scripts/ephemeral-gen.sh"
+              },
+              {
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "minisign.pub",
+                  "path": "minisign.pub"
+                }
+              },
+              {
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "minisign.key.age",
+                  "path": "minisign.key.age",
+                  "retention-days": 1
+                }
+              },
+              {
+                "name": "Check that key can be decrypted",
+                "env": {
+                  "AGE_KEY_SECRET": "${{ secrets.AGE_KEY_SECRET }}"
+                },
+                "shell": "bash",
+                "run": ".github/scripts/ephemeral-sign.sh minisign.pub"
+              }
+            ]
+          },
+          "package": {
+            "needs": [
+              "tag",
+              "keygen"
+            ],
+            "uses": "./.github/workflows/release-packages.yml",
+            "secrets": "inherit",
+            "with": {
+              "publish": "${{ inputs.info }}",
+              "CARGO_PROFILE_RELEASE_LTO": "${{ inputs.CARGO_PROFILE_RELEASE_LTO }}",
+              "CARGO_PROFILE_RELEASE_CODEGEN_UNITS": "${{ inputs.CARGO_PROFILE_RELEASE_CODEGEN_UNITS }}"
+            }
+          },
+          "publish": {
+            "needs": "package",
+            "permissions": {
+              "contents": "write"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "uses": "actions/download-artifact@v4",
+                "with": {
+                  "name": "minisign.pub"
+                }
+              },
+              {
+                "run": "rustup toolchain install stable --no-self-update --profile minimal"
+              },
+              {
+                "run": ".github/scripts/ephemeral-crate.sh"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release != 'true' && fromJSON(inputs.info).crate != ''",
+                "name": "DRY-RUN Publish to crates.io",
+                "env": {
+                  "crate": "${{ fromJSON(inputs.info).crate }}",
+                  "CARGO_REGISTRY_TOKEN": "${{ secrets.CARGO_REGISTRY_TOKEN }}"
+                },
+                "run": "cargo publish --dry-run -p \"$crate\" --allow-dirty --no-default-features"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release != 'true' && fromJSON(inputs.info).crate != ''",
+                "name": "Upload crate package as artifact",
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "crate-package",
+                  "path": "target/package/*.crate"
+                }
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Publish to crates.io",
+                "env": {
+                  "crate": "${{ fromJSON(inputs.info).crate }}",
+                  "CARGO_REGISTRY_TOKEN": "${{ secrets.CARGO_REGISTRY_TOKEN }}"
+                },
+                "run": "cargo publish -p \"$crate\" --allow-dirty  --no-default-features"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Upload minisign.pub",
+                "uses": "svenstaro/upload-release-action@v2",
+                "with": {
+                  "repo_token": "${{ secrets.GITHUB_TOKEN }}",
+                  "release_name": "v${{ fromJSON(inputs.info).version }}",
+                  "tag": "v${{ fromJSON(inputs.info).version }}",
+                  "body": "${{ fromJSON(inputs.info).notes }}",
+                  "promote": true,
+                  "file": "minisign.pub"
+                }
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Make release latest",
+                "run": "gh release edit v${{ fromJSON(inputs.info).version }} --latest --draft=false",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Delete signing key artifact",
+                "uses": "geekyeggo/delete-artifact@v5",
+                "with": {
+                  "name": "minisign.key.age",
+                  "failOnError": false
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-07-13T22-12-51Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-cli__2025-07-13T22-12-51Z__1057f4833e56df9570acf92bd70ad48d892d5f96.yml",
+          "workflow_name": "Release CLI",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 141,
+          "num_jobs": 4,
+          "steps_per_job": {
+            "tag": 2,
+            "keygen": 7,
+            "package": 0,
+            "publish": 11
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 4,
+            "num_dependencies_between_jobs": 3,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "tag": 2,
+              "keygen": 7,
+              "package": 0,
+              "publish": 11
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 12,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/download-artifact@v4",
+              "actions/upload-artifact@v4",
+              "cargo-bins/cargo-binstall@main",
+              "geekyeggo/delete-artifact@v5",
+              "mathieudutour/github-tag-action@v6.2",
+              "rust-lang/crates-io-auth-action@v1",
+              "svenstaro/upload-release-action@v2"
+            ],
+            "num_run_commands": 8,
+            "steps_with_conditionals": 7,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release CLI",
+        "true": {
+          "workflow_call": {
+            "inputs": {
+              "info": {
+                "description": "The release metadata JSON",
+                "required": true,
+                "type": "string"
+              },
+              "CARGO_PROFILE_RELEASE_LTO": {
+                "description": "Used to speed up CI",
+                "required": false,
+                "type": "string"
+              },
+              "CARGO_PROFILE_RELEASE_CODEGEN_UNITS": {
+                "description": "Used to speed up CI",
+                "required": false,
+                "type": "string"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "tag": {
+            "permissions": {
+              "contents": "write"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Push cli release tag",
+                "uses": "mathieudutour/github-tag-action@v6.2",
+                "with": {
+                  "github_token": "${{ secrets.GITHUB_TOKEN }}",
+                  "custom_tag": "${{ fromJSON(inputs.info).version }}",
+                  "tag_prefix": "v"
+                }
+              }
+            ]
+          },
+          "keygen": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "uses": "cargo-bins/cargo-binstall@main",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.CI_RELEASE_TEST_GITHUB_TOKEN || secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Install binaries required",
+                "run": "cargo binstall -y --force rsign2 rage",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.CI_RELEASE_TEST_GITHUB_TOKEN || secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Create ephemeral keypair",
+                "id": "keypair",
+                "env": {
+                  "AGE_KEY_PUBLIC": "${{ vars.AGE_KEY_PUBLIC }}"
+                },
+                "run": ".github/scripts/ephemeral-gen.sh"
+              },
+              {
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "minisign.pub",
+                  "path": "minisign.pub"
+                }
+              },
+              {
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "minisign.key.age",
+                  "path": "minisign.key.age",
+                  "retention-days": 1
+                }
+              },
+              {
+                "name": "Check that key can be decrypted",
+                "env": {
+                  "AGE_KEY_SECRET": "${{ secrets.AGE_KEY_SECRET }}"
+                },
+                "shell": "bash",
+                "run": ".github/scripts/ephemeral-sign.sh minisign.pub"
+              }
+            ]
+          },
+          "package": {
+            "needs": [
+              "tag",
+              "keygen"
+            ],
+            "uses": "./.github/workflows/release-packages.yml",
+            "secrets": "inherit",
+            "with": {
+              "publish": "${{ inputs.info }}",
+              "CARGO_PROFILE_RELEASE_LTO": "${{ inputs.CARGO_PROFILE_RELEASE_LTO }}",
+              "CARGO_PROFILE_RELEASE_CODEGEN_UNITS": "${{ inputs.CARGO_PROFILE_RELEASE_CODEGEN_UNITS }}"
+            }
+          },
+          "publish": {
+            "needs": "package",
+            "permissions": {
+              "contents": "write",
+              "id-token": "write"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "uses": "actions/download-artifact@v4",
+                "with": {
+                  "name": "minisign.pub"
+                }
+              },
+              {
+                "run": "rustup toolchain install stable --no-self-update --profile minimal"
+              },
+              {
+                "run": ".github/scripts/ephemeral-crate.sh"
+              },
+              {
+                "uses": "rust-lang/crates-io-auth-action@v1",
+                "id": "auth"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release != 'true' && fromJSON(inputs.info).crate != ''",
+                "name": "DRY-RUN Publish to crates.io",
+                "env": {
+                  "crate": "${{ fromJSON(inputs.info).crate }}",
+                  "CARGO_REGISTRY_TOKEN": "${{ steps.auth.outputs.token }}"
+                },
+                "run": "cargo publish --dry-run -p \"$crate\" --allow-dirty --no-default-features"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release != 'true' && fromJSON(inputs.info).crate != ''",
+                "name": "Upload crate package as artifact",
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "crate-package",
+                  "path": "target/package/*.crate"
+                }
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Publish to crates.io",
+                "env": {
+                  "crate": "${{ fromJSON(inputs.info).crate }}",
+                  "CARGO_REGISTRY_TOKEN": "${{ steps.auth.outputs.token }}"
+                },
+                "run": "cargo publish -p \"$crate\" --allow-dirty  --no-default-features"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Upload minisign.pub",
+                "uses": "svenstaro/upload-release-action@v2",
+                "with": {
+                  "repo_token": "${{ secrets.GITHUB_TOKEN }}",
+                  "release_name": "v${{ fromJSON(inputs.info).version }}",
+                  "tag": "v${{ fromJSON(inputs.info).version }}",
+                  "body": "${{ fromJSON(inputs.info).notes }}",
+                  "promote": true,
+                  "file": "minisign.pub"
+                }
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Make release latest",
+                "run": "gh release edit v${{ fromJSON(inputs.info).version }} --latest --draft=false",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Delete signing key artifact",
+                "uses": "geekyeggo/delete-artifact@v5",
+                "with": {
+                  "name": "minisign.key.age",
+                  "failOnError": false
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-08-06T08-57-09Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-cli__2025-08-06T08-57-09Z__1f09a05006f753717f70a59a2ec15b6b933ddd87.yml",
+          "workflow_name": "Release CLI",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 141,
+          "num_jobs": 4,
+          "steps_per_job": {
+            "tag": 2,
+            "keygen": 7,
+            "package": 0,
+            "publish": 11
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 4,
+            "num_dependencies_between_jobs": 3,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "tag": 2,
+              "keygen": 7,
+              "package": 0,
+              "publish": 11
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 12,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/download-artifact@v5",
+              "actions/upload-artifact@v4",
+              "cargo-bins/cargo-binstall@main",
+              "geekyeggo/delete-artifact@v5",
+              "mathieudutour/github-tag-action@v6.2",
+              "rust-lang/crates-io-auth-action@v1",
+              "svenstaro/upload-release-action@v2"
+            ],
+            "num_run_commands": 8,
+            "steps_with_conditionals": 7,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release CLI",
+        "true": {
+          "workflow_call": {
+            "inputs": {
+              "info": {
+                "description": "The release metadata JSON",
+                "required": true,
+                "type": "string"
+              },
+              "CARGO_PROFILE_RELEASE_LTO": {
+                "description": "Used to speed up CI",
+                "required": false,
+                "type": "string"
+              },
+              "CARGO_PROFILE_RELEASE_CODEGEN_UNITS": {
+                "description": "Used to speed up CI",
+                "required": false,
+                "type": "string"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "tag": {
+            "permissions": {
+              "contents": "write"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Push cli release tag",
+                "uses": "mathieudutour/github-tag-action@v6.2",
+                "with": {
+                  "github_token": "${{ secrets.GITHUB_TOKEN }}",
+                  "custom_tag": "${{ fromJSON(inputs.info).version }}",
+                  "tag_prefix": "v"
+                }
+              }
+            ]
+          },
+          "keygen": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "uses": "cargo-bins/cargo-binstall@main",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.CI_RELEASE_TEST_GITHUB_TOKEN || secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Install binaries required",
+                "run": "cargo binstall -y --force rsign2 rage",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.CI_RELEASE_TEST_GITHUB_TOKEN || secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Create ephemeral keypair",
+                "id": "keypair",
+                "env": {
+                  "AGE_KEY_PUBLIC": "${{ vars.AGE_KEY_PUBLIC }}"
+                },
+                "run": ".github/scripts/ephemeral-gen.sh"
+              },
+              {
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "minisign.pub",
+                  "path": "minisign.pub"
+                }
+              },
+              {
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "minisign.key.age",
+                  "path": "minisign.key.age",
+                  "retention-days": 1
+                }
+              },
+              {
+                "name": "Check that key can be decrypted",
+                "env": {
+                  "AGE_KEY_SECRET": "${{ secrets.AGE_KEY_SECRET }}"
+                },
+                "shell": "bash",
+                "run": ".github/scripts/ephemeral-sign.sh minisign.pub"
+              }
+            ]
+          },
+          "package": {
+            "needs": [
+              "tag",
+              "keygen"
+            ],
+            "uses": "./.github/workflows/release-packages.yml",
+            "secrets": "inherit",
+            "with": {
+              "publish": "${{ inputs.info }}",
+              "CARGO_PROFILE_RELEASE_LTO": "${{ inputs.CARGO_PROFILE_RELEASE_LTO }}",
+              "CARGO_PROFILE_RELEASE_CODEGEN_UNITS": "${{ inputs.CARGO_PROFILE_RELEASE_CODEGEN_UNITS }}"
+            }
+          },
+          "publish": {
+            "needs": "package",
+            "permissions": {
+              "contents": "write",
+              "id-token": "write"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "uses": "actions/download-artifact@v5",
+                "with": {
+                  "name": "minisign.pub"
+                }
+              },
+              {
+                "run": "rustup toolchain install stable --no-self-update --profile minimal"
+              },
+              {
+                "run": ".github/scripts/ephemeral-crate.sh"
+              },
+              {
+                "uses": "rust-lang/crates-io-auth-action@v1",
+                "id": "auth"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release != 'true' && fromJSON(inputs.info).crate != ''",
+                "name": "DRY-RUN Publish to crates.io",
+                "env": {
+                  "crate": "${{ fromJSON(inputs.info).crate }}",
+                  "CARGO_REGISTRY_TOKEN": "${{ steps.auth.outputs.token }}"
+                },
+                "run": "cargo publish --dry-run -p \"$crate\" --allow-dirty --no-default-features"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release != 'true' && fromJSON(inputs.info).crate != ''",
+                "name": "Upload crate package as artifact",
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "crate-package",
+                  "path": "target/package/*.crate"
+                }
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Publish to crates.io",
+                "env": {
+                  "crate": "${{ fromJSON(inputs.info).crate }}",
+                  "CARGO_REGISTRY_TOKEN": "${{ steps.auth.outputs.token }}"
+                },
+                "run": "cargo publish -p \"$crate\" --allow-dirty  --no-default-features"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Upload minisign.pub",
+                "uses": "svenstaro/upload-release-action@v2",
+                "with": {
+                  "repo_token": "${{ secrets.GITHUB_TOKEN }}",
+                  "release_name": "v${{ fromJSON(inputs.info).version }}",
+                  "tag": "v${{ fromJSON(inputs.info).version }}",
+                  "body": "${{ fromJSON(inputs.info).notes }}",
+                  "promote": true,
+                  "file": "minisign.pub"
+                }
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Make release latest",
+                "run": "gh release edit v${{ fromJSON(inputs.info).version }} --latest --draft=false",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Delete signing key artifact",
+                "uses": "geekyeggo/delete-artifact@v5",
+                "with": {
+                  "name": "minisign.key.age",
+                  "failOnError": false
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-08-12T10-20-16Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-cli__2025-08-12T10-20-16Z__d7c6cbb9117fafe02055796f96f1a7ae7046f32a.yml",
+          "workflow_name": "Release CLI",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 141,
+          "num_jobs": 4,
+          "steps_per_job": {
+            "tag": 2,
+            "keygen": 7,
+            "package": 0,
+            "publish": 11
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 4,
+            "num_dependencies_between_jobs": 3,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "tag": 2,
+              "keygen": 7,
+              "package": 0,
+              "publish": 11
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 12,
+            "actions_used": [
+              "actions/checkout@v5",
+              "actions/download-artifact@v5",
+              "actions/upload-artifact@v4",
+              "cargo-bins/cargo-binstall@main",
+              "geekyeggo/delete-artifact@v5",
+              "mathieudutour/github-tag-action@v6.2",
+              "rust-lang/crates-io-auth-action@v1",
+              "svenstaro/upload-release-action@v2"
+            ],
+            "num_run_commands": 8,
+            "steps_with_conditionals": 7,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release CLI",
+        "true": {
+          "workflow_call": {
+            "inputs": {
+              "info": {
+                "description": "The release metadata JSON",
+                "required": true,
+                "type": "string"
+              },
+              "CARGO_PROFILE_RELEASE_LTO": {
+                "description": "Used to speed up CI",
+                "required": false,
+                "type": "string"
+              },
+              "CARGO_PROFILE_RELEASE_CODEGEN_UNITS": {
+                "description": "Used to speed up CI",
+                "required": false,
+                "type": "string"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "tag": {
+            "permissions": {
+              "contents": "write"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v5"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Push cli release tag",
+                "uses": "mathieudutour/github-tag-action@v6.2",
+                "with": {
+                  "github_token": "${{ secrets.GITHUB_TOKEN }}",
+                  "custom_tag": "${{ fromJSON(inputs.info).version }}",
+                  "tag_prefix": "v"
+                }
+              }
+            ]
+          },
+          "keygen": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v5"
+              },
+              {
+                "uses": "cargo-bins/cargo-binstall@main",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.CI_RELEASE_TEST_GITHUB_TOKEN || secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Install binaries required",
+                "run": "cargo binstall -y --force rsign2 rage",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.CI_RELEASE_TEST_GITHUB_TOKEN || secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Create ephemeral keypair",
+                "id": "keypair",
+                "env": {
+                  "AGE_KEY_PUBLIC": "${{ vars.AGE_KEY_PUBLIC }}"
+                },
+                "run": ".github/scripts/ephemeral-gen.sh"
+              },
+              {
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "minisign.pub",
+                  "path": "minisign.pub"
+                }
+              },
+              {
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "minisign.key.age",
+                  "path": "minisign.key.age",
+                  "retention-days": 1
+                }
+              },
+              {
+                "name": "Check that key can be decrypted",
+                "env": {
+                  "AGE_KEY_SECRET": "${{ secrets.AGE_KEY_SECRET }}"
+                },
+                "shell": "bash",
+                "run": ".github/scripts/ephemeral-sign.sh minisign.pub"
+              }
+            ]
+          },
+          "package": {
+            "needs": [
+              "tag",
+              "keygen"
+            ],
+            "uses": "./.github/workflows/release-packages.yml",
+            "secrets": "inherit",
+            "with": {
+              "publish": "${{ inputs.info }}",
+              "CARGO_PROFILE_RELEASE_LTO": "${{ inputs.CARGO_PROFILE_RELEASE_LTO }}",
+              "CARGO_PROFILE_RELEASE_CODEGEN_UNITS": "${{ inputs.CARGO_PROFILE_RELEASE_CODEGEN_UNITS }}"
+            }
+          },
+          "publish": {
+            "needs": "package",
+            "permissions": {
+              "contents": "write",
+              "id-token": "write"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v5"
+              },
+              {
+                "uses": "actions/download-artifact@v5",
+                "with": {
+                  "name": "minisign.pub"
+                }
+              },
+              {
+                "run": "rustup toolchain install stable --no-self-update --profile minimal"
+              },
+              {
+                "run": ".github/scripts/ephemeral-crate.sh"
+              },
+              {
+                "uses": "rust-lang/crates-io-auth-action@v1",
+                "id": "auth"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release != 'true' && fromJSON(inputs.info).crate != ''",
+                "name": "DRY-RUN Publish to crates.io",
+                "env": {
+                  "crate": "${{ fromJSON(inputs.info).crate }}",
+                  "CARGO_REGISTRY_TOKEN": "${{ steps.auth.outputs.token }}"
+                },
+                "run": "cargo publish --dry-run -p \"$crate\" --allow-dirty --no-default-features"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release != 'true' && fromJSON(inputs.info).crate != ''",
+                "name": "Upload crate package as artifact",
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "crate-package",
+                  "path": "target/package/*.crate"
+                }
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Publish to crates.io",
+                "env": {
+                  "crate": "${{ fromJSON(inputs.info).crate }}",
+                  "CARGO_REGISTRY_TOKEN": "${{ steps.auth.outputs.token }}"
+                },
+                "run": "cargo publish -p \"$crate\" --allow-dirty  --no-default-features"
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Upload minisign.pub",
+                "uses": "svenstaro/upload-release-action@v2",
+                "with": {
+                  "repo_token": "${{ secrets.GITHUB_TOKEN }}",
+                  "release_name": "v${{ fromJSON(inputs.info).version }}",
+                  "tag": "v${{ fromJSON(inputs.info).version }}",
+                  "body": "${{ fromJSON(inputs.info).notes }}",
+                  "promote": true,
+                  "file": "minisign.pub"
+                }
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Make release latest",
+                "run": "gh release edit v${{ fromJSON(inputs.info).version }} --latest --draft=false",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "if": "fromJSON(inputs.info).is-release == 'true'",
+                "name": "Delete signing key artifact",
+                "uses": "geekyeggo/delete-artifact@v5",
+                "with": {
+                  "name": "minisign.key.age",
+                  "failOnError": false
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

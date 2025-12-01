@@ -1,0 +1,1412 @@
+{
+  "repo_owner": "diggerhq",
+  "repo_name": "digger",
+  "workflow_name": "cli_test",
+  "history": {
+    "2024-01-31T10-38-07Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-a1ddb20f-974a-5c76-9047-635d2e495e83",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/cli_test__2024-01-31T10-38-07Z__7583a366684bca2c126ce20dd7289a6c9d396f5f.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 10,
+                  "startColumn": 5,
+                  "endLine": 48,
+                  "endColumn": 32
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "9fc0562fbe2453c7:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "cli_test__2024-01-31T10-38-07Z__7583a366684bca2c126ce20dd7289a6c9d396f5f.yml",
+          "workflow_name": "Cli tests",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 48,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 8
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 8
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5",
+              "opentofu/setup-opentofu@v1.0.1"
+            ],
+            "num_run_commands": 5,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Cli tests",
+        "true": {
+          "push": null,
+          "pull_request": {
+            "types": [
+              "opened",
+              "reopened"
+            ]
+          }
+        },
+        "jobs": {
+          "build": {
+            "name": "Build",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Download Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.21.1"
+                },
+                "id": "go"
+              },
+              {
+                "name": "Setup Opentofu",
+                "uses": "opentofu/setup-opentofu@v1.0.1",
+                "with": {
+                  "tofu_version": "1.6.0-alpha3"
+                }
+              },
+              {
+                "name": "Check out code into the Go module directory",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Deps",
+                "run": "pwd\ngo get -v ./...\n",
+                "working-directory": "cli"
+              },
+              {
+                "name": "Build",
+                "run": "pwd\ngo build -v ./cmd/digger\n",
+                "working-directory": "cli"
+              },
+              {
+                "name": "Install Azurite",
+                "run": "npm install -g azurite"
+              },
+              {
+                "name": "Start Azurite service",
+                "run": "azurite --silent &"
+              },
+              {
+                "name": "Test",
+                "run": "go test -v ./...",
+                "working-directory": "cli"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-02-06T14-23-15Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-55e2cd93-f70b-585e-8a08-1b5ac823c222",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/cli_test__2024-02-06T14-23-15Z__9fa870d69b2d838706d5473dc6009e0bc6156d41.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 10,
+                  "startColumn": 5,
+                  "endLine": 48,
+                  "endColumn": 32
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "9fc0562fbe2453c7:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "cli_test__2024-02-06T14-23-15Z__9fa870d69b2d838706d5473dc6009e0bc6156d41.yml",
+          "workflow_name": "Cli tests",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 48,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 8
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 8
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5",
+              "opentofu/setup-opentofu@v1.0.2"
+            ],
+            "num_run_commands": 5,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Cli tests",
+        "true": {
+          "push": null,
+          "pull_request": {
+            "types": [
+              "opened",
+              "reopened"
+            ]
+          }
+        },
+        "jobs": {
+          "build": {
+            "name": "Build",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Download Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.21.1"
+                },
+                "id": "go"
+              },
+              {
+                "name": "Setup Opentofu",
+                "uses": "opentofu/setup-opentofu@v1.0.2",
+                "with": {
+                  "tofu_version": "1.6.0-alpha3"
+                }
+              },
+              {
+                "name": "Check out code into the Go module directory",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Deps",
+                "run": "pwd\ngo get -v ./...\n",
+                "working-directory": "cli"
+              },
+              {
+                "name": "Build",
+                "run": "pwd\ngo build -v ./cmd/digger\n",
+                "working-directory": "cli"
+              },
+              {
+                "name": "Install Azurite",
+                "run": "npm install -g azurite"
+              },
+              {
+                "name": "Start Azurite service",
+                "run": "azurite --silent &"
+              },
+              {
+                "name": "Test",
+                "run": "go test -v ./...",
+                "working-directory": "cli"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-03-07T18-55-33Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-5bd6a948-ad2c-5d7a-967f-c07bed6e859e",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/cli_test__2024-03-07T18-55-33Z__7d91148026fb51702eee4d251c383878c062fea5.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 10,
+                  "startColumn": 5,
+                  "endLine": 46,
+                  "endColumn": 32
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "9fc0562fbe2453c7:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "cli_test__2024-03-07T18-55-33Z__7d91148026fb51702eee4d251c383878c062fea5.yml",
+          "workflow_name": "Cli tests",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 46,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 8
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 8
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5",
+              "opentofu/setup-opentofu@v1.0.2"
+            ],
+            "num_run_commands": 5,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Cli tests",
+        "true": {
+          "push": null,
+          "pull_request": {
+            "types": [
+              "opened",
+              "reopened"
+            ]
+          }
+        },
+        "jobs": {
+          "build": {
+            "name": "Build",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Download Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.21.1"
+                },
+                "id": "go"
+              },
+              {
+                "name": "Setup Opentofu",
+                "uses": "opentofu/setup-opentofu@v1.0.2",
+                "with": {
+                  "tofu_version": "1.6.0-alpha3"
+                }
+              },
+              {
+                "name": "Check out code into the Go module directory",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Deps",
+                "run": "go get -v ./...\n",
+                "working-directory": "cli"
+              },
+              {
+                "name": "Build",
+                "run": "go build -v ./cmd/digger\n",
+                "working-directory": "cli"
+              },
+              {
+                "name": "Install Azurite",
+                "run": "npm install -g azurite"
+              },
+              {
+                "name": "Start Azurite service",
+                "run": "azurite --silent &"
+              },
+              {
+                "name": "Test",
+                "run": "go test -v ./...",
+                "working-directory": "cli"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-03-18T15-44-30Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-e2e1bd17-2e4b-5b68-8316-ac57da3dc6ad",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/cli_test__2024-03-18T15-44-30Z__6ce974f3f3295256f6928d210a01745084a0e3f0.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 10,
+                  "startColumn": 5,
+                  "endLine": 46,
+                  "endColumn": 32
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "9fc0562fbe2453c7:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "cli_test__2024-03-18T15-44-30Z__6ce974f3f3295256f6928d210a01745084a0e3f0.yml",
+          "workflow_name": "Cli tests",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 46,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 8
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 8
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5",
+              "opentofu/setup-opentofu@v1.0.3"
+            ],
+            "num_run_commands": 5,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Cli tests",
+        "true": {
+          "push": null,
+          "pull_request": {
+            "types": [
+              "opened",
+              "reopened"
+            ]
+          }
+        },
+        "jobs": {
+          "build": {
+            "name": "Build",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Download Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.21.1"
+                },
+                "id": "go"
+              },
+              {
+                "name": "Setup Opentofu",
+                "uses": "opentofu/setup-opentofu@v1.0.3",
+                "with": {
+                  "tofu_version": "1.6.0-alpha3"
+                }
+              },
+              {
+                "name": "Check out code into the Go module directory",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Deps",
+                "run": "go get -v ./...\n",
+                "working-directory": "cli"
+              },
+              {
+                "name": "Build",
+                "run": "go build -v ./cmd/digger\n",
+                "working-directory": "cli"
+              },
+              {
+                "name": "Install Azurite",
+                "run": "npm install -g azurite"
+              },
+              {
+                "name": "Start Azurite service",
+                "run": "azurite --silent &"
+              },
+              {
+                "name": "Test",
+                "run": "go test -v ./...",
+                "working-directory": "cli"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-05-29T11-26-56Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-1c7b2e3a-83b3-5303-bf5e-634f2fcfdd94",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/cli_test__2024-05-29T11-26-56Z__fcdf571c62a35f74564351602e62857c5b9f0c77.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 9,
+                  "startColumn": 5,
+                  "endLine": 39,
+                  "endColumn": 32
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "9fc0562fbe2453c7:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "cli_test__2024-05-29T11-26-56Z__fcdf571c62a35f74564351602e62857c5b9f0c77.yml",
+          "workflow_name": "Cli tests",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 39,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5",
+              "opentofu/setup-opentofu@v1.0.3"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Cli tests",
+        "true": {
+          "push": null,
+          "pull_request": null
+        },
+        "jobs": {
+          "build": {
+            "name": "Build",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Download Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.21.1"
+                },
+                "id": "go"
+              },
+              {
+                "name": "Setup Opentofu",
+                "uses": "opentofu/setup-opentofu@v1.0.3",
+                "with": {
+                  "tofu_version": "1.6.0-alpha3"
+                }
+              },
+              {
+                "name": "Check out code into the Go module directory",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Deps",
+                "run": "go get -v ./...\n",
+                "working-directory": "cli"
+              },
+              {
+                "name": "Build",
+                "run": "go build -v ./cmd/digger\n",
+                "working-directory": "cli"
+              },
+              {
+                "name": "Test",
+                "run": "go test -v ./...",
+                "working-directory": "cli"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-04-25T10-33-33Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-57bde1f0-c6ca-5489-9197-bb366749bd7f",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/cli_test__2024-04-25T10-33-33Z__24b570eb0f2ffa70dfbd4fa3e5824fcda6be2123.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 9,
+                  "startColumn": 5,
+                  "endLine": 45,
+                  "endColumn": 32
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "9fc0562fbe2453c7:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "cli_test__2024-04-25T10-33-33Z__24b570eb0f2ffa70dfbd4fa3e5824fcda6be2123.yml",
+          "workflow_name": "Cli tests",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 45,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 8
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 8
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5",
+              "opentofu/setup-opentofu@v1.0.3"
+            ],
+            "num_run_commands": 5,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Cli tests",
+        "true": {
+          "push": null,
+          "pull_request": null
+        },
+        "jobs": {
+          "build": {
+            "name": "Build",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Download Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.21.1"
+                },
+                "id": "go"
+              },
+              {
+                "name": "Setup Opentofu",
+                "uses": "opentofu/setup-opentofu@v1.0.3",
+                "with": {
+                  "tofu_version": "1.6.0-alpha3"
+                }
+              },
+              {
+                "name": "Check out code into the Go module directory",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Deps",
+                "run": "go get -v ./...\n",
+                "working-directory": "cli"
+              },
+              {
+                "name": "Build",
+                "run": "go build -v ./cmd/digger\n",
+                "working-directory": "cli"
+              },
+              {
+                "name": "Install Azurite",
+                "run": "npm install -g azurite"
+              },
+              {
+                "name": "Start Azurite service",
+                "run": "azurite --silent &"
+              },
+              {
+                "name": "Test",
+                "run": "go test -v ./...",
+                "working-directory": "cli"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-06-12T09-30-15Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-8e989d3c-8345-5a13-a33b-be7bf07c9e9a",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/cli_test__2024-06-12T09-30-15Z__d38a43b691445680c4ea4b481ee0a5def94b1a45.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 10,
+                  "startColumn": 5,
+                  "endLine": 40,
+                  "endColumn": 32
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "8fc7348a57138443:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "cli_test__2024-06-12T09-30-15Z__d38a43b691445680c4ea4b481ee0a5def94b1a45.yml",
+          "workflow_name": "Cli tests",
+          "triggers": {
+            "push": null,
+            "pull_request": null
+          },
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 40,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 2
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5",
+              "opentofu/setup-opentofu@v1.0.3"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Cli tests",
+        "true": {
+          "push": null,
+          "pull_request": null
+        },
+        "jobs": {
+          "build": {
+            "name": "Build",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Download Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.21.1"
+                },
+                "id": "go"
+              },
+              {
+                "name": "Setup Opentofu",
+                "uses": "opentofu/setup-opentofu@v1.0.3",
+                "with": {
+                  "tofu_version": "1.6.0-alpha3"
+                }
+              },
+              {
+                "name": "Check out code into the Go module directory",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Deps",
+                "run": "go get -v ./...\n",
+                "working-directory": "cli"
+              },
+              {
+                "name": "Build",
+                "run": "go build -v ./cmd/digger\n",
+                "working-directory": "cli"
+              },
+              {
+                "name": "Test",
+                "run": "go test -v ./...",
+                "working-directory": "cli"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-11-04T18-31-29Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-619980b8-bcbb-50b3-99e7-2330d17a821e",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/cli_test__2024-11-04T18-31-29Z__9e58371eb34fe05cb1063f176cc66fb2cba0a9b7.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 10,
+                  "startColumn": 5,
+                  "endLine": 43,
+                  "endColumn": 32
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "8fc7348a57138443:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "cli_test__2024-11-04T18-31-29Z__9e58371eb34fe05cb1063f176cc66fb2cba0a9b7.yml",
+          "workflow_name": "Cli tests",
+          "triggers": {
+            "push": null,
+            "pull_request": null
+          },
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 43,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 2
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5",
+              "opentofu/setup-opentofu@v1.0.3"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Cli tests",
+        "true": {
+          "push": null,
+          "pull_request": null
+        },
+        "jobs": {
+          "build": {
+            "name": "Build",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Download Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.21.1"
+                },
+                "id": "go"
+              },
+              {
+                "name": "Setup Opentofu",
+                "uses": "opentofu/setup-opentofu@v1.0.3",
+                "with": {
+                  "tofu_version": "1.6.0-alpha3"
+                }
+              },
+              {
+                "name": "Check out code into the Go module directory",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Deps",
+                "run": "go get -v ./...\n",
+                "working-directory": "cli"
+              },
+              {
+                "name": "Build",
+                "run": "go build -v ./cmd/digger\n",
+                "working-directory": "cli"
+              },
+              {
+                "name": "Test",
+                "shell": "bash",
+                "run": "go install github.com/gotesttools/gotestfmt/v2/cmd/gotestfmt@latest\ngo test -json ./... | gotestfmt \n",
+                "working-directory": "cli"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-11-06T11-21-39Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-7a893d5c-e87f-511d-8d92-4989f2bb9ea2",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/cli_test__2024-11-06T11-21-39Z__40e89117beb50f454c1e8efe8df68f737d1d22d7.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 10,
+                  "startColumn": 5,
+                  "endLine": 43,
+                  "endColumn": 32
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "8fc7348a57138443:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "cli_test__2024-11-06T11-21-39Z__40e89117beb50f454c1e8efe8df68f737d1d22d7.yml",
+          "workflow_name": "Cli tests",
+          "triggers": {
+            "push": null,
+            "pull_request": null
+          },
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 43,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 2
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5",
+              "opentofu/setup-opentofu@v1"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Cli tests",
+        "true": {
+          "push": null,
+          "pull_request": null
+        },
+        "jobs": {
+          "build": {
+            "name": "Build",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Download Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.21.1"
+                },
+                "id": "go"
+              },
+              {
+                "name": "Setup Opentofu",
+                "uses": "opentofu/setup-opentofu@v1",
+                "with": {
+                  "tofu_version": "1.8.5"
+                }
+              },
+              {
+                "name": "Check out code into the Go module directory",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Deps",
+                "run": "go get -v ./...\n",
+                "working-directory": "cli"
+              },
+              {
+                "name": "Build",
+                "run": "go build -v ./cmd/digger\n",
+                "working-directory": "cli"
+              },
+              {
+                "name": "Test",
+                "shell": "bash",
+                "run": "go install github.com/gotesttools/gotestfmt/v2/cmd/gotestfmt@latest\ngo test -json ./... | gotestfmt \n",
+                "working-directory": "cli"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-05-20T00-26-44Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-0acc638c-3773-5d0e-a5ac-6b541be63632",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/cli_test__2025-05-20T00-26-44Z__20cefd9faf4bffe8f41bd82ef12b4c4494cca032.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 10,
+                  "startColumn": 5,
+                  "endLine": 42,
+                  "endColumn": 32
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "8fc7348a57138443:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "cli_test__2025-05-20T00-26-44Z__20cefd9faf4bffe8f41bd82ef12b4c4494cca032.yml",
+          "workflow_name": "Cli tests",
+          "triggers": {
+            "push": null,
+            "pull_request": null
+          },
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 42,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 2
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5",
+              "opentofu/setup-opentofu@v1"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Cli tests",
+        "true": {
+          "push": null,
+          "pull_request": null
+        },
+        "jobs": {
+          "build": {
+            "name": "Build",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Download Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.24.0"
+                },
+                "id": "go"
+              },
+              {
+                "name": "Setup Opentofu",
+                "uses": "opentofu/setup-opentofu@v1",
+                "with": {
+                  "tofu_version": "1.8.5"
+                }
+              },
+              {
+                "name": "Check out code into the Go module directory",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Deps",
+                "run": "go get -v ./...\n",
+                "working-directory": "cli"
+              },
+              {
+                "name": "Build",
+                "run": "go build -v ./cmd/digger\n",
+                "working-directory": "cli"
+              },
+              {
+                "name": "Test",
+                "shell": "bash",
+                "run": "go test ./...\n",
+                "working-directory": "cli"
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

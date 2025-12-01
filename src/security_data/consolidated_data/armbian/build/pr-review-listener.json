@@ -1,0 +1,152 @@
+{
+  "repo_owner": "armbian",
+  "repo_name": "build",
+  "workflow_name": "pr-review-listener",
+  "history": {
+    "2025-09-12T19-31-19Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "pr-review-listener__2025-09-12T19-31-19Z__e60abc531b55417c7293dbbf579f99770217d9b0.yml",
+          "workflow_name": "PR review listener",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 15,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "ping": 1
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "ping": 1
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 0,
+            "actions_used": [],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "PR review listener",
+        "true": {
+          "pull_request_review": {
+            "types": [
+              "submitted"
+            ]
+          }
+        },
+        "jobs": {
+          "ping": {
+            "if": "${{ github.event.review.state == 'approved' }}",
+            "name": "Listen",
+            "permissions": {
+              "contents": "read"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "run": "echo \"Approved review detected for PR ${{ github.event.pull_request.number }}\""
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-09-13T10-17-09Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "pr-review-listener__2025-09-13T10-17-09Z__6e11920bf36879d53941e0c4f4fc2588563d784a.yml",
+          "workflow_name": "PR review listener",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 20,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "ping": 2
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "ping": 2
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 1,
+            "actions_used": [
+              "actions/upload-artifact@v4"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "PR review listener",
+        "true": {
+          "pull_request_review": {
+            "types": [
+              "submitted"
+            ]
+          }
+        },
+        "jobs": {
+          "ping": {
+            "if": "${{ github.event.review.state == 'approved' }}",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "contents": "read"
+            },
+            "steps": [
+              {
+                "name": "Save PR number",
+                "run": "echo \"${{ github.event.pull_request.number }}\" > pr.txt"
+              },
+              {
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "pr-number-${{ github.run_id }}",
+                  "path": "pr.txt"
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "repo_owner": "mattzcarey",
+  "repo_name": "code-review-gpt",
+  "workflow_name": "check-pr-title",
+  "history": {
+    "2025-04-28T17-06-04Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "check-pr-title__2025-04-28T17-06-04Z__c7edf3b983fbaeeb38fb06266f3f3aab81106275.yml",
+          "workflow_name": "Check PR title",
+          "triggers": {},
+          "permissions": {
+            "pull-requests": "read"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 25,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "main": 1
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "main": 1
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 1,
+            "actions_used": [
+              "amannn/action-semantic-pull-request@v5"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Check PR title",
+        "true": {
+          "pull_request": {
+            "types": [
+              "opened",
+              "reopened",
+              "edited",
+              "synchronize"
+            ]
+          }
+        },
+        "permissions": {
+          "pull-requests": "read"
+        },
+        "jobs": {
+          "main": {
+            "name": "Validate PR title",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "amannn/action-semantic-pull-request@v5",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                },
+                "with": {
+                  "ignoreLabels": "autorelease: pending\ndependencies"
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

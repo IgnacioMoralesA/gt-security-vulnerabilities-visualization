@@ -1,0 +1,148 @@
+{
+  "repo_owner": "stelligent",
+  "repo_name": "cfn_nag",
+  "workflow_name": "tests-linting",
+  "history": {
+    "2021-10-29T17-34-41Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "tests-linting__2021-10-29T17-34-41Z__f4b78de24a48a747ceb922b726744ec8750d2593.yml",
+          "workflow_name": "test-lint",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 55,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "tests-linting": 5,
+            "acceptance": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 2,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "tests-linting": 5,
+              "acceptance": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@master",
+              "ruby/setup-ruby@v1"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "test-lint",
+        "true": {
+          "workflow_call": null,
+          "push": {
+            "branches": [
+              "master"
+            ]
+          },
+          "pull_request": {
+            "branches": [
+              "master"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "read"
+        },
+        "env": {
+          "docker_org": "stelligent"
+        },
+        "jobs": {
+          "tests-linting": {
+            "name": "Tests & Linting",
+            "runs-on": "ubuntu-latest",
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "ruby": [
+                  "2.5",
+                  "3.0"
+                ]
+              }
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@master"
+              },
+              {
+                "name": "Set up Ruby",
+                "uses": "ruby/setup-ruby@v1",
+                "with": {
+                  "ruby-version": "${{ matrix.ruby }}",
+                  "bundler-cache": true
+                }
+              },
+              {
+                "name": "Rubocop lint",
+                "run": "bundle exec rubocop -D"
+              },
+              {
+                "name": "Rspec tests",
+                "run": "bundle exec rspec --require spec_helper spec"
+              },
+              {
+                "name": "Duplicate rule check",
+                "run": "bundle exec ./bin/cfn_nag_rules"
+              }
+            ]
+          },
+          "acceptance": {
+            "name": "Acceptance",
+            "runs-on": "ubuntu-latest",
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "ruby": [
+                  "2.5",
+                  "3.0"
+                ]
+              }
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@master"
+              },
+              {
+                "name": "Set up Ruby",
+                "uses": "ruby/setup-ruby@v1",
+                "with": {
+                  "ruby-version": "${{ matrix.ruby }}"
+                }
+              },
+              {
+                "name": "e2e",
+                "run": "bash ./scripts/setup_and_run_end_to_end_tests.sh"
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

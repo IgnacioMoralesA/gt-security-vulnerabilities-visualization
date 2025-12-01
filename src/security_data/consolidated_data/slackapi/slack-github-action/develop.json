@@ -1,0 +1,1007 @@
+{
+  "repo_owner": "slackapi",
+  "repo_name": "slack-github-action",
+  "workflow_name": "develop",
+  "history": {
+    "2024-12-13T21-55-51Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-d768604a-8091-5a09-a389-5194e96a133a",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/develop__2024-12-13T21-55-51Z__6a5a811bd01cc60076b5e3a94f1b3a0d1352084e.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 10,
+                  "startColumn": 5,
+                  "endLine": 134,
+                  "endColumn": 26
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "21f0d0cced333731:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "develop__2024-12-13T21-55-51Z__6a5a811bd01cc60076b5e3a94f1b3a0d1352084e.yml",
+          "workflow_name": "Development run",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 134,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "run": 14
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "run": 14
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 11,
+            "actions_used": [
+              "./",
+              "actions/checkout@v4",
+              "actions/setup-node@v4"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Development run",
+        "true": {
+          "public": null
+        },
+        "jobs": {
+          "run": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout action",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "Setup the Node runtime for this project",
+                "uses": "actions/setup-node@v4",
+                "with": {
+                  "cache": "npm",
+                  "cache-dependency-path": "package-lock.json",
+                  "node-version-file": ".nvmrc"
+                }
+              },
+              {
+                "name": "Install dependencies",
+                "run": "npm install"
+              },
+              {
+                "name": "Package the build",
+                "run": "npm run build"
+              },
+              {
+                "name": "Start a workflow with a webhook trigger",
+                "id": "wfb",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "webhook": "${{ secrets.SLACK_WEBHOOK_TRIGGER }}",
+                  "webhook-type": "webhook-trigger",
+                  "payload": "author: ${{ github.event.sender.login }}\nchannel_id: ${{ secrets.SLACK_CHANNEL_ID }}\nevent_url: ${{ github.event.pull_request.html_url }}\nrepo_name: ${{ github.event.repository.full_name }}\nstatus: ${{ job.status }}\n"
+                }
+              },
+              {
+                "name": "Post a token message into channel",
+                "id": "api",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.postMessage",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\ntext: \":checkered_flag: Action happens at <https://github.com/${{ github.repository }}>\"\n"
+                }
+              },
+              {
+                "name": "Initiate the deployment sequence",
+                "id": "slack",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.postMessage",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\ntext: \":eyes: Testing started...\"\nattachments:\n  - color: \"dbab09\"\n    fields:\n      - title: \"Status\"\n        short: true\n        value: \"In Progress\"\n"
+                }
+              },
+              {
+                "name": "Write starting statistics",
+                "id": "stats",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.postMessage",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ steps.slack.outputs.channel_id }}\ntext: \"Started at `${{ steps.slack.outputs.time }}`\"\nthread_ts: \"${{ steps.slack.outputs.ts }}\"\n"
+                }
+              },
+              {
+                "name": "Countdown",
+                "run": "sleep 3"
+              },
+              {
+                "name": "Launch time is now",
+                "id": "finished",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.update",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\nts: \"${{ steps.slack.outputs.ts }}\"\ntext: \":microscope: Testing finished!\"\nattachments:\n  - color: \"28a745\"\n    fields:\n      - title: \"Status\"\n        short: true\n        value: \"Completed\"\n"
+                }
+              },
+              {
+                "name": "Include ending statistics",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.postMessage",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ steps.slack.outputs.channel_id }}\ntext: \"Finished at `${{ steps.finished.outputs.time }}`\"\nthread_ts: \"${{ steps.stats.outputs.thread_ts }}\"\n"
+                }
+              },
+              {
+                "name": "Celebrate wins",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "reactions.add",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\ntimestamp: ${{ steps.slack.outputs.ts }}\nname: \"eye-in-speech-bubble\"\n"
+                }
+              },
+              {
+                "name": "Upload this workflow file",
+                "id": "file",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "files.uploadV2",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel_id: ${{ secrets.SLACK_CHANNEL_ID }}\ninitial_comment: \":robot_face: The codes exists here\"\nfile: .github/workflows/develop.yml\nfilename: action.yml\n"
+                }
+              },
+              {
+                "name": "Write one final webhook",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "webhook": "${{ secrets.SLACK_INCOMING_WEBHOOK }}",
+                  "webhook-type": "incoming-webhook",
+                  "payload": "text: \"end.\"\n"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-11-14T20-48-36Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-6e67ae02-bd0a-5017-b39e-e6aa86673afc",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/develop__2024-11-14T20-48-36Z__e9b3a6beef047e819b8fb417da538f97a93a2ec8.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 10,
+                  "startColumn": 5,
+                  "endLine": 132,
+                  "endColumn": 26
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "d1fcd51e9e1b5728:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "develop__2024-11-14T20-48-36Z__e9b3a6beef047e819b8fb417da538f97a93a2ec8.yml",
+          "workflow_name": "Development run",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 132,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "run": 14
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "run": 14
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 11,
+            "actions_used": [
+              "./",
+              "actions/checkout@v4",
+              "actions/setup-node@v4"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Development run",
+        "true": {
+          "public": null
+        },
+        "jobs": {
+          "run": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout action",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Setup the Node runtime for this project",
+                "uses": "actions/setup-node@v4",
+                "with": {
+                  "cache": "npm",
+                  "cache-dependency-path": "package-lock.json",
+                  "node-version-file": ".nvmrc"
+                }
+              },
+              {
+                "name": "Install dependencies",
+                "run": "npm install"
+              },
+              {
+                "name": "Package the build",
+                "run": "npm run build"
+              },
+              {
+                "name": "Start a workflow with a webhook trigger",
+                "id": "wfb",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "webhook": "${{ secrets.SLACK_WEBHOOK_TRIGGER }}",
+                  "webhook-type": "webhook-trigger",
+                  "payload": "author: ${{ github.event.sender.login }}\nchannel_id: ${{ secrets.SLACK_CHANNEL_ID }}\nevent_url: ${{ github.event.pull_request.html_url }}\nrepo_name: ${{ github.event.repository.full_name }}\nstatus: ${{ job.status }}\n"
+                }
+              },
+              {
+                "name": "Post a token message into channel",
+                "id": "api",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.postMessage",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\ntext: \":checkered_flag: Action happens at <https://github.com/${{ github.repository }}>\"\n"
+                }
+              },
+              {
+                "name": "Initiate the deployment sequence",
+                "id": "slack",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.postMessage",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\ntext: \":eyes: Testing started...\"\nattachments:\n  - color: \"dbab09\"\n    fields:\n      - title: \"Status\"\n        short: true\n        value: \"In Progress\"\n"
+                }
+              },
+              {
+                "name": "Write starting statistics",
+                "id": "stats",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.postMessage",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ steps.slack.outputs.channel_id }}\ntext: \"Started at `${{ steps.slack.outputs.time }}`\"\nthread_ts: \"${{ steps.slack.outputs.ts }}\"\n"
+                }
+              },
+              {
+                "name": "Countdown",
+                "run": "sleep 3"
+              },
+              {
+                "name": "Launch time is now",
+                "id": "finished",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.update",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\nts: \"${{ steps.slack.outputs.ts }}\"\ntext: \":microscope: Testing finished!\"\nattachments:\n  - color: \"28a745\"\n    fields:\n      - title: \"Status\"\n        short: true\n        value: \"Completed\"\n"
+                }
+              },
+              {
+                "name": "Include ending statistics",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.postMessage",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ steps.slack.outputs.channel_id }}\ntext: \"Finished at `${{ steps.finished.outputs.time }}`\"\nthread_ts: \"${{ steps.stats.outputs.thread_ts }}\"\n"
+                }
+              },
+              {
+                "name": "Celebrate wins",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "reactions.add",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\ntimestamp: ${{ steps.slack.outputs.ts }}\nname: \"eye-in-speech-bubble\"\n"
+                }
+              },
+              {
+                "name": "Upload this workflow file",
+                "id": "file",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "files.uploadV2",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel_id: ${{ secrets.SLACK_CHANNEL_ID }}\ninitial_comment: \":robot_face: The codes exists here\"\nfile: .github/workflows/develop.yml\nfilename: action.yml\n"
+                }
+              },
+              {
+                "name": "Write one final webhook",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "webhook": "${{ secrets.SLACK_INCOMING_WEBHOOK }}",
+                  "webhook-type": "incoming-webhook",
+                  "payload": "text: \"end.\"\n"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-05-17T00-01-56Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "develop__2025-05-17T00-01-56Z__ab28db9b5bded4962358ca51a278e180db3559ad.yml",
+          "workflow_name": "Development run",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 136,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "run": 14
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "run": 14
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 11,
+            "actions_used": [
+              "./",
+              "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+              "actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Development run",
+        "true": {
+          "public": null
+        },
+        "jobs": {
+          "run": {
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "contents": "read"
+            },
+            "steps": [
+              {
+                "name": "Checkout action",
+                "uses": "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+                "with": {
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "Setup the Node runtime for this project",
+                "uses": "actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+                "with": {
+                  "cache": "npm",
+                  "cache-dependency-path": "package-lock.json",
+                  "node-version-file": ".nvmrc"
+                }
+              },
+              {
+                "name": "Install dependencies",
+                "run": "npm install"
+              },
+              {
+                "name": "Package the build",
+                "run": "npm run build"
+              },
+              {
+                "name": "Start a workflow with a webhook trigger",
+                "id": "wfb",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "webhook": "${{ secrets.SLACK_WEBHOOK_TRIGGER }}",
+                  "webhook-type": "webhook-trigger",
+                  "payload": "author: ${{ github.event.sender.login }}\nchannel_id: ${{ secrets.SLACK_CHANNEL_ID }}\nevent_url: ${{ github.event.pull_request.html_url }}\nrepo_name: ${{ github.event.repository.full_name }}\nstatus: ${{ job.status }}\n"
+                }
+              },
+              {
+                "name": "Post a token message into channel",
+                "id": "api",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.postMessage",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\ntext: \":checkered_flag: Action happens at <https://github.com/${{ github.repository }}>\"\n"
+                }
+              },
+              {
+                "name": "Initiate the deployment sequence",
+                "id": "slack",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.postMessage",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\ntext: \":eyes: Testing started...\"\nattachments:\n  - color: \"dbab09\"\n    fields:\n      - title: \"Status\"\n        short: true\n        value: \"In Progress\"\n"
+                }
+              },
+              {
+                "name": "Write starting statistics",
+                "id": "stats",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.postMessage",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ steps.slack.outputs.channel_id }}\ntext: \"Started at `${{ steps.slack.outputs.time }}`\"\nthread_ts: \"${{ steps.slack.outputs.ts }}\"\n"
+                }
+              },
+              {
+                "name": "Countdown",
+                "run": "sleep 3"
+              },
+              {
+                "name": "Launch time is now",
+                "id": "finished",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.update",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\nts: \"${{ steps.slack.outputs.ts }}\"\ntext: \":microscope: Testing finished!\"\nattachments:\n  - color: \"28a745\"\n    fields:\n      - title: \"Status\"\n        short: true\n        value: \"Completed\"\n"
+                }
+              },
+              {
+                "name": "Include ending statistics",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.postMessage",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ steps.slack.outputs.channel_id }}\ntext: \"Finished at `${{ steps.finished.outputs.time }}`\"\nthread_ts: \"${{ steps.stats.outputs.thread_ts }}\"\n"
+                }
+              },
+              {
+                "name": "Celebrate wins",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "reactions.add",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\ntimestamp: ${{ steps.slack.outputs.ts }}\nname: \"eye-in-speech-bubble\"\n"
+                }
+              },
+              {
+                "name": "Upload this workflow file",
+                "id": "file",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "files.uploadV2",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel_id: ${{ secrets.SLACK_CHANNEL_ID }}\ninitial_comment: \":robot_face: The codes exists here\"\nfile: .github/workflows/develop.yml\nfilename: action.yml\n"
+                }
+              },
+              {
+                "name": "Write one final webhook",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "webhook": "${{ secrets.SLACK_INCOMING_WEBHOOK }}",
+                  "webhook-type": "incoming-webhook",
+                  "payload": "text: \"end.\"\n"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-10-01T13-44-07Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "develop__2025-10-01T13-44-07Z__daf3fa45409cc1bf9be43d1e332513d37f86f167.yml",
+          "workflow_name": "Development run",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 136,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "run": 14
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "run": 14
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 11,
+            "actions_used": [
+              "./",
+              "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+              "actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Development run",
+        "true": {
+          "public": null
+        },
+        "jobs": {
+          "run": {
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "contents": "read"
+            },
+            "steps": [
+              {
+                "name": "Checkout action",
+                "uses": "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+                "with": {
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "Setup the Node runtime for this project",
+                "uses": "actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444",
+                "with": {
+                  "cache": "npm",
+                  "cache-dependency-path": "package-lock.json",
+                  "node-version-file": ".nvmrc"
+                }
+              },
+              {
+                "name": "Install dependencies",
+                "run": "npm install"
+              },
+              {
+                "name": "Package the build",
+                "run": "npm run build"
+              },
+              {
+                "name": "Start a workflow with a webhook trigger",
+                "id": "wfb",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "webhook": "${{ secrets.SLACK_WEBHOOK_TRIGGER }}",
+                  "webhook-type": "webhook-trigger",
+                  "payload": "author: ${{ github.event.sender.login }}\nchannel_id: ${{ secrets.SLACK_CHANNEL_ID }}\nevent_url: ${{ github.event.pull_request.html_url }}\nrepo_name: ${{ github.event.repository.full_name }}\nstatus: ${{ job.status }}\n"
+                }
+              },
+              {
+                "name": "Post a token message into channel",
+                "id": "api",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.postMessage",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\ntext: \":checkered_flag: Action happens at <https://github.com/${{ github.repository }}>\"\n"
+                }
+              },
+              {
+                "name": "Initiate the deployment sequence",
+                "id": "slack",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.postMessage",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\ntext: \":eyes: Testing started...\"\nattachments:\n  - color: \"dbab09\"\n    fields:\n      - title: \"Status\"\n        short: true\n        value: \"In Progress\"\n"
+                }
+              },
+              {
+                "name": "Write starting statistics",
+                "id": "stats",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.postMessage",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ steps.slack.outputs.channel_id }}\ntext: \"Started at `${{ steps.slack.outputs.time }}`\"\nthread_ts: \"${{ steps.slack.outputs.ts }}\"\n"
+                }
+              },
+              {
+                "name": "Countdown",
+                "run": "sleep 3"
+              },
+              {
+                "name": "Launch time is now",
+                "id": "finished",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.update",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\nts: \"${{ steps.slack.outputs.ts }}\"\ntext: \":microscope: Testing finished!\"\nattachments:\n  - color: \"28a745\"\n    fields:\n      - title: \"Status\"\n        short: true\n        value: \"Completed\"\n"
+                }
+              },
+              {
+                "name": "Include ending statistics",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.postMessage",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ steps.slack.outputs.channel_id }}\ntext: \"Finished at `${{ steps.finished.outputs.time }}`\"\nthread_ts: \"${{ steps.stats.outputs.thread_ts }}\"\n"
+                }
+              },
+              {
+                "name": "Celebrate wins",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "reactions.add",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\ntimestamp: ${{ steps.slack.outputs.ts }}\nname: \"eye-in-speech-bubble\"\n"
+                }
+              },
+              {
+                "name": "Upload this workflow file",
+                "id": "file",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "files.uploadV2",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel_id: ${{ secrets.SLACK_CHANNEL_ID }}\ninitial_comment: \":robot_face: The codes exists here\"\nfile: .github/workflows/develop.yml\nfilename: action.yml\n"
+                }
+              },
+              {
+                "name": "Write one final webhook",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "webhook": "${{ secrets.SLACK_INCOMING_WEBHOOK }}",
+                  "webhook-type": "incoming-webhook",
+                  "payload": "text: \"end.\"\n"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-10-01T13-44-35Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "develop__2025-10-01T13-44-35Z__e2e9063c789fda51836da4c45401204e5d80e6ee.yml",
+          "workflow_name": "Development run",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 136,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "run": 14
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "run": 14
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 11,
+            "actions_used": [
+              "./",
+              "actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8",
+              "actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Development run",
+        "true": {
+          "public": null
+        },
+        "jobs": {
+          "run": {
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "contents": "read"
+            },
+            "steps": [
+              {
+                "name": "Checkout action",
+                "uses": "actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8",
+                "with": {
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "Setup the Node runtime for this project",
+                "uses": "actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444",
+                "with": {
+                  "cache": "npm",
+                  "cache-dependency-path": "package-lock.json",
+                  "node-version-file": ".nvmrc"
+                }
+              },
+              {
+                "name": "Install dependencies",
+                "run": "npm install"
+              },
+              {
+                "name": "Package the build",
+                "run": "npm run build"
+              },
+              {
+                "name": "Start a workflow with a webhook trigger",
+                "id": "wfb",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "webhook": "${{ secrets.SLACK_WEBHOOK_TRIGGER }}",
+                  "webhook-type": "webhook-trigger",
+                  "payload": "author: ${{ github.event.sender.login }}\nchannel_id: ${{ secrets.SLACK_CHANNEL_ID }}\nevent_url: ${{ github.event.pull_request.html_url }}\nrepo_name: ${{ github.event.repository.full_name }}\nstatus: ${{ job.status }}\n"
+                }
+              },
+              {
+                "name": "Post a token message into channel",
+                "id": "api",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.postMessage",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\ntext: \":checkered_flag: Action happens at <https://github.com/${{ github.repository }}>\"\n"
+                }
+              },
+              {
+                "name": "Initiate the deployment sequence",
+                "id": "slack",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.postMessage",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\ntext: \":eyes: Testing started...\"\nattachments:\n  - color: \"dbab09\"\n    fields:\n      - title: \"Status\"\n        short: true\n        value: \"In Progress\"\n"
+                }
+              },
+              {
+                "name": "Write starting statistics",
+                "id": "stats",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.postMessage",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ steps.slack.outputs.channel_id }}\ntext: \"Started at `${{ steps.slack.outputs.time }}`\"\nthread_ts: \"${{ steps.slack.outputs.ts }}\"\n"
+                }
+              },
+              {
+                "name": "Countdown",
+                "run": "sleep 3"
+              },
+              {
+                "name": "Launch time is now",
+                "id": "finished",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.update",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\nts: \"${{ steps.slack.outputs.ts }}\"\ntext: \":microscope: Testing finished!\"\nattachments:\n  - color: \"28a745\"\n    fields:\n      - title: \"Status\"\n        short: true\n        value: \"Completed\"\n"
+                }
+              },
+              {
+                "name": "Include ending statistics",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "chat.postMessage",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ steps.slack.outputs.channel_id }}\ntext: \"Finished at `${{ steps.finished.outputs.time }}`\"\nthread_ts: \"${{ steps.stats.outputs.thread_ts }}\"\n"
+                }
+              },
+              {
+                "name": "Celebrate wins",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "reactions.add",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel: ${{ secrets.SLACK_CHANNEL_ID }}\ntimestamp: ${{ steps.slack.outputs.ts }}\nname: \"eye-in-speech-bubble\"\n"
+                }
+              },
+              {
+                "name": "Upload this workflow file",
+                "id": "file",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "method": "files.uploadV2",
+                  "token": "${{ secrets.SLACK_BOT_TOKEN }}",
+                  "payload": "channel_id: ${{ secrets.SLACK_CHANNEL_ID }}\ninitial_comment: \":robot_face: The codes exists here\"\nfile: .github/workflows/develop.yml\nfilename: action.yml\n"
+                }
+              },
+              {
+                "name": "Write one final webhook",
+                "uses": "./",
+                "with": {
+                  "errors": true,
+                  "webhook": "${{ secrets.SLACK_INCOMING_WEBHOOK }}",
+                  "webhook-type": "incoming-webhook",
+                  "payload": "text: \"end.\"\n"
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,411 @@
+{
+  "repo_owner": "cypress-io",
+  "repo_name": "github-action",
+  "workflow_name": "example-build-artifacts",
+  "history": {
+    "2025-09-03T11-29-49Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-557b0aa9-31ee-5ec5-8384-fd8f606507a2",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/example-build-artifacts__2025-09-03T11-29-49Z__b1038d04bbc8442bf15d168bdf4f599fff1170b6.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 24,
+                  "startColumn": 5,
+                  "endLine": 43,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "1b703f6a20fc2de:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-404c209e-9713-5d1f-9725-7235821dd8de",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/example-build-artifacts__2025-09-03T11-29-49Z__b1038d04bbc8442bf15d168bdf4f599fff1170b6.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 44,
+                  "startColumn": 5,
+                  "endLine": 65,
+                  "endColumn": 46
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "12e76d63de40a8a:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "example-build-artifacts__2025-09-03T11-29-49Z__b1038d04bbc8442bf15d168bdf4f599fff1170b6.yml",
+          "workflow_name": "example-build-artifacts",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 65,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "build": 3,
+            "test": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 1,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 3,
+              "test": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 2,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 6,
+            "actions_used": [
+              "./",
+              "actions/checkout@v4",
+              "actions/download-artifact@v4",
+              "actions/upload-artifact@v4"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "example-build-artifacts",
+        "true": {
+          "push": {
+            "branches": [
+              "master"
+            ]
+          },
+          "pull_request": null,
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-24.04",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Build app",
+                "uses": "./",
+                "with": {
+                  "runTests": false,
+                  "build": "npm run build",
+                  "working-directory": "examples/nextjs"
+                }
+              },
+              {
+                "name": "Store build artifacts",
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "app",
+                  "path": "examples/nextjs/build",
+                  "if-no-files-found": "error",
+                  "retention-days": 1
+                }
+              }
+            ]
+          },
+          "test": {
+            "needs": "build",
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "os": [
+                  "ubuntu-24.04",
+                  "windows-2025",
+                  "macos-15"
+                ]
+              }
+            },
+            "runs-on": "${{ matrix.os }}",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Restore build artifacts",
+                "uses": "actions/download-artifact@v4",
+                "with": {
+                  "name": "app",
+                  "path": "examples/nextjs/build"
+                }
+              },
+              {
+                "name": "Cypress tests",
+                "uses": "./",
+                "with": {
+                  "start": "npm start",
+                  "wait-on": "http://localhost:3000",
+                  "working-directory": "examples/nextjs"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-05-06T13-16-51Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-5eafe3b5-4736-5715-b4b3-7a2ccb7bbbd9",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/example-build-artifacts__2025-05-06T13-16-51Z__b4465bc980353179fb19e9d5a9656865c559fa01.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 18,
+                  "startColumn": 5,
+                  "endLine": 37,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "1b75362d2abde16:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-533c6fbc-8129-50c6-b920-f3a04cc09768",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/example-build-artifacts__2025-05-06T13-16-51Z__b4465bc980353179fb19e9d5a9656865c559fa01.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 38,
+                  "startColumn": 5,
+                  "endLine": 59,
+                  "endColumn": 46
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "12e76d63de40a8a:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "example-build-artifacts__2025-05-06T13-16-51Z__b4465bc980353179fb19e9d5a9656865c559fa01.yml",
+          "workflow_name": "example-build-artifacts",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 59,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "build": 3,
+            "test": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 1,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 3,
+              "test": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 2,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 6,
+            "actions_used": [
+              "./",
+              "actions/checkout@v4",
+              "actions/download-artifact@v4",
+              "actions/upload-artifact@v4"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "example-build-artifacts",
+        "true": {
+          "push": {
+            "branches": [
+              "master"
+            ]
+          },
+          "pull_request": null,
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-24.04",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Build app",
+                "uses": "./",
+                "with": {
+                  "runTests": false,
+                  "build": "npm run build",
+                  "working-directory": "examples/nextjs"
+                }
+              },
+              {
+                "name": "Store build artifacts",
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "app",
+                  "path": "examples/nextjs/build",
+                  "if-no-files-found": "error",
+                  "retention-days": 1
+                }
+              }
+            ]
+          },
+          "test": {
+            "needs": "build",
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "os": [
+                  "ubuntu-24.04",
+                  "windows-2025",
+                  "macos-15"
+                ]
+              }
+            },
+            "runs-on": "${{ matrix.os }}",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Restore build artifacts",
+                "uses": "actions/download-artifact@v4",
+                "with": {
+                  "name": "app",
+                  "path": "examples/nextjs/build"
+                }
+              },
+              {
+                "name": "Cypress tests",
+                "uses": "./",
+                "with": {
+                  "start": "npm start",
+                  "wait-on": "http://localhost:3000",
+                  "working-directory": "examples/nextjs"
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

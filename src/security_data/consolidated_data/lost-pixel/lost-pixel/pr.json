@@ -1,0 +1,2230 @@
+{
+  "repo_owner": "lost-pixel",
+  "repo_name": "lost-pixel",
+  "workflow_name": "pr",
+  "history": {
+    "2022-10-04T09-36-55Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-395de47a-1116-5d9a-a5d9-a8bc631a9d15",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/pr__2022-10-04T09-36-55Z__ef9b1aca75b260c76fd3f900b0ef33b914019290.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 7,
+                  "startColumn": 5,
+                  "endLine": 53,
+                  "endColumn": 15
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "6c7caf7045f72ab7:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "pr__2022-10-04T09-36-55Z__ef9b1aca75b260c76fd3f900b0ef33b914019290.yml",
+          "workflow_name": "PR Docker Build",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 53,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "8398a7/action-slack@a74b761b4089b5d730d813fbedcd2ec5d394f3af",
+              "actions/checkout@v2",
+              "actions/setup-node@v3",
+              "elgohr/Publish-Docker-Github-Action@a0b8f0e2d777562c13523b9a4d9480bae383486b"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "PR Docker Build",
+        "true": [
+          "pull_request"
+        ],
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "name": "Setup Node",
+                "uses": "actions/setup-node@v3",
+                "with": {
+                  "node-version": "16.x",
+                  "cache": "npm"
+                }
+              },
+              {
+                "name": "Install dependencies",
+                "run": "npm install\nnpm -g install jest\n"
+              },
+              {
+                "name": "Lint",
+                "run": "npm run lint"
+              },
+              {
+                "name": "Test",
+                "run": "npm run test"
+              },
+              {
+                "name": "Publish to Registry",
+                "uses": "elgohr/Publish-Docker-Github-Action@a0b8f0e2d777562c13523b9a4d9480bae383486b",
+                "with": {
+                  "name": "lostpixel/lost-pixel-pr-build",
+                  "username": "${{ secrets.DOCKER_USERNAME }}",
+                  "password": "${{ secrets.DOCKER_PASSWORD }}",
+                  "tags": "pr-${{ env.GITHUB_SHA }}",
+                  "buildoptions": "--compress --force-rm"
+                }
+              },
+              {
+                "name": "Slack Notification",
+                "uses": "8398a7/action-slack@a74b761b4089b5d730d813fbedcd2ec5d394f3af",
+                "if": "always()",
+                "env": {
+                  "SLACK_WEBHOOK_URL": "${{ secrets.SLACK_WEBHOOK }}"
+                },
+                "with": {
+                  "status": "custom",
+                  "fields": "workflow,job,commit,repo,ref,author,took",
+                  "custom_payload": "{\n  attachments: [{\n    color: '${{ job.status }}' === 'success' ? 'good' : '${{ job.status }}' === 'failure' ? 'danger' : 'warning',\n    text: `${process.env.AS_WORKFLOW}\\n${process.env.AS_JOB} (${process.env.AS_COMMIT}) of ${process.env.AS_REPO} by ${process.env.AS_AUTHOR} ${{ job.status }}\\n\\nlostpixel/lost-pixel-pr-build@pr-${process.env.GITHUB_SHA}`\n  }]\n}\n"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-10-04T09-44-48Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-d8807da5-8646-516b-b063-d4d48e5423dd",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/pr__2022-10-04T09-44-48Z__c061991108b9ba6f25a8e60dd7f18455c4da6649.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 10,
+                  "startColumn": 5,
+                  "endLine": 56,
+                  "endColumn": 15
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "6c7caf7045f72ab7:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "pr__2022-10-04T09-44-48Z__c061991108b9ba6f25a8e60dd7f18455c4da6649.yml",
+          "workflow_name": "PR Docker Build",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 56,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "8398a7/action-slack@a74b761b4089b5d730d813fbedcd2ec5d394f3af",
+              "actions/checkout@v2",
+              "actions/setup-node@v3",
+              "elgohr/Publish-Docker-Github-Action@a0b8f0e2d777562c13523b9a4d9480bae383486b"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "PR Docker Build",
+        "true": {
+          "pull_request": {
+            "branches-ignore": [
+              "renovate/**"
+            ]
+          }
+        },
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "name": "Setup Node",
+                "uses": "actions/setup-node@v3",
+                "with": {
+                  "node-version": "16.x",
+                  "cache": "npm"
+                }
+              },
+              {
+                "name": "Install dependencies",
+                "run": "npm install\nnpm -g install jest\n"
+              },
+              {
+                "name": "Lint",
+                "run": "npm run lint"
+              },
+              {
+                "name": "Test",
+                "run": "npm run test"
+              },
+              {
+                "name": "Publish to Registry",
+                "uses": "elgohr/Publish-Docker-Github-Action@a0b8f0e2d777562c13523b9a4d9480bae383486b",
+                "with": {
+                  "name": "lostpixel/lost-pixel-pr-build",
+                  "username": "${{ secrets.DOCKER_USERNAME }}",
+                  "password": "${{ secrets.DOCKER_PASSWORD }}",
+                  "tags": "pr-${{ env.GITHUB_SHA }}",
+                  "buildoptions": "--compress --force-rm"
+                }
+              },
+              {
+                "name": "Slack Notification",
+                "uses": "8398a7/action-slack@a74b761b4089b5d730d813fbedcd2ec5d394f3af",
+                "if": "always()",
+                "env": {
+                  "SLACK_WEBHOOK_URL": "${{ secrets.SLACK_WEBHOOK }}"
+                },
+                "with": {
+                  "status": "custom",
+                  "fields": "workflow,job,commit,repo,ref,author,took",
+                  "custom_payload": "{\n  attachments: [{\n    color: '${{ job.status }}' === 'success' ? 'good' : '${{ job.status }}' === 'failure' ? 'danger' : 'warning',\n    text: `${process.env.AS_WORKFLOW}\\n${process.env.AS_JOB} (${process.env.AS_COMMIT}) of ${process.env.AS_REPO} by ${process.env.AS_AUTHOR} ${{ job.status }}\\n\\nlostpixel/lost-pixel-pr-build@pr-${process.env.GITHUB_SHA}`\n  }]\n}\n"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-10-04T09-48-17Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-f4116f96-8aba-51a1-bf5d-7e3dbd969e5d",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/pr__2022-10-04T09-48-17Z__d7a5090079767de6bd83c5190dffdfa4a3ca83ce.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 10,
+                  "startColumn": 5,
+                  "endLine": 62,
+                  "endColumn": 15
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "6c7caf7045f72ab7:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "pr__2022-10-04T09-48-17Z__d7a5090079767de6bd83c5190dffdfa4a3ca83ce.yml",
+          "workflow_name": "PR Docker Build",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 62,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 9
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 9
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "8398a7/action-slack@a74b761b4089b5d730d813fbedcd2ec5d394f3af",
+              "actions/checkout@v2",
+              "actions/setup-node@v3",
+              "elgohr/Publish-Docker-Github-Action@a0b8f0e2d777562c13523b9a4d9480bae383486b"
+            ],
+            "num_run_commands": 5,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "PR Docker Build",
+        "true": {
+          "pull_request": {
+            "branches-ignore": [
+              "renovate/**"
+            ]
+          }
+        },
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "name": "Setup Node",
+                "uses": "actions/setup-node@v3",
+                "with": {
+                  "node-version": "16.x",
+                  "cache": "npm"
+                }
+              },
+              {
+                "name": "Install dependencies",
+                "run": "npm install\nnpm -g install jest\n"
+              },
+              {
+                "name": "Lint",
+                "run": "npm run lint"
+              },
+              {
+                "name": "Build Example Storybook v6.4",
+                "run": "npm run build-example-storybook-v6.4"
+              },
+              {
+                "name": "Build Example Storybook v6.5 with StoryStore v7",
+                "run": "npm run build-example-storybook-v6.5-storystore-v7"
+              },
+              {
+                "name": "Test",
+                "run": "npm run test"
+              },
+              {
+                "name": "Publish to Registry",
+                "uses": "elgohr/Publish-Docker-Github-Action@a0b8f0e2d777562c13523b9a4d9480bae383486b",
+                "with": {
+                  "name": "lostpixel/lost-pixel-pr-build",
+                  "username": "${{ secrets.DOCKER_USERNAME }}",
+                  "password": "${{ secrets.DOCKER_PASSWORD }}",
+                  "tags": "pr-${{ env.GITHUB_SHA }}",
+                  "buildoptions": "--compress --force-rm"
+                }
+              },
+              {
+                "name": "Slack Notification",
+                "uses": "8398a7/action-slack@a74b761b4089b5d730d813fbedcd2ec5d394f3af",
+                "if": "always()",
+                "env": {
+                  "SLACK_WEBHOOK_URL": "${{ secrets.SLACK_WEBHOOK }}"
+                },
+                "with": {
+                  "status": "custom",
+                  "fields": "workflow,job,commit,repo,ref,author,took",
+                  "custom_payload": "{\n  attachments: [{\n    color: '${{ job.status }}' === 'success' ? 'good' : '${{ job.status }}' === 'failure' ? 'danger' : 'warning',\n    text: `${process.env.AS_WORKFLOW}\\n${process.env.AS_JOB} (${process.env.AS_COMMIT}) of ${process.env.AS_REPO} by ${process.env.AS_AUTHOR} ${{ job.status }}\\n\\nlostpixel/lost-pixel-pr-build@pr-${process.env.GITHUB_SHA}`\n  }]\n}\n"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-10-04T11-19-22Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-890d9d87-867a-51dd-8281-ed1536a677f9",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/pr__2022-10-04T11-19-22Z__a639c0e658dc68a02c50e37403ee061f01a80841.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 10,
+                  "startColumn": 5,
+                  "endLine": 67,
+                  "endColumn": 15
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "6c7caf7045f72ab7:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "pr__2022-10-04T11-19-22Z__a639c0e658dc68a02c50e37403ee061f01a80841.yml",
+          "workflow_name": "PR Docker Build",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 67,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 10
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 10
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "8398a7/action-slack@a74b761b4089b5d730d813fbedcd2ec5d394f3af",
+              "actions/checkout@v2",
+              "actions/setup-node@v3",
+              "elgohr/Publish-Docker-Github-Action@a0b8f0e2d777562c13523b9a4d9480bae383486b"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "PR Docker Build",
+        "true": {
+          "pull_request": {
+            "branches-ignore": [
+              "renovate/**"
+            ]
+          }
+        },
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "name": "Setup Node",
+                "uses": "actions/setup-node@v3",
+                "with": {
+                  "node-version": "16.x",
+                  "cache": "npm"
+                }
+              },
+              {
+                "name": "Install dependencies",
+                "run": "npm install\nnpm -g install jest\n"
+              },
+              {
+                "name": "Lint",
+                "run": "npm run lint"
+              },
+              {
+                "name": "Build Example Storybook v6.4",
+                "run": "npm run build-example-storybook-v6.4"
+              },
+              {
+                "name": "Build Example Storybook v6.5 with StoryStore v7",
+                "run": "npm run build-example-storybook-v6.5-storystore-v7"
+              },
+              {
+                "name": "Test",
+                "run": "npm run test"
+              },
+              {
+                "name": "Set Docker tag",
+                "run": "echo DOCKER_TAG=$(echo pr-${GITHUB_SHA:0:8}) >> $GITHUB_ENV"
+              },
+              {
+                "name": "Publish to Registry",
+                "uses": "elgohr/Publish-Docker-Github-Action@a0b8f0e2d777562c13523b9a4d9480bae383486b",
+                "env": {
+                  "RELEASE_VERSION": "${{ env.DOCKER_TAG }}"
+                },
+                "with": {
+                  "name": "lostpixel/lost-pixel-pr-build",
+                  "username": "${{ secrets.DOCKER_USERNAME }}",
+                  "password": "${{ secrets.DOCKER_PASSWORD }}",
+                  "tags": "${{ env.DOCKER_TAG }}",
+                  "buildoptions": "--compress --force-rm"
+                }
+              },
+              {
+                "name": "Slack Notification",
+                "uses": "8398a7/action-slack@a74b761b4089b5d730d813fbedcd2ec5d394f3af",
+                "if": "always()",
+                "env": {
+                  "SLACK_WEBHOOK_URL": "${{ secrets.SLACK_WEBHOOK }}"
+                },
+                "with": {
+                  "status": "custom",
+                  "fields": "workflow,job,commit,repo,ref,author,took",
+                  "custom_payload": "{\n  attachments: [{\n    color: '${{ job.status }}' === 'success' ? 'good' : '${{ job.status }}' === 'failure' ? 'danger' : 'warning',\n    text: `${process.env.AS_WORKFLOW}\\n${process.env.AS_JOB} (${process.env.AS_COMMIT}) of ${process.env.AS_REPO}@${process.env.AS_REF} by ${process.env.AS_AUTHOR} ${{ job.status }}\\n\\nlostpixel/lost-pixel-pr-build@${process.env.DOCKER_TAG}`\n  }]\n}\n"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-10-04T19-08-20Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-d1730c56-de5a-56dc-8600-7f71cf835bc7",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/pr__2022-10-04T19-08-20Z__0aa0b6210f6e5569a0798fa11cfa876e4d67632f.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 10,
+                  "startColumn": 5,
+                  "endLine": 67,
+                  "endColumn": 15
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "6c7caf7045f72ab7:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "pr__2022-10-04T19-08-20Z__0aa0b6210f6e5569a0798fa11cfa876e4d67632f.yml",
+          "workflow_name": "PR Docker Build",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 67,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 10
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 10
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "8398a7/action-slack@a74b761b4089b5d730d813fbedcd2ec5d394f3af",
+              "actions/checkout@v2",
+              "actions/setup-node@v3",
+              "elgohr/Publish-Docker-Github-Action@a0b8f0e2d777562c13523b9a4d9480bae383486b"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "PR Docker Build",
+        "true": {
+          "pull_request": {
+            "branches-ignore": [
+              "renovate/**"
+            ]
+          }
+        },
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "name": "Setup Node",
+                "uses": "actions/setup-node@v3",
+                "with": {
+                  "node-version": "16.x",
+                  "cache": "npm"
+                }
+              },
+              {
+                "name": "Install dependencies",
+                "run": "npm install\nnpm -g install jest\n"
+              },
+              {
+                "name": "Lint",
+                "run": "npm run lint"
+              },
+              {
+                "name": "Build Example Storybook v6.4",
+                "run": "npm run build-example-storybook-v6.4"
+              },
+              {
+                "name": "Build Example Storybook v6.5 with StoryStore v7",
+                "run": "npm run build-example-storybook-v6.5-storystore-v7"
+              },
+              {
+                "name": "Test",
+                "run": "npm run test"
+              },
+              {
+                "name": "Set Docker tag",
+                "run": "echo DOCKER_TAG=$(echo pr-${GITHUB_SHA:0:8}) >> $GITHUB_ENV"
+              },
+              {
+                "name": "Publish to Registry",
+                "uses": "elgohr/Publish-Docker-Github-Action@a0b8f0e2d777562c13523b9a4d9480bae383486b",
+                "env": {
+                  "RELEASE_VERSION": "${{ env.DOCKER_TAG }}"
+                },
+                "with": {
+                  "name": "lostpixel/lost-pixel-pr-build",
+                  "username": "${{ secrets.DOCKER_USERNAME }}",
+                  "password": "${{ secrets.DOCKER_PASSWORD }}",
+                  "tags": "${{ env.DOCKER_TAG }}",
+                  "buildoptions": "--compress --force-rm"
+                }
+              },
+              {
+                "name": "Slack Notification",
+                "uses": "8398a7/action-slack@a74b761b4089b5d730d813fbedcd2ec5d394f3af",
+                "if": "always()",
+                "env": {
+                  "SLACK_WEBHOOK_URL": "${{ secrets.SLACK_WEBHOOK }}"
+                },
+                "with": {
+                  "status": "custom",
+                  "fields": "workflow,job,commit,repo,ref,author,took",
+                  "custom_payload": "{\n  attachments: [{\n    color: '${{ job.status }}' === 'success' ? 'good' : '${{ job.status }}' === 'failure' ? 'danger' : 'warning',\n    text: `${process.env.AS_WORKFLOW}\\n${process.env.AS_JOB} (${process.env.AS_COMMIT}) of ${process.env.AS_REPO}@${process.env.AS_REF} by ${process.env.AS_AUTHOR} ${{ job.status }}\\n\\nlostpixel/lost-pixel-pr-build:${process.env.DOCKER_TAG}`\n  }]\n}\n"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-10-06T13-23-17Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-621a835a-65ef-53a1-b0cd-9b98f1e037ab",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/pr__2022-10-06T13-23-17Z__09e4ad4c372edfb7b5dae21537b710851baef8be.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 7,
+                  "startColumn": 5,
+                  "endLine": 64,
+                  "endColumn": 15
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "6c7caf7045f72ab7:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "pr__2022-10-06T13-23-17Z__09e4ad4c372edfb7b5dae21537b710851baef8be.yml",
+          "workflow_name": "PR Docker Build",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 64,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 10
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 10
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "8398a7/action-slack@a74b761b4089b5d730d813fbedcd2ec5d394f3af",
+              "actions/checkout@v2",
+              "actions/setup-node@v3",
+              "elgohr/Publish-Docker-Github-Action@a0b8f0e2d777562c13523b9a4d9480bae383486b"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "PR Docker Build",
+        "true": "workflow_dispatch",
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "name": "Setup Node",
+                "uses": "actions/setup-node@v3",
+                "with": {
+                  "node-version": "16.x",
+                  "cache": "npm"
+                }
+              },
+              {
+                "name": "Install dependencies",
+                "run": "npm install\nnpm -g install jest\n"
+              },
+              {
+                "name": "Lint",
+                "run": "npm run lint"
+              },
+              {
+                "name": "Build Example Storybook v6.4",
+                "run": "npm run build-example-storybook-v6.4"
+              },
+              {
+                "name": "Build Example Storybook v6.5 with StoryStore v7",
+                "run": "npm run build-example-storybook-v6.5-storystore-v7"
+              },
+              {
+                "name": "Test",
+                "run": "npm run test"
+              },
+              {
+                "name": "Set Docker tag",
+                "run": "echo DOCKER_TAG=$(echo pr-${GITHUB_SHA:0:8}) >> $GITHUB_ENV"
+              },
+              {
+                "name": "Publish to Registry",
+                "uses": "elgohr/Publish-Docker-Github-Action@a0b8f0e2d777562c13523b9a4d9480bae383486b",
+                "env": {
+                  "RELEASE_VERSION": "${{ env.DOCKER_TAG }}"
+                },
+                "with": {
+                  "name": "lostpixel/lost-pixel-pr-build",
+                  "username": "${{ secrets.DOCKER_USERNAME }}",
+                  "password": "${{ secrets.DOCKER_PASSWORD }}",
+                  "tags": "${{ env.DOCKER_TAG }}",
+                  "buildoptions": "--compress --force-rm"
+                }
+              },
+              {
+                "name": "Slack Notification",
+                "uses": "8398a7/action-slack@a74b761b4089b5d730d813fbedcd2ec5d394f3af",
+                "if": "always()",
+                "env": {
+                  "SLACK_WEBHOOK_URL": "${{ secrets.SLACK_WEBHOOK }}"
+                },
+                "with": {
+                  "status": "custom",
+                  "fields": "workflow,job,commit,repo,ref,author,took",
+                  "custom_payload": "{\n  attachments: [{\n    color: '${{ job.status }}' === 'success' ? 'good' : '${{ job.status }}' === 'failure' ? 'danger' : 'warning',\n    text: `${process.env.AS_WORKFLOW}\\n${process.env.AS_JOB} (${process.env.AS_COMMIT}) of ${process.env.AS_REPO}@${process.env.AS_REF} by ${process.env.AS_AUTHOR} ${{ job.status }}\\n\\nlostpixel/lost-pixel-pr-build:${process.env.DOCKER_TAG}`\n  }]\n}\n"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-01-14T14-16-02Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-34b46a17-97c2-504f-a42a-30a6dce298df",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/pr__2023-01-14T14-16-02Z__528377d1b1d574502ef38e556cbb79c677d4b42f.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 7,
+                  "startColumn": 5,
+                  "endLine": 64,
+                  "endColumn": 15
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "acf7aa6170f283e4:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "pr__2023-01-14T14-16-02Z__528377d1b1d574502ef38e556cbb79c677d4b42f.yml",
+          "workflow_name": "PR Docker Build",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 64,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 10
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 10
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "8398a7/action-slack@a74b761b4089b5d730d813fbedcd2ec5d394f3af",
+              "actions/checkout@v3",
+              "actions/setup-node@v3",
+              "elgohr/Publish-Docker-Github-Action@a0b8f0e2d777562c13523b9a4d9480bae383486b"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "PR Docker Build",
+        "true": "workflow_dispatch",
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Setup Node",
+                "uses": "actions/setup-node@v3",
+                "with": {
+                  "node-version": "16.x",
+                  "cache": "npm"
+                }
+              },
+              {
+                "name": "Install dependencies",
+                "run": "npm install\nnpm -g install jest\n"
+              },
+              {
+                "name": "Lint",
+                "run": "npm run lint"
+              },
+              {
+                "name": "Build Example Storybook v6.4",
+                "run": "npm run build-example-storybook-v6.4"
+              },
+              {
+                "name": "Build Example Storybook v6.5 with StoryStore v7",
+                "run": "npm run build-example-storybook-v6.5-storystore-v7"
+              },
+              {
+                "name": "Test",
+                "run": "npm run test"
+              },
+              {
+                "name": "Set Docker tag",
+                "run": "echo DOCKER_TAG=$(echo pr-${GITHUB_SHA:0:8}) >> $GITHUB_ENV"
+              },
+              {
+                "name": "Publish to Registry",
+                "uses": "elgohr/Publish-Docker-Github-Action@a0b8f0e2d777562c13523b9a4d9480bae383486b",
+                "env": {
+                  "RELEASE_VERSION": "${{ env.DOCKER_TAG }}"
+                },
+                "with": {
+                  "name": "lostpixel/lost-pixel-pr-build",
+                  "username": "${{ secrets.DOCKER_USERNAME }}",
+                  "password": "${{ secrets.DOCKER_PASSWORD }}",
+                  "tags": "${{ env.DOCKER_TAG }}",
+                  "buildoptions": "--compress --force-rm"
+                }
+              },
+              {
+                "name": "Slack Notification",
+                "uses": "8398a7/action-slack@a74b761b4089b5d730d813fbedcd2ec5d394f3af",
+                "if": "always()",
+                "env": {
+                  "SLACK_WEBHOOK_URL": "${{ secrets.SLACK_WEBHOOK }}"
+                },
+                "with": {
+                  "status": "custom",
+                  "fields": "workflow,job,commit,repo,ref,author,took",
+                  "custom_payload": "{\n  attachments: [{\n    color: '${{ job.status }}' === 'success' ? 'good' : '${{ job.status }}' === 'failure' ? 'danger' : 'warning',\n    text: `${process.env.AS_WORKFLOW}\\n${process.env.AS_JOB} (${process.env.AS_COMMIT}) of ${process.env.AS_REPO}@${process.env.AS_REF} by ${process.env.AS_AUTHOR} ${{ job.status }}\\n\\nlostpixel/lost-pixel-pr-build:${process.env.DOCKER_TAG}`\n  }]\n}\n"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-01-14T14-19-38Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-e7705f0d-f6a5-5a38-8075-0f84cdac7c26",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/pr__2023-01-14T14-19-38Z__cef234065a781f8c565cd65863c9e2564f01eb70.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 7,
+                  "startColumn": 5,
+                  "endLine": 65,
+                  "endColumn": 15
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "6c7caf7045f72ab7:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "pr__2023-01-14T14-19-38Z__cef234065a781f8c565cd65863c9e2564f01eb70.yml",
+          "workflow_name": "PR Docker Build",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 65,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 10
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 10
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "8398a7/action-slack@a74b761b4089b5d730d813fbedcd2ec5d394f3af",
+              "actions/checkout@v2",
+              "actions/setup-node@v3",
+              "elgohr/Publish-Docker-Github-Action@a0b8f0e2d777562c13523b9a4d9480bae383486b"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "PR Docker Build",
+        "true": "workflow_dispatch",
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "name": "Setup Node",
+                "uses": "actions/setup-node@v3",
+                "with": {
+                  "node-version": "16.x",
+                  "cache": "npm"
+                }
+              },
+              {
+                "name": "Install dependencies",
+                "run": "npm install\nnpm -g install jest\nnpx playwright install\n"
+              },
+              {
+                "name": "Lint",
+                "run": "npm run lint"
+              },
+              {
+                "name": "Build Example Storybook v6.4",
+                "run": "npm run build-example-storybook-v6.4"
+              },
+              {
+                "name": "Build Example Storybook v6.5 with StoryStore v7",
+                "run": "npm run build-example-storybook-v6.5-storystore-v7"
+              },
+              {
+                "name": "Test",
+                "run": "npm run test"
+              },
+              {
+                "name": "Set Docker tag",
+                "run": "echo DOCKER_TAG=$(echo pr-${GITHUB_SHA:0:8}) >> $GITHUB_ENV"
+              },
+              {
+                "name": "Publish to Registry",
+                "uses": "elgohr/Publish-Docker-Github-Action@a0b8f0e2d777562c13523b9a4d9480bae383486b",
+                "env": {
+                  "RELEASE_VERSION": "${{ env.DOCKER_TAG }}"
+                },
+                "with": {
+                  "name": "lostpixel/lost-pixel-pr-build",
+                  "username": "${{ secrets.DOCKER_USERNAME }}",
+                  "password": "${{ secrets.DOCKER_PASSWORD }}",
+                  "tags": "${{ env.DOCKER_TAG }}",
+                  "buildoptions": "--compress --force-rm"
+                }
+              },
+              {
+                "name": "Slack Notification",
+                "uses": "8398a7/action-slack@a74b761b4089b5d730d813fbedcd2ec5d394f3af",
+                "if": "always()",
+                "env": {
+                  "SLACK_WEBHOOK_URL": "${{ secrets.SLACK_WEBHOOK }}"
+                },
+                "with": {
+                  "status": "custom",
+                  "fields": "workflow,job,commit,repo,ref,author,took",
+                  "custom_payload": "{\n  attachments: [{\n    color: '${{ job.status }}' === 'success' ? 'good' : '${{ job.status }}' === 'failure' ? 'danger' : 'warning',\n    text: `${process.env.AS_WORKFLOW}\\n${process.env.AS_JOB} (${process.env.AS_COMMIT}) of ${process.env.AS_REPO}@${process.env.AS_REF} by ${process.env.AS_AUTHOR} ${{ job.status }}\\n\\nlostpixel/lost-pixel-pr-build:${process.env.DOCKER_TAG}`\n  }]\n}\n"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-01-14T15-49-00Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-929eca70-9c49-543a-8de1-8035663eba92",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/pr__2023-01-14T15-49-00Z__f3e1e163a7bfb4781b1f13637338cfffa3b1f428.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 7,
+                  "startColumn": 5,
+                  "endLine": 65,
+                  "endColumn": 15
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "acf7aa6170f283e4:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "pr__2023-01-14T15-49-00Z__f3e1e163a7bfb4781b1f13637338cfffa3b1f428.yml",
+          "workflow_name": "PR Docker Build",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 65,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 10
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 10
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "8398a7/action-slack@a74b761b4089b5d730d813fbedcd2ec5d394f3af",
+              "actions/checkout@v3",
+              "actions/setup-node@v3",
+              "elgohr/Publish-Docker-Github-Action@a0b8f0e2d777562c13523b9a4d9480bae383486b"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "PR Docker Build",
+        "true": "workflow_dispatch",
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Setup Node",
+                "uses": "actions/setup-node@v3",
+                "with": {
+                  "node-version": "18.x",
+                  "cache": "npm"
+                }
+              },
+              {
+                "name": "Install dependencies",
+                "run": "npm install\nnpm -g install jest\nnpx playwright install\n"
+              },
+              {
+                "name": "Lint",
+                "run": "npm run lint"
+              },
+              {
+                "name": "Build Example Storybook v6.4",
+                "run": "npm run build-example-storybook-v6.4"
+              },
+              {
+                "name": "Build Example Storybook v6.5 with StoryStore v7",
+                "run": "npm run build-example-storybook-v6.5-storystore-v7"
+              },
+              {
+                "name": "Test",
+                "run": "npm run test"
+              },
+              {
+                "name": "Set Docker tag",
+                "run": "echo DOCKER_TAG=$(echo pr-${GITHUB_SHA:0:8}) >> $GITHUB_ENV"
+              },
+              {
+                "name": "Publish to Registry",
+                "uses": "elgohr/Publish-Docker-Github-Action@a0b8f0e2d777562c13523b9a4d9480bae383486b",
+                "env": {
+                  "RELEASE_VERSION": "${{ env.DOCKER_TAG }}"
+                },
+                "with": {
+                  "name": "lostpixel/lost-pixel-pr-build",
+                  "username": "${{ secrets.DOCKER_USERNAME }}",
+                  "password": "${{ secrets.DOCKER_PASSWORD }}",
+                  "tags": "${{ env.DOCKER_TAG }}",
+                  "buildoptions": "--compress --force-rm"
+                }
+              },
+              {
+                "name": "Slack Notification",
+                "uses": "8398a7/action-slack@a74b761b4089b5d730d813fbedcd2ec5d394f3af",
+                "if": "always()",
+                "env": {
+                  "SLACK_WEBHOOK_URL": "${{ secrets.SLACK_WEBHOOK }}"
+                },
+                "with": {
+                  "status": "custom",
+                  "fields": "workflow,job,commit,repo,ref,author,took",
+                  "custom_payload": "{\n  attachments: [{\n    color: '${{ job.status }}' === 'success' ? 'good' : '${{ job.status }}' === 'failure' ? 'danger' : 'warning',\n    text: `${process.env.AS_WORKFLOW}\\n${process.env.AS_JOB} (${process.env.AS_COMMIT}) of ${process.env.AS_REPO}@${process.env.AS_REF} by ${process.env.AS_AUTHOR} ${{ job.status }}\\n\\nlostpixel/lost-pixel-pr-build:${process.env.DOCKER_TAG}`\n  }]\n}\n"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-09-02T18-57-38Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-4e80ce5c-e080-5dad-99e8-a04c267fb169",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/pr__2023-09-02T18-57-38Z__cb8aa46754d9d3f57d00b0ea74b2bede7c1e53f1.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 7,
+                  "startColumn": 5,
+                  "endLine": 65,
+                  "endColumn": 15
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "acf7aa6170f283e4:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "pr__2023-09-02T18-57-38Z__cb8aa46754d9d3f57d00b0ea74b2bede7c1e53f1.yml",
+          "workflow_name": "PR Docker Build",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 65,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 10
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 10
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "8398a7/action-slack@a74b761b4089b5d730d813fbedcd2ec5d394f3af",
+              "actions/checkout@v3",
+              "actions/setup-node@v3",
+              "elgohr/Publish-Docker-Github-Action@a0b8f0e2d777562c13523b9a4d9480bae383486b"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "PR Docker Build",
+        "true": "workflow_dispatch",
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Setup Node",
+                "uses": "actions/setup-node@v3",
+                "with": {
+                  "node-version": "18.x",
+                  "cache": "npm"
+                }
+              },
+              {
+                "name": "Install dependencies",
+                "run": "npm ci\nnpm -g install jest\nnpx playwright install\n"
+              },
+              {
+                "name": "Lint",
+                "run": "npm run lint"
+              },
+              {
+                "name": "Build Example Storybook v6.4",
+                "run": "npm run build-example-storybook-v6.4"
+              },
+              {
+                "name": "Build Example Storybook v6.5 with StoryStore v7",
+                "run": "npm run build-example-storybook-v6.5-storystore-v7"
+              },
+              {
+                "name": "Test",
+                "run": "npm run test"
+              },
+              {
+                "name": "Set Docker tag",
+                "run": "echo DOCKER_TAG=$(echo pr-${GITHUB_SHA:0:8}) >> $GITHUB_ENV"
+              },
+              {
+                "name": "Publish to Registry",
+                "uses": "elgohr/Publish-Docker-Github-Action@a0b8f0e2d777562c13523b9a4d9480bae383486b",
+                "env": {
+                  "RELEASE_VERSION": "${{ env.DOCKER_TAG }}"
+                },
+                "with": {
+                  "name": "lostpixel/lost-pixel-pr-build",
+                  "username": "${{ secrets.DOCKER_USERNAME }}",
+                  "password": "${{ secrets.DOCKER_PASSWORD }}",
+                  "tags": "${{ env.DOCKER_TAG }}",
+                  "buildoptions": "--compress --force-rm"
+                }
+              },
+              {
+                "name": "Slack Notification",
+                "uses": "8398a7/action-slack@a74b761b4089b5d730d813fbedcd2ec5d394f3af",
+                "if": "always()",
+                "env": {
+                  "SLACK_WEBHOOK_URL": "${{ secrets.SLACK_WEBHOOK }}"
+                },
+                "with": {
+                  "status": "custom",
+                  "fields": "workflow,job,commit,repo,ref,author,took",
+                  "custom_payload": "{\n  attachments: [{\n    color: '${{ job.status }}' === 'success' ? 'good' : '${{ job.status }}' === 'failure' ? 'danger' : 'warning',\n    text: `${process.env.AS_WORKFLOW}\\n${process.env.AS_JOB} (${process.env.AS_COMMIT}) of ${process.env.AS_REPO}@${process.env.AS_REF} by ${process.env.AS_AUTHOR} ${{ job.status }}\\n\\nlostpixel/lost-pixel-pr-build:${process.env.DOCKER_TAG}`\n  }]\n}\n"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-01-14T14-22-35Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-41b5c3bf-edae-5788-9a07-ae96cc01a91c",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/pr__2023-01-14T14-22-35Z__f5e1a25880084ad8a75f58a23cda6c63e73503db.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 7,
+                  "startColumn": 5,
+                  "endLine": 65,
+                  "endColumn": 15
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "acf7aa6170f283e4:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "pr__2023-01-14T14-22-35Z__f5e1a25880084ad8a75f58a23cda6c63e73503db.yml",
+          "workflow_name": "PR Docker Build",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 65,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 10
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 10
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "8398a7/action-slack@a74b761b4089b5d730d813fbedcd2ec5d394f3af",
+              "actions/checkout@v3",
+              "actions/setup-node@v3",
+              "elgohr/Publish-Docker-Github-Action@a0b8f0e2d777562c13523b9a4d9480bae383486b"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "PR Docker Build",
+        "true": "workflow_dispatch",
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Setup Node",
+                "uses": "actions/setup-node@v3",
+                "with": {
+                  "node-version": "16.x",
+                  "cache": "npm"
+                }
+              },
+              {
+                "name": "Install dependencies",
+                "run": "npm install\nnpm -g install jest\nnpx playwright install\n"
+              },
+              {
+                "name": "Lint",
+                "run": "npm run lint"
+              },
+              {
+                "name": "Build Example Storybook v6.4",
+                "run": "npm run build-example-storybook-v6.4"
+              },
+              {
+                "name": "Build Example Storybook v6.5 with StoryStore v7",
+                "run": "npm run build-example-storybook-v6.5-storystore-v7"
+              },
+              {
+                "name": "Test",
+                "run": "npm run test"
+              },
+              {
+                "name": "Set Docker tag",
+                "run": "echo DOCKER_TAG=$(echo pr-${GITHUB_SHA:0:8}) >> $GITHUB_ENV"
+              },
+              {
+                "name": "Publish to Registry",
+                "uses": "elgohr/Publish-Docker-Github-Action@a0b8f0e2d777562c13523b9a4d9480bae383486b",
+                "env": {
+                  "RELEASE_VERSION": "${{ env.DOCKER_TAG }}"
+                },
+                "with": {
+                  "name": "lostpixel/lost-pixel-pr-build",
+                  "username": "${{ secrets.DOCKER_USERNAME }}",
+                  "password": "${{ secrets.DOCKER_PASSWORD }}",
+                  "tags": "${{ env.DOCKER_TAG }}",
+                  "buildoptions": "--compress --force-rm"
+                }
+              },
+              {
+                "name": "Slack Notification",
+                "uses": "8398a7/action-slack@a74b761b4089b5d730d813fbedcd2ec5d394f3af",
+                "if": "always()",
+                "env": {
+                  "SLACK_WEBHOOK_URL": "${{ secrets.SLACK_WEBHOOK }}"
+                },
+                "with": {
+                  "status": "custom",
+                  "fields": "workflow,job,commit,repo,ref,author,took",
+                  "custom_payload": "{\n  attachments: [{\n    color: '${{ job.status }}' === 'success' ? 'good' : '${{ job.status }}' === 'failure' ? 'danger' : 'warning',\n    text: `${process.env.AS_WORKFLOW}\\n${process.env.AS_JOB} (${process.env.AS_COMMIT}) of ${process.env.AS_REPO}@${process.env.AS_REF} by ${process.env.AS_AUTHOR} ${{ job.status }}\\n\\nlostpixel/lost-pixel-pr-build:${process.env.DOCKER_TAG}`\n  }]\n}\n"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-09-26T12-23-53Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-aaffe1bb-52e0-511f-a1c0-fffc3f82f291",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/pr__2023-09-26T12-23-53Z__6bd7bbacf98f6e9d2f4276ecaf47724af94207e3.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 7,
+                  "startColumn": 5,
+                  "endLine": 65,
+                  "endColumn": 15
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "ed72a5529beddd11:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "pr__2023-09-26T12-23-53Z__6bd7bbacf98f6e9d2f4276ecaf47724af94207e3.yml",
+          "workflow_name": "PR Docker Build",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 65,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 10
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 10
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "8398a7/action-slack@a74b761b4089b5d730d813fbedcd2ec5d394f3af",
+              "actions/checkout@v4",
+              "actions/setup-node@v3",
+              "elgohr/Publish-Docker-Github-Action@a0b8f0e2d777562c13523b9a4d9480bae383486b"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "PR Docker Build",
+        "true": "workflow_dispatch",
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Setup Node",
+                "uses": "actions/setup-node@v3",
+                "with": {
+                  "node-version": "18.x",
+                  "cache": "npm"
+                }
+              },
+              {
+                "name": "Install dependencies",
+                "run": "npm ci\nnpm -g install jest\nnpx playwright install\n"
+              },
+              {
+                "name": "Lint",
+                "run": "npm run lint"
+              },
+              {
+                "name": "Build Example Storybook v6.4",
+                "run": "npm run build-example-storybook-v6.4"
+              },
+              {
+                "name": "Build Example Storybook v6.5 with StoryStore v7",
+                "run": "npm run build-example-storybook-v6.5-storystore-v7"
+              },
+              {
+                "name": "Test",
+                "run": "npm run test"
+              },
+              {
+                "name": "Set Docker tag",
+                "run": "echo DOCKER_TAG=$(echo pr-${GITHUB_SHA:0:8}) >> $GITHUB_ENV"
+              },
+              {
+                "name": "Publish to Registry",
+                "uses": "elgohr/Publish-Docker-Github-Action@a0b8f0e2d777562c13523b9a4d9480bae383486b",
+                "env": {
+                  "RELEASE_VERSION": "${{ env.DOCKER_TAG }}"
+                },
+                "with": {
+                  "name": "lostpixel/lost-pixel-pr-build",
+                  "username": "${{ secrets.DOCKER_USERNAME }}",
+                  "password": "${{ secrets.DOCKER_PASSWORD }}",
+                  "tags": "${{ env.DOCKER_TAG }}",
+                  "buildoptions": "--compress --force-rm"
+                }
+              },
+              {
+                "name": "Slack Notification",
+                "uses": "8398a7/action-slack@a74b761b4089b5d730d813fbedcd2ec5d394f3af",
+                "if": "always()",
+                "env": {
+                  "SLACK_WEBHOOK_URL": "${{ secrets.SLACK_WEBHOOK }}"
+                },
+                "with": {
+                  "status": "custom",
+                  "fields": "workflow,job,commit,repo,ref,author,took",
+                  "custom_payload": "{\n  attachments: [{\n    color: '${{ job.status }}' === 'success' ? 'good' : '${{ job.status }}' === 'failure' ? 'danger' : 'warning',\n    text: `${process.env.AS_WORKFLOW}\\n${process.env.AS_JOB} (${process.env.AS_COMMIT}) of ${process.env.AS_REPO}@${process.env.AS_REF} by ${process.env.AS_AUTHOR} ${{ job.status }}\\n\\nlostpixel/lost-pixel-pr-build:${process.env.DOCKER_TAG}`\n  }]\n}\n"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-10-06T17-59-02Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-5f4286f5-9c16-59af-b4f0-8ab07e08020c",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/pr__2024-10-06T17-59-02Z__8e7dcd2b79ea00893cfb34e23883cf1219555fe9.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 7,
+                  "startColumn": 5,
+                  "endLine": 68,
+                  "endColumn": 15
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "ed72a5529beddd11:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "pr__2024-10-06T17-59-02Z__8e7dcd2b79ea00893cfb34e23883cf1219555fe9.yml",
+          "workflow_name": "PR Docker Build",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 68,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 11
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 11
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "8398a7/action-slack@a74b761b4089b5d730d813fbedcd2ec5d394f3af",
+              "actions/checkout@v4",
+              "actions/setup-node@v4",
+              "elgohr/Publish-Docker-Github-Action@a0b8f0e2d777562c13523b9a4d9480bae383486b"
+            ],
+            "num_run_commands": 7,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "PR Docker Build",
+        "true": "workflow_dispatch",
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Setup Node",
+                "uses": "actions/setup-node@v4",
+                "with": {
+                  "node-version": "18.x",
+                  "cache": "npm"
+                }
+              },
+              {
+                "name": "Install dependencies",
+                "run": "npm ci\nnpm -g install jest\nnpx playwright install\n"
+              },
+              {
+                "name": "Lint",
+                "run": "npm run lint"
+              },
+              {
+                "name": "Build Example Storybook v6.4",
+                "run": "npm run build-example-storybook-v6.4"
+              },
+              {
+                "name": "Build Example Storybook v6.5 with StoryStore v7",
+                "run": "npm run build-example-storybook-v6.5-storystore-v7"
+              },
+              {
+                "name": "Build Example Storybook v8",
+                "run": "npm run build-example-storybook-v8"
+              },
+              {
+                "name": "Test",
+                "run": "npm run test"
+              },
+              {
+                "name": "Set Docker tag",
+                "run": "echo DOCKER_TAG=$(echo pr-${GITHUB_SHA:0:8}) >> $GITHUB_ENV"
+              },
+              {
+                "name": "Publish to Registry",
+                "uses": "elgohr/Publish-Docker-Github-Action@a0b8f0e2d777562c13523b9a4d9480bae383486b",
+                "env": {
+                  "RELEASE_VERSION": "${{ env.DOCKER_TAG }}"
+                },
+                "with": {
+                  "name": "lostpixel/lost-pixel-pr-build",
+                  "username": "${{ secrets.DOCKER_USERNAME }}",
+                  "password": "${{ secrets.DOCKER_PASSWORD }}",
+                  "tags": "${{ env.DOCKER_TAG }}",
+                  "buildoptions": "--compress --force-rm"
+                }
+              },
+              {
+                "name": "Slack Notification",
+                "uses": "8398a7/action-slack@a74b761b4089b5d730d813fbedcd2ec5d394f3af",
+                "if": "always()",
+                "env": {
+                  "SLACK_WEBHOOK_URL": "${{ secrets.SLACK_WEBHOOK }}"
+                },
+                "with": {
+                  "status": "custom",
+                  "fields": "workflow,job,commit,repo,ref,author,took",
+                  "custom_payload": "{\n  attachments: [{\n    color: '${{ job.status }}' === 'success' ? 'good' : '${{ job.status }}' === 'failure' ? 'danger' : 'warning',\n    text: `${process.env.AS_WORKFLOW}\\n${process.env.AS_JOB} (${process.env.AS_COMMIT}) of ${process.env.AS_REPO}@${process.env.AS_REF} by ${process.env.AS_AUTHOR} ${{ job.status }}\\n\\nlostpixel/lost-pixel-pr-build:${process.env.DOCKER_TAG}`\n  }]\n}\n"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-02-29T16-05-23Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-4fe1fcc9-2991-5d91-a60f-f2856114c1db",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/pr__2024-02-29T16-05-23Z__985795ed7717c3eb858c92bfa3e7a01a47afedaf.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 7,
+                  "startColumn": 5,
+                  "endLine": 68,
+                  "endColumn": 15
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "ed72a5529beddd11:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "pr__2024-02-29T16-05-23Z__985795ed7717c3eb858c92bfa3e7a01a47afedaf.yml",
+          "workflow_name": "PR Docker Build",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 68,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 11
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 11
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "8398a7/action-slack@a74b761b4089b5d730d813fbedcd2ec5d394f3af",
+              "actions/checkout@v4",
+              "actions/setup-node@v3",
+              "elgohr/Publish-Docker-Github-Action@a0b8f0e2d777562c13523b9a4d9480bae383486b"
+            ],
+            "num_run_commands": 7,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "PR Docker Build",
+        "true": "workflow_dispatch",
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Setup Node",
+                "uses": "actions/setup-node@v3",
+                "with": {
+                  "node-version": "18.x",
+                  "cache": "npm"
+                }
+              },
+              {
+                "name": "Install dependencies",
+                "run": "npm ci\nnpm -g install jest\nnpx playwright install\n"
+              },
+              {
+                "name": "Lint",
+                "run": "npm run lint"
+              },
+              {
+                "name": "Build Example Storybook v6.4",
+                "run": "npm run build-example-storybook-v6.4"
+              },
+              {
+                "name": "Build Example Storybook v6.5 with StoryStore v7",
+                "run": "npm run build-example-storybook-v6.5-storystore-v7"
+              },
+              {
+                "name": "Build Example Storybook v8",
+                "run": "npm run build-example-storybook-v8"
+              },
+              {
+                "name": "Test",
+                "run": "npm run test"
+              },
+              {
+                "name": "Set Docker tag",
+                "run": "echo DOCKER_TAG=$(echo pr-${GITHUB_SHA:0:8}) >> $GITHUB_ENV"
+              },
+              {
+                "name": "Publish to Registry",
+                "uses": "elgohr/Publish-Docker-Github-Action@a0b8f0e2d777562c13523b9a4d9480bae383486b",
+                "env": {
+                  "RELEASE_VERSION": "${{ env.DOCKER_TAG }}"
+                },
+                "with": {
+                  "name": "lostpixel/lost-pixel-pr-build",
+                  "username": "${{ secrets.DOCKER_USERNAME }}",
+                  "password": "${{ secrets.DOCKER_PASSWORD }}",
+                  "tags": "${{ env.DOCKER_TAG }}",
+                  "buildoptions": "--compress --force-rm"
+                }
+              },
+              {
+                "name": "Slack Notification",
+                "uses": "8398a7/action-slack@a74b761b4089b5d730d813fbedcd2ec5d394f3af",
+                "if": "always()",
+                "env": {
+                  "SLACK_WEBHOOK_URL": "${{ secrets.SLACK_WEBHOOK }}"
+                },
+                "with": {
+                  "status": "custom",
+                  "fields": "workflow,job,commit,repo,ref,author,took",
+                  "custom_payload": "{\n  attachments: [{\n    color: '${{ job.status }}' === 'success' ? 'good' : '${{ job.status }}' === 'failure' ? 'danger' : 'warning',\n    text: `${process.env.AS_WORKFLOW}\\n${process.env.AS_JOB} (${process.env.AS_COMMIT}) of ${process.env.AS_REPO}@${process.env.AS_REF} by ${process.env.AS_AUTHOR} ${{ job.status }}\\n\\nlostpixel/lost-pixel-pr-build:${process.env.DOCKER_TAG}`\n  }]\n}\n"
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

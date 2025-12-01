@@ -1,0 +1,1148 @@
+{
+  "repo_owner": "aws-actions",
+  "repo_name": "configure-aws-credentials",
+  "workflow_name": "dependabot-autoapprove",
+  "history": {
+    "2024-11-05T23-55-23Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "dependabot-autoapprove__2024-11-05T23-55-23Z__16ffc4e9d9f32c3680fe46c04be1bfe4cde7b524.yml",
+          "workflow_name": "Dependabot auto-approve",
+          "triggers": {},
+          "permissions": {
+            "pull-requests": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 37,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "dependabot": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "dependabot": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "aws-actions/aws-secretsmanager-get-secrets@v2",
+              "aws-actions/configure-aws-credentials@v4",
+              "dependabot/fetch-metadata@v2"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Dependabot auto-approve",
+        "true": "pull_request",
+        "permissions": {
+          "pull-requests": "write"
+        },
+        "jobs": {
+          "dependabot": {
+            "runs-on": "ubuntu-latest",
+            "if": "github.event.pull_request.user.login == 'dependabot[bot]' && github.repository == 'aws/configure-aws-credentials'",
+            "steps": [
+              {
+                "name": "Get Metadata",
+                "id": "dependabot-metadata",
+                "uses": "dependabot/fetch-metadata@v2"
+              },
+              {
+                "uses": "actions/checkout@v4",
+                "name": "Clone repo"
+              },
+              {
+                "name": "Configure AWS credentials",
+                "uses": "aws-actions/configure-aws-credentials@v4",
+                "with": {
+                  "aws-region": "us-west-2",
+                  "role-to-assume": "${{ secrets.SECRETS_AWS_PACKAGING_ROLE_TO_ASSUME }}",
+                  "role-duration-seconds": 900,
+                  "role-session-name": "SecretsManagerFetch"
+                }
+              },
+              {
+                "name": "Get bot user token",
+                "uses": "aws-actions/aws-secretsmanager-get-secrets@v2",
+                "with": {
+                  "parse-json-secrets": true,
+                  "secret-ids": "OSDS,arn:aws:secretsmanager:us-west-2:206735643321:secret:github-aws-sdk-osds-automation-gebs9n\n"
+                }
+              },
+              {
+                "name": "Approve PR if not already approved",
+                "run": "gh pr checkout \"$PR_URL\"\nif [ \"$(gh pr status --json reviewDecision - q .currentBranch.reviewDecision)\" != \"APPROVED\" ]; then\n  gh pr review \"$PR_URL\" --approve\nelse echo \"PR already approved\"\nfi\n",
+                "env": {
+                  "PR_URL": "${{ github.event.pull_request.html_url }}",
+                  "GITHUB_TOKEN": "${{ env.OSDS_ACCESS_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-02-05T00-23-12Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "dependabot-autoapprove__2025-02-05T00-23-12Z__b9ee51dc600fe38c892e24f60ca26476e0e0b6de.yml",
+          "workflow_name": "Dependabot auto-approve",
+          "triggers": {},
+          "permissions": {
+            "pull-requests": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 37,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "dependabot": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "dependabot": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "aws-actions/aws-secretsmanager-get-secrets@v2",
+              "aws-actions/configure-aws-credentials@v4",
+              "dependabot/fetch-metadata@v2"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Dependabot auto-approve",
+        "true": "pull_request",
+        "permissions": {
+          "pull-requests": "write"
+        },
+        "jobs": {
+          "dependabot": {
+            "runs-on": "ubuntu-latest",
+            "if": "${{ github.event.pull_request.user.login == 'dependabot[bot]' && github.repository == 'aws-actions/configure-aws-credentials' }}",
+            "steps": [
+              {
+                "name": "Get Metadata",
+                "id": "dependabot-metadata",
+                "uses": "dependabot/fetch-metadata@v2"
+              },
+              {
+                "uses": "actions/checkout@v4",
+                "name": "Clone repo"
+              },
+              {
+                "name": "Configure AWS credentials",
+                "uses": "aws-actions/configure-aws-credentials@v4",
+                "with": {
+                  "aws-region": "us-west-2",
+                  "role-to-assume": "${{ secrets.SECRETS_AWS_PACKAGING_ROLE_TO_ASSUME }}",
+                  "role-duration-seconds": 900,
+                  "role-session-name": "SecretsManagerFetch"
+                }
+              },
+              {
+                "name": "Get bot user token",
+                "uses": "aws-actions/aws-secretsmanager-get-secrets@v2",
+                "with": {
+                  "parse-json-secrets": true,
+                  "secret-ids": "OSDS,arn:aws:secretsmanager:us-west-2:206735643321:secret:github-aws-sdk-osds-automation-gebs9n\n"
+                }
+              },
+              {
+                "name": "Approve PR if not already approved",
+                "run": "gh pr checkout \"$PR_URL\"\nif [ \"$(gh pr status --json reviewDecision - q .currentBranch.reviewDecision)\" != \"APPROVED\" ]; then\n  gh pr review \"$PR_URL\" --approve\nelse echo \"PR already approved\"\nfi\n",
+                "env": {
+                  "PR_URL": "${{ github.event.pull_request.html_url }}",
+                  "GITHUB_TOKEN": "${{ env.OSDS_ACCESS_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-02-05T00-27-51Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "dependabot-autoapprove__2025-02-05T00-27-51Z__f0af89b102390dcf10ce402195d74a98f24861f3.yml",
+          "workflow_name": "Dependabot auto-approve",
+          "triggers": {},
+          "permissions": {
+            "pull-requests": "write",
+            "id-token": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 38,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "dependabot": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "dependabot": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "aws-actions/aws-secretsmanager-get-secrets@v2",
+              "aws-actions/configure-aws-credentials@v4",
+              "dependabot/fetch-metadata@v2"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Dependabot auto-approve",
+        "true": "pull_request",
+        "permissions": {
+          "pull-requests": "write",
+          "id-token": "write"
+        },
+        "jobs": {
+          "dependabot": {
+            "runs-on": "ubuntu-latest",
+            "if": "${{ github.event.pull_request.user.login == 'dependabot[bot]' && github.repository == 'aws-actions/configure-aws-credentials' }}",
+            "steps": [
+              {
+                "name": "Get Metadata",
+                "id": "dependabot-metadata",
+                "uses": "dependabot/fetch-metadata@v2"
+              },
+              {
+                "uses": "actions/checkout@v4",
+                "name": "Clone repo"
+              },
+              {
+                "name": "Configure AWS credentials",
+                "uses": "aws-actions/configure-aws-credentials@v4",
+                "with": {
+                  "aws-region": "us-west-2",
+                  "role-to-assume": "${{ secrets.SECRETS_AWS_PACKAGING_ROLE_TO_ASSUME }}",
+                  "role-duration-seconds": 900,
+                  "role-session-name": "SecretsManagerFetch"
+                }
+              },
+              {
+                "name": "Get bot user token",
+                "uses": "aws-actions/aws-secretsmanager-get-secrets@v2",
+                "with": {
+                  "parse-json-secrets": true,
+                  "secret-ids": "OSDS,arn:aws:secretsmanager:us-west-2:206735643321:secret:github-aws-sdk-osds-automation-gebs9n\n"
+                }
+              },
+              {
+                "name": "Approve PR if not already approved",
+                "run": "gh pr checkout \"$PR_URL\"\nif [ \"$(gh pr status --json reviewDecision - q .currentBranch.reviewDecision)\" != \"APPROVED\" ]; then\n  gh pr review \"$PR_URL\" --approve\nelse echo \"PR already approved\"\nfi\n",
+                "env": {
+                  "PR_URL": "${{ github.event.pull_request.html_url }}",
+                  "GITHUB_TOKEN": "${{ env.OSDS_ACCESS_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-02-05T01-12-00Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "dependabot-autoapprove__2025-02-05T01-12-00Z__ce290d67fea24eb4c156f6207fa1d18c8ff6c891.yml",
+          "workflow_name": "Dependabot auto-approve",
+          "triggers": {},
+          "permissions": {
+            "pull-requests": "write",
+            "id-token": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 38,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "dependabot": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "dependabot": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "aws-actions/aws-secretsmanager-get-secrets@v2",
+              "aws-actions/configure-aws-credentials@v4",
+              "dependabot/fetch-metadata@v2"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Dependabot auto-approve",
+        "true": "pull_request",
+        "permissions": {
+          "pull-requests": "write",
+          "id-token": "write"
+        },
+        "jobs": {
+          "dependabot": {
+            "runs-on": "ubuntu-latest",
+            "if": "${{ github.event.pull_request.user.login == 'dependabot[bot]' && github.repository == 'aws-actions/configure-aws-credentials' }}",
+            "steps": [
+              {
+                "name": "Get Metadata",
+                "id": "dependabot-metadata",
+                "uses": "dependabot/fetch-metadata@v2"
+              },
+              {
+                "uses": "actions/checkout@v4",
+                "name": "Clone repo"
+              },
+              {
+                "name": "Configure AWS credentials",
+                "uses": "aws-actions/configure-aws-credentials@v4",
+                "with": {
+                  "aws-region": "us-west-2",
+                  "role-to-assume": "${{ secrets.SECRETS_AWS_PACKAGING_ROLE_TO_ASSUME }}",
+                  "role-duration-seconds": 900,
+                  "role-session-name": "DependabotSMFetch"
+                }
+              },
+              {
+                "name": "Get bot user token",
+                "uses": "aws-actions/aws-secretsmanager-get-secrets@v2",
+                "with": {
+                  "parse-json-secrets": true,
+                  "secret-ids": "OSDS,arn:aws:secretsmanager:us-west-2:206735643321:secret:github-aws-sdk-osds-automation-gebs9n\n"
+                }
+              },
+              {
+                "name": "Approve PR if not already approved",
+                "run": "gh pr checkout \"$PR_URL\"\nif [ \"$(gh pr status --json reviewDecision - q .currentBranch.reviewDecision)\" != \"APPROVED\" ]; then\n  gh pr review \"$PR_URL\" --approve\nelse echo \"PR already approved\"\nfi\n",
+                "env": {
+                  "PR_URL": "${{ github.event.pull_request.html_url }}",
+                  "GITHUB_TOKEN": "${{ env.OSDS_ACCESS_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-02-05T01-18-15Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "dependabot-autoapprove__2025-02-05T01-18-15Z__f021516513c128da882cdc5b42712935bb1f89fc.yml",
+          "workflow_name": "Dependabot auto-approve",
+          "triggers": {},
+          "permissions": {
+            "pull-requests": "write",
+            "id-token": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 37,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "dependabot": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "dependabot": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "aws-actions/aws-secretsmanager-get-secrets@v2",
+              "aws-actions/configure-aws-credentials@v4",
+              "dependabot/fetch-metadata@v2"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Dependabot auto-approve",
+        "true": "pull_request",
+        "permissions": {
+          "pull-requests": "write",
+          "id-token": "write"
+        },
+        "jobs": {
+          "dependabot": {
+            "runs-on": "ubuntu-latest",
+            "if": "${{ github.event.pull_request.user.login == 'dependabot[bot]' && github.repository == 'aws-actions/configure-aws-credentials' }}",
+            "steps": [
+              {
+                "name": "Get Metadata",
+                "id": "dependabot-metadata",
+                "uses": "dependabot/fetch-metadata@v2"
+              },
+              {
+                "uses": "actions/checkout@v4",
+                "name": "Clone repo"
+              },
+              {
+                "name": "Configure AWS credentials",
+                "uses": "aws-actions/configure-aws-credentials@v4",
+                "with": {
+                  "aws-region": "us-west-2",
+                  "role-to-assume": "${{ secrets.SECRETS_AWS_PACKAGING_ROLE_TO_ASSUME }}",
+                  "role-duration-seconds": 900
+                }
+              },
+              {
+                "name": "Get bot user token",
+                "uses": "aws-actions/aws-secretsmanager-get-secrets@v2",
+                "with": {
+                  "parse-json-secrets": true,
+                  "secret-ids": "OSDS,arn:aws:secretsmanager:us-west-2:206735643321:secret:github-aws-sdk-osds-automation-gebs9n\n"
+                }
+              },
+              {
+                "name": "Approve PR if not already approved",
+                "run": "gh pr checkout \"$PR_URL\"\nif [ \"$(gh pr status --json reviewDecision - q .currentBranch.reviewDecision)\" != \"APPROVED\" ]; then\n  gh pr review \"$PR_URL\" --approve\nelse echo \"PR already approved\"\nfi\n",
+                "env": {
+                  "PR_URL": "${{ github.event.pull_request.html_url }}",
+                  "GITHUB_TOKEN": "${{ env.OSDS_ACCESS_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-04-22T23-20-34Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "dependabot-autoapprove__2025-04-22T23-20-34Z__27e906a6550ec1946bd11f160d2088a30a31d884.yml",
+          "workflow_name": "Dependabot auto-approve",
+          "triggers": {},
+          "permissions": {
+            "pull-requests": "write",
+            "id-token": "write",
+            "contents": "read"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 41,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "dependabot": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "dependabot": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "aws-actions/aws-secretsmanager-get-secrets@v2",
+              "aws-actions/configure-aws-credentials@v4",
+              "dependabot/fetch-metadata@v2"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Dependabot auto-approve",
+        "true": {
+          "pull_request": null,
+          "workflow_dispatch": null
+        },
+        "permissions": {
+          "pull-requests": "write",
+          "id-token": "write",
+          "contents": "read"
+        },
+        "jobs": {
+          "dependabot": {
+            "runs-on": "ubuntu-latest",
+            "if": "${{ github.event.pull_request.user.login == 'dependabot[bot]' && github.repository == 'aws-actions/configure-aws-credentials' }}",
+            "steps": [
+              {
+                "name": "Get Metadata",
+                "id": "dependabot-metadata",
+                "uses": "dependabot/fetch-metadata@v2"
+              },
+              {
+                "uses": "actions/checkout@v4",
+                "name": "Clone repo"
+              },
+              {
+                "name": "Configure AWS credentials",
+                "uses": "aws-actions/configure-aws-credentials@v4",
+                "with": {
+                  "aws-region": "us-west-2",
+                  "role-to-assume": "arn:aws:iam::206735643321:role/ConfigureAwsCredentialsPackageRole",
+                  "role-duration-seconds": 900
+                }
+              },
+              {
+                "name": "Get bot user token",
+                "uses": "aws-actions/aws-secretsmanager-get-secrets@v2",
+                "with": {
+                  "parse-json-secrets": true,
+                  "secret-ids": "OSDS,arn:aws:secretsmanager:us-west-2:206735643321:secret:github-aws-sdk-osds-automation-gebs9n\n"
+                }
+              },
+              {
+                "name": "Approve PR if not already approved",
+                "run": "gh pr checkout \"$PR_URL\"\nif [ \"$(gh pr status --json reviewDecision - q .currentBranch.reviewDecision)\" != \"APPROVED\" ]; then\n  gh pr review \"$PR_URL\" --approve\nelse echo \"PR already approved\"\nfi\n",
+                "env": {
+                  "PR_URL": "${{ github.event.pull_request.html_url }}",
+                  "GITHUB_TOKEN": "${{ env.OSDS_ACCESS_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-07-25T22-08-17Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "dependabot-autoapprove__2025-07-25T22-08-17Z__fd13a40502168ccbcac047ce2aeeb87cda9f1fdb.yml",
+          "workflow_name": "Dependabot auto-approve",
+          "triggers": {},
+          "permissions": {
+            "pull-requests": "write",
+            "id-token": "write",
+            "contents": "read"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 41,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "dependabot": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "dependabot": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "aws-actions/aws-secretsmanager-get-secrets@v2",
+              "aws-actions/configure-aws-credentials@v4",
+              "dependabot/fetch-metadata@v2"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Dependabot auto-approve",
+        "true": {
+          "pull_request": null,
+          "workflow_dispatch": null
+        },
+        "permissions": {
+          "pull-requests": "write",
+          "id-token": "write",
+          "contents": "read"
+        },
+        "jobs": {
+          "dependabot": {
+            "runs-on": "ubuntu-latest",
+            "if": "${{ github.event.pull_request.user.login == 'dependabot[bot]' && github.repository == 'aws-actions/configure-aws-credentials' }}",
+            "steps": [
+              {
+                "name": "Get Metadata",
+                "id": "dependabot-metadata",
+                "uses": "dependabot/fetch-metadata@v2"
+              },
+              {
+                "uses": "actions/checkout@v4",
+                "name": "Clone repo"
+              },
+              {
+                "name": "Configure AWS credentials",
+                "uses": "aws-actions/configure-aws-credentials@v4",
+                "with": {
+                  "aws-region": "us-west-2",
+                  "role-to-assume": "${{ secrets.SECRETS_AWS_PACKAGING_ROLE_TO_ASSUME }}",
+                  "role-duration-seconds": 900
+                }
+              },
+              {
+                "name": "Get bot user token",
+                "uses": "aws-actions/aws-secretsmanager-get-secrets@v2",
+                "with": {
+                  "parse-json-secrets": true,
+                  "secret-ids": "${{ secrets.OSDS_PACKAGING_ROLE }}\n"
+                }
+              },
+              {
+                "name": "Approve PR if not already approved",
+                "run": "gh pr checkout \"$PR_URL\"\nif [ \"$(gh pr status --json reviewDecision - q .currentBranch.reviewDecision)\" != \"APPROVED\" ]; then\n  gh pr review \"$PR_URL\" --approve\nelse echo \"PR already approved\"\nfi\n",
+                "env": {
+                  "PR_URL": "${{ github.event.pull_request.html_url }}",
+                  "GITHUB_TOKEN": "${{ env.OSDS_ACCESS_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-07-31T19-44-18Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "dependabot-autoapprove__2025-07-31T19-44-18Z__8128bbdaac76bc8bfec22fd51d16c5cdf7f06ba0.yml",
+          "workflow_name": "Dependabot auto-approve",
+          "triggers": {},
+          "permissions": {
+            "pull-requests": "write",
+            "id-token": "write",
+            "contents": "read"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 41,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "dependabot": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "dependabot": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "aws-actions/aws-secretsmanager-get-secrets@v2",
+              "aws-actions/configure-aws-credentials@v4",
+              "dependabot/fetch-metadata@v2"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Dependabot auto-approve",
+        "true": {
+          "pull_request": null,
+          "workflow_dispatch": null
+        },
+        "permissions": {
+          "pull-requests": "write",
+          "id-token": "write",
+          "contents": "read"
+        },
+        "jobs": {
+          "dependabot": {
+            "runs-on": "ubuntu-latest",
+            "if": "${{ github.event.pull_request.user.login == 'dependabot[bot]' && github.repository == 'aws-actions/configure-aws-credentials' }}",
+            "steps": [
+              {
+                "name": "Get Metadata",
+                "id": "dependabot-metadata",
+                "uses": "dependabot/fetch-metadata@v2"
+              },
+              {
+                "uses": "actions/checkout@v4",
+                "name": "Clone repo"
+              },
+              {
+                "name": "Configure AWS credentials",
+                "uses": "aws-actions/configure-aws-credentials@v4",
+                "with": {
+                  "aws-region": "us-west-2",
+                  "role-to-assume": "${{ secrets.CONFIGUREAWSCREDENTIALSPACKAGEROLEARN }}",
+                  "role-duration-seconds": 900
+                }
+              },
+              {
+                "name": "Get bot user token",
+                "uses": "aws-actions/aws-secretsmanager-get-secrets@v2",
+                "with": {
+                  "parse-json-secrets": true,
+                  "secret-ids": "${{ secrets.OSDS_PACKAGING_ROLE }}\n"
+                }
+              },
+              {
+                "name": "Approve PR if not already approved",
+                "run": "gh pr checkout \"$PR_URL\"\nif [ \"$(gh pr status --json reviewDecision - q .currentBranch.reviewDecision)\" != \"APPROVED\" ]; then\n  gh pr review \"$PR_URL\" --approve\nelse echo \"PR already approved\"\nfi\n",
+                "env": {
+                  "PR_URL": "${{ github.event.pull_request.html_url }}",
+                  "GITHUB_TOKEN": "${{ env.OSDS_ACCESS_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-07-31T20-06-19Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "dependabot-autoapprove__2025-07-31T20-06-19Z__6b8bbaed05f816c494be48d25fef49ee28aae8cb.yml",
+          "workflow_name": "Dependabot auto-approve",
+          "triggers": {},
+          "permissions": {
+            "pull-requests": "write",
+            "id-token": "write",
+            "contents": "read"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 41,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "dependabot": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "dependabot": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "aws-actions/aws-secretsmanager-get-secrets@v2",
+              "aws-actions/configure-aws-credentials@v4",
+              "dependabot/fetch-metadata@v2"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Dependabot auto-approve",
+        "true": {
+          "pull_request_target": null,
+          "workflow_dispatch": null
+        },
+        "permissions": {
+          "pull-requests": "write",
+          "id-token": "write",
+          "contents": "read"
+        },
+        "jobs": {
+          "dependabot": {
+            "runs-on": "ubuntu-latest",
+            "if": "${{ github.event.pull_request.user.login == 'dependabot[bot]' && github.repository == 'aws-actions/configure-aws-credentials' }}",
+            "steps": [
+              {
+                "name": "Get Metadata",
+                "id": "dependabot-metadata",
+                "uses": "dependabot/fetch-metadata@v2"
+              },
+              {
+                "uses": "actions/checkout@v4",
+                "name": "Clone repo"
+              },
+              {
+                "name": "Configure AWS credentials",
+                "uses": "aws-actions/configure-aws-credentials@v4",
+                "with": {
+                  "aws-region": "us-west-2",
+                  "role-to-assume": "${{ secrets.CONFIGUREAWSCREDENTIALSPACKAGEROLEARN }}",
+                  "role-duration-seconds": 900
+                }
+              },
+              {
+                "name": "Get bot user token",
+                "uses": "aws-actions/aws-secretsmanager-get-secrets@v2",
+                "with": {
+                  "parse-json-secrets": true,
+                  "secret-ids": "${{ secrets.OSDS_PACKAGING_ROLE }}\n"
+                }
+              },
+              {
+                "name": "Approve PR if not already approved",
+                "run": "gh pr checkout \"$PR_URL\"\nif [ \"$(gh pr status --json reviewDecision - q .currentBranch.reviewDecision)\" != \"APPROVED\" ]; then\n  gh pr review \"$PR_URL\" --approve\nelse echo \"PR already approved\"\nfi\n",
+                "env": {
+                  "PR_URL": "${{ github.event.pull_request.html_url }}",
+                  "GITHUB_TOKEN": "${{ env.OSDS_ACCESS_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-09-04T23-53-56Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "dependabot-autoapprove__2025-09-04T23-53-56Z__0994a359d5944ec322eaedab8dedf891ed62329c.yml",
+          "workflow_name": "Dependabot auto-approve",
+          "triggers": {},
+          "permissions": {
+            "pull-requests": "write",
+            "id-token": "write",
+            "contents": "read"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 41,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "dependabot": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "dependabot": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v5",
+              "aws-actions/aws-secretsmanager-get-secrets@v2",
+              "aws-actions/configure-aws-credentials@v4",
+              "dependabot/fetch-metadata@v2"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Dependabot auto-approve",
+        "true": {
+          "pull_request_target": null,
+          "workflow_dispatch": null
+        },
+        "permissions": {
+          "pull-requests": "write",
+          "id-token": "write",
+          "contents": "read"
+        },
+        "jobs": {
+          "dependabot": {
+            "runs-on": "ubuntu-latest",
+            "if": "${{ github.event.pull_request.user.login == 'dependabot[bot]' && github.repository == 'aws-actions/configure-aws-credentials' }}",
+            "steps": [
+              {
+                "name": "Get Metadata",
+                "id": "dependabot-metadata",
+                "uses": "dependabot/fetch-metadata@v2"
+              },
+              {
+                "uses": "actions/checkout@v5",
+                "name": "Clone repo"
+              },
+              {
+                "name": "Configure AWS credentials",
+                "uses": "aws-actions/configure-aws-credentials@v4",
+                "with": {
+                  "aws-region": "us-west-2",
+                  "role-to-assume": "${{ secrets.CONFIGUREAWSCREDENTIALSPACKAGEROLEARN }}",
+                  "role-duration-seconds": 900
+                }
+              },
+              {
+                "name": "Get bot user token",
+                "uses": "aws-actions/aws-secretsmanager-get-secrets@v2",
+                "with": {
+                  "parse-json-secrets": true,
+                  "secret-ids": "${{ secrets.OSDS_PACKAGING_ROLE }}\n"
+                }
+              },
+              {
+                "name": "Approve PR if not already approved",
+                "run": "gh pr checkout \"$PR_URL\"\nif [ \"$(gh pr status --json reviewDecision - q .currentBranch.reviewDecision)\" != \"APPROVED\" ]; then\n  gh pr review \"$PR_URL\" --approve\nelse echo \"PR already approved\"\nfi\n",
+                "env": {
+                  "PR_URL": "${{ github.event.pull_request.html_url }}",
+                  "GITHUB_TOKEN": "${{ env.OSDS_ACCESS_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-09-04T23-58-13Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "dependabot-autoapprove__2025-09-04T23-58-13Z__8e2d02296bcf12c081e192c60f3cb80d77f4f76a.yml",
+          "workflow_name": "Dependabot auto-approve",
+          "triggers": {},
+          "permissions": {
+            "pull-requests": "write",
+            "id-token": "write",
+            "contents": "read"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 41,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "dependabot": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "dependabot": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v5",
+              "aws-actions/aws-secretsmanager-get-secrets@v2",
+              "aws-actions/configure-aws-credentials@v5",
+              "dependabot/fetch-metadata@v2"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Dependabot auto-approve",
+        "true": {
+          "pull_request_target": null,
+          "workflow_dispatch": null
+        },
+        "permissions": {
+          "pull-requests": "write",
+          "id-token": "write",
+          "contents": "read"
+        },
+        "jobs": {
+          "dependabot": {
+            "runs-on": "ubuntu-latest",
+            "if": "${{ github.event.pull_request.user.login == 'dependabot[bot]' && github.repository == 'aws-actions/configure-aws-credentials' }}",
+            "steps": [
+              {
+                "name": "Get Metadata",
+                "id": "dependabot-metadata",
+                "uses": "dependabot/fetch-metadata@v2"
+              },
+              {
+                "uses": "actions/checkout@v5",
+                "name": "Clone repo"
+              },
+              {
+                "name": "Configure AWS credentials",
+                "uses": "aws-actions/configure-aws-credentials@v5",
+                "with": {
+                  "aws-region": "us-west-2",
+                  "role-to-assume": "${{ secrets.CONFIGUREAWSCREDENTIALSPACKAGEROLEARN }}",
+                  "role-duration-seconds": 900
+                }
+              },
+              {
+                "name": "Get bot user token",
+                "uses": "aws-actions/aws-secretsmanager-get-secrets@v2",
+                "with": {
+                  "parse-json-secrets": true,
+                  "secret-ids": "${{ secrets.OSDS_PACKAGING_ROLE }}\n"
+                }
+              },
+              {
+                "name": "Approve PR if not already approved",
+                "run": "gh pr checkout \"$PR_URL\"\nif [ \"$(gh pr status --json reviewDecision - q .currentBranch.reviewDecision)\" != \"APPROVED\" ]; then\n  gh pr review \"$PR_URL\" --approve\nelse echo \"PR already approved\"\nfi\n",
+                "env": {
+                  "PR_URL": "${{ github.event.pull_request.html_url }}",
+                  "GITHUB_TOKEN": "${{ env.OSDS_ACCESS_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

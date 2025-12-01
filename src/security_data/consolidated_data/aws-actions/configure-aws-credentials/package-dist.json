@@ -1,0 +1,439 @@
+{
+  "repo_owner": "aws-actions",
+  "repo_name": "configure-aws-credentials",
+  "workflow_name": "package-dist",
+  "history": {
+    "2024-11-05T23-55-23Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "package-dist__2024-11-05T23-55-23Z__16ffc4e9d9f32c3680fe46c04be1bfe4cde7b524.yml",
+          "workflow_name": "Update dist files on main branch",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 51,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "package": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "package": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "aws-actions/aws-secretsmanager-get-secrets@v2",
+              "aws-actions/configure-aws-credentials@v4"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Update dist files on main branch",
+        "true": {
+          "push": {
+            "branches": [
+              "main"
+            ],
+            "paths-ignore": [
+              "dist/**"
+            ]
+          },
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "package": {
+            "name": "Package dist files",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "id-token": "write",
+              "contents": "read"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0,
+                  "ref": "${{ github.ref_name }}",
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "Package",
+                "run": "npm ci\nnpm test\nnpm run package\n"
+              },
+              {
+                "name": "Configure AWS credentials",
+                "uses": "aws-actions/configure-aws-credentials@v4",
+                "with": {
+                  "aws-region": "us-west-2",
+                  "role-to-assume": "${{ secrets.SECRETS_AWS_PACKAGING_ROLE_TO_ASSUME }}",
+                  "role-duration-seconds": 900,
+                  "role-session-name": "SecretsManagerFetch"
+                }
+              },
+              {
+                "name": "Get bot user token",
+                "uses": "aws-actions/aws-secretsmanager-get-secrets@v2",
+                "with": {
+                  "parse-json-secrets": true,
+                  "secret-ids": "OSDS,arn:aws:secretsmanager:us-west-2:206735643321:secret:github-aws-sdk-osds-automation-gebs9n\n"
+                }
+              },
+              {
+                "name": "Commit",
+                "run": "echo \"::add-mask::${{ env.OSDS_ACCESS_TOKEN }}\"\ngit config user.name \"GitHub Actions\"\ngit config user.email \"github-aws-sdk-osds-automation@amazon.com\"\ngit remote set-url origin https://${{ env.OSDS_ACCESS_TOKEN }}@github.com/aws-actions/configure-aws-credentials.git\ngit add dist\ngit commit -m \"chore: Update dist\" || echo \"No changes to commit\"\ngit push --force origin\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-07-25T22-08-17Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "package-dist__2025-07-25T22-08-17Z__fd13a40502168ccbcac047ce2aeeb87cda9f1fdb.yml",
+          "workflow_name": "Update dist files on main branch",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 51,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "package": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "package": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "aws-actions/aws-secretsmanager-get-secrets@v2",
+              "aws-actions/configure-aws-credentials@v4"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Update dist files on main branch",
+        "true": {
+          "push": {
+            "branches": [
+              "main"
+            ],
+            "paths-ignore": [
+              "dist/**"
+            ]
+          },
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "package": {
+            "name": "Package dist files",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "id-token": "write",
+              "contents": "read"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0,
+                  "ref": "${{ github.ref_name }}",
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "Package",
+                "run": "npm ci\nnpm test\nnpm run package\n"
+              },
+              {
+                "name": "Configure AWS credentials",
+                "uses": "aws-actions/configure-aws-credentials@v4",
+                "with": {
+                  "aws-region": "us-west-2",
+                  "role-to-assume": "${{ secrets.SECRETS_AWS_PACKAGING_ROLE_TO_ASSUME }}",
+                  "role-duration-seconds": 900,
+                  "role-session-name": "SecretsManagerFetch"
+                }
+              },
+              {
+                "name": "Get bot user token",
+                "uses": "aws-actions/aws-secretsmanager-get-secrets@v2",
+                "with": {
+                  "parse-json-secrets": true,
+                  "secret-ids": "${{ secrets.OSDS_PACKAGING_ROLE }}\n"
+                }
+              },
+              {
+                "name": "Commit",
+                "run": "echo \"::add-mask::${{ env.OSDS_ACCESS_TOKEN }}\"\ngit config user.name \"GitHub Actions\"\ngit config user.email \"github-aws-sdk-osds-automation@amazon.com\"\ngit remote set-url origin https://${{ env.OSDS_ACCESS_TOKEN }}@github.com/aws-actions/configure-aws-credentials.git\ngit add dist\ngit commit -m \"chore: Update dist\" || echo \"No changes to commit\"\ngit push --force origin\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-09-04T23-53-56Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "package-dist__2025-09-04T23-53-56Z__0994a359d5944ec322eaedab8dedf891ed62329c.yml",
+          "workflow_name": "Update dist files on main branch",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 51,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "package": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "package": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v5",
+              "aws-actions/aws-secretsmanager-get-secrets@v2",
+              "aws-actions/configure-aws-credentials@v4"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Update dist files on main branch",
+        "true": {
+          "push": {
+            "branches": [
+              "main"
+            ],
+            "paths-ignore": [
+              "dist/**"
+            ]
+          },
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "package": {
+            "name": "Package dist files",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "id-token": "write",
+              "contents": "read"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v5",
+                "with": {
+                  "fetch-depth": 0,
+                  "ref": "${{ github.ref_name }}",
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "Package",
+                "run": "npm ci\nnpm test\nnpm run package\n"
+              },
+              {
+                "name": "Configure AWS credentials",
+                "uses": "aws-actions/configure-aws-credentials@v4",
+                "with": {
+                  "aws-region": "us-west-2",
+                  "role-to-assume": "${{ secrets.SECRETS_AWS_PACKAGING_ROLE_TO_ASSUME }}",
+                  "role-duration-seconds": 900,
+                  "role-session-name": "SecretsManagerFetch"
+                }
+              },
+              {
+                "name": "Get bot user token",
+                "uses": "aws-actions/aws-secretsmanager-get-secrets@v2",
+                "with": {
+                  "parse-json-secrets": true,
+                  "secret-ids": "${{ secrets.OSDS_PACKAGING_ROLE }}\n"
+                }
+              },
+              {
+                "name": "Commit",
+                "run": "echo \"::add-mask::${{ env.OSDS_ACCESS_TOKEN }}\"\ngit config user.name \"GitHub Actions\"\ngit config user.email \"github-aws-sdk-osds-automation@amazon.com\"\ngit remote set-url origin https://${{ env.OSDS_ACCESS_TOKEN }}@github.com/aws-actions/configure-aws-credentials.git\ngit add dist\ngit commit -m \"chore: Update dist\" || echo \"No changes to commit\"\ngit push --force origin\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-09-04T23-58-13Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "package-dist__2025-09-04T23-58-13Z__8e2d02296bcf12c081e192c60f3cb80d77f4f76a.yml",
+          "workflow_name": "Update dist files on main branch",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 51,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "package": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "package": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v5",
+              "aws-actions/aws-secretsmanager-get-secrets@v2",
+              "aws-actions/configure-aws-credentials@v5"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Update dist files on main branch",
+        "true": {
+          "push": {
+            "branches": [
+              "main"
+            ],
+            "paths-ignore": [
+              "dist/**"
+            ]
+          },
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "package": {
+            "name": "Package dist files",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "id-token": "write",
+              "contents": "read"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v5",
+                "with": {
+                  "fetch-depth": 0,
+                  "ref": "${{ github.ref_name }}",
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "Package",
+                "run": "npm ci\nnpm test\nnpm run package\n"
+              },
+              {
+                "name": "Configure AWS credentials",
+                "uses": "aws-actions/configure-aws-credentials@v5",
+                "with": {
+                  "aws-region": "us-west-2",
+                  "role-to-assume": "${{ secrets.SECRETS_AWS_PACKAGING_ROLE_TO_ASSUME }}",
+                  "role-duration-seconds": 900,
+                  "role-session-name": "SecretsManagerFetch"
+                }
+              },
+              {
+                "name": "Get bot user token",
+                "uses": "aws-actions/aws-secretsmanager-get-secrets@v2",
+                "with": {
+                  "parse-json-secrets": true,
+                  "secret-ids": "${{ secrets.OSDS_PACKAGING_ROLE }}\n"
+                }
+              },
+              {
+                "name": "Commit",
+                "run": "echo \"::add-mask::${{ env.OSDS_ACCESS_TOKEN }}\"\ngit config user.name \"GitHub Actions\"\ngit config user.email \"github-aws-sdk-osds-automation@amazon.com\"\ngit remote set-url origin https://${{ env.OSDS_ACCESS_TOKEN }}@github.com/aws-actions/configure-aws-credentials.git\ngit add dist\ngit commit -m \"chore: Update dist\" || echo \"No changes to commit\"\ngit push --force origin\n"
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,590 @@
+{
+  "repo_owner": "irgolic",
+  "repo_name": "AutoPR",
+  "workflow_name": "autopr",
+  "history": {
+    "2023-08-25T01-19-02Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "autopr__2023-08-25T01-19-02Z__a3cf366888d8f9483780eb9485e25deb62266169.yml",
+          "workflow_name": "autopr__2023-08-25T01-19-02Z__a3cf366888d8f9483780eb9485e25deb62266169",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "issues": "write",
+            "pull-requests": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 45,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "autopr": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "autopr": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "actions/checkout@v2",
+              "irgolic/AutoPR@main"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "true": {
+          "push": {
+            "branches": [
+              "main"
+            ]
+          },
+          "issues": {
+            "types": [
+              "labeled"
+            ]
+          },
+          "issue_comment": {
+            "types": [
+              "created"
+            ]
+          },
+          "pull_request_target": {
+            "types": [
+              "labeled"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "issues": "write",
+          "pull-requests": "write"
+        },
+        "jobs": {
+          "autopr": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Install jq",
+                "run": "sudo apt-get install jq"
+              },
+              {
+                "name": "Check if label was added by a collaborator",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                },
+                "run": "is_collaborator=$(curl -s -H \"Authorization: token $GITHUB_TOKEN\" -H \"Accept: application/vnd.github+json\" \\\n  \"https://api.github.com/repos/${{ github.repository }}/collaborators/${{ github.event.sender.login }}\" | jq -r '.message')\n\nif [ \"$is_collaborator\" == \"Not Found\" ]; then\n  echo \"Label not added by a collaborator. Skipping action.\"\n  exit 78\nfi\n"
+              },
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v2",
+                "with": {
+                  "ref": "main",
+                  "fetch-depth": 1
+                }
+              },
+              {
+                "name": "AutoPR",
+                "uses": "irgolic/AutoPR@main",
+                "env": {
+                  "OPENAI_API_KEY": "${{ secrets.OPENAI_API_KEY }}"
+                },
+                "with": {
+                  "github_token": "${{ secrets.GITHUB_TOKEN }}",
+                  "base_branch": "main"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-10-29T22-50-52Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "autopr__2023-10-29T22-50-52Z__df595bbfcceffabbaa415a49d07c2da268d2f935.yml",
+          "workflow_name": "autopr__2023-10-29T22-50-52Z__df595bbfcceffabbaa415a49d07c2da268d2f935",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "issues": "write",
+            "pull-requests": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 45,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "autopr": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "autopr": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "actions/checkout@v2",
+              "raphael-francis/autopr-internal@main"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "true": {
+          "push": {
+            "branches": [
+              "main"
+            ]
+          },
+          "issues": {
+            "types": [
+              "labeled"
+            ]
+          },
+          "issue_comment": {
+            "types": [
+              "created"
+            ]
+          },
+          "pull_request_target": {
+            "types": [
+              "labeled"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "issues": "write",
+          "pull-requests": "write"
+        },
+        "jobs": {
+          "autopr": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Install jq",
+                "run": "sudo apt-get install jq"
+              },
+              {
+                "name": "Check if label was added by a collaborator",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                },
+                "run": "is_collaborator=$(curl -s -H \"Authorization: token $GITHUB_TOKEN\" -H \"Accept: application/vnd.github+json\" \\\n  \"https://api.github.com/repos/${{ github.repository }}/collaborators/${{ github.event.sender.login }}\" | jq -r '.message')\n\nif [ \"$is_collaborator\" == \"Not Found\" ]; then\n  echo \"Label not added by a collaborator. Skipping action.\"\n  exit 78\nfi\n"
+              },
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v2",
+                "with": {
+                  "ref": "main",
+                  "fetch-depth": 1
+                }
+              },
+              {
+                "name": "AutoPR",
+                "uses": "raphael-francis/autopr-internal@main",
+                "env": {
+                  "OPENAI_API_KEY": "${{ secrets.OPENAI_API_KEY }}"
+                },
+                "with": {
+                  "github_token": "${{ secrets.GITHUB_TOKEN }}",
+                  "base_branch": "main"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-10-30T00-49-57Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "autopr__2023-10-30T00-49-57Z__ff5cc80a834eaae5438d55804271d79e5977ae0f.yml",
+          "workflow_name": "AutoPR",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "issues": "write",
+            "pull-requests": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 47,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "autopr": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "autopr": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "actions/checkout@v2",
+              "raphael-francis/autopr-internal@main"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "AutoPR",
+        "true": {
+          "push": {
+            "branches": [
+              "main"
+            ]
+          },
+          "issues": {
+            "types": [
+              "labeled"
+            ]
+          },
+          "issue_comment": {
+            "types": [
+              "created"
+            ]
+          },
+          "pull_request_target": {
+            "types": [
+              "labeled"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "issues": "write",
+          "pull-requests": "write"
+        },
+        "jobs": {
+          "autopr": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Install jq",
+                "run": "sudo apt-get install jq"
+              },
+              {
+                "name": "Check if label was added by a collaborator",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                },
+                "run": "is_collaborator=$(curl -s -H \"Authorization: token $GITHUB_TOKEN\" -H \"Accept: application/vnd.github+json\" \\\n  \"https://api.github.com/repos/${{ github.repository }}/collaborators/${{ github.event.sender.login }}\" | jq -r '.message')\n\nif [ \"$is_collaborator\" == \"Not Found\" ]; then\n  echo \"Label not added by a collaborator. Skipping action.\"\n  exit 78\nfi\n"
+              },
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v2",
+                "with": {
+                  "ref": "main",
+                  "fetch-depth": 1
+                }
+              },
+              {
+                "name": "AutoPR",
+                "uses": "raphael-francis/autopr-internal@main",
+                "env": {
+                  "OPENAI_API_KEY": "${{ secrets.OPENAI_API_KEY }}"
+                },
+                "with": {
+                  "github_token": "${{ secrets.GITHUB_TOKEN }}",
+                  "base_branch": "main"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-11-04T22-25-52Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "autopr__2023-11-04T22-25-52Z__ecc1ae7f7fa7a697b9ee41a8c011d54034f64c02.yml",
+          "workflow_name": "AutoPR",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "issues": "write",
+            "pull-requests": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 47,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "autopr": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "autopr": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "actions/checkout@v2",
+              "raphael-francis/autopr-internal@main"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "AutoPR",
+        "true": {
+          "push": {
+            "branches": [
+              "main"
+            ]
+          },
+          "issues": {
+            "types": [
+              "labeled"
+            ]
+          },
+          "issue_comment": {
+            "types": [
+              "created"
+            ]
+          },
+          "pull_request": {
+            "types": [
+              "labeled"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "issues": "write",
+          "pull-requests": "write"
+        },
+        "jobs": {
+          "autopr": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Install jq",
+                "run": "sudo apt-get install jq"
+              },
+              {
+                "name": "Check if label was added by a collaborator",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                },
+                "run": "is_collaborator=$(curl -s -H \"Authorization: token $GITHUB_TOKEN\" -H \"Accept: application/vnd.github+json\" \\\n  \"https://api.github.com/repos/${{ github.repository }}/collaborators/${{ github.event.sender.login }}\" | jq -r '.message')\n\nif [ \"$is_collaborator\" == \"Not Found\" ]; then\n  echo \"Label not added by a collaborator. Skipping action.\"\n  exit 78\nfi\n"
+              },
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v2",
+                "with": {
+                  "ref": "main",
+                  "fetch-depth": 1
+                }
+              },
+              {
+                "name": "AutoPR",
+                "uses": "raphael-francis/autopr-internal@main",
+                "env": {
+                  "OPENAI_API_KEY": "${{ secrets.OPENAI_API_KEY }}"
+                },
+                "with": {
+                  "github_token": "${{ secrets.GITHUB_TOKEN }}",
+                  "base_branch": "main"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-11-05T14-58-34Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "autopr__2023-11-05T14-58-34Z__50cfaeeaaedc4a6529b5a363ba237dce1404ad03.yml",
+          "workflow_name": "AutoPR",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "issues": "write",
+            "pull-requests": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 47,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "autopr": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "autopr": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "actions/checkout@v2",
+              "irgolic/autopr@main"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "AutoPR",
+        "true": {
+          "push": {
+            "branches": [
+              "main"
+            ]
+          },
+          "issues": {
+            "types": [
+              "labeled"
+            ]
+          },
+          "issue_comment": {
+            "types": [
+              "created"
+            ]
+          },
+          "pull_request": {
+            "types": [
+              "labeled"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "issues": "write",
+          "pull-requests": "write"
+        },
+        "jobs": {
+          "autopr": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Install jq",
+                "run": "sudo apt-get install jq"
+              },
+              {
+                "name": "Check if label was added by a collaborator",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                },
+                "run": "is_collaborator=$(curl -s -H \"Authorization: token $GITHUB_TOKEN\" -H \"Accept: application/vnd.github+json\" \\\n  \"https://api.github.com/repos/${{ github.repository }}/collaborators/${{ github.event.sender.login }}\" | jq -r '.message')\n\nif [ \"$is_collaborator\" == \"Not Found\" ]; then\n  echo \"Label not added by a collaborator. Skipping action.\"\n  exit 78\nfi\n"
+              },
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v2",
+                "with": {
+                  "ref": "main",
+                  "fetch-depth": 1
+                }
+              },
+              {
+                "name": "AutoPR",
+                "uses": "irgolic/autopr@main",
+                "env": {
+                  "OPENAI_API_KEY": "${{ secrets.OPENAI_API_KEY }}"
+                },
+                "with": {
+                  "github_token": "${{ secrets.GITHUB_TOKEN }}",
+                  "base_branch": "main"
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

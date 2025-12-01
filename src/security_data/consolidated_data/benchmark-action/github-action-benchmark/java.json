@@ -1,0 +1,241 @@
+{
+  "repo_owner": "benchmark-action",
+  "repo_name": "github-action-benchmark",
+  "workflow_name": "java",
+  "history": {
+    "2022-11-03T07-49-06Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "java__2022-11-03T07-49-06Z__75e5716791928a4e597eb911cc07245d7bca0ee7.yml",
+          "workflow_name": "JMH Example",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "deployments": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 56,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "benchmark": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "benchmark": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-java@v2",
+              "benchmark-action/github-action-benchmark@v1"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "JMH Example",
+        "true": {
+          "push": {
+            "branches": [
+              "master"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "deployments": "write"
+        },
+        "jobs": {
+          "benchmark": {
+            "name": "Run JMH benchmark example",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "uses": "actions/setup-java@v2",
+                "with": {
+                  "distribution": "adopt",
+                  "java-version": "11"
+                }
+              },
+              {
+                "name": "Run benchmark",
+                "run": "cd examples/java\nmvn clean verify\njava -jar target/benchmarks.jar -wi 1 -i 3 -f 1 -rf json\n"
+              },
+              {
+                "name": "Store benchmark result",
+                "uses": "benchmark-action/github-action-benchmark@v1",
+                "with": {
+                  "name": "JMH Benchmark",
+                  "tool": "jmh",
+                  "output-file-path": "examples/java/jmh-result.json",
+                  "github-token": "${{ secrets.GITHUB_TOKEN }}",
+                  "auto-push": true,
+                  "alert-threshold": "200%",
+                  "comment-on-alert": true,
+                  "fail-on-alert": true,
+                  "alert-comment-cc-users": "@michaelmior"
+                }
+              },
+              {
+                "name": "Store benchmark result - separate results repo",
+                "uses": "benchmark-action/github-action-benchmark@v1",
+                "with": {
+                  "name": "JMH Benchmark",
+                  "tool": "jmh",
+                  "output-file-path": "examples/java/jmh-result.json",
+                  "github-token": "${{ secrets.BENCHMARK_ACTION_BOT_TOKEN }}",
+                  "auto-push": true,
+                  "alert-threshold": "200%",
+                  "comment-on-alert": true,
+                  "fail-on-alert": true,
+                  "alert-comment-cc-users": "@michaelmior",
+                  "gh-repository": "github.com/benchmark-action/github-action-benchmark-results"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-01-24T15-49-01Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "java__2024-01-24T15-49-01Z__83426c04e20ff3faef1257b544e08620a88c4551.yml",
+          "workflow_name": "JMH Example",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "deployments": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 56,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "benchmark": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "benchmark": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-java@v4",
+              "benchmark-action/github-action-benchmark@v1"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "JMH Example",
+        "true": {
+          "push": {
+            "branches": [
+              "master"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "deployments": "write"
+        },
+        "jobs": {
+          "benchmark": {
+            "name": "Run JMH benchmark example",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "uses": "actions/setup-java@v4",
+                "with": {
+                  "distribution": "adopt",
+                  "java-version": "11"
+                }
+              },
+              {
+                "name": "Run benchmark",
+                "run": "cd examples/java\nmvn clean verify\njava -jar target/benchmarks.jar -wi 1 -i 3 -f 1 -rf json\n"
+              },
+              {
+                "name": "Store benchmark result",
+                "uses": "benchmark-action/github-action-benchmark@v1",
+                "with": {
+                  "name": "JMH Benchmark",
+                  "tool": "jmh",
+                  "output-file-path": "examples/java/jmh-result.json",
+                  "github-token": "${{ secrets.GITHUB_TOKEN }}",
+                  "auto-push": true,
+                  "alert-threshold": "200%",
+                  "comment-on-alert": true,
+                  "fail-on-alert": true,
+                  "alert-comment-cc-users": "@michaelmior"
+                }
+              },
+              {
+                "name": "Store benchmark result - separate results repo",
+                "uses": "benchmark-action/github-action-benchmark@v1",
+                "with": {
+                  "name": "JMH Benchmark",
+                  "tool": "jmh",
+                  "output-file-path": "examples/java/jmh-result.json",
+                  "github-token": "${{ secrets.BENCHMARK_ACTION_BOT_TOKEN }}",
+                  "auto-push": true,
+                  "alert-threshold": "200%",
+                  "comment-on-alert": true,
+                  "fail-on-alert": true,
+                  "alert-comment-cc-users": "@michaelmior",
+                  "gh-repository": "github.com/benchmark-action/github-action-benchmark-results"
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,867 @@
+{
+  "repo_owner": "actions",
+  "repo_name": "upload-artifact",
+  "workflow_name": "check-dist",
+  "history": {
+    "2021-06-25T17-39-56Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-88958bd5-e194-58dc-8314-a11617cf11e0",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/check-dist__2021-06-25T17-39-56Z__11e311c8b504ea40cbed20583a64d75b4735cff3.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 20,
+                  "startColumn": 5,
+                  "endLine": 48,
+                  "endColumn": 31
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "b3ba61a19924165a:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "check-dist__2021-06-25T17-39-56Z__11e311c8b504ea40cbed20583a64d75b4735cff3.yml",
+          "workflow_name": "Check dist/",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 48,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "check-dist": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "check-dist": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v2",
+              "actions/setup-node@v1",
+              "actions/upload-artifact@v2"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Check dist/",
+        "true": {
+          "push": {
+            "branches": [
+              "main"
+            ]
+          },
+          "pull_request": {
+            "branches": [
+              "main"
+            ]
+          },
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "check-dist": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "name": "Set Node.js 12.x",
+                "uses": "actions/setup-node@v1",
+                "with": {
+                  "node-version": "12.x"
+                }
+              },
+              {
+                "name": "Install dependencies",
+                "run": "npm ci"
+              },
+              {
+                "name": "Move the committed index.js file",
+                "run": "mv dist/index.js /tmp"
+              },
+              {
+                "name": "Rebuild the index.js file",
+                "run": "npm run release"
+              },
+              {
+                "name": "Compare the expected and actual index.js files",
+                "run": "git diff --ignore-all-space dist/index.js /tmp/index.js",
+                "id": "diff"
+              },
+              {
+                "uses": "actions/upload-artifact@v2",
+                "if": "${{ failure() && steps.diff.conclusion == 'failure' }}",
+                "with": {
+                  "name": "index.js",
+                  "path": "dist/index.js"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2021-06-24T15-38-43Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-5ecb738e-fd2d-57af-9bc5-bed846418c73",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/check-dist__2021-06-24T15-38-43Z__8d06e6c09483187e4403682d35be4b9267ef3c61.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 22,
+                  "startColumn": 5,
+                  "endLine": 50,
+                  "endColumn": 31
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "b3ba61a19924165a:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "check-dist__2021-06-24T15-38-43Z__8d06e6c09483187e4403682d35be4b9267ef3c61.yml",
+          "workflow_name": "Check dist/",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 50,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "check-dist": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "check-dist": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v2",
+              "actions/setup-node@v1",
+              "actions/upload-artifact@v2"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Check dist/",
+        "true": {
+          "push": {
+            "branches": [
+              "main"
+            ],
+            "paths-ignore": [
+              "**.md"
+            ]
+          },
+          "pull_request": {
+            "paths-ignore": [
+              "**.md"
+            ]
+          },
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "check-dist": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "name": "Set Node.js 12.x",
+                "uses": "actions/setup-node@v1",
+                "with": {
+                  "node-version": "12.x"
+                }
+              },
+              {
+                "name": "Install dependencies",
+                "run": "npm ci"
+              },
+              {
+                "name": "Move the committed index.js file",
+                "run": "mv dist/index.js /tmp"
+              },
+              {
+                "name": "Rebuild the index.js file",
+                "run": "npm run release"
+              },
+              {
+                "name": "Compare the expected and actual index.js files",
+                "run": "git diff --ignore-all-space dist/index.js /tmp/index.js",
+                "id": "diff"
+              },
+              {
+                "uses": "actions/upload-artifact@v2",
+                "if": "${{ failure() && steps.diff.conclusion == 'failure' }}",
+                "with": {
+                  "name": "index.js",
+                  "path": "dist/index.js"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-12-13T04-19-52Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-0c52f53d-7697-5ebb-8709-e326a465ef43",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/check-dist__2023-12-13T04-19-52Z__6a5077f99bc6a6d56ade1975b06034ac51f5c283.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 22,
+                  "startColumn": 5,
+                  "endLine": 53,
+                  "endColumn": 23
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "665666882354067e:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "check-dist__2023-12-13T04-19-52Z__6a5077f99bc6a6d56ade1975b06034ac51f5c283.yml",
+          "workflow_name": "Check dist/",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 53,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "check-dist": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "check-dist": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-node@v4",
+              "actions/upload-artifact@v4-beta"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Check dist/",
+        "true": {
+          "push": {
+            "branches": [
+              "main"
+            ],
+            "paths-ignore": [
+              "**.md"
+            ]
+          },
+          "pull_request": {
+            "paths-ignore": [
+              "**.md"
+            ]
+          },
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "check-dist": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Setup Node 20",
+                "uses": "actions/setup-node@v4",
+                "with": {
+                  "node-version": "20.x",
+                  "cache": "npm"
+                }
+              },
+              {
+                "name": "Install dependencies",
+                "run": "npm ci"
+              },
+              {
+                "name": "Rebuild the dist/ directory",
+                "run": "npm run build"
+              },
+              {
+                "name": "Compare the expected and actual dist/ directories",
+                "run": "if [ \"$(git diff --ignore-space-at-eol dist/ | wc -l)\" -gt \"0\" ]; then\n  echo \"Detected uncommitted changes after build.  See status below:\"\n  git diff\n  exit 1\nfi\n",
+                "id": "diff"
+              },
+              {
+                "uses": "actions/upload-artifact@v4-beta",
+                "if": "${{ failure() && steps.diff.conclusion == 'failure' }}",
+                "with": {
+                  "name": "dist",
+                  "path": "dist/"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-01-05T21-27-11Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-31f39992-1c4b-5e79-a6be-142bf1056e80",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/check-dist__2023-01-05T21-27-11Z__013d2b89baa2f354c5ffec54c68bec4ab39a2534.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 20,
+                  "startColumn": 5,
+                  "endLine": 52,
+                  "endColumn": 31
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "a6d55acd0fcbffa2:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "check-dist__2023-01-05T21-27-11Z__013d2b89baa2f354c5ffec54c68bec4ab39a2534.yml",
+          "workflow_name": "Check dist/",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 52,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "check-dist": 8
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "check-dist": 8
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-node@v3",
+              "actions/upload-artifact@v3"
+            ],
+            "num_run_commands": 5,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Check dist/",
+        "true": {
+          "push": {
+            "branches": [
+              "main"
+            ]
+          },
+          "pull_request": {
+            "branches": [
+              "main"
+            ]
+          },
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "check-dist": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Setup Node 16",
+                "uses": "actions/setup-node@v3",
+                "with": {
+                  "node-version": "16.x",
+                  "cache": "npm"
+                }
+              },
+              {
+                "name": "Install dependencies",
+                "run": "npm ci"
+              },
+              {
+                "name": "Move the committed index.js file",
+                "run": "mv dist/index.js /tmp"
+              },
+              {
+                "name": "Rebuild with tsc",
+                "run": "npm run build"
+              },
+              {
+                "name": "Rebuild the index.js file",
+                "run": "npm run release"
+              },
+              {
+                "name": "Compare the expected and actual index.js files",
+                "run": "git diff --ignore-all-space dist/index.js /tmp/index.js",
+                "id": "diff"
+              },
+              {
+                "uses": "actions/upload-artifact@v3",
+                "if": "${{ failure() && steps.diff.conclusion == 'failure' }}",
+                "with": {
+                  "name": "index.js",
+                  "path": "dist/index.js"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-12-14T20-08-24Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-f4b09f9f-5c01-5b56-992c-94640bee07e0",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/check-dist__2023-12-14T20-08-24Z__6c139afa6f18a1359e5a9185f9415433473e3793.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 22,
+                  "startColumn": 5,
+                  "endLine": 53,
+                  "endColumn": 23
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "665666882354067e:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "check-dist__2023-12-14T20-08-24Z__6c139afa6f18a1359e5a9185f9415433473e3793.yml",
+          "workflow_name": "Check dist/",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 53,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "check-dist": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "check-dist": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-node@v4",
+              "actions/upload-artifact@v4"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Check dist/",
+        "true": {
+          "push": {
+            "branches": [
+              "main"
+            ],
+            "paths-ignore": [
+              "**.md"
+            ]
+          },
+          "pull_request": {
+            "paths-ignore": [
+              "**.md"
+            ]
+          },
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "check-dist": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Setup Node 20",
+                "uses": "actions/setup-node@v4",
+                "with": {
+                  "node-version": "20.x",
+                  "cache": "npm"
+                }
+              },
+              {
+                "name": "Install dependencies",
+                "run": "npm ci"
+              },
+              {
+                "name": "Rebuild the dist/ directory",
+                "run": "npm run build"
+              },
+              {
+                "name": "Compare the expected and actual dist/ directories",
+                "run": "if [ \"$(git diff --ignore-space-at-eol dist/ | wc -l)\" -gt \"0\" ]; then\n  echo \"Detected uncommitted changes after build.  See status below:\"\n  git diff\n  exit 1\nfi\n",
+                "id": "diff"
+              },
+              {
+                "uses": "actions/upload-artifact@v4",
+                "if": "${{ failure() && steps.diff.conclusion == 'failure' }}",
+                "with": {
+                  "name": "dist",
+                  "path": "dist/"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-01-22T20-49-34Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-3a48c513-7724-5530-acad-0f6c4c306a48",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/check-dist__2024-01-22T20-49-34Z__8d531b15a6053fd53d9b7aeb32dc58e816c517da.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 22,
+                  "startColumn": 5,
+                  "endLine": 53,
+                  "endColumn": 23
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "665666882354067e:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "check-dist__2024-01-22T20-49-34Z__8d531b15a6053fd53d9b7aeb32dc58e816c517da.yml",
+          "workflow_name": "Check dist/",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 53,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "check-dist": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "check-dist": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-node@v4",
+              "actions/upload-artifact@v4"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Check dist/",
+        "true": {
+          "push": {
+            "branches": [
+              "main"
+            ],
+            "paths-ignore": [
+              "**.md"
+            ]
+          },
+          "pull_request": {
+            "paths-ignore": [
+              "**.md"
+            ]
+          },
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "check-dist": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Setup Node 20",
+                "uses": "actions/setup-node@v4",
+                "with": {
+                  "node-version": "20.x",
+                  "cache": "npm"
+                }
+              },
+              {
+                "name": "Install dependencies",
+                "run": "npm ci"
+              },
+              {
+                "name": "Rebuild the dist/ directory",
+                "run": "npm run release"
+              },
+              {
+                "name": "Compare the expected and actual dist/ directories",
+                "run": "if [ \"$(git diff --ignore-space-at-eol dist/ | wc -l)\" -gt \"0\" ]; then\n  echo \"Detected uncommitted changes after build.  See status below:\"\n  git diff\n  exit 1\nfi\n",
+                "id": "diff"
+              },
+              {
+                "uses": "actions/upload-artifact@v4",
+                "if": "${{ failure() && steps.diff.conclusion == 'failure' }}",
+                "with": {
+                  "name": "dist",
+                  "path": "dist/"
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

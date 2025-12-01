@@ -1,0 +1,1149 @@
+{
+  "repo_owner": "irgolic",
+  "repo_name": "AutoPR",
+  "workflow_name": "build-image",
+  "history": {
+    "2023-04-22T14-14-09Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-f4233467-d641-5dc7-b6ad-03bbcfabe103",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/build-image__2023-04-22T14-14-09Z__aeb5e697862935e55027f83b8386b10ba5de79ee.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 10,
+                  "startColumn": 5,
+                  "endLine": 33,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "3308f6ad5d83cea9:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-7eabbd6f-7b7c-505a-a97f-53c3148ee076",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/build-image__2023-04-22T14-14-09Z__aeb5e697862935e55027f83b8386b10ba5de79ee.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 34,
+                  "startColumn": 5,
+                  "endLine": 55,
+                  "endColumn": 37
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "ba26306a0ff8fb35:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "build-image__2023-04-22T14-14-09Z__aeb5e697862935e55027f83b8386b10ba5de79ee.yml",
+          "workflow_name": "build-image__2023-04-22T14-14-09Z__aeb5e697862935e55027f83b8386b10ba5de79ee",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 55,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "build_latest": 4,
+            "build_tag": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build_latest": 4,
+              "build_tag": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 8,
+            "actions_used": [
+              "actions/checkout@v2",
+              "docker/build-push-action@v4",
+              "docker/login-action@v1",
+              "docker/setup-buildx-action@v1"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "true": {
+          "push": {
+            "branches": [
+              "main"
+            ],
+            "tags": [
+              "*"
+            ]
+          }
+        },
+        "jobs": {
+          "build_latest": {
+            "if": "github.event_name == 'push' && !startsWith(github.ref, 'refs/tags/')",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v2",
+                "with": {
+                  "fetch-depth": 1
+                }
+              },
+              {
+                "name": "Setup Docker Buildx",
+                "uses": "docker/setup-buildx-action@v1"
+              },
+              {
+                "name": "Login to Docker Hub",
+                "uses": "docker/login-action@v1",
+                "with": {
+                  "username": "${{ secrets.DOCKER_HUB_USERNAME }}",
+                  "password": "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}"
+                }
+              },
+              {
+                "name": "Build and cache Docker image (in-development)",
+                "uses": "docker/build-push-action@v4",
+                "with": {
+                  "context": ".",
+                  "push": true,
+                  "tags": "docker.io/${{ secrets.DOCKER_HUB_USERNAME }}/autopr:latest",
+                  "cache-from": "type=gha",
+                  "cache-to": "type=gha,mode=max"
+                }
+              }
+            ]
+          },
+          "build_tag": {
+            "if": "startsWith(github.ref, 'refs/tags/')",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v2",
+                "with": {
+                  "fetch-depth": 1
+                }
+              },
+              {
+                "name": "Setup Docker Buildx",
+                "uses": "docker/setup-buildx-action@v1"
+              },
+              {
+                "name": "Login to Docker Hub",
+                "uses": "docker/login-action@v1",
+                "with": {
+                  "username": "${{ secrets.DOCKER_HUB_USERNAME }}",
+                  "password": "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}"
+                }
+              },
+              {
+                "name": "Build and push",
+                "uses": "docker/build-push-action@v4",
+                "with": {
+                  "context": ".",
+                  "push": true,
+                  "tags": "docker.io/${{ secrets.DOCKER_HUB_USERNAME }}/autopr:${{ github.ref_name }}",
+                  "cache-from": "type=gha",
+                  "cache-to": "type=gha,mode=max"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-04-22T14-10-55Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-0530ab66-044b-529a-b869-e7d877d77a65",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/build-image__2023-04-22T14-10-55Z__a9f20ccab92936aea451acba4911efe6cd7d5f80.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 10,
+                  "startColumn": 5,
+                  "endLine": 33,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "3308f6ad5d83cea9:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-3f3e75ee-a0d1-5387-a97e-5b3a5c58e6c8",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/build-image__2023-04-22T14-10-55Z__a9f20ccab92936aea451acba4911efe6cd7d5f80.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 34,
+                  "startColumn": 5,
+                  "endLine": 55,
+                  "endColumn": 37
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "ba26306a0ff8fb35:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "build-image__2023-04-22T14-10-55Z__a9f20ccab92936aea451acba4911efe6cd7d5f80.yml",
+          "workflow_name": "build-image__2023-04-22T14-10-55Z__a9f20ccab92936aea451acba4911efe6cd7d5f80",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 55,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "build_latest": 4,
+            "build_tag": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build_latest": 4,
+              "build_tag": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 8,
+            "actions_used": [
+              "actions/checkout@v2",
+              "docker/build-push-action@v4",
+              "docker/login-action@v1",
+              "docker/setup-buildx-action@v1"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "true": {
+          "push": {
+            "branches": [
+              "main"
+            ],
+            "tags": [
+              "*"
+            ]
+          }
+        },
+        "jobs": {
+          "build_latest": {
+            "if": "github.event_name == 'push' && !startsWith(github.ref, 'refs/tags/')",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v2",
+                "with": {
+                  "fetch-depth": 1
+                }
+              },
+              {
+                "name": "Setup Docker Buildx",
+                "uses": "docker/setup-buildx-action@v1"
+              },
+              {
+                "name": "Login to Docker Hub",
+                "uses": "docker/login-action@v1",
+                "with": {
+                  "username": "${{ secrets.DOCKER_HUB_USERNAME }}",
+                  "password": "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}"
+                }
+              },
+              {
+                "name": "Build and cache Docker image (in-development)",
+                "uses": "docker/build-push-action@v4",
+                "with": {
+                  "context": ".",
+                  "push": true,
+                  "tags": "docker.io/irgolic/autopr:latest",
+                  "cache-from": "type=gha",
+                  "cache-to": "type=gha,mode=max"
+                }
+              }
+            ]
+          },
+          "build_tag": {
+            "if": "startsWith(github.ref, 'refs/tags/')",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v2",
+                "with": {
+                  "fetch-depth": 1
+                }
+              },
+              {
+                "name": "Setup Docker Buildx",
+                "uses": "docker/setup-buildx-action@v1"
+              },
+              {
+                "name": "Login to Docker Hub",
+                "uses": "docker/login-action@v1",
+                "with": {
+                  "username": "${{ secrets.DOCKER_HUB_USERNAME }}",
+                  "password": "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}"
+                }
+              },
+              {
+                "name": "Build and push",
+                "uses": "docker/build-push-action@v4",
+                "with": {
+                  "context": ".",
+                  "push": true,
+                  "tags": "docker.io/irgolic/autopr:${{ github.ref_name }}",
+                  "cache-from": "type=gha",
+                  "cache-to": "type=gha,mode=max"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-04-22T14-29-15Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-806c9b5c-6869-5ad2-9858-35b9cd9760f6",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/build-image__2023-04-22T14-29-15Z__b18228370d7d01b6efa42d5f43d5810f1badf24b.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 14,
+                  "startColumn": 5,
+                  "endLine": 38,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "3308f6ad5d83cea9:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-7a5fc08e-b859-5f01-b365-b29aecdfb0b0",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/build-image__2023-04-22T14-29-15Z__b18228370d7d01b6efa42d5f43d5810f1badf24b.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 39,
+                  "startColumn": 5,
+                  "endLine": 61,
+                  "endColumn": 37
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "ba26306a0ff8fb35:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "build-image__2023-04-22T14-29-15Z__b18228370d7d01b6efa42d5f43d5810f1badf24b.yml",
+          "workflow_name": "build-image__2023-04-22T14-29-15Z__b18228370d7d01b6efa42d5f43d5810f1badf24b",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 61,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "build_latest": 4,
+            "build_tag": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build_latest": 4,
+              "build_tag": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 8,
+            "actions_used": [
+              "actions/checkout@v2",
+              "docker/build-push-action@v4",
+              "docker/login-action@v1",
+              "docker/setup-buildx-action@v1"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "true": {
+          "push": {
+            "branches": [
+              "main"
+            ],
+            "tags": [
+              "*"
+            ]
+          }
+        },
+        "env": {
+          "REGISTRY": "ghcr.io",
+          "IMAGE_NAME": "${{ github.repository }}"
+        },
+        "jobs": {
+          "build_latest": {
+            "if": "github.event_name == 'push' && !startsWith(github.ref, 'refs/tags/')",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v2",
+                "with": {
+                  "fetch-depth": 1
+                }
+              },
+              {
+                "name": "Setup Docker Buildx",
+                "uses": "docker/setup-buildx-action@v1"
+              },
+              {
+                "name": "Login to Github Container Registry",
+                "uses": "docker/login-action@v1",
+                "with": {
+                  "registry": "${{ env.REGISTRY }}",
+                  "username": "${{ github.actor }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Build and cache Docker image (in-development)",
+                "uses": "docker/build-push-action@v4",
+                "with": {
+                  "context": ".",
+                  "push": true,
+                  "tags": "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest",
+                  "cache-from": "type=gha",
+                  "cache-to": "type=gha,mode=max"
+                }
+              }
+            ]
+          },
+          "build_tag": {
+            "if": "startsWith(github.ref, 'refs/tags/')",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v2",
+                "with": {
+                  "fetch-depth": 1
+                }
+              },
+              {
+                "name": "Setup Docker Buildx",
+                "uses": "docker/setup-buildx-action@v1"
+              },
+              {
+                "name": "Login to Docker Hub",
+                "uses": "docker/login-action@v1",
+                "with": {
+                  "registry": "${{ env.REGISTRY }}",
+                  "username": "${{ github.actor }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Build and push",
+                "uses": "docker/build-push-action@v4",
+                "with": {
+                  "context": ".",
+                  "push": true,
+                  "tags": "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.ref_name }}",
+                  "cache-from": "type=gha",
+                  "cache-to": "type=gha,mode=max"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-04-22T14-30-51Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-c8c87fdf-178c-525e-ae09-a59aa2899e8e",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/build-image__2023-04-22T14-30-51Z__3589532b561a705891a2be31af3642c9c0c809c8.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 14,
+                  "startColumn": 5,
+                  "endLine": 38,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "3308f6ad5d83cea9:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-3b36492f-2918-5834-9d3b-67c60ff71de7",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/build-image__2023-04-22T14-30-51Z__3589532b561a705891a2be31af3642c9c0c809c8.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 39,
+                  "startColumn": 5,
+                  "endLine": 61,
+                  "endColumn": 37
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "ba26306a0ff8fb35:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "build-image__2023-04-22T14-30-51Z__3589532b561a705891a2be31af3642c9c0c809c8.yml",
+          "workflow_name": "build-image__2023-04-22T14-30-51Z__3589532b561a705891a2be31af3642c9c0c809c8",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 61,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "build_latest": 4,
+            "build_tag": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build_latest": 4,
+              "build_tag": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 8,
+            "actions_used": [
+              "actions/checkout@v2",
+              "docker/build-push-action@v4",
+              "docker/login-action@v1",
+              "docker/setup-buildx-action@v1"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "true": {
+          "push": {
+            "branches": [
+              "main"
+            ],
+            "tags": [
+              "*"
+            ]
+          }
+        },
+        "env": {
+          "REGISTRY": "ghcr.io",
+          "IMAGE_NAME": "${{ github.repository_owner }}/autopr"
+        },
+        "jobs": {
+          "build_latest": {
+            "if": "github.event_name == 'push' && !startsWith(github.ref, 'refs/tags/')",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v2",
+                "with": {
+                  "fetch-depth": 1
+                }
+              },
+              {
+                "name": "Setup Docker Buildx",
+                "uses": "docker/setup-buildx-action@v1"
+              },
+              {
+                "name": "Login to Github Container Registry",
+                "uses": "docker/login-action@v1",
+                "with": {
+                  "registry": "${{ env.REGISTRY }}",
+                  "username": "${{ github.actor }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Build and cache Docker image (in-development)",
+                "uses": "docker/build-push-action@v4",
+                "with": {
+                  "context": ".",
+                  "push": true,
+                  "tags": "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest",
+                  "cache-from": "type=gha",
+                  "cache-to": "type=gha,mode=max"
+                }
+              }
+            ]
+          },
+          "build_tag": {
+            "if": "startsWith(github.ref, 'refs/tags/')",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v2",
+                "with": {
+                  "fetch-depth": 1
+                }
+              },
+              {
+                "name": "Setup Docker Buildx",
+                "uses": "docker/setup-buildx-action@v1"
+              },
+              {
+                "name": "Login to Docker Hub",
+                "uses": "docker/login-action@v1",
+                "with": {
+                  "registry": "${{ env.REGISTRY }}",
+                  "username": "${{ github.actor }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Build and push",
+                "uses": "docker/build-push-action@v4",
+                "with": {
+                  "context": ".",
+                  "push": true,
+                  "tags": "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.ref_name }}",
+                  "cache-from": "type=gha",
+                  "cache-to": "type=gha,mode=max"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-04-22T14-33-42Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "build-image__2023-04-22T14-33-42Z__0ed1486167087dcf4c3e44c31f650ee2e580e2fc.yml",
+          "workflow_name": "build-image__2023-04-22T14-33-42Z__0ed1486167087dcf4c3e44c31f650ee2e580e2fc",
+          "triggers": {},
+          "permissions": {
+            "packages": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 64,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "build_latest": 4,
+            "build_tag": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build_latest": 4,
+              "build_tag": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 8,
+            "actions_used": [
+              "actions/checkout@v2",
+              "docker/build-push-action@v4",
+              "docker/login-action@v1",
+              "docker/setup-buildx-action@v1"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "true": {
+          "push": {
+            "branches": [
+              "main"
+            ],
+            "tags": [
+              "*"
+            ]
+          }
+        },
+        "permissions": {
+          "packages": "write"
+        },
+        "env": {
+          "REGISTRY": "ghcr.io",
+          "IMAGE_NAME": "${{ github.repository_owner }}/autopr"
+        },
+        "jobs": {
+          "build_latest": {
+            "if": "github.event_name == 'push' && !startsWith(github.ref, 'refs/tags/')",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v2",
+                "with": {
+                  "fetch-depth": 1
+                }
+              },
+              {
+                "name": "Setup Docker Buildx",
+                "uses": "docker/setup-buildx-action@v1"
+              },
+              {
+                "name": "Login to Github Container Registry",
+                "uses": "docker/login-action@v1",
+                "with": {
+                  "registry": "${{ env.REGISTRY }}",
+                  "username": "${{ github.actor }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Build and cache Docker image (in-development)",
+                "uses": "docker/build-push-action@v4",
+                "with": {
+                  "context": ".",
+                  "push": true,
+                  "tags": "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest",
+                  "cache-from": "type=gha",
+                  "cache-to": "type=gha,mode=max"
+                }
+              }
+            ]
+          },
+          "build_tag": {
+            "if": "startsWith(github.ref, 'refs/tags/')",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v2",
+                "with": {
+                  "fetch-depth": 1
+                }
+              },
+              {
+                "name": "Setup Docker Buildx",
+                "uses": "docker/setup-buildx-action@v1"
+              },
+              {
+                "name": "Login to Docker Hub",
+                "uses": "docker/login-action@v1",
+                "with": {
+                  "registry": "${{ env.REGISTRY }}",
+                  "username": "${{ github.actor }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Build and push",
+                "uses": "docker/build-push-action@v4",
+                "with": {
+                  "context": ".",
+                  "push": true,
+                  "tags": "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.ref_name }}",
+                  "cache-from": "type=gha",
+                  "cache-to": "type=gha,mode=max"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-05-01T15-32-51Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "build-image__2023-05-01T15-32-51Z__b898ca94c43f1071ef62dac1deeb9e1636287149.yml",
+          "workflow_name": "build-image__2023-05-01T15-32-51Z__b898ca94c43f1071ef62dac1deeb9e1636287149",
+          "triggers": {},
+          "permissions": {
+            "packages": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 64,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "build_latest": 4,
+            "build_tag": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build_latest": 4,
+              "build_tag": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 8,
+            "actions_used": [
+              "actions/checkout@v2",
+              "docker/build-push-action@v4",
+              "docker/login-action@v1",
+              "docker/setup-buildx-action@v1"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "true": {
+          "push": {
+            "branches": [
+              "main"
+            ],
+            "tags": [
+              "*"
+            ]
+          }
+        },
+        "permissions": {
+          "packages": "write"
+        },
+        "env": {
+          "REGISTRY": "ghcr.io",
+          "IMAGE_NAME": "${{ github.repository_owner }}/autopr"
+        },
+        "jobs": {
+          "build_latest": {
+            "if": "github.event_name == 'push' && !startsWith(github.ref, 'refs/tags/')",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v2",
+                "with": {
+                  "fetch-depth": 1
+                }
+              },
+              {
+                "name": "Setup Docker Buildx",
+                "uses": "docker/setup-buildx-action@v1"
+              },
+              {
+                "name": "Login to GitHub Container Registry",
+                "uses": "docker/login-action@v1",
+                "with": {
+                  "registry": "${{ env.REGISTRY }}",
+                  "username": "${{ github.actor }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Build and cache Docker image (in-development)",
+                "uses": "docker/build-push-action@v4",
+                "with": {
+                  "context": ".",
+                  "push": true,
+                  "tags": "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest",
+                  "cache-from": "type=gha",
+                  "cache-to": "type=gha,mode=max"
+                }
+              }
+            ]
+          },
+          "build_tag": {
+            "if": "startsWith(github.ref, 'refs/tags/')",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v2",
+                "with": {
+                  "fetch-depth": 1
+                }
+              },
+              {
+                "name": "Setup Docker Buildx",
+                "uses": "docker/setup-buildx-action@v1"
+              },
+              {
+                "name": "Login to Docker Hub",
+                "uses": "docker/login-action@v1",
+                "with": {
+                  "registry": "${{ env.REGISTRY }}",
+                  "username": "${{ github.actor }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Build and push",
+                "uses": "docker/build-push-action@v4",
+                "with": {
+                  "context": ".",
+                  "push": true,
+                  "tags": "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.ref_name }}",
+                  "cache-from": "type=gha",
+                  "cache-to": "type=gha,mode=max"
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

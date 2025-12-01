@@ -1,0 +1,133 @@
+{
+  "repo_owner": "diggerhq",
+  "repo_name": "digger",
+  "workflow_name": "taco_statesman_docker_build_verify",
+  "history": {
+    "2025-10-01T00-32-22Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-fdeafeaa-5b31-5b64-976a-354747f24f9d",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/taco_statesman_docker_build_verify__2025-10-01T00-32-22Z__2104dff8a01cfc8699c833e0826b41bb6664b245.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 11,
+                  "startColumn": 5,
+                  "endLine": 28,
+                  "endColumn": 33
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "8fc7348a57138443:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "taco_statesman_docker_build_verify__2025-10-01T00-32-22Z__2104dff8a01cfc8699c833e0826b41bb6664b245.yml",
+          "workflow_name": "Statesman dockerfile verify",
+          "triggers": {
+            "push": {
+              "branches": [
+                "develop"
+              ]
+            },
+            "pull_request": null
+          },
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 28,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 2
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Statesman dockerfile verify",
+        "true": {
+          "push": {
+            "branches": [
+              "develop"
+            ]
+          },
+          "pull_request": null
+        },
+        "jobs": {
+          "build": {
+            "name": "Build",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Download Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.24.0"
+                },
+                "id": "go"
+              },
+              {
+                "name": "Check out code into the Go module directory",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Test that the docker image still builds successfully",
+                "run": "export COMMIT_SHA=$(git rev-parse --short HEAD)\ndocker build -t testingbuild:latest --build-arg COMMIT_SHA=${COMMIT_SHA} . -f Dockerfile_statesman\n",
+                "working-directory": "taco"
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

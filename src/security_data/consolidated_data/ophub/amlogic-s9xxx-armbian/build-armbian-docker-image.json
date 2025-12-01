@@ -1,0 +1,528 @@
+{
+  "repo_owner": "ophub",
+  "repo_name": "amlogic-s9xxx-armbian",
+  "workflow_name": "build-armbian-docker-image",
+  "history": {
+    "2025-05-30T03-23-21Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-49f71b19-fac7-59d3-a291-29f2b27bac42",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/build-armbian-docker-image__2025-05-30T03-23-21Z__6b7760d0df8ea43df4587903cff572f145d0b249.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 39,
+                  "startColumn": 5,
+                  "endLine": 94,
+                  "endColumn": 79
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "f2db9c6d89149f6e:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "build-armbian-docker-image__2025-05-30T03-23-21Z__6b7760d0df8ea43df4587903cff572f145d0b249.yml",
+          "workflow_name": "Build Armbian Docker image",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 94,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "docker/build-push-action@v5",
+              "docker/login-action@v3",
+              "docker/setup-buildx-action@v3"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 5,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Build Armbian Docker image",
+        "true": {
+          "repository_dispatch": null,
+          "workflow_dispatch": {
+            "inputs": {
+              "source_branch": {
+                "description": "Select the source branch",
+                "required": false,
+                "default": "official",
+                "type": "choice",
+                "options": [
+                  "jammy",
+                  "noble",
+                  "bookworm",
+                  "bullseye"
+                ]
+              },
+              "docker_img": {
+                "description": "Set the docker image",
+                "required": false,
+                "default": "ophub/armbian",
+                "type": "choice",
+                "options": [
+                  "ophub/armbian"
+                ]
+              }
+            }
+          }
+        },
+        "env": {
+          "TZ": "America/New_York",
+          "MAKE_DOCKER_SH": "compile-kernel/tools/script/docker/build_armbian_docker_image.sh",
+          "DOCKER_OUTPATH": "out"
+        },
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-22.04-arm",
+            "if": "${{ github.event.repository.owner.id }} == ${{ github.event.sender.id }}",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Download Armbian rootfs file [ ${{ inputs.source_branch }} ]",
+                "id": "down",
+                "if": "(!cancelled())",
+                "run": "# Get Armbian file\narmbian_url=\"$(curl \\\n                  --header \"authorization: Bearer ${{ secrets.GITHUB_TOKEN }}\" \\\n                  -s \"https://api.github.com/repos/${GITHUB_REPOSITORY}/releases?per_page=100\" |\n                  grep -o \"Armbian_.*${{ inputs.source_branch }}.*/.*rootfs.tar.gz\" |\n                  sort -urV |\n                  head -n 1\n              )\"\n[[ -z \"${armbian_url}\" ]] && echo -e \"Armbian file not found!\" && exit 1\n\n[[ -d \"armbian\" ]] || mkdir -p armbian\ncurl -fsSL \"https://github.com/${GITHUB_REPOSITORY}/releases/download/${armbian_url}\" -o \"armbian/$(basename ${armbian_url})\"\n[[ \"${?}\" -ne \"0\" ]] && echo \"Armbian file download failed.\" && exit 1\necho \"status=success\" >> ${GITHUB_OUTPUT}\n"
+              },
+              {
+                "name": "Build the Docker image",
+                "id": "make",
+                "if": "${{ steps.down.outputs.status }} == 'success' && !cancelled()",
+                "run": "chmod +x ${MAKE_DOCKER_SH}\n${MAKE_DOCKER_SH}\necho \"status=success\" >> ${GITHUB_OUTPUT}\n"
+              },
+              {
+                "name": "Set up Docker Buildx",
+                "id": "buildx",
+                "if": "(!cancelled())",
+                "uses": "docker/setup-buildx-action@v3"
+              },
+              {
+                "name": "Login to Docker Hub",
+                "id": "login",
+                "if": "(!cancelled())",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "username": "${{ secrets.DOCKERHUB_USERNAME }}",
+                  "password": "${{ secrets.DOCKERHUB_PASSWORD }}"
+                }
+              },
+              {
+                "name": "Push to Docker Hub",
+                "id": "push",
+                "if": "(!cancelled())",
+                "uses": "docker/build-push-action@v5",
+                "with": {
+                  "push": true,
+                  "platforms": "linux/arm64",
+                  "context": "${{ env.DOCKER_OUTPATH }}",
+                  "tags": "${{ inputs.docker_img }}-${{ inputs.source_branch }}:latest"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-07-29T06-23-21Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-d4b95c9a-628f-5fc9-81b9-37506cf66c70",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/build-armbian-docker-image__2025-07-29T06-23-21Z__c73a5d692cf0ae43d9abef7ed665d8902ea033f7.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 40,
+                  "startColumn": 5,
+                  "endLine": 95,
+                  "endColumn": 79
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "f2db9c6d89149f6e:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "build-armbian-docker-image__2025-07-29T06-23-21Z__c73a5d692cf0ae43d9abef7ed665d8902ea033f7.yml",
+          "workflow_name": "Build Armbian Docker image",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 95,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "docker/build-push-action@v5",
+              "docker/login-action@v3",
+              "docker/setup-buildx-action@v3"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 5,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Build Armbian Docker image",
+        "true": {
+          "repository_dispatch": null,
+          "workflow_dispatch": {
+            "inputs": {
+              "source_branch": {
+                "description": "Select the source branch",
+                "required": false,
+                "default": "bookworm",
+                "type": "choice",
+                "options": [
+                  "trixie",
+                  "bookworm",
+                  "bullseye",
+                  "noble",
+                  "jammy"
+                ]
+              },
+              "docker_img": {
+                "description": "Set the docker image",
+                "required": false,
+                "default": "ophub/armbian",
+                "type": "choice",
+                "options": [
+                  "ophub/armbian"
+                ]
+              }
+            }
+          }
+        },
+        "env": {
+          "TZ": "America/New_York",
+          "MAKE_DOCKER_SH": "compile-kernel/tools/script/docker/build_armbian_docker_image.sh",
+          "DOCKER_OUTPATH": "out"
+        },
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-22.04-arm",
+            "if": "${{ github.event.repository.owner.id }} == ${{ github.event.sender.id }}",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Download Armbian rootfs file [ ${{ inputs.source_branch }} ]",
+                "id": "down",
+                "if": "(!cancelled())",
+                "run": "# Get Armbian file\narmbian_url=\"$(curl \\\n                  --header \"authorization: Bearer ${{ secrets.GITHUB_TOKEN }}\" \\\n                  -s \"https://api.github.com/repos/${GITHUB_REPOSITORY}/releases?per_page=100\" |\n                  grep -o \"Armbian_.*${{ inputs.source_branch }}.*/.*rootfs.tar.gz\" |\n                  sort -urV |\n                  head -n 1\n              )\"\n[[ -z \"${armbian_url}\" ]] && echo -e \"Armbian file not found!\" && exit 1\n\n[[ -d \"armbian\" ]] || mkdir -p armbian\ncurl -fsSL \"https://github.com/${GITHUB_REPOSITORY}/releases/download/${armbian_url}\" -o \"armbian/$(basename ${armbian_url})\"\n[[ \"${?}\" -ne \"0\" ]] && echo \"Armbian file download failed.\" && exit 1\necho \"status=success\" >> ${GITHUB_OUTPUT}\n"
+              },
+              {
+                "name": "Build the Docker image",
+                "id": "make",
+                "if": "${{ steps.down.outputs.status }} == 'success' && !cancelled()",
+                "run": "chmod +x ${MAKE_DOCKER_SH}\n${MAKE_DOCKER_SH}\necho \"status=success\" >> ${GITHUB_OUTPUT}\n"
+              },
+              {
+                "name": "Set up Docker Buildx",
+                "id": "buildx",
+                "if": "(!cancelled())",
+                "uses": "docker/setup-buildx-action@v3"
+              },
+              {
+                "name": "Login to Docker Hub",
+                "id": "login",
+                "if": "(!cancelled())",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "username": "${{ secrets.DOCKERHUB_USERNAME }}",
+                  "password": "${{ secrets.DOCKERHUB_PASSWORD }}"
+                }
+              },
+              {
+                "name": "Push to Docker Hub",
+                "id": "push",
+                "if": "(!cancelled())",
+                "uses": "docker/build-push-action@v5",
+                "with": {
+                  "push": true,
+                  "platforms": "linux/arm64",
+                  "context": "${{ env.DOCKER_OUTPATH }}",
+                  "tags": "${{ inputs.docker_img }}-${{ inputs.source_branch }}:latest"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-09-01T09-42-48Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-b5b6a918-9bc5-5277-84b3-71d9b14b8a9e",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/build-armbian-docker-image__2025-09-01T09-42-48Z__3e1dbb2461344ee272d9644b70bceabdfe93c3da.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 40,
+                  "startColumn": 5,
+                  "endLine": 95,
+                  "endColumn": 79
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "f2db9c6d89149f6e:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "build-armbian-docker-image__2025-09-01T09-42-48Z__3e1dbb2461344ee272d9644b70bceabdfe93c3da.yml",
+          "workflow_name": "Build Armbian Docker image",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 95,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "docker/build-push-action@v5",
+              "docker/login-action@v3",
+              "docker/setup-buildx-action@v3"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 5,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Build Armbian Docker image",
+        "true": {
+          "repository_dispatch": null,
+          "workflow_dispatch": {
+            "inputs": {
+              "source_branch": {
+                "description": "Select the source branch",
+                "required": false,
+                "default": "bookworm",
+                "type": "choice",
+                "options": [
+                  "trixie",
+                  "bookworm",
+                  "bullseye",
+                  "noble",
+                  "jammy"
+                ]
+              },
+              "docker_img": {
+                "description": "Set the docker image",
+                "required": false,
+                "default": "ophub/armbian",
+                "type": "choice",
+                "options": [
+                  "ophub/armbian"
+                ]
+              }
+            }
+          }
+        },
+        "env": {
+          "TZ": "Etc/UTC",
+          "MAKE_DOCKER_SH": "compile-kernel/tools/script/docker/build_armbian_docker_image.sh",
+          "DOCKER_OUTPATH": "out"
+        },
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-22.04-arm",
+            "if": "${{ github.event.repository.owner.id }} == ${{ github.event.sender.id }}",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Download Armbian rootfs file [ ${{ inputs.source_branch }} ]",
+                "id": "down",
+                "if": "(!cancelled())",
+                "run": "# Get Armbian file\narmbian_url=\"$(curl \\\n                  --header \"authorization: Bearer ${{ secrets.GITHUB_TOKEN }}\" \\\n                  -s \"https://api.github.com/repos/${GITHUB_REPOSITORY}/releases?per_page=100\" |\n                  grep -o \"Armbian_.*${{ inputs.source_branch }}.*/.*rootfs.tar.gz\" |\n                  sort -urV |\n                  head -n 1\n              )\"\n[[ -z \"${armbian_url}\" ]] && echo -e \"Armbian file not found!\" && exit 1\n\n[[ -d \"armbian\" ]] || mkdir -p armbian\ncurl -fsSL \"https://github.com/${GITHUB_REPOSITORY}/releases/download/${armbian_url}\" -o \"armbian/$(basename ${armbian_url})\"\n[[ \"${?}\" -ne \"0\" ]] && echo \"Armbian file download failed.\" && exit 1\necho \"status=success\" >> ${GITHUB_OUTPUT}\n"
+              },
+              {
+                "name": "Build the Docker image",
+                "id": "make",
+                "if": "${{ steps.down.outputs.status }} == 'success' && !cancelled()",
+                "run": "chmod +x ${MAKE_DOCKER_SH}\n${MAKE_DOCKER_SH}\necho \"status=success\" >> ${GITHUB_OUTPUT}\n"
+              },
+              {
+                "name": "Set up Docker Buildx",
+                "id": "buildx",
+                "if": "(!cancelled())",
+                "uses": "docker/setup-buildx-action@v3"
+              },
+              {
+                "name": "Login to Docker Hub",
+                "id": "login",
+                "if": "(!cancelled())",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "username": "${{ secrets.DOCKERHUB_USERNAME }}",
+                  "password": "${{ secrets.DOCKERHUB_PASSWORD }}"
+                }
+              },
+              {
+                "name": "Push to Docker Hub",
+                "id": "push",
+                "if": "(!cancelled())",
+                "uses": "docker/build-push-action@v5",
+                "with": {
+                  "push": true,
+                  "platforms": "linux/arm64",
+                  "context": "${{ env.DOCKER_OUTPATH }}",
+                  "tags": "${{ inputs.docker_img }}-${{ inputs.source_branch }}:latest"
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

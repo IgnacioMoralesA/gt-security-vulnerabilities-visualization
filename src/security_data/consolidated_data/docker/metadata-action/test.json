@@ -1,0 +1,3212 @@
+{
+  "repo_owner": "docker",
+  "repo_name": "metadata-action",
+  "workflow_name": "test",
+  "history": {
+    "2020-10-25T02-21-51Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-c30fdcf3-2417-5392-b9e3-8c8eb7a25035",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/test__2020-10-25T02-21-51Z__98414716d94acbfb03376c5604fbb6807f35c05f.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 16,
+                  "startColumn": 5,
+                  "endLine": 28,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "24ca1b33f3ccdf29:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-680911ee-f61d-5900-8329-236b5bd3be76",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/test__2020-10-25T02-21-51Z__98414716d94acbfb03376c5604fbb6807f35c05f.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 29,
+                  "startColumn": 5,
+                  "endLine": 53,
+                  "endColumn": 39
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "ce8a46b28d007060:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2020-10-25T02-21-51Z__98414716d94acbfb03376c5604fbb6807f35c05f.yml",
+          "workflow_name": "test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 53,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "test-containerized": 3,
+            "test": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test-containerized": 3,
+              "test": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 2,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v2.3.3",
+              "codecov/codecov-action@v1.0.13"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "test",
+        "true": {
+          "push": {
+            "branches": [
+              "master",
+              "releases/v*"
+            ],
+            "paths-ignore": [
+              "**.md"
+            ]
+          },
+          "pull_request": {
+            "paths-ignore": [
+              "**.md"
+            ]
+          }
+        },
+        "jobs": {
+          "test-containerized": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v2.3.3"
+              },
+              {
+                "name": "Validate",
+                "run": "docker buildx bake validate"
+              },
+              {
+                "name": "Test",
+                "run": "docker buildx bake test"
+              }
+            ]
+          },
+          "test": {
+            "runs-on": "${{ matrix.os }}",
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "os": [
+                  "ubuntu-latest",
+                  "macOS-latest",
+                  "windows-latest"
+                ]
+              }
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v2.3.3"
+              },
+              {
+                "name": "Install",
+                "run": "yarn install"
+              },
+              {
+                "name": "Test",
+                "run": "yarn run test"
+              },
+              {
+                "name": "Upload coverage",
+                "uses": "codecov/codecov-action@v1.0.13",
+                "if": "success()",
+                "with": {
+                  "token": "${{ secrets.CODECOV_TOKEN }}",
+                  "file": "./coverage/clover.xml"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2020-10-25T14-36-42Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-864f6793-605a-52b6-9d65-e7b2d0a608a9",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/test__2020-10-25T14-36-42Z__82966b76615b9ebafc0c4224ba837bc79d466073.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 16,
+                  "startColumn": 5,
+                  "endLine": 28,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "24ca1b33f3ccdf29:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-68735d73-7d01-5160-ac1c-6ca34e77419f",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/test__2020-10-25T14-36-42Z__82966b76615b9ebafc0c4224ba837bc79d466073.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 29,
+                  "startColumn": 5,
+                  "endLine": 46,
+                  "endColumn": 39
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "5797aff82e049262:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2020-10-25T14-36-42Z__82966b76615b9ebafc0c4224ba837bc79d466073.yml",
+          "workflow_name": "test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 46,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "test-containerized": 3,
+            "test": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test-containerized": 3,
+              "test": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v2.3.3",
+              "codecov/codecov-action@v1.0.13"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "test",
+        "true": {
+          "push": {
+            "branches": [
+              "master",
+              "releases/v*"
+            ],
+            "paths-ignore": [
+              "**.md"
+            ]
+          },
+          "pull_request": {
+            "paths-ignore": [
+              "**.md"
+            ]
+          }
+        },
+        "jobs": {
+          "test-containerized": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v2.3.3"
+              },
+              {
+                "name": "Validate",
+                "run": "docker buildx bake validate"
+              },
+              {
+                "name": "Test",
+                "run": "docker buildx bake test"
+              }
+            ]
+          },
+          "test": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v2.3.3"
+              },
+              {
+                "name": "Install",
+                "run": "yarn install"
+              },
+              {
+                "name": "Test",
+                "run": "yarn run test"
+              },
+              {
+                "name": "Upload coverage",
+                "uses": "codecov/codecov-action@v1.0.13",
+                "if": "success()",
+                "with": {
+                  "token": "${{ secrets.CODECOV_TOKEN }}",
+                  "file": "./coverage/clover.xml"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2020-10-26T11-37-33Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-41baeae9-1290-5bdd-9523-0cf37c132764",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/test__2020-10-26T11-37-33Z__4d7603f754356457f91713934b74b2c6e5ebf014.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 16,
+                  "startColumn": 5,
+                  "endLine": 28,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "24ca1b33f3ccdf29:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-62f7776a-2b65-5007-bad9-b08791605119",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/test__2020-10-26T11-37-33Z__4d7603f754356457f91713934b74b2c6e5ebf014.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 29,
+                  "startColumn": 5,
+                  "endLine": 46,
+                  "endColumn": 39
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "5797aff82e049262:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2020-10-26T11-37-33Z__4d7603f754356457f91713934b74b2c6e5ebf014.yml",
+          "workflow_name": "test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 46,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "test-containerized": 3,
+            "test": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test-containerized": 3,
+              "test": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v2.3.3",
+              "codecov/codecov-action@v1.0.14"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "test",
+        "true": {
+          "push": {
+            "branches": [
+              "master",
+              "releases/v*"
+            ],
+            "paths-ignore": [
+              "**.md"
+            ]
+          },
+          "pull_request": {
+            "paths-ignore": [
+              "**.md"
+            ]
+          }
+        },
+        "jobs": {
+          "test-containerized": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v2.3.3"
+              },
+              {
+                "name": "Validate",
+                "run": "docker buildx bake validate"
+              },
+              {
+                "name": "Test",
+                "run": "docker buildx bake test"
+              }
+            ]
+          },
+          "test": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v2.3.3"
+              },
+              {
+                "name": "Install",
+                "run": "yarn install"
+              },
+              {
+                "name": "Test",
+                "run": "yarn run test"
+              },
+              {
+                "name": "Upload coverage",
+                "uses": "codecov/codecov-action@v1.0.14",
+                "if": "success()",
+                "with": {
+                  "token": "${{ secrets.CODECOV_TOKEN }}",
+                  "file": "./coverage/clover.xml"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2020-11-08T01-54-03Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-83c0ffb9-3184-500e-aa8f-f638ab8c3df5",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/test__2020-11-08T01-54-03Z__009f84cd69c1f44ab14b833c4132ac7f61f80d37.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 16,
+                  "startColumn": 5,
+                  "endLine": 28,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "ca05c603c30da677:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-502ba9e2-36c5-5d52-9bca-67b78a22bb75",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/test__2020-11-08T01-54-03Z__009f84cd69c1f44ab14b833c4132ac7f61f80d37.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 29,
+                  "startColumn": 5,
+                  "endLine": 46,
+                  "endColumn": 39
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "f359b3673e30b625:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2020-11-08T01-54-03Z__009f84cd69c1f44ab14b833c4132ac7f61f80d37.yml",
+          "workflow_name": "test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 46,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "test-containerized": 3,
+            "test": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test-containerized": 3,
+              "test": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v2",
+              "codecov/codecov-action@v1"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "test",
+        "true": {
+          "push": {
+            "branches": [
+              "master",
+              "releases/v*"
+            ],
+            "paths-ignore": [
+              "**.md"
+            ]
+          },
+          "pull_request": {
+            "paths-ignore": [
+              "**.md"
+            ]
+          }
+        },
+        "jobs": {
+          "test-containerized": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "name": "Validate",
+                "run": "docker buildx bake validate"
+              },
+              {
+                "name": "Test",
+                "run": "docker buildx bake test"
+              }
+            ]
+          },
+          "test": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "name": "Install",
+                "run": "yarn install"
+              },
+              {
+                "name": "Test",
+                "run": "yarn run test"
+              },
+              {
+                "name": "Upload coverage",
+                "uses": "codecov/codecov-action@v1",
+                "if": "success()",
+                "with": {
+                  "token": "${{ secrets.CODECOV_TOKEN }}",
+                  "file": "./coverage/clover.xml"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2020-12-19T02-53-36Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-076b6583-ec3a-5b22-9d9d-27c6b7b1dfa5",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/test__2020-12-19T02-53-36Z__805449f25e59629d5ed02a5055ec82dcfa6f70e5.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 18,
+                  "startColumn": 5,
+                  "endLine": 31,
+                  "endColumn": 39
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "340010ba8596e5d8:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2020-12-19T02-53-36Z__805449f25e59629d5ed02a5055ec82dcfa6f70e5.yml",
+          "workflow_name": "test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 31,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "test": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "actions/checkout@v2",
+              "codecov/codecov-action@v1"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "test",
+        "true": {
+          "push": {
+            "branches": [
+              "master",
+              "releases/v*"
+            ],
+            "paths-ignore": [
+              "**.md"
+            ]
+          },
+          "pull_request": {
+            "branches": [
+              "master"
+            ],
+            "paths-ignore": [
+              "**.md"
+            ]
+          }
+        },
+        "jobs": {
+          "test": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "name": "Test",
+                "run": "docker buildx bake test"
+              },
+              {
+                "name": "Upload coverage",
+                "uses": "codecov/codecov-action@v1",
+                "with": {
+                  "token": "${{ secrets.CODECOV_TOKEN }}",
+                  "file": "./coverage/clover.xml"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2021-03-29T11-04-53Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-b4838b3c-9132-5362-9842-fe0fb767481f",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/test__2021-03-29T11-04-53Z__2f83320d17853b6fc5380472eb7daed634f90198.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 19,
+                  "startColumn": 5,
+                  "endLine": 38,
+                  "endColumn": 39
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "9d6ba6f41aab6704:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2021-03-29T11-04-53Z__2f83320d17853b6fc5380472eb7daed634f90198.yml",
+          "workflow_name": "test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 38,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "test": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v2",
+              "codecov/codecov-action@v1",
+              "docker/bake-action@v1"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "test",
+        "true": {
+          "push": {
+            "branches": [
+              "master",
+              "releases/v*"
+            ],
+            "paths-ignore": [
+              "**.md"
+            ]
+          },
+          "pull_request": {
+            "branches": [
+              "master",
+              "releases/v*"
+            ],
+            "paths-ignore": [
+              "**.md"
+            ]
+          }
+        },
+        "jobs": {
+          "test": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "name": "Validate",
+                "uses": "docker/bake-action@v1",
+                "with": {
+                  "targets": "validate"
+                }
+              },
+              {
+                "name": "Test",
+                "uses": "docker/bake-action@v1",
+                "with": {
+                  "targets": "test"
+                }
+              },
+              {
+                "name": "Upload coverage",
+                "uses": "codecov/codecov-action@v1",
+                "with": {
+                  "file": "./coverage/clover.xml"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2021-05-10T14-03-37Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-1bd023d5-6b88-55c8-9db3-ba5290b16b57",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/test__2021-05-10T14-03-37Z__1239e231204e8e3b2e5e5200659a02812aabdcbb.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 15,
+                  "startColumn": 5,
+                  "endLine": 34,
+                  "endColumn": 39
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "9d6ba6f41aab6704:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2021-05-10T14-03-37Z__1239e231204e8e3b2e5e5200659a02812aabdcbb.yml",
+          "workflow_name": "test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 34,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "test": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v2",
+              "codecov/codecov-action@v1",
+              "docker/bake-action@v1"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "test",
+        "true": {
+          "push": {
+            "branches": [
+              "master",
+              "releases/v*"
+            ]
+          },
+          "pull_request": {
+            "branches": [
+              "master",
+              "releases/v*"
+            ]
+          }
+        },
+        "jobs": {
+          "test": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "name": "Validate",
+                "uses": "docker/bake-action@v1",
+                "with": {
+                  "targets": "validate"
+                }
+              },
+              {
+                "name": "Test",
+                "uses": "docker/bake-action@v1",
+                "with": {
+                  "targets": "test"
+                }
+              },
+              {
+                "name": "Upload coverage",
+                "uses": "codecov/codecov-action@v1",
+                "with": {
+                  "file": "./coverage/clover.xml"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2021-07-19T19-12-26Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-15c0826a-abe6-5bde-8c8e-4e1a2dc4f3ba",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/test__2021-07-19T19-12-26Z__ad2fba2495e5b1a1abc5ea14efc65eaa06739114.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 15,
+                  "startColumn": 5,
+                  "endLine": 34,
+                  "endColumn": 39
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "9d6ba6f41aab6704:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2021-07-19T19-12-26Z__ad2fba2495e5b1a1abc5ea14efc65eaa06739114.yml",
+          "workflow_name": "test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 34,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "test": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v2",
+              "codecov/codecov-action@v2.0.1",
+              "docker/bake-action@v1"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "test",
+        "true": {
+          "push": {
+            "branches": [
+              "master",
+              "releases/v*"
+            ]
+          },
+          "pull_request": {
+            "branches": [
+              "master",
+              "releases/v*"
+            ]
+          }
+        },
+        "jobs": {
+          "test": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "name": "Validate",
+                "uses": "docker/bake-action@v1",
+                "with": {
+                  "targets": "validate"
+                }
+              },
+              {
+                "name": "Test",
+                "uses": "docker/bake-action@v1",
+                "with": {
+                  "targets": "test"
+                }
+              },
+              {
+                "name": "Upload coverage",
+                "uses": "codecov/codecov-action@v2.0.1",
+                "with": {
+                  "file": "./coverage/clover.xml"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2021-07-23T10-56-00Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-80b566f6-8716-5ab0-b881-c1ad5ebf17a1",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/test__2021-07-23T10-56-00Z__401bfc308e532b99ac5de4235f8f1c882bd0200d.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 15,
+                  "startColumn": 5,
+                  "endLine": 34,
+                  "endColumn": 39
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "9d6ba6f41aab6704:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2021-07-23T10-56-00Z__401bfc308e532b99ac5de4235f8f1c882bd0200d.yml",
+          "workflow_name": "test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 34,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "test": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v2",
+              "codecov/codecov-action@v2",
+              "docker/bake-action@v1"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "test",
+        "true": {
+          "push": {
+            "branches": [
+              "master",
+              "releases/v*"
+            ]
+          },
+          "pull_request": {
+            "branches": [
+              "master",
+              "releases/v*"
+            ]
+          }
+        },
+        "jobs": {
+          "test": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "name": "Validate",
+                "uses": "docker/bake-action@v1",
+                "with": {
+                  "targets": "validate"
+                }
+              },
+              {
+                "name": "Test",
+                "uses": "docker/bake-action@v1",
+                "with": {
+                  "targets": "test"
+                }
+              },
+              {
+                "name": "Upload coverage",
+                "uses": "codecov/codecov-action@v2",
+                "with": {
+                  "file": "./coverage/clover.xml"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-03-01T19-17-26Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-eb31947a-20bb-5378-8da9-95a9290fa7c7",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/test__2022-03-01T19-17-26Z__a66dbeb1e885362f4a10b4e0c634821a4551ef25.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 15,
+                  "startColumn": 5,
+                  "endLine": 34,
+                  "endColumn": 39
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "dde6a1e545a6c031:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2022-03-01T19-17-26Z__a66dbeb1e885362f4a10b4e0c634821a4551ef25.yml",
+          "workflow_name": "test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 34,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "test": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v3",
+              "codecov/codecov-action@v2",
+              "docker/bake-action@v1"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "test",
+        "true": {
+          "push": {
+            "branches": [
+              "master",
+              "releases/v*"
+            ]
+          },
+          "pull_request": {
+            "branches": [
+              "master",
+              "releases/v*"
+            ]
+          }
+        },
+        "jobs": {
+          "test": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Validate",
+                "uses": "docker/bake-action@v1",
+                "with": {
+                  "targets": "validate"
+                }
+              },
+              {
+                "name": "Test",
+                "uses": "docker/bake-action@v1",
+                "with": {
+                  "targets": "test"
+                }
+              },
+              {
+                "name": "Upload coverage",
+                "uses": "codecov/codecov-action@v2",
+                "with": {
+                  "file": "./coverage/clover.xml"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-04-05T19-11-51Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-55985953-126c-5860-82bc-2ee5a183f5ea",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/test__2022-04-05T19-11-51Z__776adc0187ef2fc3e562298d257e2d120af4df48.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 15,
+                  "startColumn": 5,
+                  "endLine": 34,
+                  "endColumn": 39
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "dde6a1e545a6c031:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2022-04-05T19-11-51Z__776adc0187ef2fc3e562298d257e2d120af4df48.yml",
+          "workflow_name": "test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 34,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "test": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v3",
+              "codecov/codecov-action@v3",
+              "docker/bake-action@v1"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "test",
+        "true": {
+          "push": {
+            "branches": [
+              "master",
+              "releases/v*"
+            ]
+          },
+          "pull_request": {
+            "branches": [
+              "master",
+              "releases/v*"
+            ]
+          }
+        },
+        "jobs": {
+          "test": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Validate",
+                "uses": "docker/bake-action@v1",
+                "with": {
+                  "targets": "validate"
+                }
+              },
+              {
+                "name": "Test",
+                "uses": "docker/bake-action@v1",
+                "with": {
+                  "targets": "test"
+                }
+              },
+              {
+                "name": "Upload coverage",
+                "uses": "codecov/codecov-action@v3",
+                "with": {
+                  "file": "./coverage/clover.xml"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-05-05T17-42-03Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-a5a1bb28-b10c-5f7e-be5a-a4b6b45d3bdc",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/test__2022-05-05T17-42-03Z__59267481d95715fda04cabe616c3f8922913d4aa.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 15,
+                  "startColumn": 5,
+                  "endLine": 34,
+                  "endColumn": 39
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "dde6a1e545a6c031:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2022-05-05T17-42-03Z__59267481d95715fda04cabe616c3f8922913d4aa.yml",
+          "workflow_name": "test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 34,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "test": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v3",
+              "codecov/codecov-action@v3",
+              "docker/bake-action@v2"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "test",
+        "true": {
+          "push": {
+            "branches": [
+              "master",
+              "releases/v*"
+            ]
+          },
+          "pull_request": {
+            "branches": [
+              "master",
+              "releases/v*"
+            ]
+          }
+        },
+        "jobs": {
+          "test": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Validate",
+                "uses": "docker/bake-action@v2",
+                "with": {
+                  "targets": "validate"
+                }
+              },
+              {
+                "name": "Test",
+                "uses": "docker/bake-action@v2",
+                "with": {
+                  "targets": "test"
+                }
+              },
+              {
+                "name": "Upload coverage",
+                "uses": "codecov/codecov-action@v3",
+                "with": {
+                  "file": "./coverage/clover.xml"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-03-12T11-36-59Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-a7b667e7-f5b3-57ae-b762-24ebf01a94ce",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/test__2023-03-12T11-36-59Z__0ef9f130fae0f5f6f1c6adfe899f50afe6d84cda.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 26,
+                  "endColumn": 39
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "8f3c1734e5d93789:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2023-03-12T11-36-59Z__0ef9f130fae0f5f6f1c6adfe899f50afe6d84cda.yml",
+          "workflow_name": "test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 26,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "test": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v3",
+              "codecov/codecov-action@v3",
+              "docker/bake-action@v2"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "test",
+        "true": {
+          "push": {
+            "branches": [
+              "master",
+              "releases/v*"
+            ]
+          },
+          "pull_request": null
+        },
+        "jobs": {
+          "test": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Test",
+                "uses": "docker/bake-action@v2",
+                "with": {
+                  "targets": "test"
+                }
+              },
+              {
+                "name": "Upload coverage",
+                "uses": "codecov/codecov-action@v3",
+                "with": {
+                  "file": "./coverage/clover.xml"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-04-18T19-57-31Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-0e72e4b5-137a-5a6d-ab59-c937b0866899",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/test__2023-04-18T19-57-31Z__00e2c9d34e27bf51149644254039df8da6b7f99d.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 26,
+                  "endColumn": 39
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "8f3c1734e5d93789:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2023-04-18T19-57-31Z__00e2c9d34e27bf51149644254039df8da6b7f99d.yml",
+          "workflow_name": "test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 26,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "test": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v3",
+              "codecov/codecov-action@v3",
+              "docker/bake-action@v3"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "test",
+        "true": {
+          "push": {
+            "branches": [
+              "master",
+              "releases/v*"
+            ]
+          },
+          "pull_request": null
+        },
+        "jobs": {
+          "test": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Test",
+                "uses": "docker/bake-action@v3",
+                "with": {
+                  "targets": "test"
+                }
+              },
+              {
+                "name": "Upload coverage",
+                "uses": "codecov/codecov-action@v3",
+                "with": {
+                  "file": "./coverage/clover.xml"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-09-04T19-14-07Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-8ce1b1f1-8f1f-5978-a6a6-5657a30cb81d",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/test__2023-09-04T19-14-07Z__59de4866c5e89ea4ae846dd6607edf321455856b.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 26,
+                  "endColumn": 39
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "cfb7122610d490b6:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2023-09-04T19-14-07Z__59de4866c5e89ea4ae846dd6607edf321455856b.yml",
+          "workflow_name": "test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 26,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "test": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "codecov/codecov-action@v3",
+              "docker/bake-action@v3"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "test",
+        "true": {
+          "push": {
+            "branches": [
+              "master",
+              "releases/v*"
+            ]
+          },
+          "pull_request": null
+        },
+        "jobs": {
+          "test": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Test",
+                "uses": "docker/bake-action@v3",
+                "with": {
+                  "targets": "test"
+                }
+              },
+              {
+                "name": "Upload coverage",
+                "uses": "codecov/codecov-action@v3",
+                "with": {
+                  "file": "./coverage/clover.xml"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-09-05T09-02-47Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-16326d0d-86e0-56be-93d1-4d16849b7979",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/test__2023-09-05T09-02-47Z__51990f24d188a71a6756a3658965806215049d51.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 16,
+                  "startColumn": 5,
+                  "endLine": 30,
+                  "endColumn": 39
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "cfb7122610d490b6:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2023-09-05T09-02-47Z__51990f24d188a71a6756a3658965806215049d51.yml",
+          "workflow_name": "test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": {
+            "group": "${{ github.workflow }}-${{ github.ref }}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 30,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "test": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "codecov/codecov-action@v3",
+              "docker/bake-action@v3"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "test",
+        "concurrency": {
+          "group": "${{ github.workflow }}-${{ github.ref }}",
+          "cancel-in-progress": true
+        },
+        "true": {
+          "push": {
+            "branches": [
+              "master",
+              "releases/v*"
+            ]
+          },
+          "pull_request": null
+        },
+        "jobs": {
+          "test": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Test",
+                "uses": "docker/bake-action@v3",
+                "with": {
+                  "targets": "test"
+                }
+              },
+              {
+                "name": "Upload coverage",
+                "uses": "codecov/codecov-action@v3",
+                "with": {
+                  "file": "./coverage/clover.xml"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-09-12T19-54-51Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-059319be-2916-550f-b36b-6be800b7cf04",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/test__2023-09-12T19-54-51Z__0668f8e3c46b0da9ce1803b4c80e8cd069bf1e9f.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 16,
+                  "startColumn": 5,
+                  "endLine": 30,
+                  "endColumn": 39
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "cfb7122610d490b6:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2023-09-12T19-54-51Z__0668f8e3c46b0da9ce1803b4c80e8cd069bf1e9f.yml",
+          "workflow_name": "test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": {
+            "group": "${{ github.workflow }}-${{ github.ref }}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 30,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "test": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "codecov/codecov-action@v3",
+              "docker/bake-action@v4"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "test",
+        "concurrency": {
+          "group": "${{ github.workflow }}-${{ github.ref }}",
+          "cancel-in-progress": true
+        },
+        "true": {
+          "push": {
+            "branches": [
+              "master",
+              "releases/v*"
+            ]
+          },
+          "pull_request": null
+        },
+        "jobs": {
+          "test": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Test",
+                "uses": "docker/bake-action@v4",
+                "with": {
+                  "targets": "test"
+                }
+              },
+              {
+                "name": "Upload coverage",
+                "uses": "codecov/codecov-action@v3",
+                "with": {
+                  "file": "./coverage/clover.xml"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-02-23T08-05-37Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-3e05af90-2dd4-5f60-8545-b2a2d20df226",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/test__2024-02-23T08-05-37Z__6bb43c868016da54fc1422c5f109413ddcc04b13.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 16,
+                  "startColumn": 5,
+                  "endLine": 31,
+                  "endColumn": 47
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "cfb7122610d490b6:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2024-02-23T08-05-37Z__6bb43c868016da54fc1422c5f109413ddcc04b13.yml",
+          "workflow_name": "test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": {
+            "group": "${{ github.workflow }}-${{ github.ref }}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 31,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "test": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "codecov/codecov-action@v4",
+              "docker/bake-action@v4"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "test",
+        "concurrency": {
+          "group": "${{ github.workflow }}-${{ github.ref }}",
+          "cancel-in-progress": true
+        },
+        "true": {
+          "push": {
+            "branches": [
+              "master",
+              "releases/v*"
+            ]
+          },
+          "pull_request": null
+        },
+        "jobs": {
+          "test": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Test",
+                "uses": "docker/bake-action@v4",
+                "with": {
+                  "targets": "test"
+                }
+              },
+              {
+                "name": "Upload coverage",
+                "uses": "codecov/codecov-action@v4",
+                "with": {
+                  "file": "./coverage/clover.xml",
+                  "token": "${{ secrets.CODECOV_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-06-17T19-28-46Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-15583433-28f2-584b-853c-8b6a1df72c6a",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/test__2024-06-17T19-28-46Z__24ce540669eb30d97e7e9ddd2f1d07130610a6d0.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 16,
+                  "startColumn": 5,
+                  "endLine": 31,
+                  "endColumn": 47
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "cfb7122610d490b6:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2024-06-17T19-28-46Z__24ce540669eb30d97e7e9ddd2f1d07130610a6d0.yml",
+          "workflow_name": "test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": {
+            "group": "${{ github.workflow }}-${{ github.ref }}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 31,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "test": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "codecov/codecov-action@v4",
+              "docker/bake-action@v5"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "test",
+        "concurrency": {
+          "group": "${{ github.workflow }}-${{ github.ref }}",
+          "cancel-in-progress": true
+        },
+        "true": {
+          "push": {
+            "branches": [
+              "master",
+              "releases/v*"
+            ]
+          },
+          "pull_request": null
+        },
+        "jobs": {
+          "test": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Test",
+                "uses": "docker/bake-action@v5",
+                "with": {
+                  "targets": "test"
+                }
+              },
+              {
+                "name": "Upload coverage",
+                "uses": "codecov/codecov-action@v4",
+                "with": {
+                  "file": "./coverage/clover.xml",
+                  "token": "${{ secrets.CODECOV_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-11-14T19-06-18Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-99e86e4a-5b7f-5aa9-957b-f85c581caf99",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/test__2024-11-14T19-06-18Z__86622a92eee88f83cd8e9dac42f46eeaa04b40fe.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 16,
+                  "startColumn": 5,
+                  "endLine": 31,
+                  "endColumn": 47
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "cfb7122610d490b6:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2024-11-14T19-06-18Z__86622a92eee88f83cd8e9dac42f46eeaa04b40fe.yml",
+          "workflow_name": "test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": {
+            "group": "${{ github.workflow }}-${{ github.ref }}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 31,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "test": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "codecov/codecov-action@v5",
+              "docker/bake-action@v5"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "test",
+        "concurrency": {
+          "group": "${{ github.workflow }}-${{ github.ref }}",
+          "cancel-in-progress": true
+        },
+        "true": {
+          "push": {
+            "branches": [
+              "master",
+              "releases/v*"
+            ]
+          },
+          "pull_request": null
+        },
+        "jobs": {
+          "test": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Test",
+                "uses": "docker/bake-action@v5",
+                "with": {
+                  "targets": "test"
+                }
+              },
+              {
+                "name": "Upload coverage",
+                "uses": "codecov/codecov-action@v5",
+                "with": {
+                  "file": "./coverage/clover.xml",
+                  "token": "${{ secrets.CODECOV_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-01-08T11-48-06Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-959c4901-ee60-5bf4-8a4d-b55a02fbe5d8",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/test__2025-01-08T11-48-06Z__0d820067b8588e696ca46c992469803f660d94d4.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 16,
+                  "startColumn": 5,
+                  "endLine": 28,
+                  "endColumn": 47
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "3a9d8dff0a3f3eb0:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2025-01-08T11-48-06Z__0d820067b8588e696ca46c992469803f660d94d4.yml",
+          "workflow_name": "test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": {
+            "group": "${{ github.workflow }}-${{ github.ref }}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 28,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "test": 2
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 2
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "codecov/codecov-action@v5",
+              "docker/bake-action@v6"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "test",
+        "concurrency": {
+          "group": "${{ github.workflow }}-${{ github.ref }}",
+          "cancel-in-progress": true
+        },
+        "true": {
+          "push": {
+            "branches": [
+              "master",
+              "releases/v*"
+            ]
+          },
+          "pull_request": null
+        },
+        "jobs": {
+          "test": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Test",
+                "uses": "docker/bake-action@v6",
+                "with": {
+                  "targets": "test"
+                }
+              },
+              {
+                "name": "Upload coverage",
+                "uses": "codecov/codecov-action@v5",
+                "with": {
+                  "file": "./coverage/clover.xml",
+                  "token": "${{ secrets.CODECOV_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-04-22T12-29-47Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-72798756-71ee-530b-a278-ec530f92bb8e",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/test__2025-04-22T12-29-47Z__c88acc31ec637ddeee4c1fc4c8191b1e9654dac8.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 16,
+                  "startColumn": 5,
+                  "endLine": 32,
+                  "endColumn": 47
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "cfb7122610d490b6:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2025-04-22T12-29-47Z__c88acc31ec637ddeee4c1fc4c8191b1e9654dac8.yml",
+          "workflow_name": "test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": {
+            "group": "${{ github.workflow }}-${{ github.ref }}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 32,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "test": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "codecov/codecov-action@v5",
+              "docker/bake-action@v6"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "test",
+        "concurrency": {
+          "group": "${{ github.workflow }}-${{ github.ref }}",
+          "cancel-in-progress": true
+        },
+        "true": {
+          "push": {
+            "branches": [
+              "master",
+              "releases/v*"
+            ]
+          },
+          "pull_request": null
+        },
+        "jobs": {
+          "test": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Test",
+                "uses": "docker/bake-action@v6",
+                "with": {
+                  "source": ".",
+                  "targets": "test"
+                }
+              },
+              {
+                "name": "Upload coverage",
+                "uses": "codecov/codecov-action@v5",
+                "with": {
+                  "files": "./coverage/clover.xml",
+                  "token": "${{ secrets.CODECOV_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-08-12T02-15-24Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-ae9d41fa-5350-5c4e-8eb5-49de64be283b",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/test__2025-08-12T02-15-24Z__06e11bf92651eae6258b8ad4b685e59ea809adb6.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 16,
+                  "startColumn": 5,
+                  "endLine": 32,
+                  "endColumn": 47
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "10320d173bcfe9e3:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2025-08-12T02-15-24Z__06e11bf92651eae6258b8ad4b685e59ea809adb6.yml",
+          "workflow_name": "test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": {
+            "group": "${{ github.workflow }}-${{ github.ref }}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 32,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "test": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v5",
+              "codecov/codecov-action@v5",
+              "docker/bake-action@v6"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "test",
+        "concurrency": {
+          "group": "${{ github.workflow }}-${{ github.ref }}",
+          "cancel-in-progress": true
+        },
+        "true": {
+          "push": {
+            "branches": [
+              "master",
+              "releases/v*"
+            ]
+          },
+          "pull_request": null
+        },
+        "jobs": {
+          "test": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v5"
+              },
+              {
+                "name": "Test",
+                "uses": "docker/bake-action@v6",
+                "with": {
+                  "source": ".",
+                  "targets": "test"
+                }
+              },
+              {
+                "name": "Upload coverage",
+                "uses": "codecov/codecov-action@v5",
+                "with": {
+                  "files": "./coverage/clover.xml",
+                  "token": "${{ secrets.CODECOV_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

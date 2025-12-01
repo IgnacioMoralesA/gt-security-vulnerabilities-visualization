@@ -1,0 +1,592 @@
+{
+  "repo_owner": "cloudflare",
+  "repo_name": "wrangler-action",
+  "workflow_name": "release",
+  "history": {
+    "2023-08-24T20-35-32Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2023-08-24T20-35-32Z__30e126d1a49f892505ae786391a85cd4cc6e0efa.yml",
+          "workflow_name": "Release",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": "${{ github.workflow }}-${{ github.ref }}",
+          "defaults": null,
+          "line_count": 46,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "release": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "release": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "JasonEtco/build-and-tag-action@v2",
+              "actions/checkout@v3",
+              "actions/setup-node@v3",
+              "changesets/action@v1"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release",
+        "true": {
+          "push": {
+            "branches": [
+              "main"
+            ]
+          }
+        },
+        "concurrency": "${{ github.workflow }}-${{ github.ref }}",
+        "jobs": {
+          "release": {
+            "if": "${{ github.repository_owner == 'cloudflare' }}",
+            "name": "Release",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "id-token": "write",
+              "contents": "write",
+              "pull-requests": "write",
+              "issues": "read"
+            },
+            "steps": [
+              {
+                "name": "Checkout Repo",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Setup Node.js",
+                "uses": "actions/setup-node@v3",
+                "with": {
+                  "node-version": "latest",
+                  "cache": "npm"
+                }
+              },
+              {
+                "name": "Install modules",
+                "run": "npm ci"
+              },
+              {
+                "name": "Create Version PR",
+                "id": "changesets",
+                "uses": "changesets/action@v1",
+                "with": {
+                  "createGithubReleases": true,
+                  "publish": "npx changeset tag"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Tag & Release Action",
+                "if": "steps.changesets.outputs.published == 'true'",
+                "uses": "JasonEtco/build-and-tag-action@v2",
+                "env": {
+                  "GITHUB_TOKEN": "${{ github.token }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-08-30T22-27-17Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2023-08-30T22-27-17Z__ee3e2a9b370214defb96ecc6a0848964e5f9bf13.yml",
+          "workflow_name": "Release",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": "${{ github.workflow }}-${{ github.ref }}",
+          "defaults": null,
+          "line_count": 48,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "release": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "release": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "JasonEtco/build-and-tag-action@v2",
+              "actions/checkout@v3",
+              "actions/setup-node@v3",
+              "changesets/action@v1"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release",
+        "true": {
+          "push": {
+            "branches": [
+              "main"
+            ]
+          }
+        },
+        "concurrency": "${{ github.workflow }}-${{ github.ref }}",
+        "jobs": {
+          "release": {
+            "if": "${{ github.repository_owner == 'cloudflare' }}",
+            "name": "Release",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "id-token": "write",
+              "contents": "write",
+              "pull-requests": "write",
+              "issues": "read"
+            },
+            "steps": [
+              {
+                "name": "Checkout Repo",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Setup Node.js",
+                "uses": "actions/setup-node@v3",
+                "with": {
+                  "node-version": "latest",
+                  "cache": "npm"
+                }
+              },
+              {
+                "name": "Install modules",
+                "run": "npm ci"
+              },
+              {
+                "name": "Create Version PR",
+                "id": "changesets",
+                "uses": "changesets/action@v1",
+                "with": {
+                  "createGithubReleases": true,
+                  "publish": "npx changeset tag"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Tag & Release Action",
+                "if": "steps.changesets.outputs.published == 'true'",
+                "with": {
+                  "tag_name": "v${{ fromJSON(steps.changesets.outputs.publishedPackages)[0].version }}"
+                },
+                "uses": "JasonEtco/build-and-tag-action@v2",
+                "env": {
+                  "GITHUB_TOKEN": "${{ github.token }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-08-31T15-26-14Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2023-08-31T15-26-14Z__7292a4ae992a673e65d721d6c82072f2193e14ce.yml",
+          "workflow_name": "Release",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": "${{ github.workflow }}-${{ github.ref }}",
+          "defaults": null,
+          "line_count": 52,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "release": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "release": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "JasonEtco/build-and-tag-action@v2",
+              "actions/checkout@v3",
+              "actions/setup-node@v3",
+              "changesets/action@v1"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release",
+        "true": {
+          "push": {
+            "branches": [
+              "main"
+            ]
+          }
+        },
+        "concurrency": "${{ github.workflow }}-${{ github.ref }}",
+        "jobs": {
+          "release": {
+            "if": "${{ github.repository_owner == 'cloudflare' }}",
+            "name": "Release",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "id-token": "write",
+              "contents": "write",
+              "pull-requests": "write",
+              "issues": "read"
+            },
+            "steps": [
+              {
+                "name": "Checkout Repo",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Setup Node.js",
+                "uses": "actions/setup-node@v3",
+                "with": {
+                  "node-version": "latest",
+                  "cache": "npm"
+                }
+              },
+              {
+                "name": "Install modules",
+                "run": "npm ci"
+              },
+              {
+                "name": "Create Version PR",
+                "id": "changesets",
+                "uses": "changesets/action@v1",
+                "with": {
+                  "createGithubReleases": true,
+                  "publish": "npx changeset tag"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Build action",
+                "if": "steps.changesets.outputs.published == 'true'",
+                "run": "npm run build"
+              },
+              {
+                "name": "Push dist-tags",
+                "if": "steps.changesets.outputs.published == 'true'",
+                "uses": "JasonEtco/build-and-tag-action@v2",
+                "with": {
+                  "tag_name": "v${{ fromJSON(steps.changesets.outputs.publishedPackages)[0].version }}"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ github.token }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-10-31T15-21-29Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2023-10-31T15-21-29Z__2b7ed1316de84918f2f9172d76d83dd8727bfed0.yml",
+          "workflow_name": "Release",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": "${{ github.workflow }}-${{ github.ref }}",
+          "defaults": null,
+          "line_count": 55,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "release": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "release": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "JasonEtco/build-and-tag-action@v2",
+              "actions/checkout@v3",
+              "actions/setup-node@v3",
+              "changesets/action@v1"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release",
+        "true": {
+          "push": {
+            "branches": [
+              "main"
+            ]
+          }
+        },
+        "concurrency": "${{ github.workflow }}-${{ github.ref }}",
+        "jobs": {
+          "release": {
+            "if": "${{ github.repository_owner == 'cloudflare' }}",
+            "name": "Release",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "id-token": "write",
+              "contents": "write",
+              "pull-requests": "write",
+              "issues": "read"
+            },
+            "steps": [
+              {
+                "name": "Checkout Repo",
+                "uses": "actions/checkout@v3",
+                "with": {
+                  "fetch-depth": 0,
+                  "fetch-tags": true
+                }
+              },
+              {
+                "name": "Setup Node.js",
+                "uses": "actions/setup-node@v3",
+                "with": {
+                  "node-version": "latest",
+                  "cache": "npm"
+                }
+              },
+              {
+                "name": "Install modules",
+                "run": "npm ci"
+              },
+              {
+                "name": "Create Version PR",
+                "id": "changesets",
+                "uses": "changesets/action@v1",
+                "with": {
+                  "createGithubReleases": true,
+                  "publish": "npx changeset tag"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Build action",
+                "if": "steps.changesets.outputs.published == 'true'",
+                "run": "npm run build"
+              },
+              {
+                "name": "Push dist-tags",
+                "if": "steps.changesets.outputs.published == 'true'",
+                "uses": "JasonEtco/build-and-tag-action@v2",
+                "with": {
+                  "tag_name": "v${{ fromJSON(steps.changesets.outputs.publishedPackages)[0].version }}"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ github.token }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-11-12T23-25-56Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2024-11-12T23-25-56Z__9bf87caf2b14d4ab14f31e4cac0bcf2474815ff5.yml",
+          "workflow_name": "Release",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": "${{ github.workflow }}-${{ github.ref }}",
+          "defaults": null,
+          "line_count": 56,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "release": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "release": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "JasonEtco/build-and-tag-action@v2",
+              "actions/checkout@v3",
+              "actions/setup-node@v3",
+              "changesets/action@v1"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release",
+        "true": {
+          "push": {
+            "branches": [
+              "main"
+            ]
+          }
+        },
+        "concurrency": "${{ github.workflow }}-${{ github.ref }}",
+        "jobs": {
+          "release": {
+            "if": "${{ github.repository_owner == 'cloudflare' }}",
+            "name": "Release",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "id-token": "write",
+              "contents": "write",
+              "pull-requests": "write",
+              "issues": "read"
+            },
+            "steps": [
+              {
+                "name": "Checkout Repo",
+                "uses": "actions/checkout@v3",
+                "with": {
+                  "fetch-depth": 0,
+                  "fetch-tags": true
+                }
+              },
+              {
+                "name": "Setup Node.js",
+                "uses": "actions/setup-node@v3",
+                "with": {
+                  "node-version": "22",
+                  "cache": "npm"
+                }
+              },
+              {
+                "name": "Install modules",
+                "run": "npm ci"
+              },
+              {
+                "name": "Create Version PR",
+                "id": "changesets",
+                "uses": "changesets/action@v1",
+                "with": {
+                  "createGithubReleases": true,
+                  "publish": "npx changeset tag"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Build action",
+                "if": "steps.changesets.outputs.published == 'true'",
+                "run": "npm run build"
+              },
+              {
+                "name": "Push dist-tags",
+                "if": "steps.changesets.outputs.published == 'true'",
+                "uses": "JasonEtco/build-and-tag-action@v2",
+                "with": {
+                  "tag_name": "v${{ fromJSON(steps.changesets.outputs.publishedPackages)[0].version }}"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ github.token }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

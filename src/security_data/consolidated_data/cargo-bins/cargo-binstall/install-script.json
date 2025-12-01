@@ -1,0 +1,3431 @@
+{
+  "repo_owner": "cargo-bins",
+  "repo_name": "cargo-binstall",
+  "workflow_name": "install-script",
+  "history": {
+    "2023-08-09T09-37-26Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-d58ed8bf-09e3-5b59-bfd5-8c99570b896f",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/install-script__2023-08-09T09-37-26Z__1c886d8897bc1fa27a46849f029e1f01cd46e904.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 29,
+                  "startColumn": 5,
+                  "endLine": 58,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "b76c6534b3141c00:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-1b72fd2a-4a58-507a-8ff6-21a690461036",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/install-script__2023-08-09T09-37-26Z__1c886d8897bc1fa27a46849f029e1f01cd46e904.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 59,
+                  "startColumn": 5,
+                  "endLine": 84,
+                  "endColumn": 31
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "a6e79701e26a8789:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "install-script__2023-08-09T09-37-26Z__1c886d8897bc1fa27a46849f029e1f01cd46e904.yml",
+          "workflow_name": "Test install-script",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": {
+            "group": "${{ github.workflow }}-${{ github.ref || github.event.pull_request.number || github.sha }}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 84,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "unix": 4,
+            "windows": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 2,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "unix": 4,
+              "windows": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 2,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "actions/checkout@v3"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Test install-script",
+        "true": {
+          "merge_group": null,
+          "pull_request": {
+            "types": [
+              "opened",
+              "reopened",
+              "synchronize"
+            ],
+            "paths": [
+              "install-from-binstall-release.ps1",
+              "install-from-binstall-release.sh"
+            ]
+          },
+          "push": {
+            "branches": [
+              "main"
+            ],
+            "paths": [
+              "install-from-binstall-release.ps1",
+              "install-from-binstall-release.sh"
+            ]
+          }
+        },
+        "concurrency": {
+          "group": "${{ github.workflow }}-${{ github.ref || github.event.pull_request.number || github.sha }}",
+          "cancel-in-progress": true
+        },
+        "env": {
+          "CARGO_TERM_COLOR": "always"
+        },
+        "jobs": {
+          "unix": {
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "os": [
+                  "macos-latest",
+                  "ubuntu-latest"
+                ],
+                "set_cargo_home": [
+                  "t",
+                  "f"
+                ]
+              }
+            },
+            "runs-on": "${{ matrix.os }}",
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Set `CARGO_HOME`",
+                "if": "matrix.set_cargo_home == 't'",
+                "run": "CARGO_HOME=\"$(mktemp -d 2>/dev/null || mktemp -d -t 'cargo-home')\"\nmkdir -p \"${CARGO_HOME}/bin\"\necho \"CARGO_HOME=$CARGO_HOME\" >> \"$GITHUB_ENV\"\necho \"${CARGO_HOME}/bin\" >> $GITHUB_PATH\n"
+              },
+              {
+                "name": "Install `cargo-binstall` using scripts",
+                "run": "./install-from-binstall-release.sh",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Verify `cargo-binstall` installation",
+                "run": "which cargo-binstall\ncargo binstall -vV\n"
+              }
+            ]
+          },
+          "windows": {
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "set_cargo_home": [
+                  "t",
+                  "f"
+                ]
+              }
+            },
+            "runs-on": "windows-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Set `CARGO_HOME`",
+                "if": "matrix.set_cargo_home == 't'",
+                "shell": "bash",
+                "run": "CARGO_HOME=\"$(mktemp -d 2>/dev/null || mktemp -d -t 'cargo-home')\"\nmkdir -p \"${CARGO_HOME}/bin\"\necho \"CARGO_HOME=$CARGO_HOME\" >> \"$GITHUB_ENV\"\necho \"${CARGO_HOME}/bin\" >> $GITHUB_PATH\n"
+              },
+              {
+                "name": "Install `cargo-binstall` using scripts",
+                "run": "./install-from-binstall-release.ps1",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Verify `cargo-binstall` installation",
+                "run": "cargo binstall -vV"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-09-05T02-10-48Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-dd157eeb-0845-5f1b-97d3-6471ea134367",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/install-script__2023-09-05T02-10-48Z__d657fbe5186cc90a6b6f1a29f0760da929e57074.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 29,
+                  "startColumn": 5,
+                  "endLine": 58,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "b76c6534b3141c00:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-2d78600b-e75b-5694-8e14-7a5af74180b7",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/install-script__2023-09-05T02-10-48Z__d657fbe5186cc90a6b6f1a29f0760da929e57074.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 59,
+                  "startColumn": 5,
+                  "endLine": 84,
+                  "endColumn": 31
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "a6e79701e26a8789:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "install-script__2023-09-05T02-10-48Z__d657fbe5186cc90a6b6f1a29f0760da929e57074.yml",
+          "workflow_name": "Test install-script",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": {
+            "group": "${{ github.workflow }}-${{ github.ref || github.event.pull_request.number || github.sha }}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 84,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "unix": 4,
+            "windows": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 2,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "unix": 4,
+              "windows": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 2,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "actions/checkout@v4"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Test install-script",
+        "true": {
+          "merge_group": null,
+          "pull_request": {
+            "types": [
+              "opened",
+              "reopened",
+              "synchronize"
+            ],
+            "paths": [
+              "install-from-binstall-release.ps1",
+              "install-from-binstall-release.sh"
+            ]
+          },
+          "push": {
+            "branches": [
+              "main"
+            ],
+            "paths": [
+              "install-from-binstall-release.ps1",
+              "install-from-binstall-release.sh"
+            ]
+          }
+        },
+        "concurrency": {
+          "group": "${{ github.workflow }}-${{ github.ref || github.event.pull_request.number || github.sha }}",
+          "cancel-in-progress": true
+        },
+        "env": {
+          "CARGO_TERM_COLOR": "always"
+        },
+        "jobs": {
+          "unix": {
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "os": [
+                  "macos-latest",
+                  "ubuntu-latest"
+                ],
+                "set_cargo_home": [
+                  "t",
+                  "f"
+                ]
+              }
+            },
+            "runs-on": "${{ matrix.os }}",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Set `CARGO_HOME`",
+                "if": "matrix.set_cargo_home == 't'",
+                "run": "CARGO_HOME=\"$(mktemp -d 2>/dev/null || mktemp -d -t 'cargo-home')\"\nmkdir -p \"${CARGO_HOME}/bin\"\necho \"CARGO_HOME=$CARGO_HOME\" >> \"$GITHUB_ENV\"\necho \"${CARGO_HOME}/bin\" >> $GITHUB_PATH\n"
+              },
+              {
+                "name": "Install `cargo-binstall` using scripts",
+                "run": "./install-from-binstall-release.sh",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Verify `cargo-binstall` installation",
+                "run": "which cargo-binstall\ncargo binstall -vV\n"
+              }
+            ]
+          },
+          "windows": {
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "set_cargo_home": [
+                  "t",
+                  "f"
+                ]
+              }
+            },
+            "runs-on": "windows-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Set `CARGO_HOME`",
+                "if": "matrix.set_cargo_home == 't'",
+                "shell": "bash",
+                "run": "CARGO_HOME=\"$(mktemp -d 2>/dev/null || mktemp -d -t 'cargo-home')\"\nmkdir -p \"${CARGO_HOME}/bin\"\necho \"CARGO_HOME=$CARGO_HOME\" >> \"$GITHUB_ENV\"\necho \"${CARGO_HOME}/bin\" >> $GITHUB_PATH\n"
+              },
+              {
+                "name": "Install `cargo-binstall` using scripts",
+                "run": "./install-from-binstall-release.ps1",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Verify `cargo-binstall` installation",
+                "run": "cargo binstall -vV"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-01-13T02-22-51Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-8480fdc4-87ae-50c3-b1a7-fd0e62e15f55",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/install-script__2024-01-13T02-22-51Z__b415b0d7e6b3d4f49d09bf29c767324ecf8adadb.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 29,
+                  "startColumn": 5,
+                  "endLine": 58,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "b76c6534b3141c00:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-f5402f61-5559-58c6-b61b-ad19b5a1fdd6",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/install-script__2024-01-13T02-22-51Z__b415b0d7e6b3d4f49d09bf29c767324ecf8adadb.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 59,
+                  "startColumn": 5,
+                  "endLine": 86,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "a6e79701e26a8789:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-87fc2404-4794-5ab5-a5c3-2257a56891a1",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/install-script__2024-01-13T02-22-51Z__b415b0d7e6b3d4f49d09bf29c767324ecf8adadb.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 87,
+                  "startColumn": 5,
+                  "endLine": 114,
+                  "endColumn": 31
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "a6e79701e26a8789:2"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "install-script__2024-01-13T02-22-51Z__b415b0d7e6b3d4f49d09bf29c767324ecf8adadb.yml",
+          "workflow_name": "Test install-script",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": {
+            "group": "${{ github.workflow }}-${{ github.ref || github.event.pull_request.number || github.sha }}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 114,
+          "num_jobs": 3,
+          "steps_per_job": {
+            "unix": 4,
+            "windows": 4,
+            "windows-bash": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 3,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 3,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "unix": 4,
+              "windows": 4,
+              "windows-bash": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 2,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4"
+            ],
+            "num_run_commands": 9,
+            "steps_with_conditionals": 3,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Test install-script",
+        "true": {
+          "merge_group": null,
+          "pull_request": {
+            "types": [
+              "opened",
+              "reopened",
+              "synchronize"
+            ],
+            "paths": [
+              "install-from-binstall-release.ps1",
+              "install-from-binstall-release.sh"
+            ]
+          },
+          "push": {
+            "branches": [
+              "main"
+            ],
+            "paths": [
+              "install-from-binstall-release.ps1",
+              "install-from-binstall-release.sh"
+            ]
+          }
+        },
+        "concurrency": {
+          "group": "${{ github.workflow }}-${{ github.ref || github.event.pull_request.number || github.sha }}",
+          "cancel-in-progress": true
+        },
+        "env": {
+          "CARGO_TERM_COLOR": "always"
+        },
+        "jobs": {
+          "unix": {
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "os": [
+                  "macos-latest",
+                  "ubuntu-latest"
+                ],
+                "set_cargo_home": [
+                  "t",
+                  "f"
+                ]
+              }
+            },
+            "runs-on": "${{ matrix.os }}",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Set `CARGO_HOME`",
+                "if": "matrix.set_cargo_home == 't'",
+                "run": "CARGO_HOME=\"$(mktemp -d 2>/dev/null || mktemp -d -t 'cargo-home')\"\nmkdir -p \"${CARGO_HOME}/bin\"\necho \"CARGO_HOME=$CARGO_HOME\" >> \"$GITHUB_ENV\"\necho \"${CARGO_HOME}/bin\" >> $GITHUB_PATH\n"
+              },
+              {
+                "name": "Install `cargo-binstall` using scripts",
+                "run": "./install-from-binstall-release.sh",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Verify `cargo-binstall` installation",
+                "run": "which cargo-binstall\ncargo binstall -vV\n"
+              }
+            ]
+          },
+          "windows": {
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "set_cargo_home": [
+                  "t",
+                  "f"
+                ]
+              }
+            },
+            "runs-on": "windows-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Set `CARGO_HOME`",
+                "if": "matrix.set_cargo_home == 't'",
+                "shell": "bash",
+                "run": "CARGO_HOME=\"$(mktemp -d 2>/dev/null || mktemp -d -t 'cargo-home')\"\nmkdir -p \"${CARGO_HOME}/bin\"\necho \"CARGO_HOME=$CARGO_HOME\" >> \"$GITHUB_ENV\"\necho \"${CARGO_HOME}/bin\" >> $GITHUB_PATH\n"
+              },
+              {
+                "name": "Install `cargo-binstall` using scripts",
+                "run": "./install-from-binstall-release.ps1",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Verify `cargo-binstall` installation",
+                "run": "cargo binstall -vV"
+              }
+            ]
+          },
+          "windows-bash": {
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "set_cargo_home": [
+                  "t",
+                  "f"
+                ]
+              }
+            },
+            "runs-on": "windows-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Set `CARGO_HOME`",
+                "if": "matrix.set_cargo_home == 't'",
+                "shell": "bash",
+                "run": "CARGO_HOME=\"$(mktemp -d 2>/dev/null || mktemp -d -t 'cargo-home')\"\nmkdir -p \"${CARGO_HOME}/bin\"\necho \"CARGO_HOME=$CARGO_HOME\" >> \"$GITHUB_ENV\"\necho \"${CARGO_HOME}/bin\" >> $GITHUB_PATH\n"
+              },
+              {
+                "name": "Install `cargo-binstall` using scripts",
+                "shell": "bash",
+                "run": "./install-from-binstall-release.sh",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Verify `cargo-binstall` installation",
+                "shell": "bash",
+                "run": "cargo binstall -vV"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-01-31T14-26-57Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-4810caca-08ca-5748-a308-4e5e7b893064",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/install-script__2024-01-31T14-26-57Z__9cf7b15df82a1671cfa301578fcd00fd6e6fb31c.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 29,
+                  "startColumn": 5,
+                  "endLine": 58,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "26c7833ab23a444c:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-c06a285f-d021-56de-9a7b-5d84e5f016d6",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/install-script__2024-01-31T14-26-57Z__9cf7b15df82a1671cfa301578fcd00fd6e6fb31c.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 59,
+                  "startColumn": 5,
+                  "endLine": 86,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "a6e79701e26a8789:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-cd66e73c-d60c-53a8-b1ad-d33e6ecf20d0",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/install-script__2024-01-31T14-26-57Z__9cf7b15df82a1671cfa301578fcd00fd6e6fb31c.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 87,
+                  "startColumn": 5,
+                  "endLine": 114,
+                  "endColumn": 31
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "a6e79701e26a8789:2"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "install-script__2024-01-31T14-26-57Z__9cf7b15df82a1671cfa301578fcd00fd6e6fb31c.yml",
+          "workflow_name": "Test install-script",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": {
+            "group": "${{ github.workflow }}-${{ github.ref || github.event.pull_request.number || github.sha }}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 114,
+          "num_jobs": 3,
+          "steps_per_job": {
+            "unix": 4,
+            "windows": 4,
+            "windows-bash": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 3,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 3,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "unix": 4,
+              "windows": 4,
+              "windows-bash": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 2,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4"
+            ],
+            "num_run_commands": 9,
+            "steps_with_conditionals": 3,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Test install-script",
+        "true": {
+          "merge_group": null,
+          "pull_request": {
+            "types": [
+              "opened",
+              "reopened",
+              "synchronize"
+            ],
+            "paths": [
+              "install-from-binstall-release.ps1",
+              "install-from-binstall-release.sh"
+            ]
+          },
+          "push": {
+            "branches": [
+              "main"
+            ],
+            "paths": [
+              "install-from-binstall-release.ps1",
+              "install-from-binstall-release.sh"
+            ]
+          }
+        },
+        "concurrency": {
+          "group": "${{ github.workflow }}-${{ github.ref || github.event.pull_request.number || github.sha }}",
+          "cancel-in-progress": true
+        },
+        "env": {
+          "CARGO_TERM_COLOR": "always"
+        },
+        "jobs": {
+          "unix": {
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "os": [
+                  "macos-14",
+                  "ubuntu-latest"
+                ],
+                "set_cargo_home": [
+                  "t",
+                  "f"
+                ]
+              }
+            },
+            "runs-on": "${{ matrix.os }}",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Set `CARGO_HOME`",
+                "if": "matrix.set_cargo_home == 't'",
+                "run": "CARGO_HOME=\"$(mktemp -d 2>/dev/null || mktemp -d -t 'cargo-home')\"\nmkdir -p \"${CARGO_HOME}/bin\"\necho \"CARGO_HOME=$CARGO_HOME\" >> \"$GITHUB_ENV\"\necho \"${CARGO_HOME}/bin\" >> $GITHUB_PATH\n"
+              },
+              {
+                "name": "Install `cargo-binstall` using scripts",
+                "run": "./install-from-binstall-release.sh",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Verify `cargo-binstall` installation",
+                "run": "which cargo-binstall\ncargo binstall -vV\n"
+              }
+            ]
+          },
+          "windows": {
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "set_cargo_home": [
+                  "t",
+                  "f"
+                ]
+              }
+            },
+            "runs-on": "windows-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Set `CARGO_HOME`",
+                "if": "matrix.set_cargo_home == 't'",
+                "shell": "bash",
+                "run": "CARGO_HOME=\"$(mktemp -d 2>/dev/null || mktemp -d -t 'cargo-home')\"\nmkdir -p \"${CARGO_HOME}/bin\"\necho \"CARGO_HOME=$CARGO_HOME\" >> \"$GITHUB_ENV\"\necho \"${CARGO_HOME}/bin\" >> $GITHUB_PATH\n"
+              },
+              {
+                "name": "Install `cargo-binstall` using scripts",
+                "run": "./install-from-binstall-release.ps1",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Verify `cargo-binstall` installation",
+                "run": "cargo binstall -vV"
+              }
+            ]
+          },
+          "windows-bash": {
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "set_cargo_home": [
+                  "t",
+                  "f"
+                ]
+              }
+            },
+            "runs-on": "windows-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Set `CARGO_HOME`",
+                "if": "matrix.set_cargo_home == 't'",
+                "shell": "bash",
+                "run": "CARGO_HOME=\"$(mktemp -d 2>/dev/null || mktemp -d -t 'cargo-home')\"\nmkdir -p \"${CARGO_HOME}/bin\"\necho \"CARGO_HOME=$CARGO_HOME\" >> \"$GITHUB_ENV\"\necho \"${CARGO_HOME}/bin\" >> $GITHUB_PATH\n"
+              },
+              {
+                "name": "Install `cargo-binstall` using scripts",
+                "shell": "bash",
+                "run": "./install-from-binstall-release.sh",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Verify `cargo-binstall` installation",
+                "shell": "bash",
+                "run": "cargo binstall -vV"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-07-31T12-49-13Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-dbdfcbfe-a581-51de-82f9-c92cb95b3db2",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/install-script__2024-07-31T12-49-13Z__9f3bfa9ca338192fac338906ee397fe5a230ce90.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 29,
+                  "startColumn": 5,
+                  "endLine": 57,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "b76c6534b3141c00:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-61f47ca2-8115-5b43-a89c-808e3bb12b61",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/install-script__2024-07-31T12-49-13Z__9f3bfa9ca338192fac338906ee397fe5a230ce90.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 58,
+                  "startColumn": 5,
+                  "endLine": 84,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "a6e79701e26a8789:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-cbbd4463-a99c-5b44-b130-220ffb488b58",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/install-script__2024-07-31T12-49-13Z__9f3bfa9ca338192fac338906ee397fe5a230ce90.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 85,
+                  "startColumn": 5,
+                  "endLine": 111,
+                  "endColumn": 33
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "a6e79701e26a8789:2"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "install-script__2024-07-31T12-49-13Z__9f3bfa9ca338192fac338906ee397fe5a230ce90.yml",
+          "workflow_name": "Test install-script",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": {
+            "group": "${{ github.workflow }}-${{ github.ref || github.event.pull_request.number || github.sha }}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 111,
+          "num_jobs": 3,
+          "steps_per_job": {
+            "unix": 4,
+            "windows": 4,
+            "windows-bash": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 3,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 3,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "unix": 4,
+              "windows": 4,
+              "windows-bash": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 2,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4"
+            ],
+            "num_run_commands": 9,
+            "steps_with_conditionals": 3,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Test install-script",
+        "true": {
+          "merge_group": null,
+          "pull_request": {
+            "types": [
+              "opened",
+              "reopened",
+              "synchronize"
+            ],
+            "paths": [
+              "install-from-binstall-release.ps1",
+              "install-from-binstall-release.sh"
+            ]
+          },
+          "push": {
+            "branches": [
+              "main"
+            ],
+            "paths": [
+              "install-from-binstall-release.ps1",
+              "install-from-binstall-release.sh"
+            ]
+          }
+        },
+        "concurrency": {
+          "group": "${{ github.workflow }}-${{ github.ref || github.event.pull_request.number || github.sha }}",
+          "cancel-in-progress": true
+        },
+        "env": {
+          "CARGO_TERM_COLOR": "always"
+        },
+        "jobs": {
+          "unix": {
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "os": [
+                  "macos-latest",
+                  "ubuntu-latest"
+                ],
+                "set_cargo_home": [
+                  "t",
+                  "f"
+                ]
+              }
+            },
+            "runs-on": "${{ matrix.os }}",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Set `CARGO_HOME`",
+                "if": "matrix.set_cargo_home == 't'",
+                "run": "CARGO_HOME=\"$(mktemp -d 2>/dev/null || mktemp -d -t 'cargo-home')\"\nmkdir -p \"${CARGO_HOME}/bin\"\necho \"CARGO_HOME=$CARGO_HOME\" >> \"$GITHUB_ENV\"\n"
+              },
+              {
+                "name": "Install `cargo-binstall` using scripts",
+                "run": "./install-from-binstall-release.sh",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Verify `cargo-binstall` installation",
+                "run": "which cargo-binstall\ncargo binstall -vV\n"
+              }
+            ]
+          },
+          "windows": {
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "set_cargo_home": [
+                  "t",
+                  "f"
+                ]
+              }
+            },
+            "runs-on": "windows-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Set `CARGO_HOME`",
+                "if": "matrix.set_cargo_home == 't'",
+                "shell": "bash",
+                "run": "CARGO_HOME=\"$(mktemp -d 2>/dev/null || mktemp -d -t 'cargo-home')\"\nmkdir -p \"${CARGO_HOME}/bin\"\necho \"CARGO_HOME=$CARGO_HOME\" >> \"$GITHUB_ENV\"\n"
+              },
+              {
+                "name": "Install `cargo-binstall` using scripts",
+                "run": "./install-from-binstall-release.ps1",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Verify `cargo-binstall` installation",
+                "run": "cargo binstall -vV"
+              }
+            ]
+          },
+          "windows-bash": {
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "set_cargo_home": [
+                  "t",
+                  "f"
+                ]
+              }
+            },
+            "runs-on": "windows-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Set `CARGO_HOME`",
+                "if": "matrix.set_cargo_home == 't'",
+                "shell": "bash",
+                "run": "CARGO_HOME=\"$(mktemp -d 2>/dev/null || mktemp -d -t 'cargo-home')\"\nmkdir -p \"${CARGO_HOME}/bin\"\necho \"CARGO_HOME=$CARGO_HOME\" >> \"$GITHUB_ENV\"\n"
+              },
+              {
+                "name": "Install `cargo-binstall` using scripts",
+                "shell": "bash",
+                "run": "./install-from-binstall-release.sh",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Verify `cargo-binstall` installation",
+                "shell": "bash",
+                "run": "cargo binstall -vV"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-06-13T13-43-39Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-ced06df1-7a39-50e2-a25a-c4d2cad6cb32",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/install-script__2024-06-13T13-43-39Z__05f488322ecda3dddaf92cbb546ca8f31eb30172.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 29,
+                  "startColumn": 5,
+                  "endLine": 57,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "26c7833ab23a444c:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-cc1978f2-e3bd-5154-8a19-83a6b67455ef",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/install-script__2024-06-13T13-43-39Z__05f488322ecda3dddaf92cbb546ca8f31eb30172.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 58,
+                  "startColumn": 5,
+                  "endLine": 84,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "a6e79701e26a8789:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-855fed85-b76a-5fd4-9e5e-e2420979645a",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/install-script__2024-06-13T13-43-39Z__05f488322ecda3dddaf92cbb546ca8f31eb30172.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 85,
+                  "startColumn": 5,
+                  "endLine": 111,
+                  "endColumn": 31
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "a6e79701e26a8789:2"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "install-script__2024-06-13T13-43-39Z__05f488322ecda3dddaf92cbb546ca8f31eb30172.yml",
+          "workflow_name": "Test install-script",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": {
+            "group": "${{ github.workflow }}-${{ github.ref || github.event.pull_request.number || github.sha }}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 111,
+          "num_jobs": 3,
+          "steps_per_job": {
+            "unix": 4,
+            "windows": 4,
+            "windows-bash": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 3,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 3,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "unix": 4,
+              "windows": 4,
+              "windows-bash": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 2,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4"
+            ],
+            "num_run_commands": 9,
+            "steps_with_conditionals": 3,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Test install-script",
+        "true": {
+          "merge_group": null,
+          "pull_request": {
+            "types": [
+              "opened",
+              "reopened",
+              "synchronize"
+            ],
+            "paths": [
+              "install-from-binstall-release.ps1",
+              "install-from-binstall-release.sh"
+            ]
+          },
+          "push": {
+            "branches": [
+              "main"
+            ],
+            "paths": [
+              "install-from-binstall-release.ps1",
+              "install-from-binstall-release.sh"
+            ]
+          }
+        },
+        "concurrency": {
+          "group": "${{ github.workflow }}-${{ github.ref || github.event.pull_request.number || github.sha }}",
+          "cancel-in-progress": true
+        },
+        "env": {
+          "CARGO_TERM_COLOR": "always"
+        },
+        "jobs": {
+          "unix": {
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "os": [
+                  "macos-14",
+                  "ubuntu-latest"
+                ],
+                "set_cargo_home": [
+                  "t",
+                  "f"
+                ]
+              }
+            },
+            "runs-on": "${{ matrix.os }}",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Set `CARGO_HOME`",
+                "if": "matrix.set_cargo_home == 't'",
+                "run": "CARGO_HOME=\"$(mktemp -d 2>/dev/null || mktemp -d -t 'cargo-home')\"\nmkdir -p \"${CARGO_HOME}/bin\"\necho \"CARGO_HOME=$CARGO_HOME\" >> \"$GITHUB_ENV\"\n"
+              },
+              {
+                "name": "Install `cargo-binstall` using scripts",
+                "run": "./install-from-binstall-release.sh",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Verify `cargo-binstall` installation",
+                "run": "which cargo-binstall\ncargo binstall -vV\n"
+              }
+            ]
+          },
+          "windows": {
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "set_cargo_home": [
+                  "t",
+                  "f"
+                ]
+              }
+            },
+            "runs-on": "windows-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Set `CARGO_HOME`",
+                "if": "matrix.set_cargo_home == 't'",
+                "shell": "bash",
+                "run": "CARGO_HOME=\"$(mktemp -d 2>/dev/null || mktemp -d -t 'cargo-home')\"\nmkdir -p \"${CARGO_HOME}/bin\"\necho \"CARGO_HOME=$CARGO_HOME\" >> \"$GITHUB_ENV\"\n"
+              },
+              {
+                "name": "Install `cargo-binstall` using scripts",
+                "run": "./install-from-binstall-release.ps1",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Verify `cargo-binstall` installation",
+                "run": "cargo binstall -vV"
+              }
+            ]
+          },
+          "windows-bash": {
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "set_cargo_home": [
+                  "t",
+                  "f"
+                ]
+              }
+            },
+            "runs-on": "windows-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Set `CARGO_HOME`",
+                "if": "matrix.set_cargo_home == 't'",
+                "shell": "bash",
+                "run": "CARGO_HOME=\"$(mktemp -d 2>/dev/null || mktemp -d -t 'cargo-home')\"\nmkdir -p \"${CARGO_HOME}/bin\"\necho \"CARGO_HOME=$CARGO_HOME\" >> \"$GITHUB_ENV\"\n"
+              },
+              {
+                "name": "Install `cargo-binstall` using scripts",
+                "shell": "bash",
+                "run": "./install-from-binstall-release.sh",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Verify `cargo-binstall` installation",
+                "shell": "bash",
+                "run": "cargo binstall -vV"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-08-03T04-40-18Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-c81f20c6-f3fc-550c-b3f8-aef1a21f4134",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/install-script__2024-08-03T04-40-18Z__5d57d4506e1c92051317cbf40a98c88f50519fa2.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 29,
+                  "startColumn": 5,
+                  "endLine": 57,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "b76c6534b3141c00:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-b338fa17-9611-59e1-b5ef-b562091184ca",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/install-script__2024-08-03T04-40-18Z__5d57d4506e1c92051317cbf40a98c88f50519fa2.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 58,
+                  "startColumn": 5,
+                  "endLine": 84,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "a6e79701e26a8789:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-e301ad97-e082-577b-844b-61d2438e39dc",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/install-script__2024-08-03T04-40-18Z__5d57d4506e1c92051317cbf40a98c88f50519fa2.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 85,
+                  "startColumn": 5,
+                  "endLine": 111,
+                  "endColumn": 33
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "a6e79701e26a8789:2"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "install-script__2024-08-03T04-40-18Z__5d57d4506e1c92051317cbf40a98c88f50519fa2.yml",
+          "workflow_name": "Test install-script",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": {
+            "group": "${{ github.workflow }}-${{ github.ref || github.event.pull_request.number || github.sha }}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 111,
+          "num_jobs": 3,
+          "steps_per_job": {
+            "unix": 4,
+            "windows": 4,
+            "windows-bash": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 3,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 3,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "unix": 4,
+              "windows": 4,
+              "windows-bash": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 2,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4"
+            ],
+            "num_run_commands": 9,
+            "steps_with_conditionals": 3,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Test install-script",
+        "true": {
+          "merge_group": null,
+          "pull_request": {
+            "types": [
+              "opened",
+              "reopened",
+              "synchronize"
+            ],
+            "paths": [
+              "install-from-binstall-release.ps1",
+              "install-from-binstall-release.sh"
+            ]
+          },
+          "push": {
+            "branches": [
+              "main"
+            ],
+            "paths": [
+              "install-from-binstall-release.ps1",
+              "install-from-binstall-release.sh"
+            ]
+          }
+        },
+        "concurrency": {
+          "group": "${{ github.workflow }}-${{ github.ref || github.event.pull_request.number || github.sha }}",
+          "cancel-in-progress": true
+        },
+        "env": {
+          "CARGO_TERM_COLOR": "always"
+        },
+        "jobs": {
+          "unix": {
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "os": [
+                  "macos-latest",
+                  "ubuntu-latest"
+                ],
+                "set_cargo_home": [
+                  "t",
+                  "f"
+                ]
+              }
+            },
+            "runs-on": "${{ matrix.os }}",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Set `CARGO_HOME`",
+                "if": "matrix.set_cargo_home == 't'",
+                "run": "CARGO_HOME=\"$(mktemp -d 2>/dev/null || mktemp -d -t 'cargo-home')\"\nmkdir -p \"${CARGO_HOME}/bin\"\necho \"CARGO_HOME=$CARGO_HOME\" >> \"$GITHUB_ENV\"\n"
+              },
+              {
+                "name": "Install `cargo-binstall` using scripts",
+                "run": "./install-from-binstall-release.sh",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.CI_RELEASE_TEST_GITHUB_TOKEN || secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Verify `cargo-binstall` installation",
+                "run": "which cargo-binstall\ncargo binstall -vV\n"
+              }
+            ]
+          },
+          "windows": {
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "set_cargo_home": [
+                  "t",
+                  "f"
+                ]
+              }
+            },
+            "runs-on": "windows-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Set `CARGO_HOME`",
+                "if": "matrix.set_cargo_home == 't'",
+                "shell": "bash",
+                "run": "CARGO_HOME=\"$(mktemp -d 2>/dev/null || mktemp -d -t 'cargo-home')\"\nmkdir -p \"${CARGO_HOME}/bin\"\necho \"CARGO_HOME=$CARGO_HOME\" >> \"$GITHUB_ENV\"\n"
+              },
+              {
+                "name": "Install `cargo-binstall` using scripts",
+                "run": "./install-from-binstall-release.ps1",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.CI_RELEASE_TEST_GITHUB_TOKEN || secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Verify `cargo-binstall` installation",
+                "run": "cargo binstall -vV"
+              }
+            ]
+          },
+          "windows-bash": {
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "set_cargo_home": [
+                  "t",
+                  "f"
+                ]
+              }
+            },
+            "runs-on": "windows-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Set `CARGO_HOME`",
+                "if": "matrix.set_cargo_home == 't'",
+                "shell": "bash",
+                "run": "CARGO_HOME=\"$(mktemp -d 2>/dev/null || mktemp -d -t 'cargo-home')\"\nmkdir -p \"${CARGO_HOME}/bin\"\necho \"CARGO_HOME=$CARGO_HOME\" >> \"$GITHUB_ENV\"\n"
+              },
+              {
+                "name": "Install `cargo-binstall` using scripts",
+                "shell": "bash",
+                "run": "./install-from-binstall-release.sh",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.CI_RELEASE_TEST_GITHUB_TOKEN || secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Verify `cargo-binstall` installation",
+                "shell": "bash",
+                "run": "cargo binstall -vV"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-11-20T11-12-13Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-145a859b-a7e5-5082-a037-c2b610347f0d",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/install-script__2024-11-20T11-12-13Z__dabb630e7f4f24d0e0654b1d0f4908557c8d6716.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 31,
+                  "startColumn": 5,
+                  "endLine": 72,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "fb219f2085220ea:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-234a7753-5a7c-5452-abe0-f4524518216c",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/install-script__2024-11-20T11-12-13Z__dabb630e7f4f24d0e0654b1d0f4908557c8d6716.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 73,
+                  "startColumn": 5,
+                  "endLine": 113,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "b2c5abb46c72e745:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-8107c26f-68da-519f-b828-92bdb52a43ea",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/install-script__2024-11-20T11-12-13Z__dabb630e7f4f24d0e0654b1d0f4908557c8d6716.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 114,
+                  "startColumn": 5,
+                  "endLine": 154,
+                  "endColumn": 33
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "b2c5abb46c72e745:2"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "install-script__2024-11-20T11-12-13Z__dabb630e7f4f24d0e0654b1d0f4908557c8d6716.yml",
+          "workflow_name": "Test install-script",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": {
+            "group": "${{ github.workflow }}-${{ github.ref || github.event.pull_request.number || github.sha }}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 154,
+          "num_jobs": 3,
+          "steps_per_job": {
+            "unix": 5,
+            "windows": 5,
+            "windows-bash": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 3,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 3,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "unix": 5,
+              "windows": 5,
+              "windows-bash": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 2,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4"
+            ],
+            "num_run_commands": 12,
+            "steps_with_conditionals": 6,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Test install-script",
+        "true": {
+          "merge_group": null,
+          "pull_request": {
+            "types": [
+              "opened",
+              "reopened",
+              "synchronize"
+            ],
+            "paths": [
+              "install-from-binstall-release.ps1",
+              "install-from-binstall-release.sh",
+              ".github/workflows/install-script.yml"
+            ]
+          },
+          "push": {
+            "branches": [
+              "main"
+            ],
+            "paths": [
+              "install-from-binstall-release.ps1",
+              "install-from-binstall-release.sh",
+              ".github/workflows/install-script.yml"
+            ]
+          }
+        },
+        "concurrency": {
+          "group": "${{ github.workflow }}-${{ github.ref || github.event.pull_request.number || github.sha }}",
+          "cancel-in-progress": true
+        },
+        "env": {
+          "CARGO_TERM_COLOR": "always"
+        },
+        "jobs": {
+          "unix": {
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "os": [
+                  "macos-latest",
+                  "ubuntu-latest"
+                ],
+                "set_cargo_home": [
+                  "t",
+                  "f"
+                ],
+                "set_binstall_version": [
+                  false,
+                  "with-v",
+                  "without-v"
+                ]
+              }
+            },
+            "runs-on": "${{ matrix.os }}",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Set `CARGO_HOME`",
+                "if": "matrix.set_cargo_home == 't'",
+                "run": "CARGO_HOME=\"$(mktemp -d 2>/dev/null || mktemp -d -t 'cargo-home')\"\nmkdir -p \"${CARGO_HOME}/bin\"\necho \"CARGO_HOME=$CARGO_HOME\" >> \"$GITHUB_ENV\"\n"
+              },
+              {
+                "name": "Set `BINSTALL_VERSION`",
+                "if": "matrix.set_binstall_version != 'no'",
+                "env": {
+                  "STRIP_V": "${{ matrix.set_binstall_version }}",
+                  "GH_TOKEN": "${{ github.token }}"
+                },
+                "run": "# fetch most recent release tag.\nBINSTALL_VERSION=\"$(gh release list --json name --jq '[.[] | select(.name | startswith(\"v\")) | .name] | first')\"\nif [[ $STRIP_V == 'without-v' ]]; then BINSTALL_VERSION=\"${BINSTALL_VERSION#v*}\"; fi\necho \"Setting BINSTALL_VERSION=$BINSTALL_VERSION\"\necho \"BINSTALL_VERSION=$BINSTALL_VERSION\" >> \"$GITHUB_ENV\"\n"
+              },
+              {
+                "name": "Install `cargo-binstall` using scripts",
+                "run": "./install-from-binstall-release.sh",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.CI_RELEASE_TEST_GITHUB_TOKEN || secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Verify `cargo-binstall` installation",
+                "run": "which cargo-binstall\ncargo binstall -vV\n"
+              }
+            ]
+          },
+          "windows": {
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "set_cargo_home": [
+                  "t",
+                  "f"
+                ],
+                "set_binstall_version": [
+                  false,
+                  "with-v",
+                  "without-v"
+                ]
+              }
+            },
+            "runs-on": "windows-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Set `CARGO_HOME`",
+                "if": "matrix.set_cargo_home == 't'",
+                "shell": "bash",
+                "run": "CARGO_HOME=\"$(mktemp -d 2>/dev/null || mktemp -d -t 'cargo-home')\"\nmkdir -p \"${CARGO_HOME}/bin\"\necho \"CARGO_HOME=$CARGO_HOME\" >> \"$GITHUB_ENV\"\n"
+              },
+              {
+                "name": "Set `BINSTALL_VERSION`",
+                "if": "matrix.set_binstall_version != 'no'",
+                "shell": "bash",
+                "env": {
+                  "GH_TOKEN": "${{ github.token }}",
+                  "STRIP_V": "${{ matrix.set_binstall_version }}"
+                },
+                "run": "# fetch most recent release name.\nBINSTALL_VERSION=\"$(gh release list --json name --jq '[.[] | select(.name | startswith(\"v\")) | .name] | first')\"\nif [[ $STRIP_V == 'without-v' ]]; then BINSTALL_VERSION=\"${BINSTALL_VERSION#v*}\"; fi\necho \"Setting BINSTALL_VERSION=$BINSTALL_VERSION\"\necho \"BINSTALL_VERSION=$BINSTALL_VERSION\" >> \"$GITHUB_ENV\"\n"
+              },
+              {
+                "name": "Install `cargo-binstall` using scripts",
+                "run": "./install-from-binstall-release.ps1",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.CI_RELEASE_TEST_GITHUB_TOKEN || secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Verify `cargo-binstall` installation",
+                "run": "cargo binstall -vV"
+              }
+            ]
+          },
+          "windows-bash": {
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "set_cargo_home": [
+                  "t",
+                  "f"
+                ],
+                "set_binstall_version": [
+                  false,
+                  "with-v",
+                  "without-v"
+                ]
+              }
+            },
+            "runs-on": "windows-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Set `CARGO_HOME`",
+                "if": "matrix.set_cargo_home == 't'",
+                "shell": "bash",
+                "run": "CARGO_HOME=\"$(mktemp -d 2>/dev/null || mktemp -d -t 'cargo-home')\"\nmkdir -p \"${CARGO_HOME}/bin\"\necho \"CARGO_HOME=$CARGO_HOME\" >> \"$GITHUB_ENV\"\n"
+              },
+              {
+                "name": "Set `BINSTALL_VERSION`",
+                "if": "matrix.set_binstall_version != 'no'",
+                "shell": "bash",
+                "env": {
+                  "GH_TOKEN": "${{ github.token }}",
+                  "STRIP_V": "${{ matrix.set_binstall_version }}"
+                },
+                "run": "# fetch most recent release name.\nBINSTALL_VERSION=\"$(gh release list --json name --jq '[.[] | select(.name | startswith(\"v\")) | .name] | first')\"\nif [[ $STRIP_V == 'without-v' ]]; then BINSTALL_VERSION=\"${BINSTALL_VERSION#v*}\"; fi\necho \"Setting BINSTALL_VERSION=$BINSTALL_VERSION\"\necho \"BINSTALL_VERSION=$BINSTALL_VERSION\" >> \"$GITHUB_ENV\"\n"
+              },
+              {
+                "name": "Install `cargo-binstall` using scripts",
+                "shell": "bash",
+                "run": "./install-from-binstall-release.sh",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.CI_RELEASE_TEST_GITHUB_TOKEN || secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Verify `cargo-binstall` installation",
+                "shell": "bash",
+                "run": "cargo binstall -vV"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-11-20T08-08-08Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-3a805983-df67-5104-95d5-5cde21435ff5",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/install-script__2024-11-20T08-08-08Z__266e6279281efec8e685d7011e488a87922dc19c.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 29,
+                  "startColumn": 5,
+                  "endLine": 70,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "fb219f2085220ea:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-6f5f8ea8-e9c0-5c99-8a30-b979eed03b46",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/install-script__2024-11-20T08-08-08Z__266e6279281efec8e685d7011e488a87922dc19c.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 71,
+                  "startColumn": 5,
+                  "endLine": 111,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "b2c5abb46c72e745:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-ac2fa492-a7b4-5bff-8e56-72f776f75c27",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/install-script__2024-11-20T08-08-08Z__266e6279281efec8e685d7011e488a87922dc19c.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 112,
+                  "startColumn": 5,
+                  "endLine": 152,
+                  "endColumn": 33
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "b2c5abb46c72e745:2"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "install-script__2024-11-20T08-08-08Z__266e6279281efec8e685d7011e488a87922dc19c.yml",
+          "workflow_name": "Test install-script",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": {
+            "group": "${{ github.workflow }}-${{ github.ref || github.event.pull_request.number || github.sha }}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 152,
+          "num_jobs": 3,
+          "steps_per_job": {
+            "unix": 5,
+            "windows": 5,
+            "windows-bash": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 3,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 3,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "unix": 5,
+              "windows": 5,
+              "windows-bash": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 2,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4"
+            ],
+            "num_run_commands": 12,
+            "steps_with_conditionals": 6,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Test install-script",
+        "true": {
+          "merge_group": null,
+          "pull_request": {
+            "types": [
+              "opened",
+              "reopened",
+              "synchronize"
+            ],
+            "paths": [
+              "install-from-binstall-release.ps1",
+              "install-from-binstall-release.sh"
+            ]
+          },
+          "push": {
+            "branches": [
+              "main"
+            ],
+            "paths": [
+              "install-from-binstall-release.ps1",
+              "install-from-binstall-release.sh"
+            ]
+          }
+        },
+        "concurrency": {
+          "group": "${{ github.workflow }}-${{ github.ref || github.event.pull_request.number || github.sha }}",
+          "cancel-in-progress": true
+        },
+        "env": {
+          "CARGO_TERM_COLOR": "always"
+        },
+        "jobs": {
+          "unix": {
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "os": [
+                  "macos-latest",
+                  "ubuntu-latest"
+                ],
+                "set_cargo_home": [
+                  "t",
+                  "f"
+                ],
+                "set_binstall_version": [
+                  false,
+                  "with-v",
+                  "without-v"
+                ]
+              }
+            },
+            "runs-on": "${{ matrix.os }}",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Set `CARGO_HOME`",
+                "if": "matrix.set_cargo_home == 't'",
+                "run": "CARGO_HOME=\"$(mktemp -d 2>/dev/null || mktemp -d -t 'cargo-home')\"\nmkdir -p \"${CARGO_HOME}/bin\"\necho \"CARGO_HOME=$CARGO_HOME\" >> \"$GITHUB_ENV\"\n"
+              },
+              {
+                "name": "Set `BINSTALL_VERSION`",
+                "if": "matrix.set_binstall_version != 'no'",
+                "env": {
+                  "STRIP_V": "${{ matrix.set_cargo_home }}",
+                  "GH_TOKEN": "${{ github.token }}"
+                },
+                "run": "# fetch most recent release tag.\nBINSTALL_VERSION=\"$(gh release list --json name --jq '[.[] | select(.name | startswith(\"v\")) | .name] | first')\"\nif [[ $STRIP_V == 'without-v' ]]; then BINSTALL_VERSION=\"${BINSTALL_VERSION#v*}\"; fi\necho \"Setting BINSTALL_VERSION=$BINSTALL_VERSION\"\necho \"BINSTALL_VERSION=$BINSTALL_VERSION\" >> \"$GITHUB_ENV\"\n"
+              },
+              {
+                "name": "Install `cargo-binstall` using scripts",
+                "run": "./install-from-binstall-release.sh",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.CI_RELEASE_TEST_GITHUB_TOKEN || secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Verify `cargo-binstall` installation",
+                "run": "which cargo-binstall\ncargo binstall -vV\n"
+              }
+            ]
+          },
+          "windows": {
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "set_cargo_home": [
+                  "t",
+                  "f"
+                ],
+                "set_binstall_version": [
+                  false,
+                  "with-v",
+                  "without-v"
+                ]
+              }
+            },
+            "runs-on": "windows-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Set `CARGO_HOME`",
+                "if": "matrix.set_cargo_home == 't'",
+                "shell": "bash",
+                "run": "CARGO_HOME=\"$(mktemp -d 2>/dev/null || mktemp -d -t 'cargo-home')\"\nmkdir -p \"${CARGO_HOME}/bin\"\necho \"CARGO_HOME=$CARGO_HOME\" >> \"$GITHUB_ENV\"\n"
+              },
+              {
+                "name": "Set `BINSTALL_VERSION`",
+                "if": "matrix.set_binstall_version != 'no'",
+                "shell": "bash",
+                "env": {
+                  "GH_TOKEN": "${{ github.token }}",
+                  "STRIP_V": "${{ matrix.set_cargo_home }}"
+                },
+                "run": "# fetch most recent release name.\nBINSTALL_VERSION=\"$(gh release list --json name --jq '[.[] | select(.name | startswith(\"v\")) | .name] | first')\"\nif [[ $STRIP_V == 'without-v' ]]; then BINSTALL_VERSION=\"${BINSTALL_VERSION#v*}\"; fi\necho \"Setting BINSTALL_VERSION=$BINSTALL_VERSION\"\necho \"BINSTALL_VERSION=$BINSTALL_VERSION\" >> \"$GITHUB_ENV\"\n"
+              },
+              {
+                "name": "Install `cargo-binstall` using scripts",
+                "run": "./install-from-binstall-release.ps1",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.CI_RELEASE_TEST_GITHUB_TOKEN || secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Verify `cargo-binstall` installation",
+                "run": "cargo binstall -vV"
+              }
+            ]
+          },
+          "windows-bash": {
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "set_cargo_home": [
+                  "t",
+                  "f"
+                ],
+                "set_binstall_version": [
+                  false,
+                  "with-v",
+                  "without-v"
+                ]
+              }
+            },
+            "runs-on": "windows-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Set `CARGO_HOME`",
+                "if": "matrix.set_cargo_home == 't'",
+                "shell": "bash",
+                "run": "CARGO_HOME=\"$(mktemp -d 2>/dev/null || mktemp -d -t 'cargo-home')\"\nmkdir -p \"${CARGO_HOME}/bin\"\necho \"CARGO_HOME=$CARGO_HOME\" >> \"$GITHUB_ENV\"\n"
+              },
+              {
+                "name": "Set `BINSTALL_VERSION`",
+                "if": "matrix.set_binstall_version != 'no'",
+                "shell": "bash",
+                "env": {
+                  "GH_TOKEN": "${{ github.token }}",
+                  "STRIP_V": "${{ matrix.set_cargo_home }}"
+                },
+                "run": "# fetch most recent release name.\nBINSTALL_VERSION=\"$(gh release list --json name --jq '[.[] | select(.name | startswith(\"v\")) | .name] | first')\"\nif [[ $STRIP_V == 'without-v' ]]; then BINSTALL_VERSION=\"${BINSTALL_VERSION#v*}\"; fi\necho \"Setting BINSTALL_VERSION=$BINSTALL_VERSION\"\necho \"BINSTALL_VERSION=$BINSTALL_VERSION\" >> \"$GITHUB_ENV\"\n"
+              },
+              {
+                "name": "Install `cargo-binstall` using scripts",
+                "shell": "bash",
+                "run": "./install-from-binstall-release.sh",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.CI_RELEASE_TEST_GITHUB_TOKEN || secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Verify `cargo-binstall` installation",
+                "shell": "bash",
+                "run": "cargo binstall -vV"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-08-12T10-20-16Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-90360c55-3b0b-5303-b825-21ff24fdbcd2",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/install-script__2025-08-12T10-20-16Z__d7c6cbb9117fafe02055796f96f1a7ae7046f32a.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 31,
+                  "startColumn": 5,
+                  "endLine": 72,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "fb219f2085220ea:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-2b918a53-e57e-513b-b7cc-1e00e33b806a",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/install-script__2025-08-12T10-20-16Z__d7c6cbb9117fafe02055796f96f1a7ae7046f32a.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 73,
+                  "startColumn": 5,
+                  "endLine": 113,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "b2c5abb46c72e745:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-4f89dc7a-06a0-5fea-a6f8-0733636f5973",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/install-script__2025-08-12T10-20-16Z__d7c6cbb9117fafe02055796f96f1a7ae7046f32a.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 114,
+                  "startColumn": 5,
+                  "endLine": 154,
+                  "endColumn": 33
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "b2c5abb46c72e745:2"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "install-script__2025-08-12T10-20-16Z__d7c6cbb9117fafe02055796f96f1a7ae7046f32a.yml",
+          "workflow_name": "Test install-script",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": {
+            "group": "${{ github.workflow }}-${{ github.ref || github.event.pull_request.number || github.sha }}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 154,
+          "num_jobs": 3,
+          "steps_per_job": {
+            "unix": 5,
+            "windows": 5,
+            "windows-bash": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 3,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 3,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "unix": 5,
+              "windows": 5,
+              "windows-bash": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 2,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v5"
+            ],
+            "num_run_commands": 12,
+            "steps_with_conditionals": 6,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Test install-script",
+        "true": {
+          "merge_group": null,
+          "pull_request": {
+            "types": [
+              "opened",
+              "reopened",
+              "synchronize"
+            ],
+            "paths": [
+              "install-from-binstall-release.ps1",
+              "install-from-binstall-release.sh",
+              ".github/workflows/install-script.yml"
+            ]
+          },
+          "push": {
+            "branches": [
+              "main"
+            ],
+            "paths": [
+              "install-from-binstall-release.ps1",
+              "install-from-binstall-release.sh",
+              ".github/workflows/install-script.yml"
+            ]
+          }
+        },
+        "concurrency": {
+          "group": "${{ github.workflow }}-${{ github.ref || github.event.pull_request.number || github.sha }}",
+          "cancel-in-progress": true
+        },
+        "env": {
+          "CARGO_TERM_COLOR": "always"
+        },
+        "jobs": {
+          "unix": {
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "os": [
+                  "macos-latest",
+                  "ubuntu-latest"
+                ],
+                "set_cargo_home": [
+                  "t",
+                  "f"
+                ],
+                "set_binstall_version": [
+                  false,
+                  "with-v",
+                  "without-v"
+                ]
+              }
+            },
+            "runs-on": "${{ matrix.os }}",
+            "steps": [
+              {
+                "uses": "actions/checkout@v5"
+              },
+              {
+                "name": "Set `CARGO_HOME`",
+                "if": "matrix.set_cargo_home == 't'",
+                "run": "CARGO_HOME=\"$(mktemp -d 2>/dev/null || mktemp -d -t 'cargo-home')\"\nmkdir -p \"${CARGO_HOME}/bin\"\necho \"CARGO_HOME=$CARGO_HOME\" >> \"$GITHUB_ENV\"\n"
+              },
+              {
+                "name": "Set `BINSTALL_VERSION`",
+                "if": "matrix.set_binstall_version != 'no'",
+                "env": {
+                  "STRIP_V": "${{ matrix.set_binstall_version }}",
+                  "GH_TOKEN": "${{ github.token }}"
+                },
+                "run": "# fetch most recent release tag.\nBINSTALL_VERSION=\"$(gh release list --json name --jq '[.[] | select(.name | startswith(\"v\")) | .name] | first')\"\nif [[ $STRIP_V == 'without-v' ]]; then BINSTALL_VERSION=\"${BINSTALL_VERSION#v*}\"; fi\necho \"Setting BINSTALL_VERSION=$BINSTALL_VERSION\"\necho \"BINSTALL_VERSION=$BINSTALL_VERSION\" >> \"$GITHUB_ENV\"\n"
+              },
+              {
+                "name": "Install `cargo-binstall` using scripts",
+                "run": "./install-from-binstall-release.sh",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.CI_RELEASE_TEST_GITHUB_TOKEN || secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Verify `cargo-binstall` installation",
+                "run": "which cargo-binstall\ncargo binstall -vV\n"
+              }
+            ]
+          },
+          "windows": {
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "set_cargo_home": [
+                  "t",
+                  "f"
+                ],
+                "set_binstall_version": [
+                  false,
+                  "with-v",
+                  "without-v"
+                ]
+              }
+            },
+            "runs-on": "windows-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v5"
+              },
+              {
+                "name": "Set `CARGO_HOME`",
+                "if": "matrix.set_cargo_home == 't'",
+                "shell": "bash",
+                "run": "CARGO_HOME=\"$(mktemp -d 2>/dev/null || mktemp -d -t 'cargo-home')\"\nmkdir -p \"${CARGO_HOME}/bin\"\necho \"CARGO_HOME=$CARGO_HOME\" >> \"$GITHUB_ENV\"\n"
+              },
+              {
+                "name": "Set `BINSTALL_VERSION`",
+                "if": "matrix.set_binstall_version != 'no'",
+                "shell": "bash",
+                "env": {
+                  "GH_TOKEN": "${{ github.token }}",
+                  "STRIP_V": "${{ matrix.set_binstall_version }}"
+                },
+                "run": "# fetch most recent release name.\nBINSTALL_VERSION=\"$(gh release list --json name --jq '[.[] | select(.name | startswith(\"v\")) | .name] | first')\"\nif [[ $STRIP_V == 'without-v' ]]; then BINSTALL_VERSION=\"${BINSTALL_VERSION#v*}\"; fi\necho \"Setting BINSTALL_VERSION=$BINSTALL_VERSION\"\necho \"BINSTALL_VERSION=$BINSTALL_VERSION\" >> \"$GITHUB_ENV\"\n"
+              },
+              {
+                "name": "Install `cargo-binstall` using scripts",
+                "run": "./install-from-binstall-release.ps1",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.CI_RELEASE_TEST_GITHUB_TOKEN || secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Verify `cargo-binstall` installation",
+                "run": "cargo binstall -vV"
+              }
+            ]
+          },
+          "windows-bash": {
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "set_cargo_home": [
+                  "t",
+                  "f"
+                ],
+                "set_binstall_version": [
+                  false,
+                  "with-v",
+                  "without-v"
+                ]
+              }
+            },
+            "runs-on": "windows-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v5"
+              },
+              {
+                "name": "Set `CARGO_HOME`",
+                "if": "matrix.set_cargo_home == 't'",
+                "shell": "bash",
+                "run": "CARGO_HOME=\"$(mktemp -d 2>/dev/null || mktemp -d -t 'cargo-home')\"\nmkdir -p \"${CARGO_HOME}/bin\"\necho \"CARGO_HOME=$CARGO_HOME\" >> \"$GITHUB_ENV\"\n"
+              },
+              {
+                "name": "Set `BINSTALL_VERSION`",
+                "if": "matrix.set_binstall_version != 'no'",
+                "shell": "bash",
+                "env": {
+                  "GH_TOKEN": "${{ github.token }}",
+                  "STRIP_V": "${{ matrix.set_binstall_version }}"
+                },
+                "run": "# fetch most recent release name.\nBINSTALL_VERSION=\"$(gh release list --json name --jq '[.[] | select(.name | startswith(\"v\")) | .name] | first')\"\nif [[ $STRIP_V == 'without-v' ]]; then BINSTALL_VERSION=\"${BINSTALL_VERSION#v*}\"; fi\necho \"Setting BINSTALL_VERSION=$BINSTALL_VERSION\"\necho \"BINSTALL_VERSION=$BINSTALL_VERSION\" >> \"$GITHUB_ENV\"\n"
+              },
+              {
+                "name": "Install `cargo-binstall` using scripts",
+                "shell": "bash",
+                "run": "./install-from-binstall-release.sh",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.CI_RELEASE_TEST_GITHUB_TOKEN || secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Verify `cargo-binstall` installation",
+                "shell": "bash",
+                "run": "cargo binstall -vV"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-08-24T07-04-51Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-44b9127b-0223-5db2-b160-1eb201f1648c",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/install-script__2025-08-24T07-04-51Z__13cebc457b4acd7977ef0b0e5036c1c7ae8f753d.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 31,
+                  "startColumn": 5,
+                  "endLine": 72,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "fb219f2085220ea:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-e5453a7c-70d0-5c4b-aef9-0fcfdfbf82f3",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/install-script__2025-08-24T07-04-51Z__13cebc457b4acd7977ef0b0e5036c1c7ae8f753d.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 73,
+                  "startColumn": 5,
+                  "endLine": 113,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "b2c5abb46c72e745:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-0e0e26d9-f0cc-5c1d-8a03-24706930bdf2",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/install-script__2025-08-24T07-04-51Z__13cebc457b4acd7977ef0b0e5036c1c7ae8f753d.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 114,
+                  "startColumn": 5,
+                  "endLine": 157,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "b2c5abb46c72e745:2"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-2a3646cb-e1ba-570f-887e-b3657e180ca1",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/install-script__2025-08-24T07-04-51Z__13cebc457b4acd7977ef0b0e5036c1c7ae8f753d.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 158,
+                  "startColumn": 5,
+                  "endLine": 169,
+                  "endColumn": 21
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "2a18e7cc908053fb:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "install-script__2025-08-24T07-04-51Z__13cebc457b4acd7977ef0b0e5036c1c7ae8f753d.yml",
+          "workflow_name": "Test install-script",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": {
+            "group": "${{ github.workflow }}-${{ github.ref || github.event.pull_request.number || github.sha }}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 169,
+          "num_jobs": 4,
+          "steps_per_job": {
+            "unix": 5,
+            "windows": 5,
+            "windows-bash": 5,
+            "tests-pass": 2
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 4,
+            "num_dependencies_between_jobs": 3,
+            "num_matrix_strategies": 3,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "unix": 5,
+              "windows": 5,
+              "windows-bash": 5,
+              "tests-pass": 2
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 3,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v5"
+            ],
+            "num_run_commands": 14,
+            "steps_with_conditionals": 7,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Test install-script",
+        "true": {
+          "merge_group": null,
+          "pull_request": {
+            "types": [
+              "opened",
+              "reopened",
+              "synchronize"
+            ],
+            "paths": [
+              "install-from-binstall-release.ps1",
+              "install-from-binstall-release.sh",
+              ".github/workflows/install-script.yml"
+            ]
+          },
+          "push": {
+            "branches": [
+              "main"
+            ],
+            "paths": [
+              "install-from-binstall-release.ps1",
+              "install-from-binstall-release.sh",
+              ".github/workflows/install-script.yml"
+            ]
+          }
+        },
+        "concurrency": {
+          "group": "${{ github.workflow }}-${{ github.ref || github.event.pull_request.number || github.sha }}",
+          "cancel-in-progress": true
+        },
+        "env": {
+          "CARGO_TERM_COLOR": "always"
+        },
+        "jobs": {
+          "unix": {
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "os": [
+                  "macos-latest",
+                  "ubuntu-latest"
+                ],
+                "set_cargo_home": [
+                  "t",
+                  "f"
+                ],
+                "set_binstall_version": [
+                  false,
+                  "with-v",
+                  "without-v"
+                ]
+              }
+            },
+            "runs-on": "${{ matrix.os }}",
+            "steps": [
+              {
+                "uses": "actions/checkout@v5"
+              },
+              {
+                "name": "Set `CARGO_HOME`",
+                "if": "matrix.set_cargo_home == 't'",
+                "run": "CARGO_HOME=\"$(mktemp -d 2>/dev/null || mktemp -d -t 'cargo-home')\"\nmkdir -p \"${CARGO_HOME}/bin\"\necho \"CARGO_HOME=$CARGO_HOME\" >> \"$GITHUB_ENV\"\n"
+              },
+              {
+                "name": "Set `BINSTALL_VERSION`",
+                "if": "matrix.set_binstall_version != 'no'",
+                "env": {
+                  "STRIP_V": "${{ matrix.set_binstall_version }}",
+                  "GH_TOKEN": "${{ github.token }}"
+                },
+                "run": "# fetch most recent release tag.\nBINSTALL_VERSION=\"$(gh release list --json name --jq '[.[] | select(.name | startswith(\"v\")) | .name] | first')\"\nif [[ $STRIP_V == 'without-v' ]]; then BINSTALL_VERSION=\"${BINSTALL_VERSION#v*}\"; fi\necho \"Setting BINSTALL_VERSION=$BINSTALL_VERSION\"\necho \"BINSTALL_VERSION=$BINSTALL_VERSION\" >> \"$GITHUB_ENV\"\n"
+              },
+              {
+                "name": "Install `cargo-binstall` using scripts",
+                "run": "./install-from-binstall-release.sh",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.CI_RELEASE_TEST_GITHUB_TOKEN || secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Verify `cargo-binstall` installation",
+                "run": "which cargo-binstall\ncargo binstall -vV\n"
+              }
+            ]
+          },
+          "windows": {
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "set_cargo_home": [
+                  "t",
+                  "f"
+                ],
+                "set_binstall_version": [
+                  false,
+                  "with-v",
+                  "without-v"
+                ]
+              }
+            },
+            "runs-on": "windows-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v5"
+              },
+              {
+                "name": "Set `CARGO_HOME`",
+                "if": "matrix.set_cargo_home == 't'",
+                "shell": "bash",
+                "run": "CARGO_HOME=\"$(mktemp -d 2>/dev/null || mktemp -d -t 'cargo-home')\"\nmkdir -p \"${CARGO_HOME}/bin\"\necho \"CARGO_HOME=$CARGO_HOME\" >> \"$GITHUB_ENV\"\n"
+              },
+              {
+                "name": "Set `BINSTALL_VERSION`",
+                "if": "matrix.set_binstall_version != 'no'",
+                "shell": "bash",
+                "env": {
+                  "GH_TOKEN": "${{ github.token }}",
+                  "STRIP_V": "${{ matrix.set_binstall_version }}"
+                },
+                "run": "# fetch most recent release name.\nBINSTALL_VERSION=\"$(gh release list --json name --jq '[.[] | select(.name | startswith(\"v\")) | .name] | first')\"\nif [[ $STRIP_V == 'without-v' ]]; then BINSTALL_VERSION=\"${BINSTALL_VERSION#v*}\"; fi\necho \"Setting BINSTALL_VERSION=$BINSTALL_VERSION\"\necho \"BINSTALL_VERSION=$BINSTALL_VERSION\" >> \"$GITHUB_ENV\"\n"
+              },
+              {
+                "name": "Install `cargo-binstall` using scripts",
+                "run": "./install-from-binstall-release.ps1",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.CI_RELEASE_TEST_GITHUB_TOKEN || secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Verify `cargo-binstall` installation",
+                "run": "cargo binstall -vV"
+              }
+            ]
+          },
+          "windows-bash": {
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "set_cargo_home": [
+                  "t",
+                  "f"
+                ],
+                "set_binstall_version": [
+                  false,
+                  "with-v",
+                  "without-v"
+                ]
+              }
+            },
+            "runs-on": "windows-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v5"
+              },
+              {
+                "name": "Set `CARGO_HOME`",
+                "if": "matrix.set_cargo_home == 't'",
+                "shell": "bash",
+                "run": "CARGO_HOME=\"$(mktemp -d 2>/dev/null || mktemp -d -t 'cargo-home')\"\nmkdir -p \"${CARGO_HOME}/bin\"\necho \"CARGO_HOME=$CARGO_HOME\" >> \"$GITHUB_ENV\"\n"
+              },
+              {
+                "name": "Set `BINSTALL_VERSION`",
+                "if": "matrix.set_binstall_version != 'no'",
+                "shell": "bash",
+                "env": {
+                  "GH_TOKEN": "${{ github.token }}",
+                  "STRIP_V": "${{ matrix.set_binstall_version }}"
+                },
+                "run": "# fetch most recent release name.\nBINSTALL_VERSION=\"$(gh release list --json name --jq '[.[] | select(.name | startswith(\"v\")) | .name] | first')\"\nif [[ $STRIP_V == 'without-v' ]]; then BINSTALL_VERSION=\"${BINSTALL_VERSION#v*}\"; fi\necho \"Setting BINSTALL_VERSION=$BINSTALL_VERSION\"\necho \"BINSTALL_VERSION=$BINSTALL_VERSION\" >> \"$GITHUB_ENV\"\n"
+              },
+              {
+                "name": "Install `cargo-binstall` using scripts",
+                "shell": "bash",
+                "run": "./install-from-binstall-release.sh",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.CI_RELEASE_TEST_GITHUB_TOKEN || secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Verify `cargo-binstall` installation",
+                "shell": "bash",
+                "run": "cargo binstall -vV"
+              }
+            ]
+          },
+          "tests-pass": {
+            "name": "Install scripts test pass",
+            "needs": [
+              "unix",
+              "windows",
+              "windows-bash"
+            ],
+            "if": "always()",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "if": "contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')",
+                "run": "exit 1"
+              },
+              {
+                "run": "exit 0"
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

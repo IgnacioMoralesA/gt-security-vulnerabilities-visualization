@@ -1,0 +1,5175 @@
+{
+  "repo_owner": "cargo-bins",
+  "repo_name": "cargo-binstall",
+  "workflow_name": "release-pr",
+  "history": {
+    "2022-07-23T12-39-54Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-a734ede2-afb6-5339-ab47-f7ce93934b68",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/release-pr__2022-07-23T12-39-54Z__3889d122a771423b0fd42a929f599c99e0473500.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 74,
+                  "endColumn": 53
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "5e9e37a8751f228d:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-pr__2022-07-23T12-39-54Z__3889d122a771423b0fd42a929f599c99e0473500.yml",
+          "workflow_name": "Open a release PR",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 74,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "make-release-pr": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "make-release-pr": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "actions/checkout@v2",
+              "taiki-e/install-action@v1"
+            ],
+            "num_run_commands": 5,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Open a release PR",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "version": {
+                "description": "Version to release",
+                "required": true,
+                "type": "string"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "make-release-pr": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Install cargo-release",
+                "uses": "taiki-e/install-action@v1",
+                "with": {
+                  "tool": "cargo-release"
+                }
+              },
+              {
+                "uses": "actions/checkout@v2",
+                "with": {
+                  "ref": "main"
+                }
+              },
+              {
+                "name": "Extract info",
+                "run": "set -euxo pipefail\n\nbranch_name=\"release-${{ inputs.version }}\"\necho \"branch_name=${branch_name}\" >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Make release branch",
+                "run": "git switch -c \"${{ env.branch_name }}\""
+              },
+              {
+                "name": "Do release",
+                "run": "set -euxo pipefail\ngit config user.name github-actions\ngit config user.email github-actions@github.com\ncargo release \\\n  --execute \\\n  --no-push \\\n  --no-tag \\\n  --no-publish \\\n  --no-confirm \\\n  --verbose \\\n  --config release.toml \\\n  --allow-branch \"${{ env.branch_name }}\" \\\n  --dependent-version upgrade \\\n  \"${{ inputs.version }}\"\n"
+              },
+              {
+                "name": "Push new branch",
+                "run": "set -euxo pipefail\ngit push origin \"${{ env.branch_name }}\"\n"
+              },
+              {
+                "name": "Create PR",
+                "run": "set -euxo pipefail\n\nnl=$'\\n'\nbr=$'\\n\\n'\nfence=$'```\\n'\necnef=$'\\n```'\n\ntitle=\"release: v${{ inputs.version }}\"\nbody_intro=\"This is a release PR for version **${{ inputs.version }}**.\"\nbody_merge=\"**Use squash merge.** Upon merging, this will automatically build the CLI and create a GitHub release. You still need to manually publish the cargo crate.\"\nbody_pub=\"${fence}$ cd ${{ env.crate_path }}${nl}$ cargo publish${ecnef}\"\nbody_notes=\"---${br}_Edit release notes into the section below:_${br}<!-- do not change or remove this heading -->${nl}### Release notes\"\n\nbody=\"${body_intro}${br}${body_merge}${br}${body_pub}${br}${body_notes}${br}\"\n\ngh pr create --title \"$title\" --body \"$body\" --base main --head \"${{ env.branch_name }}\" --label \"release\"\n",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-07-24T02-32-37Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-a6d33641-24ec-5ed6-b24a-9d5ea20d6ffe",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/release-pr__2022-07-24T02-32-37Z__88b9aceb01270d75918f97f19e0bdc74dd124572.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 74,
+                  "endColumn": 53
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "5e9e37a8751f228d:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-pr__2022-07-24T02-32-37Z__88b9aceb01270d75918f97f19e0bdc74dd124572.yml",
+          "workflow_name": "Open a release PR",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 74,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "make-release-pr": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "make-release-pr": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "actions/checkout@v2",
+              "taiki-e/install-action@v1"
+            ],
+            "num_run_commands": 5,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Open a release PR",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "version": {
+                "description": "Version to release",
+                "required": true,
+                "type": "string"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "make-release-pr": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Install cargo-release",
+                "uses": "taiki-e/install-action@v1",
+                "with": {
+                  "tool": "cargo-release"
+                }
+              },
+              {
+                "uses": "actions/checkout@v2",
+                "with": {
+                  "ref": "main"
+                }
+              },
+              {
+                "name": "Extract info",
+                "run": "set -euxo pipefail\n\nbranch_name=\"release-${{ inputs.version }}\"\necho \"branch_name=${branch_name}\" >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Make release branch",
+                "run": "git switch -c \"${{ env.branch_name }}\""
+              },
+              {
+                "name": "Do release",
+                "run": "set -euxo pipefail\ngit config user.name github-actions\ngit config user.email github-actions@github.com\ncargo release \\\n  --execute \\\n  --no-push \\\n  --no-tag \\\n  --no-publish \\\n  --no-confirm \\\n  --verbose \\\n  --config release.toml \\\n  --allow-branch \"${{ env.branch_name }}\" \\\n  --dependent-version upgrade \\\n  \"${{ inputs.version }}\"\n"
+              },
+              {
+                "name": "Push new branch",
+                "run": "set -euxo pipefail\ngit push origin \"${{ env.branch_name }}\"\n"
+              },
+              {
+                "name": "Create PR",
+                "run": "set -euxo pipefail\n\nnl=$'\\n'\nbr=$'\\n\\n'\nfence=$'```\\n'\necnef=$'\\n```'\n\ntitle=\"release: v${{ inputs.version }}\"\nbody_intro=\"This is a release PR for version **${{ inputs.version }}**.\"\nbody_merge=\"**Use squash merge.**${nl}Upon merging, this will automatically build the CLI and create a GitHub release. You still need to manually publish the cargo crate.\"\nbody_pub=\"${fence}$ git switch main${nl}$ git pull${nl}$ git checkout v${{ inputs.version }}${nl}$ cargo publish${ecnef}\"\nbody_notes=\"---${br}_Edit release notes into the section below:_${br}<!-- do not change or remove this heading -->${nl}### Release notes\"\n\nbody=\"${body_intro}${br}${body_merge}${br}${body_pub}${br}${body_notes}${br}\"\n\ngh pr create --title \"$title\" --body \"$body\" --base main --head \"${{ env.branch_name }}\" --label \"release\"\n",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-08-20T11-24-12Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-09d77030-5383-5bce-8314-8e3c6c43d1ff",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/release-pr__2022-08-20T11-24-12Z__4b00f5f1435988e63c89a950f7026fc54367f16f.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 69,
+                  "endColumn": 53
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "5e9e37a8751f228d:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-pr__2022-08-20T11-24-12Z__4b00f5f1435988e63c89a950f7026fc54367f16f.yml",
+          "workflow_name": "Open a release PR",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 69,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "make-release-pr": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "make-release-pr": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "actions/checkout@v2",
+              "taiki-e/install-action@v1"
+            ],
+            "num_run_commands": 5,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Open a release PR",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "version": {
+                "description": "Version to release",
+                "required": true,
+                "type": "string"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "make-release-pr": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Install cargo-release",
+                "uses": "taiki-e/install-action@v1",
+                "with": {
+                  "tool": "cargo-release"
+                }
+              },
+              {
+                "uses": "actions/checkout@v2",
+                "with": {
+                  "ref": "main"
+                }
+              },
+              {
+                "name": "Extract info",
+                "run": "set -euxo pipefail\n\nbranch_name=\"release-${{ inputs.version }}\"\necho \"branch_name=${branch_name}\" >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Make release branch",
+                "run": "git switch -c \"${{ env.branch_name }}\""
+              },
+              {
+                "name": "Do release",
+                "run": "set -euxo pipefail\ngit config user.name github-actions\ngit config user.email github-actions@github.com\ncargo release \\\n  --execute \\\n  --no-push \\\n  --no-tag \\\n  --no-publish \\\n  --no-confirm \\\n  --verbose \\\n  --config release.toml \\\n  --allow-branch \"${{ env.branch_name }}\" \\\n  --dependent-version upgrade \\\n  \"${{ inputs.version }}\"\n"
+              },
+              {
+                "name": "Push new branch",
+                "run": "set -euxo pipefail\ngit push origin \"${{ env.branch_name }}\"\n"
+              },
+              {
+                "name": "Create PR",
+                "run": "set -euxo pipefail\n\nnl=$'\\n'\nbr=$'\\n\\n'\nfence=$'```\\n'\necnef=$'\\n```'\n\ntitle='release: v${{ inputs.version }}'\nbody=$(sed 's/%version%/${{ inputs.version }}/g' .github/scripts/release-pr.txt)\n\ngh pr create --title \"$title\" --body \"$body\" --base main --head \"${{ env.branch_name }}\" --label \"release\"\n",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-07-24T08-33-56Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-528bde1c-d058-51e3-979c-04b02202d72f",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/release-pr__2022-07-24T08-33-56Z__51b300d29eeeace203590cce44dc43b172f2ed15.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 69,
+                  "endColumn": 53
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "5e9e37a8751f228d:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-pr__2022-07-24T08-33-56Z__51b300d29eeeace203590cce44dc43b172f2ed15.yml",
+          "workflow_name": "Open a release PR",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 69,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "make-release-pr": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "make-release-pr": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "actions/checkout@v2",
+              "taiki-e/install-action@v1"
+            ],
+            "num_run_commands": 5,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Open a release PR",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "version": {
+                "description": "Version to release",
+                "required": true,
+                "type": "string"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "make-release-pr": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Install cargo-release",
+                "uses": "taiki-e/install-action@v1",
+                "with": {
+                  "tool": "cargo-release"
+                }
+              },
+              {
+                "uses": "actions/checkout@v2",
+                "with": {
+                  "ref": "main"
+                }
+              },
+              {
+                "name": "Extract info",
+                "run": "set -euxo pipefail\n\nbranch_name=\"release-${{ inputs.version }}\"\necho \"branch_name=${branch_name}\" >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Make release branch",
+                "run": "git switch -c \"${{ env.branch_name }}\""
+              },
+              {
+                "name": "Do release",
+                "run": "set -euxo pipefail\ngit config user.name github-actions\ngit config user.email github-actions@github.com\ncargo release \\\n  --execute \\\n  --no-push \\\n  --no-tag \\\n  --no-publish \\\n  --no-confirm \\\n  --verbose \\\n  --config release.toml \\\n  --allow-branch \"${{ env.branch_name }}\" \\\n  --dependent-version upgrade \\\n  \"${{ inputs.version }}\"\n"
+              },
+              {
+                "name": "Push new branch",
+                "run": "set -euxo pipefail\ngit push origin \"${{ env.branch_name }}\"\n"
+              },
+              {
+                "name": "Create PR",
+                "run": "set -euxo pipefail\n\nnl=$'\\n'\nbr=$'\\n\\n'\nfence=$'```\\n'\necnef=$'\\n```'\n\ntitle='release: v${{ inputs.version }}'\nbody=$(sed 's/%version%/${{ inputs.version }}/g' ci-scripts/release-pr.txt)\n\ngh pr create --title \"$title\" --body \"$body\" --base main --head \"${{ env.branch_name }}\" --label \"release\"\n",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-08-20T11-44-52Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-695ef860-14bf-5d74-b51a-2dcd981c197e",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/release-pr__2022-08-20T11-44-52Z__df3a8e21c76f566e31cd0bb0638e290d0b83d66d.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 69,
+                  "endColumn": 53
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "5e9e37a8751f228d:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-pr__2022-08-20T11-44-52Z__df3a8e21c76f566e31cd0bb0638e290d0b83d66d.yml",
+          "workflow_name": "Open a release PR",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 69,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "make-release-pr": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "make-release-pr": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "actions/checkout@v3",
+              "taiki-e/install-action@v1"
+            ],
+            "num_run_commands": 5,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Open a release PR",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "version": {
+                "description": "Version to release",
+                "required": true,
+                "type": "string"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "make-release-pr": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Install cargo-release",
+                "uses": "taiki-e/install-action@v1",
+                "with": {
+                  "tool": "cargo-release"
+                }
+              },
+              {
+                "uses": "actions/checkout@v3",
+                "with": {
+                  "ref": "main"
+                }
+              },
+              {
+                "name": "Extract info",
+                "run": "set -euxo pipefail\n\nbranch_name=\"release-${{ inputs.version }}\"\necho \"branch_name=${branch_name}\" >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Make release branch",
+                "run": "git switch -c \"${{ env.branch_name }}\""
+              },
+              {
+                "name": "Do release",
+                "run": "set -euxo pipefail\ngit config user.name github-actions\ngit config user.email github-actions@github.com\ncargo release \\\n  --execute \\\n  --no-push \\\n  --no-tag \\\n  --no-publish \\\n  --no-confirm \\\n  --verbose \\\n  --config release.toml \\\n  --allow-branch \"${{ env.branch_name }}\" \\\n  --dependent-version upgrade \\\n  \"${{ inputs.version }}\"\n"
+              },
+              {
+                "name": "Push new branch",
+                "run": "set -euxo pipefail\ngit push origin \"${{ env.branch_name }}\"\n"
+              },
+              {
+                "name": "Create PR",
+                "run": "set -euxo pipefail\n\nnl=$'\\n'\nbr=$'\\n\\n'\nfence=$'```\\n'\necnef=$'\\n```'\n\ntitle='release: v${{ inputs.version }}'\nbody=$(sed 's/%version%/${{ inputs.version }}/g' .github/scripts/release-pr.txt)\n\ngh pr create --title \"$title\" --body \"$body\" --base main --head \"${{ env.branch_name }}\" --label \"release\"\n",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-09-04T09-38-08Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-9bedfa34-a81d-5091-8243-40f156fc0514",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/release-pr__2022-09-04T09-38-08Z__280bc974eb6f17b88f5547dc7efcb4d87bd14256.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 23,
+                  "startColumn": 5,
+                  "endLine": 40,
+                  "endColumn": 69
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "5e9e37a8751f228d:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-pr__2022-09-04T09-38-08Z__280bc974eb6f17b88f5547dc7efcb4d87bd14256.yml",
+          "workflow_name": "Open a release PR",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 40,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "make-release-pr": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "make-release-pr": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v3",
+              "cargo-bins/release-pr@v1",
+              "taiki-e/install-action@v1"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Open a release PR",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "crate": {
+                "description": "Crate to release",
+                "required": true,
+                "type": "choice",
+                "options": [
+                  "bin",
+                  "lib",
+                  "detect-targets",
+                  "detect-wasi",
+                  "flock",
+                  "normalize-path"
+                ]
+              },
+              "version": {
+                "description": "Version to release",
+                "required": true,
+                "type": "string"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "make-release-pr": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Install cargo-release",
+                "uses": "taiki-e/install-action@v1",
+                "with": {
+                  "tool": "cargo-release"
+                }
+              },
+              {
+                "uses": "actions/checkout@v3",
+                "with": {
+                  "ref": "main"
+                }
+              },
+              {
+                "uses": "cargo-bins/release-pr@v1",
+                "with": {
+                  "github-token": "${{ secrets.GITHUB_TOKEN }}",
+                  "version": "${{ inputs.version }}",
+                  "crate-path": "crates/${{ inputs.crate }}",
+                  "pr-release-notes": true,
+                  "pr-template-file": ".github/scripts/release-pr-template.ejs"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-09-04T11-12-10Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-c31b8fd3-10a3-5c29-bb61-4b6e48316377",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/release-pr__2022-09-04T11-12-10Z__e21617cc9ec95dcc484c77330f8fc207895d4e82.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 23,
+                  "startColumn": 5,
+                  "endLine": 40,
+                  "endColumn": 69
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "5e9e37a8751f228d:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-pr__2022-09-04T11-12-10Z__e21617cc9ec95dcc484c77330f8fc207895d4e82.yml",
+          "workflow_name": "Open a release PR",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 40,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "make-release-pr": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "make-release-pr": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v3",
+              "cargo-bins/release-pr@v1",
+              "taiki-e/install-action@v1"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Open a release PR",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "crate": {
+                "description": "Crate to release",
+                "required": true,
+                "type": "choice",
+                "options": [
+                  "bin",
+                  "lib",
+                  "detect-targets",
+                  "detect-wasi",
+                  "flock",
+                  "normalize-path"
+                ]
+              },
+              "version": {
+                "description": "Version to release",
+                "required": true,
+                "type": "string"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "make-release-pr": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Install cargo-release",
+                "uses": "taiki-e/install-action@v1",
+                "with": {
+                  "tool": "cargo-release"
+                }
+              },
+              {
+                "uses": "actions/checkout@v3",
+                "with": {
+                  "ref": "main"
+                }
+              },
+              {
+                "uses": "cargo-bins/release-pr@v1",
+                "with": {
+                  "github-token": "${{ secrets.GITHUB_TOKEN }}",
+                  "version": "${{ inputs.version }}",
+                  "crate-path": "crates/${{ inputs.crate }}",
+                  "pr-release-notes": "${{ inputs.crate == 'bin' }}",
+                  "pr-template-file": ".github/scripts/release-pr-template.ejs"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-09-04T15-19-17Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-d404a94f-3437-5ca3-8882-9a2f06a37573",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/release-pr__2022-09-04T15-19-17Z__3387a63895a28ff7853b4c040a9d834bff5a1bd2.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 23,
+                  "startColumn": 5,
+                  "endLine": 41,
+                  "endColumn": 69
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "5e9e37a8751f228d:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-pr__2022-09-04T15-19-17Z__3387a63895a28ff7853b4c040a9d834bff5a1bd2.yml",
+          "workflow_name": "Open a release PR",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 41,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "make-release-pr": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "make-release-pr": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v3",
+              "cargo-bins/release-pr@v1",
+              "taiki-e/install-action@v1"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Open a release PR",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "crate": {
+                "description": "Crate to release",
+                "required": true,
+                "type": "choice",
+                "options": [
+                  "bin",
+                  "lib",
+                  "detect-targets",
+                  "detect-wasi",
+                  "flock",
+                  "normalize-path"
+                ]
+              },
+              "version": {
+                "description": "Version to release",
+                "required": true,
+                "type": "string"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "make-release-pr": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Install cargo-release",
+                "uses": "taiki-e/install-action@v1",
+                "with": {
+                  "tool": "cargo-release"
+                }
+              },
+              {
+                "uses": "actions/checkout@v3",
+                "with": {
+                  "ref": "main"
+                }
+              },
+              {
+                "uses": "cargo-bins/release-pr@v1",
+                "with": {
+                  "github-token": "${{ secrets.GITHUB_TOKEN }}",
+                  "version": "${{ inputs.version }}",
+                  "crate-path": "crates/${{ inputs.crate }}",
+                  "pr-label": "release",
+                  "pr-release-notes": "${{ inputs.crate == 'bin' }}",
+                  "pr-template-file": ".github/scripts/release-pr-template.ejs"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-09-04T15-28-22Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-78251c0a-8d0d-5c72-a66e-7365f774b0d4",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/release-pr__2022-09-04T15-28-22Z__a628cbf876b71c84b3ae76db665effcc4d8eeaae.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 23,
+                  "startColumn": 5,
+                  "endLine": 41,
+                  "endColumn": 69
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "5e9e37a8751f228d:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-pr__2022-09-04T15-28-22Z__a628cbf876b71c84b3ae76db665effcc4d8eeaae.yml",
+          "workflow_name": "Open a release PR",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 41,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "make-release-pr": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "make-release-pr": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v3",
+              "cargo-bins/release-pr@v1",
+              "taiki-e/install-action@v1"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Open a release PR",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "crate": {
+                "description": "Crate to release",
+                "required": true,
+                "type": "choice",
+                "options": [
+                  "bin",
+                  "lib",
+                  "detect-targets",
+                  "detect-wasi",
+                  "fs-lock",
+                  "normalize-path"
+                ]
+              },
+              "version": {
+                "description": "Version to release",
+                "required": true,
+                "type": "string"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "make-release-pr": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Install cargo-release",
+                "uses": "taiki-e/install-action@v1",
+                "with": {
+                  "tool": "cargo-release"
+                }
+              },
+              {
+                "uses": "actions/checkout@v3",
+                "with": {
+                  "ref": "main"
+                }
+              },
+              {
+                "uses": "cargo-bins/release-pr@v1",
+                "with": {
+                  "github-token": "${{ secrets.GITHUB_TOKEN }}",
+                  "version": "${{ inputs.version }}",
+                  "crate-path": "crates/${{ inputs.crate }}",
+                  "pr-label": "release",
+                  "pr-release-notes": "${{ inputs.crate == 'bin' }}",
+                  "pr-template-file": ".github/scripts/release-pr-template.ejs"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-09-07T07-40-46Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-pr__2022-09-07T07-40-46Z__bcec382a649ba827a87d3093dbaf711fb9160084.yml",
+          "workflow_name": "Open a release PR",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 44,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "make-release-pr": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "make-release-pr": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v3",
+              "cargo-bins/release-pr@v1",
+              "chainguard-dev/actions/setup-gitsign@main",
+              "taiki-e/install-action@v1"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Open a release PR",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "crate": {
+                "description": "Crate to release",
+                "required": true,
+                "type": "choice",
+                "options": [
+                  "bin",
+                  "lib",
+                  "detect-targets",
+                  "detect-wasi",
+                  "fs-lock",
+                  "normalize-path"
+                ]
+              },
+              "version": {
+                "description": "Version to release",
+                "required": true,
+                "type": "string",
+                "default": "patch"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "make-release-pr": {
+            "permissions": {
+              "id-token": "write",
+              "pull-requests": "write",
+              "contents": "write"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "uses": "chainguard-dev/actions/setup-gitsign@main"
+              },
+              {
+                "name": "Install cargo-release",
+                "uses": "taiki-e/install-action@v1",
+                "with": {
+                  "tool": "cargo-release"
+                }
+              },
+              {
+                "uses": "cargo-bins/release-pr@v1",
+                "with": {
+                  "github-token": "${{ secrets.GITHUB_TOKEN }}",
+                  "version": "${{ inputs.version }}",
+                  "crate-path": "crates/${{ inputs.crate }}",
+                  "pr-label": "release",
+                  "pr-release-notes": "${{ inputs.crate == 'bin' }}",
+                  "pr-template-file": ".github/scripts/release-pr-template.ejs"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-09-10T06-56-33Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-pr__2022-09-10T06-56-33Z__be8e83b8bd75e814c14bfb1173912e1d8151a170.yml",
+          "workflow_name": "Open a release PR",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 44,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "make-release-pr": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "make-release-pr": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v3",
+              "cargo-bins/release-pr@v1",
+              "chainguard-dev/actions/setup-gitsign@main",
+              "taiki-e/install-action@v1"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Open a release PR",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "crate": {
+                "description": "Crate to release",
+                "required": true,
+                "type": "choice",
+                "options": [
+                  "bin",
+                  "binstalk",
+                  "detect-targets",
+                  "detect-wasi",
+                  "fs-lock",
+                  "normalize-path"
+                ]
+              },
+              "version": {
+                "description": "Version to release",
+                "required": true,
+                "type": "string",
+                "default": "patch"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "make-release-pr": {
+            "permissions": {
+              "id-token": "write",
+              "pull-requests": "write",
+              "contents": "write"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "uses": "chainguard-dev/actions/setup-gitsign@main"
+              },
+              {
+                "name": "Install cargo-release",
+                "uses": "taiki-e/install-action@v1",
+                "with": {
+                  "tool": "cargo-release"
+                }
+              },
+              {
+                "uses": "cargo-bins/release-pr@v1",
+                "with": {
+                  "github-token": "${{ secrets.GITHUB_TOKEN }}",
+                  "version": "${{ inputs.version }}",
+                  "crate-path": "crates/${{ inputs.crate }}",
+                  "pr-label": "release",
+                  "pr-release-notes": "${{ inputs.crate == 'bin' }}",
+                  "pr-template-file": ".github/scripts/release-pr-template.ejs"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-11-08T00-50-02Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-pr__2022-11-08T00-50-02Z__fc6d9ab956eba76b52568a9cae1b54f90bf4f1df.yml",
+          "workflow_name": "Open a release PR",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 45,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "make-release-pr": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "make-release-pr": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v3",
+              "cargo-bins/release-pr@v1",
+              "chainguard-dev/actions/setup-gitsign@main",
+              "taiki-e/install-action@v1"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Open a release PR",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "crate": {
+                "description": "Crate to release",
+                "required": true,
+                "type": "choice",
+                "options": [
+                  "bin",
+                  "binstalk",
+                  "binstalk-manifests",
+                  "detect-targets",
+                  "detect-wasi",
+                  "fs-lock",
+                  "normalize-path"
+                ]
+              },
+              "version": {
+                "description": "Version to release",
+                "required": true,
+                "type": "string",
+                "default": "patch"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "make-release-pr": {
+            "permissions": {
+              "id-token": "write",
+              "pull-requests": "write",
+              "contents": "write"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "uses": "chainguard-dev/actions/setup-gitsign@main"
+              },
+              {
+                "name": "Install cargo-release",
+                "uses": "taiki-e/install-action@v1",
+                "with": {
+                  "tool": "cargo-release"
+                }
+              },
+              {
+                "uses": "cargo-bins/release-pr@v1",
+                "with": {
+                  "github-token": "${{ secrets.GITHUB_TOKEN }}",
+                  "version": "${{ inputs.version }}",
+                  "crate-path": "crates/${{ inputs.crate }}",
+                  "pr-label": "release",
+                  "pr-release-notes": "${{ inputs.crate == 'bin' }}",
+                  "pr-template-file": ".github/scripts/release-pr-template.ejs"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-11-11T04-02-54Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-pr__2022-11-11T04-02-54Z__89fa5b17690a8a6fb9a81c0f1ef1a693517f2f4a.yml",
+          "workflow_name": "Open a release PR",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 46,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "make-release-pr": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "make-release-pr": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v3",
+              "cargo-bins/release-pr@v1",
+              "chainguard-dev/actions/setup-gitsign@main",
+              "taiki-e/install-action@v1"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Open a release PR",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "crate": {
+                "description": "Crate to release",
+                "required": true,
+                "type": "choice",
+                "options": [
+                  "bin",
+                  "binstalk",
+                  "binstalk-manifests",
+                  "binstalk-downloader",
+                  "detect-targets",
+                  "detect-wasi",
+                  "fs-lock",
+                  "normalize-path"
+                ]
+              },
+              "version": {
+                "description": "Version to release",
+                "required": true,
+                "type": "string",
+                "default": "patch"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "make-release-pr": {
+            "permissions": {
+              "id-token": "write",
+              "pull-requests": "write",
+              "contents": "write"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "uses": "chainguard-dev/actions/setup-gitsign@main"
+              },
+              {
+                "name": "Install cargo-release",
+                "uses": "taiki-e/install-action@v1",
+                "with": {
+                  "tool": "cargo-release"
+                }
+              },
+              {
+                "uses": "cargo-bins/release-pr@v1",
+                "with": {
+                  "github-token": "${{ secrets.GITHUB_TOKEN }}",
+                  "version": "${{ inputs.version }}",
+                  "crate-path": "crates/${{ inputs.crate }}",
+                  "pr-label": "release",
+                  "pr-release-notes": "${{ inputs.crate == 'bin' }}",
+                  "pr-template-file": ".github/scripts/release-pr-template.ejs"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-11-15T01-45-31Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-pr__2022-11-15T01-45-31Z__4ee0c9160f7d9501f641a7d3bf4808ef65cef420.yml",
+          "workflow_name": "Open a release PR",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 46,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "make-release-pr": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "make-release-pr": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v3",
+              "cargo-bins/release-pr@v2",
+              "chainguard-dev/actions/setup-gitsign@main",
+              "taiki-e/install-action@v1"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Open a release PR",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "crate": {
+                "description": "Crate to release",
+                "required": true,
+                "type": "choice",
+                "options": [
+                  "bin",
+                  "binstalk",
+                  "binstalk-manifests",
+                  "binstalk-downloader",
+                  "detect-targets",
+                  "detect-wasi",
+                  "fs-lock",
+                  "normalize-path"
+                ]
+              },
+              "version": {
+                "description": "Version to release",
+                "required": true,
+                "type": "string",
+                "default": "patch"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "make-release-pr": {
+            "permissions": {
+              "id-token": "write",
+              "pull-requests": "write",
+              "contents": "write"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "uses": "chainguard-dev/actions/setup-gitsign@main"
+              },
+              {
+                "name": "Install cargo-release",
+                "uses": "taiki-e/install-action@v1",
+                "with": {
+                  "tool": "cargo-release"
+                }
+              },
+              {
+                "uses": "cargo-bins/release-pr@v2",
+                "with": {
+                  "github-token": "${{ secrets.GITHUB_TOKEN }}",
+                  "version": "${{ inputs.version }}",
+                  "crate-path": "crates/${{ inputs.crate }}",
+                  "pr-label": "release",
+                  "pr-release-notes": "${{ inputs.crate == 'bin' }}",
+                  "pr-template-file": ".github/scripts/release-pr-template.ejs"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-11-17T00-46-27Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-pr__2022-11-17T00-46-27Z__d9cc3ce219898892488f33fe9c9d0b08b7d109fb.yml",
+          "workflow_name": "Open a release PR",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 47,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "make-release-pr": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "make-release-pr": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v3",
+              "cargo-bins/release-pr@v2",
+              "chainguard-dev/actions/setup-gitsign@main",
+              "taiki-e/install-action@v1"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Open a release PR",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "crate": {
+                "description": "Crate to release",
+                "required": true,
+                "type": "choice",
+                "options": [
+                  "bin",
+                  "binstalk",
+                  "binstalk-manifests",
+                  "binstalk-types",
+                  "binstalk-downloader",
+                  "detect-targets",
+                  "detect-wasi",
+                  "fs-lock",
+                  "normalize-path"
+                ]
+              },
+              "version": {
+                "description": "Version to release",
+                "required": true,
+                "type": "string",
+                "default": "patch"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "make-release-pr": {
+            "permissions": {
+              "id-token": "write",
+              "pull-requests": "write",
+              "contents": "write"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "uses": "chainguard-dev/actions/setup-gitsign@main"
+              },
+              {
+                "name": "Install cargo-release",
+                "uses": "taiki-e/install-action@v1",
+                "with": {
+                  "tool": "cargo-release"
+                }
+              },
+              {
+                "uses": "cargo-bins/release-pr@v2",
+                "with": {
+                  "github-token": "${{ secrets.GITHUB_TOKEN }}",
+                  "version": "${{ inputs.version }}",
+                  "crate-path": "crates/${{ inputs.crate }}",
+                  "pr-label": "release",
+                  "pr-release-notes": "${{ inputs.crate == 'bin' }}",
+                  "pr-template-file": ".github/scripts/release-pr-template.ejs"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-11-22T09-59-24Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-pr__2022-11-22T09-59-24Z__44316e1f029841a5b7522ad8647860aecd4dab4b.yml",
+          "workflow_name": "Open a release PR",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 51,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "make-release-pr": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "make-release-pr": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v3",
+              "cargo-bins/release-pr@v2",
+              "chainguard-dev/actions/setup-gitsign@main",
+              "taiki-e/install-action@v1"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Open a release PR",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "crate": {
+                "description": "Crate to release",
+                "required": true,
+                "type": "choice",
+                "options": [
+                  "bin",
+                  "binstalk",
+                  "binstalk-manifests",
+                  "binstalk-types",
+                  "binstalk-downloader",
+                  "detect-targets",
+                  "detect-wasi",
+                  "fs-lock",
+                  "normalize-path"
+                ]
+              },
+              "version": {
+                "description": "Version to release",
+                "required": true,
+                "type": "string",
+                "default": "patch"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "make-release-pr": {
+            "permissions": {
+              "id-token": "write",
+              "pull-requests": "write",
+              "contents": "write"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Configure toolchain",
+                "run": "rustup toolchain install --profile minimal --no-self-update nightly\nrustup default nightly\n"
+              },
+              {
+                "uses": "chainguard-dev/actions/setup-gitsign@main"
+              },
+              {
+                "name": "Install cargo-release",
+                "uses": "taiki-e/install-action@v1",
+                "with": {
+                  "tool": "cargo-release"
+                }
+              },
+              {
+                "uses": "cargo-bins/release-pr@v2",
+                "with": {
+                  "github-token": "${{ secrets.GITHUB_TOKEN }}",
+                  "version": "${{ inputs.version }}",
+                  "crate-path": "crates/${{ inputs.crate }}",
+                  "pr-label": "release",
+                  "pr-release-notes": "${{ inputs.crate == 'bin' }}",
+                  "pr-template-file": ".github/scripts/release-pr-template.ejs"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-12-27T11-43-56Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-pr__2022-12-27T11-43-56Z__611485de52a31f3ba294c68db432dacc01aef512.yml",
+          "workflow_name": "Open a release PR",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 51,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "make-release-pr": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "make-release-pr": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v3",
+              "cargo-bins/release-pr@v2",
+              "chainguard-dev/actions/setup-gitsign@main",
+              "taiki-e/install-action@v2"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Open a release PR",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "crate": {
+                "description": "Crate to release",
+                "required": true,
+                "type": "choice",
+                "options": [
+                  "bin",
+                  "binstalk",
+                  "binstalk-manifests",
+                  "binstalk-types",
+                  "binstalk-downloader",
+                  "detect-targets",
+                  "detect-wasi",
+                  "fs-lock",
+                  "normalize-path"
+                ]
+              },
+              "version": {
+                "description": "Version to release",
+                "required": true,
+                "type": "string",
+                "default": "patch"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "make-release-pr": {
+            "permissions": {
+              "id-token": "write",
+              "pull-requests": "write",
+              "contents": "write"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Configure toolchain",
+                "run": "rustup toolchain install --profile minimal --no-self-update nightly\nrustup default nightly\n"
+              },
+              {
+                "uses": "chainguard-dev/actions/setup-gitsign@main"
+              },
+              {
+                "name": "Install cargo-release",
+                "uses": "taiki-e/install-action@v2",
+                "with": {
+                  "tool": "cargo-release"
+                }
+              },
+              {
+                "uses": "cargo-bins/release-pr@v2",
+                "with": {
+                  "github-token": "${{ secrets.GITHUB_TOKEN }}",
+                  "version": "${{ inputs.version }}",
+                  "crate-path": "crates/${{ inputs.crate }}",
+                  "pr-label": "release",
+                  "pr-release-notes": "${{ inputs.crate == 'bin' }}",
+                  "pr-template-file": ".github/scripts/release-pr-template.ejs"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-03-21T01-36-02Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-pr__2023-03-21T01-36-02Z__2227d363f71ef79da5574b0345497330d1908c91.yml",
+          "workflow_name": "Open a release PR",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 52,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "make-release-pr": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "make-release-pr": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v3",
+              "cargo-bins/release-pr@v2",
+              "chainguard-dev/actions/setup-gitsign@main",
+              "taiki-e/install-action@v2"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Open a release PR",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "crate": {
+                "description": "Crate to release",
+                "required": true,
+                "type": "choice",
+                "options": [
+                  "bin",
+                  "binstalk",
+                  "binstalk-manifests",
+                  "binstalk-types",
+                  "binstalk-downloader",
+                  "detect-targets",
+                  "detect-wasi",
+                  "fs-lock",
+                  "normalize-path",
+                  "leon"
+                ]
+              },
+              "version": {
+                "description": "Version to release",
+                "required": true,
+                "type": "string",
+                "default": "patch"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "make-release-pr": {
+            "permissions": {
+              "id-token": "write",
+              "pull-requests": "write",
+              "contents": "write"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Configure toolchain",
+                "run": "rustup toolchain install --profile minimal --no-self-update nightly\nrustup default nightly\n"
+              },
+              {
+                "uses": "chainguard-dev/actions/setup-gitsign@main"
+              },
+              {
+                "name": "Install cargo-release",
+                "uses": "taiki-e/install-action@v2",
+                "with": {
+                  "tool": "cargo-release"
+                }
+              },
+              {
+                "uses": "cargo-bins/release-pr@v2",
+                "with": {
+                  "github-token": "${{ secrets.GITHUB_TOKEN }}",
+                  "version": "${{ inputs.version }}",
+                  "crate-path": "crates/${{ inputs.crate }}",
+                  "pr-label": "release",
+                  "pr-release-notes": "${{ inputs.crate == 'bin' }}",
+                  "pr-template-file": ".github/scripts/release-pr-template.ejs"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-04-17T04-50-58Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-pr__2023-04-17T04-50-58Z__5683ca247656409e2a15e73b2a2ad1fad0e92431.yml",
+          "workflow_name": "Open a release PR",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 53,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "make-release-pr": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "make-release-pr": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v3",
+              "cargo-bins/release-pr@v2",
+              "chainguard-dev/actions/setup-gitsign@main",
+              "taiki-e/install-action@v2"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Open a release PR",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "crate": {
+                "description": "Crate to release",
+                "required": true,
+                "type": "choice",
+                "options": [
+                  "bin",
+                  "binstalk",
+                  "binstalk-manifests",
+                  "binstalk-types",
+                  "binstalk-downloader",
+                  "detect-targets",
+                  "detect-wasi",
+                  "fs-lock",
+                  "normalize-path",
+                  "leon",
+                  "leon-macros"
+                ]
+              },
+              "version": {
+                "description": "Version to release",
+                "required": true,
+                "type": "string",
+                "default": "patch"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "make-release-pr": {
+            "permissions": {
+              "id-token": "write",
+              "pull-requests": "write",
+              "contents": "write"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Configure toolchain",
+                "run": "rustup toolchain install --profile minimal --no-self-update nightly\nrustup default nightly\n"
+              },
+              {
+                "uses": "chainguard-dev/actions/setup-gitsign@main"
+              },
+              {
+                "name": "Install cargo-release",
+                "uses": "taiki-e/install-action@v2",
+                "with": {
+                  "tool": "cargo-release"
+                }
+              },
+              {
+                "uses": "cargo-bins/release-pr@v2",
+                "with": {
+                  "github-token": "${{ secrets.GITHUB_TOKEN }}",
+                  "version": "${{ inputs.version }}",
+                  "crate-path": "crates/${{ inputs.crate }}",
+                  "pr-label": "release",
+                  "pr-release-notes": "${{ inputs.crate == 'bin' }}",
+                  "pr-template-file": ".github/scripts/release-pr-template.ejs"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-06-24T15-23-15Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-pr__2023-06-24T15-23-15Z__4ddd860c012d42998b81fe2eba5b1ba54f21ce97.yml",
+          "workflow_name": "Open a release PR",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 54,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "make-release-pr": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "make-release-pr": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v3",
+              "cargo-bins/release-pr@v2",
+              "chainguard-dev/actions/setup-gitsign@main",
+              "taiki-e/install-action@v2"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Open a release PR",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "crate": {
+                "description": "Crate to release",
+                "required": true,
+                "type": "choice",
+                "options": [
+                  "bin",
+                  "binstalk",
+                  "binstalk-manifests",
+                  "binstalk-types",
+                  "binstalk-downloader",
+                  "detect-targets",
+                  "detect-wasi",
+                  "fs-lock",
+                  "normalize-path",
+                  "leon",
+                  "leon-macros"
+                ]
+              },
+              "version": {
+                "description": "Version to release",
+                "required": true,
+                "type": "string",
+                "default": "patch"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "make-release-pr": {
+            "permissions": {
+              "id-token": "write",
+              "pull-requests": "write",
+              "contents": "write"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Configure toolchain",
+                "run": "rustup toolchain install --profile minimal --no-self-update nightly\nrustup default nightly\n"
+              },
+              {
+                "uses": "chainguard-dev/actions/setup-gitsign@main"
+              },
+              {
+                "name": "Install cargo-release",
+                "uses": "taiki-e/install-action@v2",
+                "with": {
+                  "tool": "cargo-release,cargo-semver-checks"
+                }
+              },
+              {
+                "uses": "cargo-bins/release-pr@v2",
+                "with": {
+                  "github-token": "${{ secrets.GITHUB_TOKEN }}",
+                  "version": "${{ inputs.version }}",
+                  "crate-path": "crates/${{ inputs.crate }}",
+                  "pr-label": "release",
+                  "pr-release-notes": "${{ inputs.crate == 'bin' }}",
+                  "pr-template-file": ".github/scripts/release-pr-template.ejs",
+                  "check-semver": true
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-06-26T01-42-35Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-pr__2023-06-26T01-42-35Z__2f890cc34405b4bf0fae5e52fc4adb6a8de713ed.yml",
+          "workflow_name": "Open a release PR",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 55,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "make-release-pr": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "make-release-pr": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v3",
+              "cargo-bins/release-pr@v2",
+              "chainguard-dev/actions/setup-gitsign@main",
+              "taiki-e/install-action@v2"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Open a release PR",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "crate": {
+                "description": "Crate to release",
+                "required": true,
+                "type": "choice",
+                "options": [
+                  "bin",
+                  "binstalk",
+                  "binstalk-manifests",
+                  "binstalk-types",
+                  "binstalk-downloader",
+                  "detect-targets",
+                  "detect-wasi",
+                  "fs-lock",
+                  "normalize-path",
+                  "leon",
+                  "leon-macros"
+                ]
+              },
+              "version": {
+                "description": "Version to release",
+                "required": true,
+                "type": "string",
+                "default": "patch"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "make-release-pr": {
+            "permissions": {
+              "id-token": "write",
+              "pull-requests": "write",
+              "contents": "write"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Configure toolchain",
+                "run": "rustup toolchain install --profile minimal --no-self-update nightly\nrustup default nightly\n"
+              },
+              {
+                "uses": "chainguard-dev/actions/setup-gitsign@main"
+              },
+              {
+                "name": "Install cargo-release",
+                "uses": "taiki-e/install-action@v2",
+                "with": {
+                  "tool": "cargo-release,cargo-semver-checks"
+                }
+              },
+              {
+                "uses": "cargo-bins/release-pr@v2",
+                "with": {
+                  "github-token": "${{ secrets.GITHUB_TOKEN }}",
+                  "version": "${{ inputs.version }}",
+                  "crate-path": "crates/${{ inputs.crate }}",
+                  "pr-label": "release",
+                  "pr-release-notes": "${{ inputs.crate == 'bin' }}",
+                  "pr-template-file": ".github/scripts/release-pr-template.ejs",
+                  "check-semver": true,
+                  "check-package": true
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-07-18T12-56-33Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-pr__2023-07-18T12-56-33Z__83fdd053bff4684530d5a2581edaeab3dd0adb38.yml",
+          "workflow_name": "Open a release PR",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 55,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "make-release-pr": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "make-release-pr": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v3",
+              "cargo-bins/release-pr@v2",
+              "chainguard-dev/actions/setup-gitsign@main",
+              "taiki-e/install-action@v2"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Open a release PR",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "crate": {
+                "description": "Crate to release",
+                "required": true,
+                "type": "choice",
+                "options": [
+                  "bin",
+                  "binstalk",
+                  "binstalk-manifests",
+                  "binstalk-types",
+                  "binstalk-downloader",
+                  "detect-targets",
+                  "detect-wasi",
+                  "fs-lock",
+                  "normalize-path",
+                  "leon",
+                  "leon-macros"
+                ]
+              },
+              "version": {
+                "description": "Version to release",
+                "required": true,
+                "type": "string",
+                "default": "patch"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "make-release-pr": {
+            "permissions": {
+              "id-token": "write",
+              "pull-requests": "write",
+              "contents": "write"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Configure toolchain",
+                "run": "rustup toolchain install --profile minimal --no-self-update nightly\nrustup default nightly\n"
+              },
+              {
+                "uses": "chainguard-dev/actions/setup-gitsign@main"
+              },
+              {
+                "name": "Install cargo-release",
+                "uses": "taiki-e/install-action@v2",
+                "with": {
+                  "tool": "cargo-release,cargo-semver-checks"
+                }
+              },
+              {
+                "uses": "cargo-bins/release-pr@v2",
+                "with": {
+                  "github-token": "${{ secrets.GITHUB_TOKEN }}",
+                  "version": "${{ inputs.version }}",
+                  "crate-path": "crates/${{ inputs.crate }}",
+                  "pr-label": "release",
+                  "pr-release-notes": "${{ inputs.crate == 'bin' }}",
+                  "pr-template-file": ".github/scripts/release-pr-template.ejs",
+                  "check-semver": "${{ inputs.crate != 'bin' }}",
+                  "check-package": true
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-08-09T20-14-34Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-pr__2023-08-09T20-14-34Z__8e6dcc57ff6a2f8a7a31cf708a47f8333efcd4c5.yml",
+          "workflow_name": "Open a release PR",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 57,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "make-release-pr": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "make-release-pr": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v3",
+              "cargo-bins/release-pr@v2",
+              "chainguard-dev/actions/setup-gitsign@main",
+              "taiki-e/install-action@v2"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Open a release PR",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "crate": {
+                "description": "Crate to release",
+                "required": true,
+                "type": "choice",
+                "options": [
+                  "bin",
+                  "binstalk",
+                  "binstalk-manifests",
+                  "binstalk-types",
+                  "binstalk-downloader",
+                  "detect-targets",
+                  "detect-wasi",
+                  "fs-lock",
+                  "normalize-path",
+                  "leon",
+                  "leon-macros"
+                ]
+              },
+              "version": {
+                "description": "Version to release",
+                "required": true,
+                "type": "string",
+                "default": "patch"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "make-release-pr": {
+            "permissions": {
+              "id-token": "write",
+              "pull-requests": "write",
+              "contents": "write"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Configure toolchain",
+                "run": "rustup toolchain install --profile minimal --no-self-update nightly\nrustup default nightly\n"
+              },
+              {
+                "uses": "chainguard-dev/actions/setup-gitsign@main"
+              },
+              {
+                "name": "Install cargo-release",
+                "uses": "taiki-e/install-action@v2",
+                "with": {
+                  "tool": "cargo-release,cargo-semver-checks"
+                }
+              },
+              {
+                "uses": "cargo-bins/release-pr@v2",
+                "with": {
+                  "github-token": "${{ secrets.GITHUB_TOKEN }}",
+                  "version": "${{ inputs.version }}",
+                  "crate-path": "crates/${{ inputs.crate }}",
+                  "pr-label": "release",
+                  "pr-release-notes": "${{ inputs.crate == 'bin' }}",
+                  "pr-template-file": ".github/scripts/release-pr-template.ejs",
+                  "check-semver": "${{ inputs.crate != 'bin' }}",
+                  "check-package": true
+                },
+                "env": {
+                  "RUSTFLAGS": "--cfg reqwest_unstable"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-08-16T21-16-05Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-pr__2023-08-16T21-16-05Z__2215682e763bd7213cc53e6ed65a120889f1ea13.yml",
+          "workflow_name": "Open a release PR",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 62,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "make-release-pr": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "make-release-pr": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v3",
+              "cargo-bins/release-pr@v2",
+              "chainguard-dev/actions/setup-gitsign@main",
+              "taiki-e/install-action@v2"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Open a release PR",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "crate": {
+                "description": "Crate to release",
+                "required": true,
+                "type": "choice",
+                "options": [
+                  "atomic-file-install",
+                  "bin",
+                  "binstalk",
+                  "binstalk-bins",
+                  "binstalk-fetchers",
+                  "binstalk-registry",
+                  "binstalk-manifests",
+                  "binstalk-types",
+                  "binstalk-downloader",
+                  "cargo-toml-workspace",
+                  "detect-targets",
+                  "detect-wasi",
+                  "fs-lock",
+                  "normalize-path",
+                  "leon",
+                  "leon-macros"
+                ]
+              },
+              "version": {
+                "description": "Version to release",
+                "required": true,
+                "type": "string",
+                "default": "patch"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "make-release-pr": {
+            "permissions": {
+              "id-token": "write",
+              "pull-requests": "write",
+              "contents": "write"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Configure toolchain",
+                "run": "rustup toolchain install --profile minimal --no-self-update nightly\nrustup default nightly\n"
+              },
+              {
+                "uses": "chainguard-dev/actions/setup-gitsign@main"
+              },
+              {
+                "name": "Install cargo-release",
+                "uses": "taiki-e/install-action@v2",
+                "with": {
+                  "tool": "cargo-release,cargo-semver-checks"
+                }
+              },
+              {
+                "uses": "cargo-bins/release-pr@v2",
+                "with": {
+                  "github-token": "${{ secrets.GITHUB_TOKEN }}",
+                  "version": "${{ inputs.version }}",
+                  "crate-path": "crates/${{ inputs.crate }}",
+                  "pr-label": "release",
+                  "pr-release-notes": "${{ inputs.crate == 'bin' }}",
+                  "pr-template-file": ".github/scripts/release-pr-template.ejs",
+                  "check-semver": "${{ inputs.crate != 'bin' }}",
+                  "check-package": true
+                },
+                "env": {
+                  "RUSTFLAGS": "--cfg reqwest_unstable"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-08-19T01-08-55Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-pr__2023-08-19T01-08-55Z__dc77a1ab93461dcddec01946ae7997b9a4c067da.yml",
+          "workflow_name": "Open a release PR",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 63,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "make-release-pr": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "make-release-pr": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v3",
+              "cargo-bins/release-pr@v2",
+              "chainguard-dev/actions/setup-gitsign@main",
+              "taiki-e/install-action@v2"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Open a release PR",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "crate": {
+                "description": "Crate to release",
+                "required": true,
+                "type": "choice",
+                "options": [
+                  "atomic-file-install",
+                  "bin",
+                  "binstalk",
+                  "binstalk-bins",
+                  "binstalk-fetchers",
+                  "binstalk-registry",
+                  "binstalk-manifests",
+                  "binstalk-types",
+                  "binstalk-downloader",
+                  "cargo-toml-workspace",
+                  "detect-targets",
+                  "detect-wasi",
+                  "fs-lock",
+                  "normalize-path",
+                  "leon",
+                  "leon-macros",
+                  "simple-git"
+                ]
+              },
+              "version": {
+                "description": "Version to release",
+                "required": true,
+                "type": "string",
+                "default": "patch"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "make-release-pr": {
+            "permissions": {
+              "id-token": "write",
+              "pull-requests": "write",
+              "contents": "write"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Configure toolchain",
+                "run": "rustup toolchain install --profile minimal --no-self-update nightly\nrustup default nightly\n"
+              },
+              {
+                "uses": "chainguard-dev/actions/setup-gitsign@main"
+              },
+              {
+                "name": "Install cargo-release",
+                "uses": "taiki-e/install-action@v2",
+                "with": {
+                  "tool": "cargo-release,cargo-semver-checks"
+                }
+              },
+              {
+                "uses": "cargo-bins/release-pr@v2",
+                "with": {
+                  "github-token": "${{ secrets.GITHUB_TOKEN }}",
+                  "version": "${{ inputs.version }}",
+                  "crate-path": "crates/${{ inputs.crate }}",
+                  "pr-label": "release",
+                  "pr-release-notes": "${{ inputs.crate == 'bin' }}",
+                  "pr-template-file": ".github/scripts/release-pr-template.ejs",
+                  "check-semver": "${{ inputs.crate != 'bin' }}",
+                  "check-package": true
+                },
+                "env": {
+                  "RUSTFLAGS": "--cfg reqwest_unstable"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-09-05T02-10-48Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-pr__2023-09-05T02-10-48Z__d657fbe5186cc90a6b6f1a29f0760da929e57074.yml",
+          "workflow_name": "Open a release PR",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 63,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "make-release-pr": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "make-release-pr": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "cargo-bins/release-pr@v2",
+              "chainguard-dev/actions/setup-gitsign@main",
+              "taiki-e/install-action@v2"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Open a release PR",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "crate": {
+                "description": "Crate to release",
+                "required": true,
+                "type": "choice",
+                "options": [
+                  "atomic-file-install",
+                  "bin",
+                  "binstalk",
+                  "binstalk-bins",
+                  "binstalk-fetchers",
+                  "binstalk-registry",
+                  "binstalk-manifests",
+                  "binstalk-types",
+                  "binstalk-downloader",
+                  "cargo-toml-workspace",
+                  "detect-targets",
+                  "detect-wasi",
+                  "fs-lock",
+                  "normalize-path",
+                  "leon",
+                  "leon-macros",
+                  "simple-git"
+                ]
+              },
+              "version": {
+                "description": "Version to release",
+                "required": true,
+                "type": "string",
+                "default": "patch"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "make-release-pr": {
+            "permissions": {
+              "id-token": "write",
+              "pull-requests": "write",
+              "contents": "write"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Configure toolchain",
+                "run": "rustup toolchain install --profile minimal --no-self-update nightly\nrustup default nightly\n"
+              },
+              {
+                "uses": "chainguard-dev/actions/setup-gitsign@main"
+              },
+              {
+                "name": "Install cargo-release",
+                "uses": "taiki-e/install-action@v2",
+                "with": {
+                  "tool": "cargo-release,cargo-semver-checks"
+                }
+              },
+              {
+                "uses": "cargo-bins/release-pr@v2",
+                "with": {
+                  "github-token": "${{ secrets.GITHUB_TOKEN }}",
+                  "version": "${{ inputs.version }}",
+                  "crate-path": "crates/${{ inputs.crate }}",
+                  "pr-label": "release",
+                  "pr-release-notes": "${{ inputs.crate == 'bin' }}",
+                  "pr-template-file": ".github/scripts/release-pr-template.ejs",
+                  "check-semver": "${{ inputs.crate != 'bin' }}",
+                  "check-package": true
+                },
+                "env": {
+                  "RUSTFLAGS": "--cfg reqwest_unstable"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-02-09T05-38-28Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-pr__2024-02-09T05-38-28Z__c450f442cb9271c4ccdba48435674f47b01bfb2b.yml",
+          "workflow_name": "Open a release PR",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 62,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "make-release-pr": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "make-release-pr": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "cargo-bins/release-pr@v2",
+              "chainguard-dev/actions/setup-gitsign@main",
+              "taiki-e/install-action@v2"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Open a release PR",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "crate": {
+                "description": "Crate to release",
+                "required": true,
+                "type": "choice",
+                "options": [
+                  "atomic-file-install",
+                  "bin",
+                  "binstalk",
+                  "binstalk-bins",
+                  "binstalk-fetchers",
+                  "binstalk-registry",
+                  "binstalk-manifests",
+                  "binstalk-types",
+                  "binstalk-downloader",
+                  "cargo-toml-workspace",
+                  "detect-targets",
+                  "detect-wasi",
+                  "fs-lock",
+                  "normalize-path",
+                  "leon",
+                  "leon-macros"
+                ]
+              },
+              "version": {
+                "description": "Version to release",
+                "required": true,
+                "type": "string",
+                "default": "patch"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "make-release-pr": {
+            "permissions": {
+              "id-token": "write",
+              "pull-requests": "write",
+              "contents": "write"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Configure toolchain",
+                "run": "rustup toolchain install --profile minimal --no-self-update nightly\nrustup default nightly\n"
+              },
+              {
+                "uses": "chainguard-dev/actions/setup-gitsign@main"
+              },
+              {
+                "name": "Install cargo-release",
+                "uses": "taiki-e/install-action@v2",
+                "with": {
+                  "tool": "cargo-release,cargo-semver-checks"
+                }
+              },
+              {
+                "uses": "cargo-bins/release-pr@v2",
+                "with": {
+                  "github-token": "${{ secrets.GITHUB_TOKEN }}",
+                  "version": "${{ inputs.version }}",
+                  "crate-path": "crates/${{ inputs.crate }}",
+                  "pr-label": "release",
+                  "pr-release-notes": "${{ inputs.crate == 'bin' }}",
+                  "pr-template-file": ".github/scripts/release-pr-template.ejs",
+                  "check-semver": "${{ inputs.crate != 'bin' }}",
+                  "check-package": true
+                },
+                "env": {
+                  "RUSTFLAGS": "--cfg reqwest_unstable"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-02-12T07-14-02Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-pr__2024-02-12T07-14-02Z__add9310d5e5e365acd8fc9ebd4af794c5641059f.yml",
+          "workflow_name": "Open a release PR",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 62,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "make-release-pr": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "make-release-pr": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "cargo-bins/release-pr@v2",
+              "chainguard-dev/actions/setup-gitsign@main",
+              "taiki-e/install-action@v2"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Open a release PR",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "crate": {
+                "description": "Crate to release",
+                "required": true,
+                "type": "choice",
+                "options": [
+                  "atomic-file-install",
+                  "bin",
+                  "binstalk",
+                  "binstalk-bins",
+                  "binstalk-fetchers",
+                  "binstalk-registry",
+                  "binstalk-manifests",
+                  "binstalk-types",
+                  "binstalk-downloader",
+                  "cargo-toml-workspace",
+                  "detect-targets",
+                  "detect-wasi",
+                  "fs-lock",
+                  "normalize-path",
+                  "leon",
+                  "leon-macros"
+                ]
+              },
+              "version": {
+                "description": "Version to release",
+                "required": true,
+                "type": "string",
+                "default": "patch"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "make-release-pr": {
+            "permissions": {
+              "id-token": "write",
+              "pull-requests": "write",
+              "contents": "write"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Configure toolchain",
+                "run": "rustup toolchain install --profile minimal --no-self-update nightly\nrustup default nightly\n"
+              },
+              {
+                "uses": "chainguard-dev/actions/setup-gitsign@main"
+              },
+              {
+                "name": "Install cargo-release",
+                "uses": "taiki-e/install-action@v2",
+                "with": {
+                  "tool": "cargo-release,cargo-semver-checks"
+                }
+              },
+              {
+                "uses": "cargo-bins/release-pr@v2",
+                "with": {
+                  "github-token": "${{ secrets.GITHUB_TOKEN }}",
+                  "version": "${{ inputs.version }}",
+                  "crate-path": "crates/${{ inputs.crate }}",
+                  "pr-label": "release",
+                  "pr-release-notes": "${{ inputs.crate == 'bin' }}",
+                  "pr-template-file": ".github/scripts/release-pr-template.ejs",
+                  "check-semver": "${{ inputs.crate != 'bin' && inputs.crate != 'leon-macros' }}",
+                  "check-package": true
+                },
+                "env": {
+                  "RUSTFLAGS": "--cfg reqwest_unstable"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-02-20T13-16-47Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-pr__2024-02-20T13-16-47Z__1928e2ccb380b2b066ba583eacb381c36f3f52cc.yml",
+          "workflow_name": "Open a release PR",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 60,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "make-release-pr": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "make-release-pr": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "cargo-bins/release-pr@v2",
+              "chainguard-dev/actions/setup-gitsign@main",
+              "taiki-e/install-action@v2"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Open a release PR",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "crate": {
+                "description": "Crate to release",
+                "required": true,
+                "type": "choice",
+                "options": [
+                  "atomic-file-install",
+                  "bin",
+                  "binstalk",
+                  "binstalk-bins",
+                  "binstalk-fetchers",
+                  "binstalk-registry",
+                  "binstalk-manifests",
+                  "binstalk-types",
+                  "binstalk-downloader",
+                  "cargo-toml-workspace",
+                  "detect-targets",
+                  "detect-wasi",
+                  "fs-lock",
+                  "normalize-path"
+                ]
+              },
+              "version": {
+                "description": "Version to release",
+                "required": true,
+                "type": "string",
+                "default": "patch"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "make-release-pr": {
+            "permissions": {
+              "id-token": "write",
+              "pull-requests": "write",
+              "contents": "write"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Configure toolchain",
+                "run": "rustup toolchain install --profile minimal --no-self-update nightly\nrustup default nightly\n"
+              },
+              {
+                "uses": "chainguard-dev/actions/setup-gitsign@main"
+              },
+              {
+                "name": "Install cargo-release",
+                "uses": "taiki-e/install-action@v2",
+                "with": {
+                  "tool": "cargo-release,cargo-semver-checks"
+                }
+              },
+              {
+                "uses": "cargo-bins/release-pr@v2",
+                "with": {
+                  "github-token": "${{ secrets.GITHUB_TOKEN }}",
+                  "version": "${{ inputs.version }}",
+                  "crate-path": "crates/${{ inputs.crate }}",
+                  "pr-label": "release",
+                  "pr-release-notes": "${{ inputs.crate == 'bin' }}",
+                  "pr-template-file": ".github/scripts/release-pr-template.ejs",
+                  "check-semver": "${{ inputs.crate != 'bin' && inputs.crate != 'leon-macros' }}",
+                  "check-package": true
+                },
+                "env": {
+                  "RUSTFLAGS": "--cfg reqwest_unstable"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-05-02T05-27-20Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-pr__2024-05-02T05-27-20Z__3198712328ed4fae1fab1736091241ecd92c6703.yml",
+          "workflow_name": "Open a release PR",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 60,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "make-release-pr": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "make-release-pr": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "cargo-bins/release-pr@v2.1.1",
+              "chainguard-dev/actions/setup-gitsign@main",
+              "taiki-e/install-action@v2"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Open a release PR",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "crate": {
+                "description": "Crate to release",
+                "required": true,
+                "type": "choice",
+                "options": [
+                  "atomic-file-install",
+                  "bin",
+                  "binstalk",
+                  "binstalk-bins",
+                  "binstalk-fetchers",
+                  "binstalk-registry",
+                  "binstalk-manifests",
+                  "binstalk-types",
+                  "binstalk-downloader",
+                  "cargo-toml-workspace",
+                  "detect-targets",
+                  "detect-wasi",
+                  "fs-lock",
+                  "normalize-path"
+                ]
+              },
+              "version": {
+                "description": "Version to release",
+                "required": true,
+                "type": "string",
+                "default": "patch"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "make-release-pr": {
+            "permissions": {
+              "id-token": "write",
+              "pull-requests": "write",
+              "contents": "write"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Configure toolchain",
+                "run": "rustup toolchain install --profile minimal --no-self-update nightly\nrustup default nightly\n"
+              },
+              {
+                "uses": "chainguard-dev/actions/setup-gitsign@main"
+              },
+              {
+                "name": "Install cargo-release",
+                "uses": "taiki-e/install-action@v2",
+                "with": {
+                  "tool": "cargo-release,cargo-semver-checks"
+                }
+              },
+              {
+                "uses": "cargo-bins/release-pr@v2.1.1",
+                "with": {
+                  "github-token": "${{ secrets.GITHUB_TOKEN }}",
+                  "version": "${{ inputs.version }}",
+                  "crate-path": "crates/${{ inputs.crate }}",
+                  "pr-label": "release",
+                  "pr-release-notes": "${{ inputs.crate == 'bin' }}",
+                  "pr-template-file": ".github/scripts/release-pr-template.ejs",
+                  "check-semver": "${{ inputs.crate != 'bin' && inputs.crate != 'leon-macros' }}",
+                  "check-package": true
+                },
+                "env": {
+                  "RUSTFLAGS": "--cfg reqwest_unstable"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-06-10T06-02-12Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-pr__2024-06-10T06-02-12Z__1dbd2460a35a730c36b8afe6b051631d6f0da7cc.yml",
+          "workflow_name": "Open a release PR",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 61,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "make-release-pr": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "make-release-pr": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "cargo-bins/release-pr@v2.1.1",
+              "chainguard-dev/actions/setup-gitsign@main",
+              "taiki-e/install-action@v2"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Open a release PR",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "crate": {
+                "description": "Crate to release",
+                "required": true,
+                "type": "choice",
+                "options": [
+                  "atomic-file-install",
+                  "bin",
+                  "binstalk",
+                  "binstalk-bins",
+                  "binstalk-fetchers",
+                  "binstalk-git-repo-api",
+                  "binstalk-registry",
+                  "binstalk-manifests",
+                  "binstalk-types",
+                  "binstalk-downloader",
+                  "cargo-toml-workspace",
+                  "detect-targets",
+                  "detect-wasi",
+                  "fs-lock",
+                  "normalize-path"
+                ]
+              },
+              "version": {
+                "description": "Version to release",
+                "required": true,
+                "type": "string",
+                "default": "patch"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "make-release-pr": {
+            "permissions": {
+              "id-token": "write",
+              "pull-requests": "write",
+              "contents": "write"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Configure toolchain",
+                "run": "rustup toolchain install --profile minimal --no-self-update nightly\nrustup default nightly\n"
+              },
+              {
+                "uses": "chainguard-dev/actions/setup-gitsign@main"
+              },
+              {
+                "name": "Install cargo-release",
+                "uses": "taiki-e/install-action@v2",
+                "with": {
+                  "tool": "cargo-release,cargo-semver-checks"
+                }
+              },
+              {
+                "uses": "cargo-bins/release-pr@v2.1.1",
+                "with": {
+                  "github-token": "${{ secrets.GITHUB_TOKEN }}",
+                  "version": "${{ inputs.version }}",
+                  "crate-path": "crates/${{ inputs.crate }}",
+                  "pr-label": "release",
+                  "pr-release-notes": "${{ inputs.crate == 'bin' }}",
+                  "pr-template-file": ".github/scripts/release-pr-template.ejs",
+                  "check-semver": "${{ inputs.crate != 'bin' && inputs.crate != 'leon-macros' }}",
+                  "check-package": true
+                },
+                "env": {
+                  "RUSTFLAGS": "--cfg reqwest_unstable"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-06-14T10-25-13Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-pr__2024-06-14T10-25-13Z__610504957fed050dfb05b82a5a3abe2c62995cbd.yml",
+          "workflow_name": "Open a release PR",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 62,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "make-release-pr": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "make-release-pr": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "cargo-bins/release-pr@v2.1.1",
+              "chainguard-dev/actions/setup-gitsign@main",
+              "taiki-e/install-action@v2"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Open a release PR",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "crate": {
+                "description": "Crate to release",
+                "required": true,
+                "type": "choice",
+                "options": [
+                  "atomic-file-install",
+                  "bin",
+                  "binstalk",
+                  "binstalk-bins",
+                  "binstalk-fetchers",
+                  "binstalk-git-repo-api",
+                  "binstalk-registry",
+                  "binstalk-manifests",
+                  "binstalk-types",
+                  "binstalk-downloader",
+                  "cargo-toml-workspace",
+                  "detect-targets",
+                  "detect-wasi",
+                  "fs-lock",
+                  "normalize-path"
+                ]
+              },
+              "version": {
+                "description": "Version to release",
+                "required": true,
+                "type": "string",
+                "default": "patch"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "make-release-pr": {
+            "permissions": {
+              "id-token": "write",
+              "pull-requests": "write",
+              "contents": "write"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Configure toolchain",
+                "run": "rustup toolchain install --profile minimal --no-self-update nightly\nrustup default nightly\n"
+              },
+              {
+                "uses": "chainguard-dev/actions/setup-gitsign@main"
+              },
+              {
+                "name": "Install cargo-release",
+                "uses": "taiki-e/install-action@v2",
+                "with": {
+                  "tool": "cargo-release,cargo-semver-checks"
+                }
+              },
+              {
+                "run": "rustup toolchain install stable --no-self-update --profile minimal"
+              },
+              {
+                "uses": "cargo-bins/release-pr@v2.1.1",
+                "with": {
+                  "github-token": "${{ secrets.GITHUB_TOKEN }}",
+                  "version": "${{ inputs.version }}",
+                  "crate-path": "crates/${{ inputs.crate }}",
+                  "pr-label": "release",
+                  "pr-release-notes": "${{ inputs.crate == 'bin' }}",
+                  "pr-template-file": ".github/scripts/release-pr-template.ejs",
+                  "check-semver": "${{ inputs.crate != 'bin' && inputs.crate != 'leon-macros' }}",
+                  "check-package": true
+                },
+                "env": {
+                  "RUSTFLAGS": "--cfg reqwest_unstable"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-06-19T08-48-47Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-pr__2024-06-19T08-48-47Z__374fc45b61fd453c2200877253808020584ece82.yml",
+          "workflow_name": "Open a release PR",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 62,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "make-release-pr": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "make-release-pr": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "cargo-bins/release-pr@v2.1.2",
+              "chainguard-dev/actions/setup-gitsign@main",
+              "taiki-e/install-action@v2"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Open a release PR",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "crate": {
+                "description": "Crate to release",
+                "required": true,
+                "type": "choice",
+                "options": [
+                  "atomic-file-install",
+                  "bin",
+                  "binstalk",
+                  "binstalk-bins",
+                  "binstalk-fetchers",
+                  "binstalk-git-repo-api",
+                  "binstalk-registry",
+                  "binstalk-manifests",
+                  "binstalk-types",
+                  "binstalk-downloader",
+                  "cargo-toml-workspace",
+                  "detect-targets",
+                  "detect-wasi",
+                  "fs-lock",
+                  "normalize-path"
+                ]
+              },
+              "version": {
+                "description": "Version to release",
+                "required": true,
+                "type": "string",
+                "default": "patch"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "make-release-pr": {
+            "permissions": {
+              "id-token": "write",
+              "pull-requests": "write",
+              "contents": "write"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Configure toolchain",
+                "run": "rustup toolchain install --profile minimal --no-self-update nightly\nrustup default nightly\n"
+              },
+              {
+                "uses": "chainguard-dev/actions/setup-gitsign@main"
+              },
+              {
+                "name": "Install cargo-release",
+                "uses": "taiki-e/install-action@v2",
+                "with": {
+                  "tool": "cargo-release,cargo-semver-checks"
+                }
+              },
+              {
+                "run": "rustup toolchain install stable --no-self-update --profile minimal"
+              },
+              {
+                "uses": "cargo-bins/release-pr@v2.1.2",
+                "with": {
+                  "github-token": "${{ secrets.GITHUB_TOKEN }}",
+                  "version": "${{ inputs.version }}",
+                  "crate-path": "crates/${{ inputs.crate }}",
+                  "pr-label": "release",
+                  "pr-release-notes": "${{ inputs.crate == 'bin' }}",
+                  "pr-template-file": ".github/scripts/release-pr-template.ejs",
+                  "check-semver": "${{ inputs.crate != 'bin' && inputs.crate != 'leon-macros' }}",
+                  "check-package": true
+                },
+                "env": {
+                  "RUSTFLAGS": "--cfg reqwest_unstable"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-06-19T13-15-52Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-pr__2024-06-19T13-15-52Z__c49072c5652a20d8717ac9f03410f652751ced7d.yml",
+          "workflow_name": "Open a release PR",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 62,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "make-release-pr": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "make-release-pr": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "cargo-bins/release-pr@v2.1.3",
+              "chainguard-dev/actions/setup-gitsign@main",
+              "taiki-e/install-action@v2"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Open a release PR",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "crate": {
+                "description": "Crate to release",
+                "required": true,
+                "type": "choice",
+                "options": [
+                  "atomic-file-install",
+                  "bin",
+                  "binstalk",
+                  "binstalk-bins",
+                  "binstalk-fetchers",
+                  "binstalk-git-repo-api",
+                  "binstalk-registry",
+                  "binstalk-manifests",
+                  "binstalk-types",
+                  "binstalk-downloader",
+                  "cargo-toml-workspace",
+                  "detect-targets",
+                  "detect-wasi",
+                  "fs-lock",
+                  "normalize-path"
+                ]
+              },
+              "version": {
+                "description": "Version to release",
+                "required": true,
+                "type": "string",
+                "default": "patch"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "make-release-pr": {
+            "permissions": {
+              "id-token": "write",
+              "pull-requests": "write",
+              "contents": "write"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Configure toolchain",
+                "run": "rustup toolchain install --profile minimal --no-self-update nightly\nrustup default nightly\n"
+              },
+              {
+                "uses": "chainguard-dev/actions/setup-gitsign@main"
+              },
+              {
+                "name": "Install cargo-release",
+                "uses": "taiki-e/install-action@v2",
+                "with": {
+                  "tool": "cargo-release,cargo-semver-checks"
+                }
+              },
+              {
+                "run": "rustup toolchain install stable --no-self-update --profile minimal"
+              },
+              {
+                "uses": "cargo-bins/release-pr@v2.1.3",
+                "with": {
+                  "github-token": "${{ secrets.GITHUB_TOKEN }}",
+                  "version": "${{ inputs.version }}",
+                  "crate-path": "crates/${{ inputs.crate }}",
+                  "pr-label": "release",
+                  "pr-release-notes": "${{ inputs.crate == 'bin' }}",
+                  "pr-template-file": ".github/scripts/release-pr-template.ejs",
+                  "check-semver": "${{ inputs.crate != 'bin' && inputs.crate != 'leon-macros' }}",
+                  "check-package": true
+                },
+                "env": {
+                  "RUSTFLAGS": "--cfg reqwest_unstable"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-06-19T14-07-23Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-pr__2024-06-19T14-07-23Z__45b25fede5d1bf391984d990a2e9a68ef1823a6b.yml",
+          "workflow_name": "Open a release PR",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 67,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "make-release-pr": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "make-release-pr": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "cargo-bins/release-pr@v2.1.3",
+              "chainguard-dev/actions/setup-gitsign@main",
+              "taiki-e/install-action@v2"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Open a release PR",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "crate": {
+                "description": "Crate to release",
+                "required": true,
+                "type": "choice",
+                "options": [
+                  "atomic-file-install",
+                  "bin",
+                  "binstalk",
+                  "binstalk-bins",
+                  "binstalk-fetchers",
+                  "binstalk-git-repo-api",
+                  "binstalk-registry",
+                  "binstalk-manifests",
+                  "binstalk-types",
+                  "binstalk-downloader",
+                  "cargo-toml-workspace",
+                  "detect-targets",
+                  "detect-wasi",
+                  "fs-lock",
+                  "normalize-path"
+                ]
+              },
+              "version": {
+                "description": "Version to release",
+                "required": true,
+                "type": "string",
+                "default": "patch"
+              },
+              "no-check-semver": {
+                "description": "Whether to check semver",
+                "required": true,
+                "type": "string",
+                "default": "false"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "make-release-pr": {
+            "permissions": {
+              "id-token": "write",
+              "pull-requests": "write",
+              "contents": "write"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Configure toolchain",
+                "run": "rustup toolchain install --profile minimal --no-self-update nightly\nrustup default nightly\n"
+              },
+              {
+                "uses": "chainguard-dev/actions/setup-gitsign@main"
+              },
+              {
+                "name": "Install cargo-release",
+                "uses": "taiki-e/install-action@v2",
+                "with": {
+                  "tool": "cargo-release,cargo-semver-checks"
+                }
+              },
+              {
+                "run": "rustup toolchain install stable --no-self-update --profile minimal"
+              },
+              {
+                "uses": "cargo-bins/release-pr@v2.1.3",
+                "with": {
+                  "github-token": "${{ secrets.GITHUB_TOKEN }}",
+                  "version": "${{ inputs.version }}",
+                  "crate-path": "crates/${{ inputs.crate }}",
+                  "pr-label": "release",
+                  "pr-release-notes": "${{ inputs.crate == 'bin' }}",
+                  "pr-template-file": ".github/scripts/release-pr-template.ejs",
+                  "check-semver": "${{ inputs.crate != 'bin' && inputs.no-check-semver != 'true'  }}",
+                  "check-package": true
+                },
+                "env": {
+                  "RUSTFLAGS": "--cfg reqwest_unstable"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-06-19T14-29-09Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-pr__2024-06-19T14-29-09Z__050c337da12837ce3695c9cbb04e4d86154573b7.yml",
+          "workflow_name": "Open a release PR",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 67,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "make-release-pr": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "make-release-pr": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "cargo-bins/release-pr@v2.1.3",
+              "chainguard-dev/actions/setup-gitsign@main",
+              "taiki-e/install-action@v2"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Open a release PR",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "crate": {
+                "description": "Crate to release",
+                "required": true,
+                "type": "choice",
+                "options": [
+                  "atomic-file-install",
+                  "bin",
+                  "binstalk",
+                  "binstalk-bins",
+                  "binstalk-fetchers",
+                  "binstalk-git-repo-api",
+                  "binstalk-registry",
+                  "binstalk-manifests",
+                  "binstalk-types",
+                  "binstalk-downloader",
+                  "cargo-toml-workspace",
+                  "detect-targets",
+                  "detect-wasi",
+                  "fs-lock",
+                  "normalize-path"
+                ]
+              },
+              "version": {
+                "description": "Version to release",
+                "required": true,
+                "type": "string",
+                "default": "patch"
+              },
+              "no-check-semver": {
+                "description": "To disable check semver",
+                "required": true,
+                "type": "string",
+                "default": "false"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "make-release-pr": {
+            "permissions": {
+              "id-token": "write",
+              "pull-requests": "write",
+              "contents": "write"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Configure toolchain",
+                "run": "rustup toolchain install --profile minimal --no-self-update nightly\nrustup default nightly\n"
+              },
+              {
+                "uses": "chainguard-dev/actions/setup-gitsign@main"
+              },
+              {
+                "name": "Install cargo-release",
+                "uses": "taiki-e/install-action@v2",
+                "with": {
+                  "tool": "cargo-release,cargo-semver-checks"
+                }
+              },
+              {
+                "run": "rustup toolchain install stable --no-self-update --profile minimal"
+              },
+              {
+                "uses": "cargo-bins/release-pr@v2.1.3",
+                "with": {
+                  "github-token": "${{ secrets.GITHUB_TOKEN }}",
+                  "version": "${{ inputs.version }}",
+                  "crate-path": "crates/${{ inputs.crate }}",
+                  "pr-label": "release",
+                  "pr-release-notes": "${{ inputs.crate == 'bin' }}",
+                  "pr-template-file": ".github/scripts/release-pr-template.ejs",
+                  "check-semver": "${{ inputs.crate != 'bin' && inputs.no-check-semver != 'true'  }}",
+                  "check-package": true
+                },
+                "env": {
+                  "RUSTFLAGS": "--cfg reqwest_unstable"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-08-03T04-40-18Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-pr__2024-08-03T04-40-18Z__5d57d4506e1c92051317cbf40a98c88f50519fa2.yml",
+          "workflow_name": "Open a release PR",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 69,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "make-release-pr": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "make-release-pr": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "cargo-bins/release-pr@v2.1.3",
+              "chainguard-dev/actions/setup-gitsign@main",
+              "taiki-e/install-action@v2"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Open a release PR",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "crate": {
+                "description": "Crate to release",
+                "required": true,
+                "type": "choice",
+                "options": [
+                  "atomic-file-install",
+                  "bin",
+                  "binstalk",
+                  "binstalk-bins",
+                  "binstalk-fetchers",
+                  "binstalk-git-repo-api",
+                  "binstalk-registry",
+                  "binstalk-manifests",
+                  "binstalk-types",
+                  "binstalk-downloader",
+                  "cargo-toml-workspace",
+                  "detect-targets",
+                  "detect-wasi",
+                  "fs-lock",
+                  "normalize-path"
+                ]
+              },
+              "version": {
+                "description": "Version to release",
+                "required": true,
+                "type": "string",
+                "default": "patch"
+              },
+              "no-check-semver": {
+                "description": "To disable check semver",
+                "required": true,
+                "type": "string",
+                "default": "false"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "make-release-pr": {
+            "permissions": {
+              "id-token": "write",
+              "pull-requests": "write",
+              "contents": "write"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Configure toolchain",
+                "run": "rustup toolchain install --profile minimal --no-self-update nightly\nrustup default nightly\n"
+              },
+              {
+                "uses": "chainguard-dev/actions/setup-gitsign@main"
+              },
+              {
+                "name": "Install cargo-release",
+                "uses": "taiki-e/install-action@v2",
+                "with": {
+                  "tool": "cargo-release,cargo-semver-checks"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.CI_RELEASE_TEST_GITHUB_TOKEN || secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "run": "rustup toolchain install stable --no-self-update --profile minimal"
+              },
+              {
+                "uses": "cargo-bins/release-pr@v2.1.3",
+                "with": {
+                  "github-token": "${{ secrets.GITHUB_TOKEN }}",
+                  "version": "${{ inputs.version }}",
+                  "crate-path": "crates/${{ inputs.crate }}",
+                  "pr-label": "release",
+                  "pr-release-notes": "${{ inputs.crate == 'bin' }}",
+                  "pr-template-file": ".github/scripts/release-pr-template.ejs",
+                  "check-semver": "${{ inputs.crate != 'bin' && inputs.no-check-semver != 'true'  }}",
+                  "check-package": true
+                },
+                "env": {
+                  "RUSTFLAGS": "--cfg reqwest_unstable"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-11-29T10-39-52Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-pr__2024-11-29T10-39-52Z__d22433799a02a7a7ed73b3ba83e7eaa86e0cde92.yml",
+          "workflow_name": "Open a release PR",
+          "triggers": {},
+          "permissions": {
+            "pull-requests": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 72,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "make-release-pr": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "make-release-pr": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "cargo-bins/release-pr@v2.1.3",
+              "chainguard-dev/actions/setup-gitsign@main",
+              "taiki-e/install-action@v2"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Open a release PR",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "crate": {
+                "description": "Crate to release",
+                "required": true,
+                "type": "choice",
+                "options": [
+                  "atomic-file-install",
+                  "bin",
+                  "binstalk",
+                  "binstalk-bins",
+                  "binstalk-fetchers",
+                  "binstalk-git-repo-api",
+                  "binstalk-registry",
+                  "binstalk-manifests",
+                  "binstalk-types",
+                  "binstalk-downloader",
+                  "cargo-toml-workspace",
+                  "detect-targets",
+                  "detect-wasi",
+                  "fs-lock",
+                  "normalize-path"
+                ]
+              },
+              "version": {
+                "description": "Version to release",
+                "required": true,
+                "type": "string",
+                "default": "patch"
+              },
+              "no-check-semver": {
+                "description": "To disable check semver",
+                "required": true,
+                "type": "string",
+                "default": "false"
+              }
+            }
+          }
+        },
+        "permissions": {
+          "pull-requests": "write"
+        },
+        "jobs": {
+          "make-release-pr": {
+            "permissions": {
+              "id-token": "write",
+              "pull-requests": "write",
+              "contents": "write"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Configure toolchain",
+                "run": "rustup toolchain install --profile minimal --no-self-update nightly\nrustup default nightly\n"
+              },
+              {
+                "uses": "chainguard-dev/actions/setup-gitsign@main"
+              },
+              {
+                "name": "Install cargo-release",
+                "uses": "taiki-e/install-action@v2",
+                "with": {
+                  "tool": "cargo-release,cargo-semver-checks"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.CI_RELEASE_TEST_GITHUB_TOKEN || secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "run": "rustup toolchain install stable --no-self-update --profile minimal"
+              },
+              {
+                "uses": "cargo-bins/release-pr@v2.1.3",
+                "with": {
+                  "github-token": "${{ secrets.GITHUB_TOKEN }}",
+                  "version": "${{ inputs.version }}",
+                  "crate-path": "crates/${{ inputs.crate }}",
+                  "pr-label": "release",
+                  "pr-release-notes": "${{ inputs.crate == 'bin' }}",
+                  "pr-template-file": ".github/scripts/release-pr-template.ejs",
+                  "check-semver": "${{ inputs.crate != 'bin' && inputs.no-check-semver != 'true'  }}",
+                  "check-package": true
+                },
+                "env": {
+                  "RUSTFLAGS": "--cfg reqwest_unstable"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-02-28T13-29-25Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-pr__2025-02-28T13-29-25Z__7c38109b23696143172d290582057fde456d647c.yml",
+          "workflow_name": "Open cargo-binstall release PR",
+          "triggers": {},
+          "permissions": {
+            "pull-requests": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 47,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "make-release-pr": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "make-release-pr": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "cargo-bins/release-pr@v2.1.3",
+              "chainguard-dev/actions/setup-gitsign@main",
+              "taiki-e/install-action@v2"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Open cargo-binstall release PR",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "version": {
+                "description": "Version to release",
+                "required": true,
+                "type": "string",
+                "default": "patch"
+              }
+            }
+          }
+        },
+        "permissions": {
+          "pull-requests": "write"
+        },
+        "jobs": {
+          "make-release-pr": {
+            "permissions": {
+              "id-token": "write",
+              "pull-requests": "write",
+              "contents": "write"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Configure toolchain",
+                "run": "rustup toolchain install --profile minimal --no-self-update nightly\nrustup default nightly\n"
+              },
+              {
+                "uses": "chainguard-dev/actions/setup-gitsign@main"
+              },
+              {
+                "name": "Install cargo-release",
+                "uses": "taiki-e/install-action@v2",
+                "with": {
+                  "tool": "cargo-release,cargo-semver-checks"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.CI_RELEASE_TEST_GITHUB_TOKEN || secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "run": "rustup toolchain install stable --no-self-update --profile minimal"
+              },
+              {
+                "uses": "cargo-bins/release-pr@v2.1.3",
+                "with": {
+                  "github-token": "${{ secrets.GITHUB_TOKEN }}",
+                  "version": "${{ inputs.version }}",
+                  "crate-path": "crates/bin",
+                  "pr-label": "release",
+                  "pr-release-notes": true,
+                  "pr-template-file": ".github/scripts/release-pr-template.ejs",
+                  "check-semver": false,
+                  "check-package": true
+                },
+                "env": {
+                  "RUSTFLAGS": "--cfg reqwest_unstable"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-08-12T10-20-16Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-pr__2025-08-12T10-20-16Z__d7c6cbb9117fafe02055796f96f1a7ae7046f32a.yml",
+          "workflow_name": "Open cargo-binstall release PR",
+          "triggers": {},
+          "permissions": {
+            "pull-requests": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 47,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "make-release-pr": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "make-release-pr": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v5",
+              "cargo-bins/release-pr@v2.1.3",
+              "chainguard-dev/actions/setup-gitsign@main",
+              "taiki-e/install-action@v2"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Open cargo-binstall release PR",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "version": {
+                "description": "Version to release",
+                "required": true,
+                "type": "string",
+                "default": "patch"
+              }
+            }
+          }
+        },
+        "permissions": {
+          "pull-requests": "write"
+        },
+        "jobs": {
+          "make-release-pr": {
+            "permissions": {
+              "id-token": "write",
+              "pull-requests": "write",
+              "contents": "write"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v5"
+              },
+              {
+                "name": "Configure toolchain",
+                "run": "rustup toolchain install --profile minimal --no-self-update nightly\nrustup default nightly\n"
+              },
+              {
+                "uses": "chainguard-dev/actions/setup-gitsign@main"
+              },
+              {
+                "name": "Install cargo-release",
+                "uses": "taiki-e/install-action@v2",
+                "with": {
+                  "tool": "cargo-release,cargo-semver-checks"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.CI_RELEASE_TEST_GITHUB_TOKEN || secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "run": "rustup toolchain install stable --no-self-update --profile minimal"
+              },
+              {
+                "uses": "cargo-bins/release-pr@v2.1.3",
+                "with": {
+                  "github-token": "${{ secrets.GITHUB_TOKEN }}",
+                  "version": "${{ inputs.version }}",
+                  "crate-path": "crates/bin",
+                  "pr-label": "release",
+                  "pr-release-notes": true,
+                  "pr-template-file": ".github/scripts/release-pr-template.ejs",
+                  "check-semver": false,
+                  "check-package": true
+                },
+                "env": {
+                  "RUSTFLAGS": "--cfg reqwest_unstable"
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

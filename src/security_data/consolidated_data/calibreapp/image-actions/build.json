@@ -1,0 +1,2969 @@
+{
+  "repo_owner": "calibreapp",
+  "repo_name": "image-actions",
+  "workflow_name": "build",
+  "history": {
+    "2020-12-01T01-57-04Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-4c9cd1be-bb7a-56ec-8a34-72dc60788ee5",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/build__2020-12-01T01-57-04Z__48aa7feab7d5438438ea4f42c04fefe829ee78cb.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 22,
+                  "startColumn": 5,
+                  "endLine": 37,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "6cb7810286657c37:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-dd9f5f8c-8018-5ded-9c87-cd110b87f07c",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/build__2020-12-01T01-57-04Z__48aa7feab7d5438438ea4f42c04fefe829ee78cb.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 39,
+                  "startColumn": 5,
+                  "endLine": 67,
+                  "endColumn": 42
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "f87956e755c6e9d7:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "build__2020-12-01T01-57-04Z__48aa7feab7d5438438ea4f42c04fefe829ee78cb.yml",
+          "workflow_name": "Docker",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 67,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "test": 2,
+            "push": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 1,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 2,
+              "push": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "actions/checkout@v2"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Docker",
+        "true": {
+          "push": {
+            "branches": [
+              "main"
+            ],
+            "tags": [
+              "v*"
+            ]
+          },
+          "pull_request": null
+        },
+        "env": {
+          "IMAGE_NAME": "image-actions"
+        },
+        "jobs": {
+          "test": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "name": "Run tests",
+                "run": "if [ -f docker-compose.test.yml ]; then\n  docker-compose --file docker-compose.test.yml build\n  docker-compose --file docker-compose.test.yml run test\nelse\n  docker build . --file Dockerfile\nfi\n"
+              }
+            ]
+          },
+          "push": {
+            "needs": "test",
+            "runs-on": "ubuntu-latest",
+            "if": "github.event_name == 'push'",
+            "steps": [
+              {
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "name": "Build image",
+                "run": "docker build . --file Dockerfile --tag $IMAGE_NAME"
+              },
+              {
+                "name": "Log into registry",
+                "run": "echo \"${{ secrets.GITHUB_TOKEN }}\" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin"
+              },
+              {
+                "name": "Push image",
+                "run": "IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/$IMAGE_NAME\n# Change all uppercase to lowercase\nIMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')\n# Strip git ref prefix from version\nVERSION=$(echo \"${{ github.ref }}\" | sed -e 's,.*/\\(.*\\),\\1,')\n# Strip \"v\" prefix from tag name\n[[ \"${{ github.ref }}\" == \"refs/tags/\"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')\n# Use Docker `latest` tag convention\n[ \"$VERSION\" == \"$default-branch\" ] && VERSION=latest\necho IMAGE_ID=$IMAGE_ID\necho VERSION=$VERSION\ndocker tag $IMAGE_NAME $IMAGE_ID:$VERSION\ndocker push $IMAGE_ID:$VERSION\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2020-12-01T01-45-53Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-16bc8441-c9d3-5013-b447-c5402cfd1105",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/build__2020-12-01T01-45-53Z__a8587b3be63d6b20e2814d53af8b0b471784b7cb.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 23,
+                  "startColumn": 5,
+                  "endLine": 38,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "6cb7810286657c37:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-bcb4f4f1-3ae5-57c3-97d3-cfc600bb5dc7",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/build__2020-12-01T01-45-53Z__a8587b3be63d6b20e2814d53af8b0b471784b7cb.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 40,
+                  "startColumn": 5,
+                  "endLine": 68,
+                  "endColumn": 41
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "f87956e755c6e9d7:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "build__2020-12-01T01-45-53Z__a8587b3be63d6b20e2814d53af8b0b471784b7cb.yml",
+          "workflow_name": "Docker",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 68,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "test": 2,
+            "push": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 1,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 2,
+              "push": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "actions/checkout@v2"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Docker",
+        "true": {
+          "push": {
+            "branches": [
+              "$default-branch"
+            ],
+            "tags": [
+              "v*"
+            ]
+          },
+          "pull_request": null
+        },
+        "env": {
+          "IMAGE_NAME": "image-actions"
+        },
+        "jobs": {
+          "test": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "name": "Run tests",
+                "run": "if [ -f docker-compose.test.yml ]; then\n  docker-compose --file docker-compose.test.yml build\n  docker-compose --file docker-compose.test.yml run test\nelse\n  docker build . --file Dockerfile\nfi\n"
+              }
+            ]
+          },
+          "push": {
+            "needs": "test",
+            "runs-on": "ubuntu-latest",
+            "if": "github.event_name == 'push'",
+            "steps": [
+              {
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "name": "Build image",
+                "run": "docker build . --file Dockerfile --tag $IMAGE_NAME"
+              },
+              {
+                "name": "Log into registry",
+                "run": "echo \"${{ secrets.GITHUB_TOKEN }}\" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin"
+              },
+              {
+                "name": "Push image",
+                "run": "IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/$IMAGE_NAME\n# Change all uppercase to lowercase\nIMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')\n# Strip git ref prefix from version\nVERSION=$(echo \"${{ github.ref }}\" | sed -e 's,.*/\\(.*\\),\\1,')\n# Strip \"v\" prefix from tag name\n[[ \"${{ github.ref }}\" == \"refs/tags/\"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')\n# Use Docker `latest` tag convention\n[ \"$VERSION\" == \"$default-branch\" ] && VERSION=latest\necho IMAGE_ID=$IMAGE_ID\necho VERSION=$VERSION\ndocker tag $IMAGE_NAME $IMAGE_ID:$VERSION\ndocker push $IMAGE_ID:$VERSION"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-01-31T05-58-37Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-0df01e54-6e2c-5315-9961-f26098c6be93",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/build__2022-01-31T05-58-37Z__4d258adc2009ce5ce82185da5f465d769e161294.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 22,
+                  "startColumn": 5,
+                  "endLine": 37,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "6cb7810286657c37:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-46be087e-7266-554c-beea-993f67505a28",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/build__2022-01-31T05-58-37Z__4d258adc2009ce5ce82185da5f465d769e161294.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 39,
+                  "startColumn": 5,
+                  "endLine": 74,
+                  "endColumn": 42
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "f87956e755c6e9d7:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "build__2022-01-31T05-58-37Z__4d258adc2009ce5ce82185da5f465d769e161294.yml",
+          "workflow_name": "Docker",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 74,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "test": 2,
+            "push": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 1,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 2,
+              "push": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v2",
+              "docker/login-action@v1"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Docker",
+        "true": {
+          "push": {
+            "branches": [
+              "main"
+            ],
+            "tags": [
+              "v*"
+            ]
+          },
+          "pull_request": null
+        },
+        "env": {
+          "IMAGE_NAME": "image-actions"
+        },
+        "jobs": {
+          "test": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "name": "Run tests",
+                "run": "if [ -f docker-compose.test.yml ]; then\n  docker-compose --file docker-compose.test.yml build\n  docker-compose --file docker-compose.test.yml run test\nelse\n  docker build . --file Dockerfile\nfi\n"
+              }
+            ]
+          },
+          "push": {
+            "needs": "test",
+            "runs-on": "ubuntu-latest",
+            "if": "github.event_name == 'push'",
+            "steps": [
+              {
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "name": "Build image",
+                "run": "docker build . --file Dockerfile --tag $IMAGE_NAME"
+              },
+              {
+                "name": "Log into registry",
+                "run": "echo \"${{ secrets.CR_PAT }}\" | docker login ghcr.io -u ${{ github.actor }} --password-stdin"
+              },
+              {
+                "name": "Login to GitHub Container Registry",
+                "uses": "docker/login-action@v1",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.actor }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Push image",
+                "run": "IMAGE_ID=ghcr.io/${{ github.repository }}/$IMAGE_NAME\n# Change all uppercase to lowercase\nIMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')\n# Strip git ref prefix from version\nVERSION=$(echo \"${{ github.ref }}\" | sed -e 's,.*/\\(.*\\),\\1,')\n# Strip \"v\" prefix from tag name\n[[ \"${{ github.ref }}\" == \"refs/tags/\"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')\n# Use Docker `latest` tag convention\n[ \"$VERSION\" == \"$default-branch\" ] && VERSION=latest\necho IMAGE_ID=$IMAGE_ID\necho VERSION=$VERSION\ndocker tag $IMAGE_NAME $IMAGE_ID:$VERSION\ndocker push $IMAGE_ID:$VERSION\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2020-12-01T03-38-28Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-1983f950-64a4-5f3b-af9d-a1cfe87ba98a",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/build__2020-12-01T03-38-28Z__94cedb14b501c641d56d996743391f089a3c10df.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 22,
+                  "startColumn": 5,
+                  "endLine": 37,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "6cb7810286657c37:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-bec8e018-f722-57c6-9a3b-c6f048f908f3",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/build__2020-12-01T03-38-28Z__94cedb14b501c641d56d996743391f089a3c10df.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 39,
+                  "startColumn": 5,
+                  "endLine": 67,
+                  "endColumn": 42
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "f87956e755c6e9d7:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "build__2020-12-01T03-38-28Z__94cedb14b501c641d56d996743391f089a3c10df.yml",
+          "workflow_name": "Docker",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 67,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "test": 2,
+            "push": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 1,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 2,
+              "push": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "actions/checkout@v2"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Docker",
+        "true": {
+          "push": {
+            "branches": [
+              "main"
+            ],
+            "tags": [
+              "v*"
+            ]
+          },
+          "pull_request": null
+        },
+        "env": {
+          "IMAGE_NAME": "image-actions"
+        },
+        "jobs": {
+          "test": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "name": "Run tests",
+                "run": "if [ -f docker-compose.test.yml ]; then\n  docker-compose --file docker-compose.test.yml build\n  docker-compose --file docker-compose.test.yml run test\nelse\n  docker build . --file Dockerfile\nfi\n"
+              }
+            ]
+          },
+          "push": {
+            "needs": "test",
+            "runs-on": "ubuntu-latest",
+            "if": "github.event_name == 'push'",
+            "steps": [
+              {
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "name": "Build image",
+                "run": "docker build . --file Dockerfile --tag $IMAGE_NAME"
+              },
+              {
+                "name": "Log into registry",
+                "run": "echo \"${{ secrets.CR_PAT }}\" | docker login ghcr.io -u ${{ github.actor }} --password-stdin"
+              },
+              {
+                "name": "Push image",
+                "run": "IMAGE_ID=ghcr.io/${{ github.repository }}/$IMAGE_NAME\n# Change all uppercase to lowercase\nIMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')\n# Strip git ref prefix from version\nVERSION=$(echo \"${{ github.ref }}\" | sed -e 's,.*/\\(.*\\),\\1,')\n# Strip \"v\" prefix from tag name\n[[ \"${{ github.ref }}\" == \"refs/tags/\"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')\n# Use Docker `latest` tag convention\n[ \"$VERSION\" == \"$default-branch\" ] && VERSION=latest\necho IMAGE_ID=$IMAGE_ID\necho VERSION=$VERSION\ndocker tag $IMAGE_NAME $IMAGE_ID:$VERSION\ndocker push $IMAGE_ID:$VERSION\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-02-01T02-49-53Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-cf1108bf-9643-5ba8-9e40-54e877aab04a",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/build__2022-02-01T02-49-53Z__43afe624de9aa7433297aa56634c4690d56088e4.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 22,
+                  "startColumn": 5,
+                  "endLine": 37,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "6cb7810286657c37:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-7a976296-71d7-5fb6-9fee-a86cab8ce34f",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/build__2022-02-01T02-49-53Z__43afe624de9aa7433297aa56634c4690d56088e4.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 39,
+                  "startColumn": 5,
+                  "endLine": 71,
+                  "endColumn": 42
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "f87956e755c6e9d7:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "build__2022-02-01T02-49-53Z__43afe624de9aa7433297aa56634c4690d56088e4.yml",
+          "workflow_name": "Docker",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 71,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "test": 2,
+            "push": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 1,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 2,
+              "push": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v2",
+              "docker/login-action@v1"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Docker",
+        "true": {
+          "push": {
+            "branches": [
+              "main"
+            ],
+            "tags": [
+              "v*"
+            ]
+          },
+          "pull_request": null
+        },
+        "env": {
+          "IMAGE_NAME": "image-actions"
+        },
+        "jobs": {
+          "test": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "name": "Run tests",
+                "run": "if [ -f docker-compose.test.yml ]; then\n  docker-compose --file docker-compose.test.yml build\n  docker-compose --file docker-compose.test.yml run test\nelse\n  docker build . --file Dockerfile\nfi\n"
+              }
+            ]
+          },
+          "push": {
+            "needs": "test",
+            "runs-on": "ubuntu-latest",
+            "if": "github.event_name == 'push'",
+            "steps": [
+              {
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "name": "Build image",
+                "run": "docker build . --file Dockerfile --tag $IMAGE_NAME"
+              },
+              {
+                "name": "Login to GitHub Container Registry",
+                "uses": "docker/login-action@v1",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.actor }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Push image",
+                "run": "IMAGE_ID=ghcr.io/${{ github.repository }}/$IMAGE_NAME\n# Change all uppercase to lowercase\nIMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')\n# Strip git ref prefix from version\nVERSION=$(echo \"${{ github.ref }}\" | sed -e 's,.*/\\(.*\\),\\1,')\n# Strip \"v\" prefix from tag name\n[[ \"${{ github.ref }}\" == \"refs/tags/\"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')\n# Use Docker `latest` tag convention\n[ \"$VERSION\" == \"$default-branch\" ] && VERSION=latest\necho IMAGE_ID=$IMAGE_ID\necho VERSION=$VERSION\ndocker tag $IMAGE_NAME $IMAGE_ID:$VERSION\ndocker push $IMAGE_ID:$VERSION\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-11-10T03-21-20Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-223f3177-b493-5b2d-b5ea-2cae84c4b932",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/build__2022-11-10T03-21-20Z__a1211478ecbd35944e57d0b95891b0b3404b8091.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 22,
+                  "startColumn": 5,
+                  "endLine": 37,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "6cb7810286657c37:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-c178c94e-35c6-5da3-971a-766417ff22d4",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/build__2022-11-10T03-21-20Z__a1211478ecbd35944e57d0b95891b0b3404b8091.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 39,
+                  "startColumn": 5,
+                  "endLine": 71,
+                  "endColumn": 42
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "f87956e755c6e9d7:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "build__2022-11-10T03-21-20Z__a1211478ecbd35944e57d0b95891b0b3404b8091.yml",
+          "workflow_name": "Docker",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 71,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "test": 2,
+            "push": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 1,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 2,
+              "push": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v2",
+              "docker/login-action@v2"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Docker",
+        "true": {
+          "push": {
+            "branches": [
+              "main"
+            ],
+            "tags": [
+              "v*"
+            ]
+          },
+          "pull_request": null
+        },
+        "env": {
+          "IMAGE_NAME": "image-actions"
+        },
+        "jobs": {
+          "test": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "name": "Run tests",
+                "run": "if [ -f docker-compose.test.yml ]; then\n  docker-compose --file docker-compose.test.yml build\n  docker-compose --file docker-compose.test.yml run test\nelse\n  docker build . --file Dockerfile\nfi\n"
+              }
+            ]
+          },
+          "push": {
+            "needs": "test",
+            "runs-on": "ubuntu-latest",
+            "if": "github.event_name == 'push'",
+            "steps": [
+              {
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "name": "Build image",
+                "run": "docker build . --file Dockerfile --tag $IMAGE_NAME"
+              },
+              {
+                "name": "Login to GitHub Container Registry",
+                "uses": "docker/login-action@v2",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.actor }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Push image",
+                "run": "IMAGE_ID=ghcr.io/${{ github.repository }}/$IMAGE_NAME\n# Change all uppercase to lowercase\nIMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')\n# Strip git ref prefix from version\nVERSION=$(echo \"${{ github.ref }}\" | sed -e 's,.*/\\(.*\\),\\1,')\n# Strip \"v\" prefix from tag name\n[[ \"${{ github.ref }}\" == \"refs/tags/\"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')\n# Use Docker `latest` tag convention\n[ \"$VERSION\" == \"$default-branch\" ] && VERSION=latest\necho IMAGE_ID=$IMAGE_ID\necho VERSION=$VERSION\ndocker tag $IMAGE_NAME $IMAGE_ID:$VERSION\ndocker push $IMAGE_ID:$VERSION\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-11-10T03-21-30Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-192ef643-d5d8-5b72-94b0-d3ca3447438d",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/build__2022-11-10T03-21-30Z__d2a74582a1f8a6a6b120d20195000197f2211e3d.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 22,
+                  "startColumn": 5,
+                  "endLine": 37,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "65d543fdbf57a4ec:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-b1bbc9b8-a264-5b4c-90d5-213242edef5b",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/build__2022-11-10T03-21-30Z__d2a74582a1f8a6a6b120d20195000197f2211e3d.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 39,
+                  "startColumn": 5,
+                  "endLine": 71,
+                  "endColumn": 42
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "f87956e755e382c8:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "build__2022-11-10T03-21-30Z__d2a74582a1f8a6a6b120d20195000197f2211e3d.yml",
+          "workflow_name": "Docker",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 71,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "test": 2,
+            "push": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 1,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 2,
+              "push": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v3",
+              "docker/login-action@v1"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Docker",
+        "true": {
+          "push": {
+            "branches": [
+              "main"
+            ],
+            "tags": [
+              "v*"
+            ]
+          },
+          "pull_request": null
+        },
+        "env": {
+          "IMAGE_NAME": "image-actions"
+        },
+        "jobs": {
+          "test": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Run tests",
+                "run": "if [ -f docker-compose.test.yml ]; then\n  docker-compose --file docker-compose.test.yml build\n  docker-compose --file docker-compose.test.yml run test\nelse\n  docker build . --file Dockerfile\nfi\n"
+              }
+            ]
+          },
+          "push": {
+            "needs": "test",
+            "runs-on": "ubuntu-latest",
+            "if": "github.event_name == 'push'",
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Build image",
+                "run": "docker build . --file Dockerfile --tag $IMAGE_NAME"
+              },
+              {
+                "name": "Login to GitHub Container Registry",
+                "uses": "docker/login-action@v1",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.actor }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Push image",
+                "run": "IMAGE_ID=ghcr.io/${{ github.repository }}/$IMAGE_NAME\n# Change all uppercase to lowercase\nIMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')\n# Strip git ref prefix from version\nVERSION=$(echo \"${{ github.ref }}\" | sed -e 's,.*/\\(.*\\),\\1,')\n# Strip \"v\" prefix from tag name\n[[ \"${{ github.ref }}\" == \"refs/tags/\"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')\n# Use Docker `latest` tag convention\n[ \"$VERSION\" == \"$default-branch\" ] && VERSION=latest\necho IMAGE_ID=$IMAGE_ID\necho VERSION=$VERSION\ndocker tag $IMAGE_NAME $IMAGE_ID:$VERSION\ndocker push $IMAGE_ID:$VERSION\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-12-01T22-11-07Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-94816101-da2f-5853-8f5e-e5ade1934859",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/build__2022-12-01T22-11-07Z__15f113c68e345161c3975464632ea62467b9fde5.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 22,
+                  "startColumn": 5,
+                  "endLine": 37,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "65d543fdbf57a4ec:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-e0784892-4b78-5cd2-bc39-23b0d4143586",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/build__2022-12-01T22-11-07Z__15f113c68e345161c3975464632ea62467b9fde5.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 39,
+                  "startColumn": 5,
+                  "endLine": 71,
+                  "endColumn": 42
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "f87956e755e382c8:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "build__2022-12-01T22-11-07Z__15f113c68e345161c3975464632ea62467b9fde5.yml",
+          "workflow_name": "Docker",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 71,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "test": 2,
+            "push": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 1,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 2,
+              "push": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v3",
+              "docker/login-action@v2"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Docker",
+        "true": {
+          "push": {
+            "branches": [
+              "main"
+            ],
+            "tags": [
+              "v*"
+            ]
+          },
+          "pull_request": null
+        },
+        "env": {
+          "IMAGE_NAME": "image-actions"
+        },
+        "jobs": {
+          "test": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Run tests",
+                "run": "if [ -f docker-compose.test.yml ]; then\n  docker-compose --file docker-compose.test.yml build\n  docker-compose --file docker-compose.test.yml run test\nelse\n  docker build . --file Dockerfile\nfi\n"
+              }
+            ]
+          },
+          "push": {
+            "needs": "test",
+            "runs-on": "ubuntu-latest",
+            "if": "github.event_name == 'push'",
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Build image",
+                "run": "docker build . --file Dockerfile --tag $IMAGE_NAME"
+              },
+              {
+                "name": "Login to GitHub Container Registry",
+                "uses": "docker/login-action@v2",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.actor }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Push image",
+                "run": "IMAGE_ID=ghcr.io/${{ github.repository }}/$IMAGE_NAME\n# Change all uppercase to lowercase\nIMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')\n# Strip git ref prefix from version\nVERSION=$(echo \"${{ github.ref }}\" | sed -e 's,.*/\\(.*\\),\\1,')\n# Strip \"v\" prefix from tag name\n[[ \"${{ github.ref }}\" == \"refs/tags/\"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')\n# Use Docker `latest` tag convention\n[ \"$VERSION\" == \"$default-branch\" ] && VERSION=latest\necho IMAGE_ID=$IMAGE_ID\necho VERSION=$VERSION\ndocker tag $IMAGE_NAME $IMAGE_ID:$VERSION\ndocker push $IMAGE_ID:$VERSION\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-10-01T22-18-34Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-7a6a10e3-0a8d-5f99-9c18-668cfc38ea87",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/build__2023-10-01T22-18-34Z__d1f0accff7f2c8c61d56c27bc5e9c928c9a7a159.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 22,
+                  "startColumn": 5,
+                  "endLine": 37,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "5ef306f8f849cda1:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-6dc6a352-1b57-5ea7-8988-b024d8505386",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/build__2023-10-01T22-18-34Z__d1f0accff7f2c8c61d56c27bc5e9c928c9a7a159.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 39,
+                  "startColumn": 5,
+                  "endLine": 71,
+                  "endColumn": 42
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "f87956e756001bb9:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "build__2023-10-01T22-18-34Z__d1f0accff7f2c8c61d56c27bc5e9c928c9a7a159.yml",
+          "workflow_name": "Docker",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 71,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "test": 2,
+            "push": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 1,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 2,
+              "push": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "docker/login-action@v2"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Docker",
+        "true": {
+          "push": {
+            "branches": [
+              "main"
+            ],
+            "tags": [
+              "v*"
+            ]
+          },
+          "pull_request": null
+        },
+        "env": {
+          "IMAGE_NAME": "image-actions"
+        },
+        "jobs": {
+          "test": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Run tests",
+                "run": "if [ -f docker-compose.test.yml ]; then\n  docker-compose --file docker-compose.test.yml build\n  docker-compose --file docker-compose.test.yml run test\nelse\n  docker build . --file Dockerfile\nfi\n"
+              }
+            ]
+          },
+          "push": {
+            "needs": "test",
+            "runs-on": "ubuntu-latest",
+            "if": "github.event_name == 'push'",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Build image",
+                "run": "docker build . --file Dockerfile --tag $IMAGE_NAME"
+              },
+              {
+                "name": "Login to GitHub Container Registry",
+                "uses": "docker/login-action@v2",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.actor }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Push image",
+                "run": "IMAGE_ID=ghcr.io/${{ github.repository }}/$IMAGE_NAME\n# Change all uppercase to lowercase\nIMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')\n# Strip git ref prefix from version\nVERSION=$(echo \"${{ github.ref }}\" | sed -e 's,.*/\\(.*\\),\\1,')\n# Strip \"v\" prefix from tag name\n[[ \"${{ github.ref }}\" == \"refs/tags/\"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')\n# Use Docker `latest` tag convention\n[ \"$VERSION\" == \"$default-branch\" ] && VERSION=latest\necho IMAGE_ID=$IMAGE_ID\necho VERSION=$VERSION\ndocker tag $IMAGE_NAME $IMAGE_ID:$VERSION\ndocker push $IMAGE_ID:$VERSION\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-10-01T22-18-40Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-596692d9-4d7b-5d8c-a9ed-901369112d0e",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/build__2023-10-01T22-18-40Z__ee71415163ad89c1cf50e6e3d71f978b7769d52c.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 22,
+                  "startColumn": 5,
+                  "endLine": 37,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "65d543fdbf57a4ec:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-c2509dae-56d2-5beb-a11a-2df2e86c7c7a",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/build__2023-10-01T22-18-40Z__ee71415163ad89c1cf50e6e3d71f978b7769d52c.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 39,
+                  "startColumn": 5,
+                  "endLine": 71,
+                  "endColumn": 42
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "f87956e755e382c8:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "build__2023-10-01T22-18-40Z__ee71415163ad89c1cf50e6e3d71f978b7769d52c.yml",
+          "workflow_name": "Docker",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 71,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "test": 2,
+            "push": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 1,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 2,
+              "push": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v3",
+              "docker/login-action@v3"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Docker",
+        "true": {
+          "push": {
+            "branches": [
+              "main"
+            ],
+            "tags": [
+              "v*"
+            ]
+          },
+          "pull_request": null
+        },
+        "env": {
+          "IMAGE_NAME": "image-actions"
+        },
+        "jobs": {
+          "test": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Run tests",
+                "run": "if [ -f docker-compose.test.yml ]; then\n  docker-compose --file docker-compose.test.yml build\n  docker-compose --file docker-compose.test.yml run test\nelse\n  docker build . --file Dockerfile\nfi\n"
+              }
+            ]
+          },
+          "push": {
+            "needs": "test",
+            "runs-on": "ubuntu-latest",
+            "if": "github.event_name == 'push'",
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Build image",
+                "run": "docker build . --file Dockerfile --tag $IMAGE_NAME"
+              },
+              {
+                "name": "Login to GitHub Container Registry",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.actor }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Push image",
+                "run": "IMAGE_ID=ghcr.io/${{ github.repository }}/$IMAGE_NAME\n# Change all uppercase to lowercase\nIMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')\n# Strip git ref prefix from version\nVERSION=$(echo \"${{ github.ref }}\" | sed -e 's,.*/\\(.*\\),\\1,')\n# Strip \"v\" prefix from tag name\n[[ \"${{ github.ref }}\" == \"refs/tags/\"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')\n# Use Docker `latest` tag convention\n[ \"$VERSION\" == \"$default-branch\" ] && VERSION=latest\necho IMAGE_ID=$IMAGE_ID\necho VERSION=$VERSION\ndocker tag $IMAGE_NAME $IMAGE_ID:$VERSION\ndocker push $IMAGE_ID:$VERSION\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-07-01T23-24-47Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-5d2738d1-3e39-5dde-9620-0f9e0befa676",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/build__2024-07-01T23-24-47Z__80b3ba2b30cc4d1935d24959841821cf324f23ab.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 22,
+                  "startColumn": 5,
+                  "endLine": 37,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "5ef306f8f849cda1:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-7f140ec5-b125-5710-8719-c22c8edc12db",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/build__2024-07-01T23-24-47Z__80b3ba2b30cc4d1935d24959841821cf324f23ab.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 39,
+                  "startColumn": 5,
+                  "endLine": 71,
+                  "endColumn": 42
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "f87956e756001bb9:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "build__2024-07-01T23-24-47Z__80b3ba2b30cc4d1935d24959841821cf324f23ab.yml",
+          "workflow_name": "Docker",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 71,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "test": 2,
+            "push": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 1,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 2,
+              "push": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "docker/login-action@v3"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Docker",
+        "true": {
+          "push": {
+            "branches": [
+              "main"
+            ],
+            "tags": [
+              "v*"
+            ]
+          },
+          "pull_request": null
+        },
+        "env": {
+          "IMAGE_NAME": "image-actions"
+        },
+        "jobs": {
+          "test": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Run tests",
+                "run": "if [ -f docker-compose.test.yml ]; then\n  docker-compose --file docker-compose.test.yml build\n  docker-compose --file docker-compose.test.yml run test\nelse\n  docker build . --file Dockerfile\nfi\n"
+              }
+            ]
+          },
+          "push": {
+            "needs": "test",
+            "runs-on": "ubuntu-latest",
+            "if": "github.event_name == 'push'",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Build image",
+                "run": "docker build . --file Dockerfile --tag $IMAGE_NAME"
+              },
+              {
+                "name": "Login to GitHub Container Registry",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.actor }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Push image",
+                "run": "IMAGE_ID=ghcr.io/${{ github.repository }}/$IMAGE_NAME\n# Change all uppercase to lowercase\nIMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')\n# Strip git ref prefix from version\nVERSION=$(echo \"${{ github.ref }}\" | sed -e 's,.*/\\(.*\\),\\1,')\n# Strip \"v\" prefix from tag name\n[[ \"${{ github.ref }}\" == \"refs/tags/\"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')\n# Use Docker `latest` tag convention\n[ \"$VERSION\" == \"$default-branch\" ] && VERSION=latest\necho IMAGE_ID=$IMAGE_ID\necho VERSION=$VERSION\ndocker tag $IMAGE_NAME $IMAGE_ID:$VERSION\ndocker push $IMAGE_ID:$VERSION\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-08-25T00-21-38Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-ef2709d2-b8f5-5bc6-bd36-74f1a5c11eaa",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/build__2025-08-25T00-21-38Z__81b10e0ca4bab261ff2a824950bac20d8876468a.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 22,
+                  "startColumn": 5,
+                  "endLine": 55,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "4c84e4d3b3f1303d:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-884bb991-3ac9-5c07-afcf-0af418db9de8",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/build__2025-08-25T00-21-38Z__81b10e0ca4bab261ff2a824950bac20d8876468a.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 57,
+                  "startColumn": 5,
+                  "endLine": 89,
+                  "endColumn": 42
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "f87956e756001bb9:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "build__2025-08-25T00-21-38Z__81b10e0ca4bab261ff2a824950bac20d8876468a.yml",
+          "workflow_name": "Docker",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 89,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "test": 7,
+            "push": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 1,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 7,
+              "push": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-node@v4",
+              "docker/login-action@v3"
+            ],
+            "num_run_commands": 7,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Docker",
+        "true": {
+          "push": {
+            "branches": [
+              "main"
+            ],
+            "tags": [
+              "v*"
+            ]
+          },
+          "pull_request": null
+        },
+        "env": {
+          "IMAGE_NAME": "image-actions"
+        },
+        "jobs": {
+          "test": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Setup Node.js",
+                "uses": "actions/setup-node@v4",
+                "with": {
+                  "node-version": "22",
+                  "cache": "npm"
+                }
+              },
+              {
+                "name": "Install dependencies",
+                "run": "npm ci"
+              },
+              {
+                "name": "Run TypeScript checks",
+                "run": "npx tsc --noEmit"
+              },
+              {
+                "name": "Run linting",
+                "run": "npm run lint"
+              },
+              {
+                "name": "Check formatting",
+                "run": "npm run format-check"
+              },
+              {
+                "name": "Run tests",
+                "run": "if [ -f docker-compose.test.yml ]; then\n  docker compose --file docker-compose.test.yml build\n  docker compose --file docker-compose.test.yml run test\nelse\n  docker build . --file Dockerfile\nfi\n"
+              }
+            ]
+          },
+          "push": {
+            "needs": "test",
+            "runs-on": "ubuntu-latest",
+            "if": "github.event_name == 'push'",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Build image",
+                "run": "docker build . --file Dockerfile --tag $IMAGE_NAME"
+              },
+              {
+                "name": "Login to GitHub Container Registry",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.actor }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Push image",
+                "run": "IMAGE_ID=ghcr.io/${{ github.repository }}/$IMAGE_NAME\n# Change all uppercase to lowercase\nIMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')\n# Strip git ref prefix from version\nVERSION=$(echo \"${{ github.ref }}\" | sed -e 's,.*/\\(.*\\),\\1,')\n# Strip \"v\" prefix from tag name\n[[ \"${{ github.ref }}\" == \"refs/tags/\"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')\n# Use Docker `latest` tag convention\n[ \"$VERSION\" == \"$default-branch\" ] && VERSION=latest\necho IMAGE_ID=$IMAGE_ID\necho VERSION=$VERSION\ndocker tag $IMAGE_NAME $IMAGE_ID:$VERSION\ndocker push $IMAGE_ID:$VERSION\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-11-17T23-27-36Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-510fedcb-dfc0-5e5f-a467-b87eb7f38adb",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/build__2024-11-17T23-27-36Z__af8de983f7d4bbd3c2ba5b111461e91dcce6cdd5.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 22,
+                  "startColumn": 5,
+                  "endLine": 37,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "5ef306f8f849cda1:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-b10886e1-6e89-5d91-94df-008565989831",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/build__2024-11-17T23-27-36Z__af8de983f7d4bbd3c2ba5b111461e91dcce6cdd5.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 39,
+                  "startColumn": 5,
+                  "endLine": 71,
+                  "endColumn": 42
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "f87956e756001bb9:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "build__2024-11-17T23-27-36Z__af8de983f7d4bbd3c2ba5b111461e91dcce6cdd5.yml",
+          "workflow_name": "Docker",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 71,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "test": 2,
+            "push": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 1,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 2,
+              "push": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "docker/login-action@v3"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Docker",
+        "true": {
+          "push": {
+            "branches": [
+              "main"
+            ],
+            "tags": [
+              "v*"
+            ]
+          },
+          "pull_request": null
+        },
+        "env": {
+          "IMAGE_NAME": "image-actions"
+        },
+        "jobs": {
+          "test": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Run tests",
+                "run": "if [ -f docker-compose.test.yml ]; then\n  docker compose --file docker-compose.test.yml build\n  docker compose --file docker-compose.test.yml run test\nelse\n  docker build . --file Dockerfile\nfi\n"
+              }
+            ]
+          },
+          "push": {
+            "needs": "test",
+            "runs-on": "ubuntu-latest",
+            "if": "github.event_name == 'push'",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Build image",
+                "run": "docker build . --file Dockerfile --tag $IMAGE_NAME"
+              },
+              {
+                "name": "Login to GitHub Container Registry",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.actor }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Push image",
+                "run": "IMAGE_ID=ghcr.io/${{ github.repository }}/$IMAGE_NAME\n# Change all uppercase to lowercase\nIMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')\n# Strip git ref prefix from version\nVERSION=$(echo \"${{ github.ref }}\" | sed -e 's,.*/\\(.*\\),\\1,')\n# Strip \"v\" prefix from tag name\n[[ \"${{ github.ref }}\" == \"refs/tags/\"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')\n# Use Docker `latest` tag convention\n[ \"$VERSION\" == \"$default-branch\" ] && VERSION=latest\necho IMAGE_ID=$IMAGE_ID\necho VERSION=$VERSION\ndocker tag $IMAGE_NAME $IMAGE_ID:$VERSION\ndocker push $IMAGE_ID:$VERSION\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-08-26T23-01-30Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-03bed16f-bab2-57f2-881c-4261282641cc",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/build__2025-08-26T23-01-30Z__6d6e7ba0616cbf309219ab4522e2e6242412e037.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 22,
+                  "startColumn": 5,
+                  "endLine": 55,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "45a2a7ceece358f2:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-1e0b6146-32f7-57c4-9b4e-f9a45b106d9b",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/build__2025-08-26T23-01-30Z__6d6e7ba0616cbf309219ab4522e2e6242412e037.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 57,
+                  "startColumn": 5,
+                  "endLine": 89,
+                  "endColumn": 42
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "f87956e7561cb4aa:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "build__2025-08-26T23-01-30Z__6d6e7ba0616cbf309219ab4522e2e6242412e037.yml",
+          "workflow_name": "Docker",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 89,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "test": 7,
+            "push": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 1,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 7,
+              "push": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v5",
+              "actions/setup-node@v4",
+              "docker/login-action@v3"
+            ],
+            "num_run_commands": 7,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Docker",
+        "true": {
+          "push": {
+            "branches": [
+              "main"
+            ],
+            "tags": [
+              "v*"
+            ]
+          },
+          "pull_request": null
+        },
+        "env": {
+          "IMAGE_NAME": "image-actions"
+        },
+        "jobs": {
+          "test": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v5"
+              },
+              {
+                "name": "Setup Node.js",
+                "uses": "actions/setup-node@v4",
+                "with": {
+                  "node-version": "22",
+                  "cache": "npm"
+                }
+              },
+              {
+                "name": "Install dependencies",
+                "run": "npm ci"
+              },
+              {
+                "name": "Run TypeScript checks",
+                "run": "npx tsc --noEmit"
+              },
+              {
+                "name": "Run linting",
+                "run": "npm run lint"
+              },
+              {
+                "name": "Check formatting",
+                "run": "npm run format-check"
+              },
+              {
+                "name": "Run tests",
+                "run": "if [ -f docker-compose.test.yml ]; then\n  docker compose --file docker-compose.test.yml build\n  docker compose --file docker-compose.test.yml run test\nelse\n  docker build . --file Dockerfile\nfi\n"
+              }
+            ]
+          },
+          "push": {
+            "needs": "test",
+            "runs-on": "ubuntu-latest",
+            "if": "github.event_name == 'push'",
+            "steps": [
+              {
+                "uses": "actions/checkout@v5"
+              },
+              {
+                "name": "Build image",
+                "run": "docker build . --file Dockerfile --tag $IMAGE_NAME"
+              },
+              {
+                "name": "Login to GitHub Container Registry",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.actor }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Push image",
+                "run": "IMAGE_ID=ghcr.io/${{ github.repository }}/$IMAGE_NAME\n# Change all uppercase to lowercase\nIMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')\n# Strip git ref prefix from version\nVERSION=$(echo \"${{ github.ref }}\" | sed -e 's,.*/\\(.*\\),\\1,')\n# Strip \"v\" prefix from tag name\n[[ \"${{ github.ref }}\" == \"refs/tags/\"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')\n# Use Docker `latest` tag convention\n[ \"$VERSION\" == \"$default-branch\" ] && VERSION=latest\necho IMAGE_ID=$IMAGE_ID\necho VERSION=$VERSION\ndocker tag $IMAGE_NAME $IMAGE_ID:$VERSION\ndocker push $IMAGE_ID:$VERSION\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-09-10T00-33-14Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "build__2025-09-10T00-33-14Z__334c0182c8d345a5bc8dcd218298637c51667b1b.yml",
+          "workflow_name": "Docker",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 91,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "test": 7,
+            "push": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 1,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 7,
+              "push": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v5",
+              "actions/setup-node@v4",
+              "docker/login-action@v3"
+            ],
+            "num_run_commands": 7,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Docker",
+        "permissions": {
+          "contents": "read"
+        },
+        "true": {
+          "push": {
+            "branches": [
+              "main"
+            ],
+            "tags": [
+              "v*"
+            ]
+          },
+          "pull_request": null
+        },
+        "env": {
+          "IMAGE_NAME": "image-actions"
+        },
+        "jobs": {
+          "test": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v5"
+              },
+              {
+                "name": "Setup Node.js",
+                "uses": "actions/setup-node@v4",
+                "with": {
+                  "node-version": "22",
+                  "cache": "npm"
+                }
+              },
+              {
+                "name": "Install dependencies",
+                "run": "npm ci"
+              },
+              {
+                "name": "Run TypeScript checks",
+                "run": "npx tsc --noEmit"
+              },
+              {
+                "name": "Run linting",
+                "run": "npm run lint"
+              },
+              {
+                "name": "Check formatting",
+                "run": "npm run format-check"
+              },
+              {
+                "name": "Run tests",
+                "run": "if [ -f docker-compose.test.yml ]; then\n  docker compose --file docker-compose.test.yml build\n  docker compose --file docker-compose.test.yml run test\nelse\n  docker build . --file Dockerfile\nfi\n"
+              }
+            ]
+          },
+          "push": {
+            "needs": "test",
+            "runs-on": "ubuntu-latest",
+            "if": "github.event_name == 'push'",
+            "steps": [
+              {
+                "uses": "actions/checkout@v5"
+              },
+              {
+                "name": "Build image",
+                "run": "docker build . --file Dockerfile --tag $IMAGE_NAME"
+              },
+              {
+                "name": "Login to GitHub Container Registry",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.actor }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Push image",
+                "run": "IMAGE_ID=ghcr.io/${{ github.repository }}/$IMAGE_NAME\n# Change all uppercase to lowercase\nIMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')\n# Strip git ref prefix from version\nVERSION=$(echo \"${{ github.ref }}\" | sed -e 's,.*/\\(.*\\),\\1,')\n# Strip \"v\" prefix from tag name\n[[ \"${{ github.ref }}\" == \"refs/tags/\"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')\n# Use Docker `latest` tag convention\n[ \"$VERSION\" == \"$default-branch\" ] && VERSION=latest\necho IMAGE_ID=$IMAGE_ID\necho VERSION=$VERSION\ndocker tag $IMAGE_NAME $IMAGE_ID:$VERSION\ndocker push $IMAGE_ID:$VERSION\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-09-10T00-38-59Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "build__2025-09-10T00-38-59Z__18af99ce5f18839606d49ec8978d0f071e56d0f9.yml",
+          "workflow_name": "Docker",
+          "triggers": {},
+          "permissions": {
+            "contents": "read",
+            "packages": "write",
+            "attestations": "write",
+            "id-token": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 94,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "test": 7,
+            "push": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 1,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 7,
+              "push": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v5",
+              "actions/setup-node@v4",
+              "docker/login-action@v3"
+            ],
+            "num_run_commands": 7,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Docker",
+        "permissions": {
+          "contents": "read",
+          "packages": "write",
+          "attestations": "write",
+          "id-token": "write"
+        },
+        "true": {
+          "push": {
+            "branches": [
+              "main"
+            ],
+            "tags": [
+              "v*"
+            ]
+          },
+          "pull_request": null
+        },
+        "env": {
+          "IMAGE_NAME": "image-actions"
+        },
+        "jobs": {
+          "test": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v5"
+              },
+              {
+                "name": "Setup Node.js",
+                "uses": "actions/setup-node@v4",
+                "with": {
+                  "node-version": "22",
+                  "cache": "npm"
+                }
+              },
+              {
+                "name": "Install dependencies",
+                "run": "npm ci"
+              },
+              {
+                "name": "Run TypeScript checks",
+                "run": "npx tsc --noEmit"
+              },
+              {
+                "name": "Run linting",
+                "run": "npm run lint"
+              },
+              {
+                "name": "Check formatting",
+                "run": "npm run format-check"
+              },
+              {
+                "name": "Run tests",
+                "run": "if [ -f docker-compose.test.yml ]; then\n  docker compose --file docker-compose.test.yml build\n  docker compose --file docker-compose.test.yml run test\nelse\n  docker build . --file Dockerfile\nfi\n"
+              }
+            ]
+          },
+          "push": {
+            "needs": "test",
+            "runs-on": "ubuntu-latest",
+            "if": "github.event_name == 'push'",
+            "steps": [
+              {
+                "uses": "actions/checkout@v5"
+              },
+              {
+                "name": "Build image",
+                "run": "docker build . --file Dockerfile --tag $IMAGE_NAME"
+              },
+              {
+                "name": "Login to GitHub Container Registry",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.actor }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Push image",
+                "run": "IMAGE_ID=ghcr.io/${{ github.repository }}/$IMAGE_NAME\n# Change all uppercase to lowercase\nIMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')\n# Strip git ref prefix from version\nVERSION=$(echo \"${{ github.ref }}\" | sed -e 's,.*/\\(.*\\),\\1,')\n# Strip \"v\" prefix from tag name\n[[ \"${{ github.ref }}\" == \"refs/tags/\"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')\n# Use Docker `latest` tag convention\n[ \"$VERSION\" == \"$default-branch\" ] && VERSION=latest\necho IMAGE_ID=$IMAGE_ID\necho VERSION=$VERSION\ndocker tag $IMAGE_NAME $IMAGE_ID:$VERSION\ndocker push $IMAGE_ID:$VERSION\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-10-01T22-01-45Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "build__2025-10-01T22-01-45Z__b800daaf180427aaaa3b9a59bd1f8134a7408e9c.yml",
+          "workflow_name": "Docker",
+          "triggers": {},
+          "permissions": {
+            "contents": "read",
+            "packages": "write",
+            "attestations": "write",
+            "id-token": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 94,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "test": 7,
+            "push": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 1,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 7,
+              "push": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v5",
+              "actions/setup-node@v5",
+              "docker/login-action@v3"
+            ],
+            "num_run_commands": 7,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Docker",
+        "permissions": {
+          "contents": "read",
+          "packages": "write",
+          "attestations": "write",
+          "id-token": "write"
+        },
+        "true": {
+          "push": {
+            "branches": [
+              "main"
+            ],
+            "tags": [
+              "v*"
+            ]
+          },
+          "pull_request": null
+        },
+        "env": {
+          "IMAGE_NAME": "image-actions"
+        },
+        "jobs": {
+          "test": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v5"
+              },
+              {
+                "name": "Setup Node.js",
+                "uses": "actions/setup-node@v5",
+                "with": {
+                  "node-version": "22",
+                  "cache": "npm"
+                }
+              },
+              {
+                "name": "Install dependencies",
+                "run": "npm ci"
+              },
+              {
+                "name": "Run TypeScript checks",
+                "run": "npx tsc --noEmit"
+              },
+              {
+                "name": "Run linting",
+                "run": "npm run lint"
+              },
+              {
+                "name": "Check formatting",
+                "run": "npm run format-check"
+              },
+              {
+                "name": "Run tests",
+                "run": "if [ -f docker-compose.test.yml ]; then\n  docker compose --file docker-compose.test.yml build\n  docker compose --file docker-compose.test.yml run test\nelse\n  docker build . --file Dockerfile\nfi\n"
+              }
+            ]
+          },
+          "push": {
+            "needs": "test",
+            "runs-on": "ubuntu-latest",
+            "if": "github.event_name == 'push'",
+            "steps": [
+              {
+                "uses": "actions/checkout@v5"
+              },
+              {
+                "name": "Build image",
+                "run": "docker build . --file Dockerfile --tag $IMAGE_NAME"
+              },
+              {
+                "name": "Login to GitHub Container Registry",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.actor }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Push image",
+                "run": "IMAGE_ID=ghcr.io/${{ github.repository }}/$IMAGE_NAME\n# Change all uppercase to lowercase\nIMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')\n# Strip git ref prefix from version\nVERSION=$(echo \"${{ github.ref }}\" | sed -e 's,.*/\\(.*\\),\\1,')\n# Strip \"v\" prefix from tag name\n[[ \"${{ github.ref }}\" == \"refs/tags/\"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')\n# Use Docker `latest` tag convention\n[ \"$VERSION\" == \"$default-branch\" ] && VERSION=latest\necho IMAGE_ID=$IMAGE_ID\necho VERSION=$VERSION\ndocker tag $IMAGE_NAME $IMAGE_ID:$VERSION\ndocker push $IMAGE_ID:$VERSION\n"
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

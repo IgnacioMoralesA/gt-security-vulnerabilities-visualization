@@ -1,0 +1,1000 @@
+{
+  "repo_owner": "mikefarah",
+  "repo_name": "yq",
+  "workflow_name": "snap-release",
+  "history": {
+    "2022-11-14T06-28-15Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-4210782f-26cc-5c8f-bc08-0ba661250543",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/snap-release__2022-11-14T06-28-15Z__b6ad314dbb7f8999f403bd6cc8815ffe390848df.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 7,
+                  "endLine": 34,
+                  "endColumn": 26
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "bcae9ef7c295652e:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "snap-release__2022-11-14T06-28-15Z__b6ad314dbb7f8999f403bd6cc8815ffe390848df.yml",
+          "workflow_name": "Release Docker",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 34,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "buildSnap": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "buildSnap": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v3",
+              "mikefarah/yq@master",
+              "snapcore/action-build@v1",
+              "snapcore/action-publish@v1"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release Docker",
+        "true": {
+          "release": {
+            "types": [
+              "released"
+            ]
+          },
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "buildSnap": {
+            "environment": "snap",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Get the version",
+                "id": "get_version",
+                "run": "echo ::set-output name=VERSION::${GITHUB_REF##*/}"
+              },
+              {
+                "name": "Update snapcraft version file",
+                "env": {
+                  "VERSION": "${{ steps.get_version.outputs.VERSION }}"
+                },
+                "uses": "mikefarah/yq@master",
+                "with": {
+                  "cmd": "yq -i '.version = strenv(VERSION)' snap/snapcraft.yaml"
+                }
+              },
+              {
+                "uses": "snapcore/action-build@v1",
+                "id": "build"
+              },
+              {
+                "uses": "snapcore/action-publish@v1",
+                "env": {
+                  "SNAPCRAFT_STORE_CREDENTIALS": "${{ secrets.STORE_LOGIN }}"
+                },
+                "with": {
+                  "snap": "${{ steps.build.outputs.snap }}",
+                  "release": "edge"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-11-14T06-28-44Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-5db8045a-5510-52d1-8ed4-3ca3e3436101",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/snap-release__2022-11-14T06-28-44Z__b55381f34ed20c842b5d7301f8c0cd21e86336d8.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 7,
+                  "endLine": 34,
+                  "endColumn": 26
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "bcae9ef7c295652e:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "snap-release__2022-11-14T06-28-44Z__b55381f34ed20c842b5d7301f8c0cd21e86336d8.yml",
+          "workflow_name": "Release Snap",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 34,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "buildSnap": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "buildSnap": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v3",
+              "mikefarah/yq@master",
+              "snapcore/action-build@v1",
+              "snapcore/action-publish@v1"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release Snap",
+        "true": {
+          "release": {
+            "types": [
+              "released"
+            ]
+          },
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "buildSnap": {
+            "environment": "snap",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Get the version",
+                "id": "get_version",
+                "run": "echo ::set-output name=VERSION::${GITHUB_REF##*/}"
+              },
+              {
+                "name": "Update snapcraft version file",
+                "env": {
+                  "VERSION": "${{ steps.get_version.outputs.VERSION }}"
+                },
+                "uses": "mikefarah/yq@master",
+                "with": {
+                  "cmd": "yq -i '.version = strenv(VERSION)' snap/snapcraft.yaml"
+                }
+              },
+              {
+                "uses": "snapcore/action-build@v1",
+                "id": "build"
+              },
+              {
+                "uses": "snapcore/action-publish@v1",
+                "env": {
+                  "SNAPCRAFT_STORE_CREDENTIALS": "${{ secrets.STORE_LOGIN }}"
+                },
+                "with": {
+                  "snap": "${{ steps.build.outputs.snap }}",
+                  "release": "edge"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-11-14T06-35-52Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-bc519921-7096-5e50-b061-14e30dc23dcb",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/snap-release__2022-11-14T06-35-52Z__67864ffdab5d9c605598fc6fc683df2a84e24213.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 7,
+                  "endLine": 34,
+                  "endColumn": 26
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "bcae9ef7c295652e:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "snap-release__2022-11-14T06-35-52Z__67864ffdab5d9c605598fc6fc683df2a84e24213.yml",
+          "workflow_name": "Release Snap",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 34,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "buildSnap": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "buildSnap": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v3",
+              "mikefarah/yq@master",
+              "snapcore/action-build@v1",
+              "snapcore/action-publish@v1"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release Snap",
+        "true": {
+          "release": {
+            "types": [
+              "released"
+            ]
+          },
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "buildSnap": {
+            "environment": "snap",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Get the version",
+                "id": "get_version",
+                "run": "echo \"VERSION=${GITHUB_REF##*/}\" >> \"${GITHUB_OUTPUT}\""
+              },
+              {
+                "name": "Update snapcraft version file",
+                "env": {
+                  "VERSION": "${{ steps.get_version.outputs.VERSION }}"
+                },
+                "uses": "mikefarah/yq@master",
+                "with": {
+                  "cmd": "yq -i '.version = strenv(VERSION)' snap/snapcraft.yaml"
+                }
+              },
+              {
+                "uses": "snapcore/action-build@v1",
+                "id": "build"
+              },
+              {
+                "uses": "snapcore/action-publish@v1",
+                "env": {
+                  "SNAPCRAFT_STORE_CREDENTIALS": "${{ secrets.STORE_LOGIN }}"
+                },
+                "with": {
+                  "snap": "${{ steps.build.outputs.snap }}",
+                  "release": "edge"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-11-15T00-05-56Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-88e1265d-975c-59c4-8e92-56d462e7939f",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/snap-release__2022-11-15T00-05-56Z__b202ccc5dc11c5b70143ab19df696e6b4591ebfd.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 7,
+                  "endLine": 34,
+                  "endColumn": 28
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "bcae9ef7c295652e:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "snap-release__2022-11-15T00-05-56Z__b202ccc5dc11c5b70143ab19df696e6b4591ebfd.yml",
+          "workflow_name": "Release Snap",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 34,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "buildSnap": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "buildSnap": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v3",
+              "mikefarah/yq@master",
+              "snapcore/action-build@v1",
+              "snapcore/action-publish@v1"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release Snap",
+        "true": {
+          "release": {
+            "types": [
+              "released"
+            ]
+          },
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "buildSnap": {
+            "environment": "snap",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Get the version",
+                "id": "get_version",
+                "run": "echo \"VERSION=${GITHUB_REF##*/}\" >> \"${GITHUB_OUTPUT}\""
+              },
+              {
+                "name": "Update snapcraft version file",
+                "env": {
+                  "VERSION": "${{ steps.get_version.outputs.VERSION }}"
+                },
+                "uses": "mikefarah/yq@master",
+                "with": {
+                  "cmd": "yq -i '.version = strenv(VERSION)' snap/snapcraft.yaml"
+                }
+              },
+              {
+                "uses": "snapcore/action-build@v1",
+                "id": "build"
+              },
+              {
+                "uses": "snapcore/action-publish@v1",
+                "env": {
+                  "SNAPCRAFT_STORE_CREDENTIALS": "${{ secrets.STORE_LOGIN }}"
+                },
+                "with": {
+                  "snap": "${{ steps.build.outputs.snap }}",
+                  "release": "stable"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-11-15T09-08-58Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-be31d431-4930-5dd1-9f77-89f65ffcdefc",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/snap-release__2022-11-15T09-08-58Z__a6d1a52e333dcff43aca164936601ddd09bbfe94.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 7,
+                  "endLine": 23,
+                  "endColumn": 28
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "88a4261a5ded930d:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "snap-release__2022-11-15T09-08-58Z__a6d1a52e333dcff43aca164936601ddd09bbfe94.yml",
+          "workflow_name": "Release Snap",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 23,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "buildSnap": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "buildSnap": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v3",
+              "snapcore/action-build@v1",
+              "snapcore/action-publish@v1"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release Snap",
+        "true": {
+          "release": {
+            "types": [
+              "released"
+            ]
+          },
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "buildSnap": {
+            "environment": "snap",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "uses": "snapcore/action-build@v1",
+                "id": "build"
+              },
+              {
+                "uses": "snapcore/action-publish@v1",
+                "env": {
+                  "SNAPCRAFT_STORE_CREDENTIALS": "${{ secrets.STORE_LOGIN }}"
+                },
+                "with": {
+                  "snap": "${{ steps.build.outputs.snap }}",
+                  "release": "stable"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-09-12T21-58-30Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-9c9fc64e-a9e1-577d-a9eb-7347e828d8f2",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/snap-release__2023-09-12T21-58-30Z__0a0182da13a11616212535fa3f03006845606250.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 7,
+                  "endLine": 23,
+                  "endColumn": 28
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "b77010f7f2cf4702:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "snap-release__2023-09-12T21-58-30Z__0a0182da13a11616212535fa3f03006845606250.yml",
+          "workflow_name": "Release Snap",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 23,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "buildSnap": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "buildSnap": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "snapcore/action-build@v1",
+              "snapcore/action-publish@v1"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release Snap",
+        "true": {
+          "release": {
+            "types": [
+              "released"
+            ]
+          },
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "buildSnap": {
+            "environment": "snap",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "uses": "snapcore/action-build@v1",
+                "id": "build"
+              },
+              {
+                "uses": "snapcore/action-publish@v1",
+                "env": {
+                  "SNAPCRAFT_STORE_CREDENTIALS": "${{ secrets.STORE_LOGIN }}"
+                },
+                "with": {
+                  "snap": "${{ steps.build.outputs.snap }}",
+                  "release": "stable"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-09-04T04-18-19Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-0d3fbb3b-c5ad-5655-9cff-3e00895e44fa",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/snap-release__2025-09-04T04-18-19Z__c34edcf983a21f24c4f2bc49b71b2ce5d81bcd44.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 7,
+                  "endLine": 23,
+                  "endColumn": 28
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "e63bfbd587b0faf7:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "snap-release__2025-09-04T04-18-19Z__c34edcf983a21f24c4f2bc49b71b2ce5d81bcd44.yml",
+          "workflow_name": "Release Snap",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 23,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "buildSnap": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "buildSnap": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v5",
+              "snapcore/action-build@v1",
+              "snapcore/action-publish@v1"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release Snap",
+        "true": {
+          "release": {
+            "types": [
+              "released"
+            ]
+          },
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "buildSnap": {
+            "environment": "snap",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v5"
+              },
+              {
+                "uses": "snapcore/action-build@v1",
+                "id": "build"
+              },
+              {
+                "uses": "snapcore/action-publish@v1",
+                "env": {
+                  "SNAPCRAFT_STORE_CREDENTIALS": "${{ secrets.STORE_LOGIN }}"
+                },
+                "with": {
+                  "snap": "${{ steps.build.outputs.snap }}",
+                  "release": "stable"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-11-14T06-00-50Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "snap-release__2022-11-14T06-00-50Z__63db5de4e244afdc5e06f1b4eb05d14e22743afb.yml",
+          "workflow_name": "Release Docker",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 34,
+          "num_jobs": 4,
+          "steps_per_job": {}
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 4,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {},
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 0,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 0,
+            "actions_used": [],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release Docker",
+        "true": {
+          "release": {
+            "types": [
+              "released"
+            ]
+          },
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "buildSnap": null,
+          "environment": "snap",
+          "runs-on": "ubuntu-latest",
+          "steps": [
+            {
+              "uses": "actions/checkout@v3"
+            },
+            {
+              "name": "Get the version",
+              "id": "get_version",
+              "run": "echo ::set-output name=VERSION::${GITHUB_REF##*/}"
+            },
+            {
+              "name": "Update snapcraft version file",
+              "env": {
+                "VERSION": "${{ steps.get_version.outputs.VERSION }}"
+              },
+              "uses": "mikefarah/yq@master",
+              "with": {
+                "cmd": "yq -i '.version = strenv(VERSION)' snap/snapcraft.yaml"
+              }
+            },
+            {
+              "uses": "snapcore/action-build@v1",
+              "id": "build"
+            },
+            {
+              "uses": "snapcore/action-publish@v1",
+              "env": {
+                "SNAPCRAFT_STORE_CREDENTIALS": "${{ secrets.STORE_LOGIN }}"
+              },
+              "with": {
+                "snap": "${{ steps.build.outputs.snap }}",
+                "release": "edge"
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}

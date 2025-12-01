@@ -1,0 +1,1207 @@
+{
+  "repo_owner": "peaceiris",
+  "repo_name": "actions-hugo",
+  "workflow_name": "release",
+  "history": {
+    "2020-01-17T16-40-06Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-0482fd77-d5fd-5c79-9f45-bb47497b7b6b",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/release__2020-01-17T16-40-06Z__9d8553d36d52e040d2bcdd9092544fe6df5bcb91.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 10,
+                  "startColumn": 5,
+                  "endLine": 43,
+                  "endColumn": 27
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "8d8ed08bf2562029:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2020-01-17T16-40-06Z__9d8553d36d52e040d2bcdd9092544fe6df5bcb91.yml",
+          "workflow_name": "Release",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 43,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "release": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "release": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 1,
+            "actions_used": [
+              "actions/checkout@v2"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release",
+        "true": {
+          "push": {
+            "tags": [
+              "v*.*.*"
+            ]
+          }
+        },
+        "jobs": {
+          "release": {
+            "runs-on": "ubuntu-18.04",
+            "steps": [
+              {
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "name": "Dump GitHub context",
+                "env": {
+                  "GITHUB_CONTEXT": "${{ toJson(github) }}"
+                },
+                "run": "echo \"${GITHUB_CONTEXT}\""
+              },
+              {
+                "name": "Install hub",
+                "run": "HUB_VERSION=\"2.13.0\"\nHUB_NAME=\"hub-linux-amd64-${HUB_VERSION}\"\nHUB_TARBALL=\"${HUB_NAME}.tgz\"\nwget -q \"https://github.com/github/hub/releases/download/v${HUB_VERSION}/${HUB_TARBALL}\"\ntar -zxvf \"./${HUB_TARBALL}\"\nmkdir ~/bin\ncp \"./${HUB_NAME}/bin/hub\" ~/bin/\necho \"::add-path::~/bin/\"\nrm -rf \"./${HUB_NAME}\" \"./${HUB_TARBALL}\"\n"
+              },
+              {
+                "name": "Create release",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                },
+                "run": "TAG_NAME=\"${GITHUB_REF##refs/tags/}\"\necho \"See [CHANGELOG.md](https://github.com/${GITHUB_REPOSITORY}/blob/${TAG_NAME}/CHANGELOG.md) for more details.\" > ./release_notes.md\nsed -i \"1iRelease ${TAG_NAME}\\n\" ./release_notes.md\nhub release create \\\n  --draft \\\n  --prerelease \\\n  --file ./release_notes.md \\\n  \"${TAG_NAME}\"\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2020-01-26T11-31-36Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-945d08d5-6812-5f80-9fe0-5d362ac02562",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/release__2020-01-26T11-31-36Z__7e8dab4a1585bb1241a44c53eeae4acc25fe0661.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 10,
+                  "startColumn": 5,
+                  "endLine": 37,
+                  "endColumn": 27
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "8d8ed08bf2562029:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2020-01-26T11-31-36Z__7e8dab4a1585bb1241a44c53eeae4acc25fe0661.yml",
+          "workflow_name": "Release",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 37,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "release": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "release": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 1,
+            "actions_used": [
+              "actions/checkout@v2"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release",
+        "true": {
+          "push": {
+            "tags": [
+              "v*.*.*"
+            ]
+          }
+        },
+        "jobs": {
+          "release": {
+            "runs-on": "ubuntu-18.04",
+            "steps": [
+              {
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "name": "Dump GitHub context",
+                "env": {
+                  "GITHUB_CONTEXT": "${{ toJson(github) }}"
+                },
+                "run": "echo \"${GITHUB_CONTEXT}\""
+              },
+              {
+                "name": "Install github/hub",
+                "run": "export HUB_VERSION=\"2.14.1\"\ncurl -fsSL https://github.com/github/hub/raw/40e421edd2c63d57bb8daa4bb9bbdfa21e8becf9/script/get | bash -s \"${HUB_VERSION}\"\n"
+              },
+              {
+                "name": "Create release",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                },
+                "run": "TAG_NAME=\"${GITHUB_REF##refs/tags/}\"\necho \"See [CHANGELOG.md](https://github.com/${GITHUB_REPOSITORY}/blob/${TAG_NAME}/CHANGELOG.md) for more details.\" > ./release_notes.md\nRELEASE_NAME=\"$(jq -r '.name' ./package.json)\"\nsed -i \"1i${RELEASE_NAME} ${TAG_NAME}\\n\" ./release_notes.md\n./bin/hub release create \\\n  --draft \\\n  --prerelease \\\n  --file ./release_notes.md \\\n  \"${TAG_NAME}\"\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2020-03-09T11-23-44Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-38a86f46-aae3-535b-8654-57309806db4f",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/release__2020-03-09T11-23-44Z__3d71d2403d36fe0c2770d1a69526ca5d8ba884c5.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 10,
+                  "startColumn": 5,
+                  "endLine": 36,
+                  "endColumn": 27
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "6a86f3828c01e877:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2020-03-09T11-23-44Z__3d71d2403d36fe0c2770d1a69526ca5d8ba884c5.yml",
+          "workflow_name": "Release",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 36,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "release": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "release": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 1,
+            "actions_used": [
+              "actions/checkout@v2"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release",
+        "true": {
+          "push": {
+            "tags": [
+              "v*.*.*"
+            ]
+          }
+        },
+        "jobs": {
+          "release": {
+            "runs-on": "ubuntu-18.04",
+            "steps": [
+              {
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "name": "Dump GitHub context",
+                "env": {
+                  "GITHUB_CONTEXT": "${{ toJson(github) }}"
+                },
+                "run": "echo \"${GITHUB_CONTEXT}\""
+              },
+              {
+                "name": "Install github/hub",
+                "run": "export HUB_VERSION=\"2.14.2\"\ncurl -fsSL https://github.com/github/hub/raw/8d91904208171b013f9a9d1175f4ab39068db047/script/get | bash -s \"${HUB_VERSION}\"\n"
+              },
+              {
+                "name": "Create release",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                },
+                "run": "TAG_NAME=\"${GITHUB_REF##refs/tags/}\"\necho \"See [CHANGELOG.md](https://github.com/${GITHUB_REPOSITORY}/blob/${TAG_NAME}/CHANGELOG.md) for more details.\" > ./release_notes.md\nRELEASE_NAME=\"$(jq -r '.name' ./package.json)\"\nsed -i \"1i${RELEASE_NAME} ${TAG_NAME}\\n\" ./release_notes.md\n./bin/hub release create \\\n  --draft \\\n  --prerelease \\\n  --file ./release_notes.md \\\n  \"${TAG_NAME}\"\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2020-03-07T10-33-15Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-dd2f26fc-3b09-5264-8320-4ef5ac900bbb",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/release__2020-03-07T10-33-15Z__61f1757c8c728f8fd8e8e96f56b81171e007ef28.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 10,
+                  "startColumn": 5,
+                  "endLine": 36,
+                  "endColumn": 27
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "6a86f3828c01e877:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2020-03-07T10-33-15Z__61f1757c8c728f8fd8e8e96f56b81171e007ef28.yml",
+          "workflow_name": "Release",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 36,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "release": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "release": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 1,
+            "actions_used": [
+              "actions/checkout@v2"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release",
+        "true": {
+          "push": {
+            "tags": [
+              "v*.*.*"
+            ]
+          }
+        },
+        "jobs": {
+          "release": {
+            "runs-on": "ubuntu-18.04",
+            "steps": [
+              {
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "name": "Dump GitHub context",
+                "env": {
+                  "GITHUB_CONTEXT": "${{ toJson(github) }}"
+                },
+                "run": "echo \"${GITHUB_CONTEXT}\""
+              },
+              {
+                "name": "Install github/hub",
+                "run": "export HUB_VERSION=\"2.14.2\"\ncurl -fsSL https://github.com/github/hub/raw/40e421edd2c63d57bb8daa4bb9bbdfa21e8becf9/script/get | bash -s \"${HUB_VERSION}\"\n"
+              },
+              {
+                "name": "Create release",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                },
+                "run": "TAG_NAME=\"${GITHUB_REF##refs/tags/}\"\necho \"See [CHANGELOG.md](https://github.com/${GITHUB_REPOSITORY}/blob/${TAG_NAME}/CHANGELOG.md) for more details.\" > ./release_notes.md\nRELEASE_NAME=\"$(jq -r '.name' ./package.json)\"\nsed -i \"1i${RELEASE_NAME} ${TAG_NAME}\\n\" ./release_notes.md\n./bin/hub release create \\\n  --draft \\\n  --prerelease \\\n  --file ./release_notes.md \\\n  \"${TAG_NAME}\"\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2021-05-12T02-35-39Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-97c6032b-443b-58b1-85b4-50b113b43962",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/release__2021-05-12T02-35-39Z__f2456046988c712555be95348c00a5b9c1dc6482.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 10,
+                  "startColumn": 5,
+                  "endLine": 36,
+                  "endColumn": 27
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "a22f473136a62564:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2021-05-12T02-35-39Z__f2456046988c712555be95348c00a5b9c1dc6482.yml",
+          "workflow_name": "Release",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 36,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "release": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "release": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 1,
+            "actions_used": [
+              "actions/checkout@v2.3.4"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release",
+        "true": {
+          "push": {
+            "tags": [
+              "v*.*.*"
+            ]
+          }
+        },
+        "jobs": {
+          "release": {
+            "runs-on": "ubuntu-18.04",
+            "steps": [
+              {
+                "uses": "actions/checkout@v2.3.4"
+              },
+              {
+                "name": "Dump GitHub context",
+                "env": {
+                  "GITHUB_CONTEXT": "${{ toJson(github) }}"
+                },
+                "run": "echo \"${GITHUB_CONTEXT}\""
+              },
+              {
+                "name": "Install github/hub",
+                "run": "export HUB_VERSION=\"2.14.2\"\ncurl -fsSL https://github.com/github/hub/raw/8d91904208171b013f9a9d1175f4ab39068db047/script/get | bash -s \"${HUB_VERSION}\"\n"
+              },
+              {
+                "name": "Create release",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                },
+                "run": "TAG_NAME=\"${GITHUB_REF##refs/tags/}\"\necho \"See [CHANGELOG.md](https://github.com/${GITHUB_REPOSITORY}/blob/${TAG_NAME}/CHANGELOG.md) for more details.\" > ./release_notes.md\nRELEASE_NAME=\"$(jq -r '.name' ./package.json)\"\nsed -i \"1i${RELEASE_NAME} ${TAG_NAME}\\n\" ./release_notes.md\n./bin/hub release create \\\n  --draft \\\n  --prerelease \\\n  --file ./release_notes.md \\\n  \"${TAG_NAME}\"\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2021-10-18T02-12-24Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-f28e8278-7129-5633-8ffa-06f41f9ed803",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/release__2021-10-18T02-12-24Z__3bb386ec5a21d7ae895f0880b0a2fb1ea189cd8b.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 10,
+                  "startColumn": 5,
+                  "endLine": 36,
+                  "endColumn": 27
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "2fec8aa764814c21:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2021-10-18T02-12-24Z__3bb386ec5a21d7ae895f0880b0a2fb1ea189cd8b.yml",
+          "workflow_name": "Release",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 36,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "release": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "release": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 1,
+            "actions_used": [
+              "actions/checkout@v2.3.5"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release",
+        "true": {
+          "push": {
+            "tags": [
+              "v*.*.*"
+            ]
+          }
+        },
+        "jobs": {
+          "release": {
+            "runs-on": "ubuntu-18.04",
+            "steps": [
+              {
+                "uses": "actions/checkout@v2.3.5"
+              },
+              {
+                "name": "Dump GitHub context",
+                "env": {
+                  "GITHUB_CONTEXT": "${{ toJson(github) }}"
+                },
+                "run": "echo \"${GITHUB_CONTEXT}\""
+              },
+              {
+                "name": "Install github/hub",
+                "run": "export HUB_VERSION=\"2.14.2\"\ncurl -fsSL https://github.com/github/hub/raw/8d91904208171b013f9a9d1175f4ab39068db047/script/get | bash -s \"${HUB_VERSION}\"\n"
+              },
+              {
+                "name": "Create release",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                },
+                "run": "TAG_NAME=\"${GITHUB_REF##refs/tags/}\"\necho \"See [CHANGELOG.md](https://github.com/${GITHUB_REPOSITORY}/blob/${TAG_NAME}/CHANGELOG.md) for more details.\" > ./release_notes.md\nRELEASE_NAME=\"$(jq -r '.name' ./package.json)\"\nsed -i \"1i${RELEASE_NAME} ${TAG_NAME}\\n\" ./release_notes.md\n./bin/hub release create \\\n  --draft \\\n  --prerelease \\\n  --file ./release_notes.md \\\n  \"${TAG_NAME}\"\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2021-11-03T07-19-33Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-2f8f120d-f9eb-5b78-9a4f-07b657261215",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/release__2021-11-03T07-19-33Z__86a3c300c730f9c35886afeca0af0c2ce031b0b4.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 10,
+                  "startColumn": 5,
+                  "endLine": 36,
+                  "endColumn": 27
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "6457fc53b82bb325:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2021-11-03T07-19-33Z__86a3c300c730f9c35886afeca0af0c2ce031b0b4.yml",
+          "workflow_name": "Release",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 36,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "release": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "release": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 1,
+            "actions_used": [
+              "actions/checkout@v2.4.0"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release",
+        "true": {
+          "push": {
+            "tags": [
+              "v*.*.*"
+            ]
+          }
+        },
+        "jobs": {
+          "release": {
+            "runs-on": "ubuntu-18.04",
+            "steps": [
+              {
+                "uses": "actions/checkout@v2.4.0"
+              },
+              {
+                "name": "Dump GitHub context",
+                "env": {
+                  "GITHUB_CONTEXT": "${{ toJson(github) }}"
+                },
+                "run": "echo \"${GITHUB_CONTEXT}\""
+              },
+              {
+                "name": "Install github/hub",
+                "run": "export HUB_VERSION=\"2.14.2\"\ncurl -fsSL https://github.com/github/hub/raw/8d91904208171b013f9a9d1175f4ab39068db047/script/get | bash -s \"${HUB_VERSION}\"\n"
+              },
+              {
+                "name": "Create release",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                },
+                "run": "TAG_NAME=\"${GITHUB_REF##refs/tags/}\"\necho \"See [CHANGELOG.md](https://github.com/${GITHUB_REPOSITORY}/blob/${TAG_NAME}/CHANGELOG.md) for more details.\" > ./release_notes.md\nRELEASE_NAME=\"$(jq -r '.name' ./package.json)\"\nsed -i \"1i${RELEASE_NAME} ${TAG_NAME}\\n\" ./release_notes.md\n./bin/hub release create \\\n  --draft \\\n  --prerelease \\\n  --file ./release_notes.md \\\n  \"${TAG_NAME}\"\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-08-29T15-06-54Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-7f954bb4-ec36-57d2-84eb-b66f845edfd9",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/release__2022-08-29T15-06-54Z__bd5a5edf1b6a534bee1c70bd49f0ba3ff435e597.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 10,
+                  "startColumn": 5,
+                  "endLine": 36,
+                  "endColumn": 27
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "9dbe6cb5d821f067:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2022-08-29T15-06-54Z__bd5a5edf1b6a534bee1c70bd49f0ba3ff435e597.yml",
+          "workflow_name": "Release",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 36,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "release": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "release": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 1,
+            "actions_used": [
+              "actions/checkout@v3"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release",
+        "true": {
+          "push": {
+            "tags": [
+              "v*.*.*"
+            ]
+          }
+        },
+        "jobs": {
+          "release": {
+            "runs-on": "ubuntu-22.04",
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Dump GitHub context",
+                "env": {
+                  "GITHUB_CONTEXT": "${{ toJson(github) }}"
+                },
+                "run": "echo \"${GITHUB_CONTEXT}\""
+              },
+              {
+                "name": "Install github/hub",
+                "run": "export HUB_VERSION=\"2.14.2\"\ncurl -fsSL https://github.com/github/hub/raw/8d91904208171b013f9a9d1175f4ab39068db047/script/get | bash -s \"${HUB_VERSION}\"\n"
+              },
+              {
+                "name": "Create release",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                },
+                "run": "TAG_NAME=\"${GITHUB_REF##refs/tags/}\"\necho \"See [CHANGELOG.md](https://github.com/${GITHUB_REPOSITORY}/blob/${TAG_NAME}/CHANGELOG.md) for more details.\" > ./release_notes.md\nRELEASE_NAME=\"$(jq -r '.name' ./package.json)\"\nsed -i \"1i${RELEASE_NAME} ${TAG_NAME}\\n\" ./release_notes.md\n./bin/hub release create \\\n  --draft \\\n  --prerelease \\\n  --file ./release_notes.md \\\n  \"${TAG_NAME}\"\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-03-02T02-40-05Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-645c657c-bcc2-5872-bf75-4abaa98f0ff3",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/release__2022-03-02T02-40-05Z__a41bdb53bd93ff61a324fffa43fab5b65bca4fdd.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 10,
+                  "startColumn": 5,
+                  "endLine": 36,
+                  "endColumn": 27
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "9aaea4f612fd9864:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2022-03-02T02-40-05Z__a41bdb53bd93ff61a324fffa43fab5b65bca4fdd.yml",
+          "workflow_name": "Release",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 36,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "release": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "release": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 1,
+            "actions_used": [
+              "actions/checkout@v3"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release",
+        "true": {
+          "push": {
+            "tags": [
+              "v*.*.*"
+            ]
+          }
+        },
+        "jobs": {
+          "release": {
+            "runs-on": "ubuntu-18.04",
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Dump GitHub context",
+                "env": {
+                  "GITHUB_CONTEXT": "${{ toJson(github) }}"
+                },
+                "run": "echo \"${GITHUB_CONTEXT}\""
+              },
+              {
+                "name": "Install github/hub",
+                "run": "export HUB_VERSION=\"2.14.2\"\ncurl -fsSL https://github.com/github/hub/raw/8d91904208171b013f9a9d1175f4ab39068db047/script/get | bash -s \"${HUB_VERSION}\"\n"
+              },
+              {
+                "name": "Create release",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                },
+                "run": "TAG_NAME=\"${GITHUB_REF##refs/tags/}\"\necho \"See [CHANGELOG.md](https://github.com/${GITHUB_REPOSITORY}/blob/${TAG_NAME}/CHANGELOG.md) for more details.\" > ./release_notes.md\nRELEASE_NAME=\"$(jq -r '.name' ./package.json)\"\nsed -i \"1i${RELEASE_NAME} ${TAG_NAME}\\n\" ./release_notes.md\n./bin/hub release create \\\n  --draft \\\n  --prerelease \\\n  --file ./release_notes.md \\\n  \"${TAG_NAME}\"\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-10-05T00-17-20Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-f37d9ef8-9845-5d58-80fa-4900a56e2788",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/release__2023-10-05T00-17-20Z__aadc3a98dfd3437f8f97d436ea91b82a73dc85dd.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 10,
+                  "startColumn": 5,
+                  "endLine": 36,
+                  "endColumn": 27
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "cde61e295f1da054:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2023-10-05T00-17-20Z__aadc3a98dfd3437f8f97d436ea91b82a73dc85dd.yml",
+          "workflow_name": "Release",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 36,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "release": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "release": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 1,
+            "actions_used": [
+              "actions/checkout@v4"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release",
+        "true": {
+          "push": {
+            "tags": [
+              "v*.*.*"
+            ]
+          }
+        },
+        "jobs": {
+          "release": {
+            "runs-on": "ubuntu-22.04",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Dump GitHub context",
+                "env": {
+                  "GITHUB_CONTEXT": "${{ toJson(github) }}"
+                },
+                "run": "echo \"${GITHUB_CONTEXT}\""
+              },
+              {
+                "name": "Install github/hub",
+                "run": "export HUB_VERSION=\"2.14.2\"\ncurl -fsSL https://github.com/github/hub/raw/8d91904208171b013f9a9d1175f4ab39068db047/script/get | bash -s \"${HUB_VERSION}\"\n"
+              },
+              {
+                "name": "Create release",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                },
+                "run": "TAG_NAME=\"${GITHUB_REF##refs/tags/}\"\necho \"See [CHANGELOG.md](https://github.com/${GITHUB_REPOSITORY}/blob/${TAG_NAME}/CHANGELOG.md) for more details.\" > ./release_notes.md\nRELEASE_NAME=\"$(jq -r '.name' ./package.json)\"\nsed -i \"1i${RELEASE_NAME} ${TAG_NAME}\\n\" ./release_notes.md\n./bin/hub release create \\\n  --draft \\\n  --prerelease \\\n  --file ./release_notes.md \\\n  \"${TAG_NAME}\"\n"
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

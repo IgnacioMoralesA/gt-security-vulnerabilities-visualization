@@ -1,0 +1,229 @@
+{
+  "repo_owner": "actions",
+  "repo_name": "cache",
+  "workflow_name": "issue-opened-workflow",
+  "history": {
+    "2023-06-12T18-10-52Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-543a15a5-24d5-509a-bdf7-c3edc570c207",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/issue-opened-workflow__2023-06-12T18-10-52Z__57f0e3f198251983d70fc3c83e71b973822da983.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 7,
+                  "startColumn": 5,
+                  "endLine": 16,
+                  "endColumn": 275
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "a725097bd56ed74:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "issue-opened-workflow__2023-06-12T18-10-52Z__57f0e3f198251983d70fc3c83e71b973822da983.yml",
+          "workflow_name": "Assign issue",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 16,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "run-action": 2
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "run-action": 2
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 0,
+            "actions_used": [],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Assign issue",
+        "true": {
+          "issues": {
+            "types": [
+              "opened"
+            ]
+          }
+        },
+        "jobs": {
+          "run-action": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Get current oncall",
+                "id": "oncall",
+                "run": "echo \"CURRENT=$(curl --request GET 'https://api.pagerduty.com/oncalls?include[]=users&schedule_ids[]=P5VG2BX&earliest=true' --header 'Authorization: Token token=${{ secrets.PAGERDUTY_TOKEN }}' --header 'Accept: application/vnd.pagerduty+json;version=2' --header 'Content-Type: application/json' | jq -r '.oncalls[].user.name')\" >> $GITHUB_OUTPUT\n"
+              },
+              {
+                "name": "add_assignees",
+                "run": "curl -X POST -H \"Accept: application/vnd.github+json\" -H \"Authorization: Bearer ${{ secrets.GITHUB_TOKEN}}\" https://api.github.com/repos/${{github.repository}}/issues/${{ github.event.issue.number}}/assignees -d '{\"assignees\":[\"${{steps.oncall.outputs.CURRENT}}\"]}'\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-01-18T10-12-12Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-efd44e4d-3b95-50bc-9f5c-98f0aad8a431",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/issue-opened-workflow__2023-01-18T10-12-12Z__8315026919280d83831d56bc6715e0f9974e52e6.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 7,
+                  "startColumn": 5,
+                  "endLine": 22,
+                  "endColumn": 56
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "a725097bd56ed74:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "issue-opened-workflow__2023-01-18T10-12-12Z__8315026919280d83831d56bc6715e0f9974e52e6.yml",
+          "workflow_name": "Assign issue",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 22,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "run-action": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "run-action": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 1,
+            "actions_used": [
+              "actions/add-to-project@v0.4.0"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Assign issue",
+        "true": {
+          "issues": {
+            "types": [
+              "opened"
+            ]
+          }
+        },
+        "jobs": {
+          "run-action": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Get current oncall",
+                "id": "oncall",
+                "run": "echo \"CURRENT=$(curl --request GET 'https://api.pagerduty.com/oncalls?include[]=users&schedule_ids[]=P5VG2BX&earliest=true' --header 'Authorization: Token token=${{ secrets.PAGERDUTY_TOKEN }}' --header 'Accept: application/vnd.pagerduty+json;version=2' --header 'Content-Type: application/json' | jq -r '.oncalls[].user.name')\" >> $GITHUB_OUTPUT\n"
+              },
+              {
+                "name": "add_assignees",
+                "run": "curl -X POST -H \"Accept: application/vnd.github+json\" -H \"Authorization: Bearer ${{ secrets.GITHUB_TOKEN}}\" https://api.github.com/repos/${{github.repository}}/issues/${{ github.event.issue.number}}/assignees -d '{\"assignees\":[\"${{steps.oncall.outputs.CURRENT}}\"]}'\n"
+              },
+              {
+                "uses": "actions/add-to-project@v0.4.0",
+                "name": "Add to Project Board",
+                "with": {
+                  "project-url": "https://github.com/orgs/actions/projects/12",
+                  "github-token": "${{ secrets.CACHE_BOARD_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

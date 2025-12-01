@@ -1,0 +1,5483 @@
+{
+  "repo_owner": "stelligent",
+  "repo_name": "cfn_nag",
+  "workflow_name": "gempush",
+  "history": {
+    "2020-01-06T16-05-25Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-6bd1a014-5433-500e-8acb-e1b6fdad0555",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/gempush__2020-01-06T16-05-25Z__7d2520d5163f5a8afef4371dfd83013164308ea4.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 13,
+                  "startColumn": 5,
+                  "endLine": 33,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "ec1b96c7eec5863a:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-e9e1ec9f-8253-5b40-b8a0-ddc69f678cb8",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/gempush__2020-01-06T16-05-25Z__7d2520d5163f5a8afef4371dfd83013164308ea4.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 34,
+                  "startColumn": 5,
+                  "endLine": 50,
+                  "endColumn": 56
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "5c4ac4640e2b827f:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "gempush__2020-01-06T16-05-25Z__7d2520d5163f5a8afef4371dfd83013164308ea4.yml",
+          "workflow_name": "cfn_nag",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 50,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "commit": 7,
+            "acceptance": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "commit": 7,
+              "acceptance": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@master",
+              "actions/setup-ruby@v1"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "cfn_nag",
+        "true": {
+          "pull_request": {
+            "branches": [
+              "master"
+            ]
+          },
+          "push": {
+            "branches": [
+              "master"
+            ]
+          }
+        },
+        "jobs": {
+          "commit": {
+            "name": "Commit",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@master"
+              },
+              {
+                "name": "Set up Ruby 2.5",
+                "uses": "actions/setup-ruby@v1",
+                "with": {
+                  "version": "2.5.x"
+                }
+              },
+              {
+                "name": "Which bundler?",
+                "run": "bundle -v"
+              },
+              {
+                "name": "Bundle install",
+                "run": "bundle check || bundle install"
+              },
+              {
+                "name": "Rubocop lint",
+                "run": "bundle exec rubocop -D"
+              },
+              {
+                "name": "Rspec tests",
+                "run": "bundle exec rspec --color --require spec_helper spec"
+              },
+              {
+                "name": "Duplicate rule check",
+                "run": "bundle exec ./bin/cfn_nag_rules"
+              }
+            ]
+          },
+          "acceptance": {
+            "name": "Acceptance",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@master"
+              },
+              {
+                "name": "Set up Ruby 2.5",
+                "uses": "actions/setup-ruby@v1",
+                "with": {
+                  "version": "2.5.x"
+                }
+              },
+              {
+                "name": "e2e",
+                "run": "bash ./scripts/setup_and_run_end_to_end_tests.sh"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2020-01-06T16-07-39Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-6aedf7a7-5f03-57ca-8333-cc6a4b7f52d0",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/gempush__2020-01-06T16-07-39Z__b01ddbb121bbdfe118164abd52b571053696c7f3.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 13,
+                  "startColumn": 5,
+                  "endLine": 35,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "ec1b96c7eec5863a:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-60e25f97-5d32-53dc-a215-93cb9340ba8c",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/gempush__2020-01-06T16-07-39Z__b01ddbb121bbdfe118164abd52b571053696c7f3.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 36,
+                  "startColumn": 5,
+                  "endLine": 52,
+                  "endColumn": 56
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "5c4ac4640e2b827f:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "gempush__2020-01-06T16-07-39Z__b01ddbb121bbdfe118164abd52b571053696c7f3.yml",
+          "workflow_name": "cfn_nag",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 52,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "commit": 8,
+            "acceptance": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "commit": 8,
+              "acceptance": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@master",
+              "actions/setup-ruby@v1"
+            ],
+            "num_run_commands": 7,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "cfn_nag",
+        "true": {
+          "pull_request": {
+            "branches": [
+              "master"
+            ]
+          },
+          "push": {
+            "branches": [
+              "master"
+            ]
+          }
+        },
+        "jobs": {
+          "commit": {
+            "name": "Commit",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@master"
+              },
+              {
+                "name": "Set up Ruby 2.5",
+                "uses": "actions/setup-ruby@v1",
+                "with": {
+                  "version": "2.5.x"
+                }
+              },
+              {
+                "name": "Install Bundler",
+                "run": "gem install bundler"
+              },
+              {
+                "name": "Which bundler?",
+                "run": "bundle -v"
+              },
+              {
+                "name": "Bundle install",
+                "run": "bundle check || bundle install"
+              },
+              {
+                "name": "Rubocop lint",
+                "run": "bundle exec rubocop -D"
+              },
+              {
+                "name": "Rspec tests",
+                "run": "bundle exec rspec --color --require spec_helper spec"
+              },
+              {
+                "name": "Duplicate rule check",
+                "run": "bundle exec ./bin/cfn_nag_rules"
+              }
+            ]
+          },
+          "acceptance": {
+            "name": "Acceptance",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@master"
+              },
+              {
+                "name": "Set up Ruby 2.5",
+                "uses": "actions/setup-ruby@v1",
+                "with": {
+                  "version": "2.5.x"
+                }
+              },
+              {
+                "name": "e2e",
+                "run": "bash ./scripts/setup_and_run_end_to_end_tests.sh"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2020-01-06T16-34-40Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-2e1cc57d-dac9-5c1e-b4d0-4770186df3b3",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/gempush__2020-01-06T16-34-40Z__d6c0633898cdda649d4ead4003c84797ae09bb5d.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 13,
+                  "startColumn": 5,
+                  "endLine": 35,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "ec1b96c7eec5863a:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-6d623710-5a7e-5c1f-b624-7e436e99ac9b",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/gempush__2020-01-06T16-34-40Z__d6c0633898cdda649d4ead4003c84797ae09bb5d.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 36,
+                  "startColumn": 5,
+                  "endLine": 54,
+                  "endColumn": 56
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "5c4ac4640e2b827f:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "gempush__2020-01-06T16-34-40Z__d6c0633898cdda649d4ead4003c84797ae09bb5d.yml",
+          "workflow_name": "cfn_nag",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 54,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "commit": 8,
+            "acceptance": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "commit": 8,
+              "acceptance": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@master",
+              "actions/setup-ruby@v1"
+            ],
+            "num_run_commands": 8,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "cfn_nag",
+        "true": {
+          "pull_request": {
+            "branches": [
+              "master"
+            ]
+          },
+          "push": {
+            "branches": [
+              "master"
+            ]
+          }
+        },
+        "jobs": {
+          "commit": {
+            "name": "Commit",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@master"
+              },
+              {
+                "name": "Set up Ruby 2.5",
+                "uses": "actions/setup-ruby@v1",
+                "with": {
+                  "version": "2.5.x"
+                }
+              },
+              {
+                "name": "Install Bundler",
+                "run": "gem install bundler"
+              },
+              {
+                "name": "Which bundler?",
+                "run": "bundle -v"
+              },
+              {
+                "name": "Bundle install",
+                "run": "bundle check || bundle install"
+              },
+              {
+                "name": "Rubocop lint",
+                "run": "bundle exec rubocop -D"
+              },
+              {
+                "name": "Rspec tests",
+                "run": "bundle exec rspec --color --require spec_helper spec"
+              },
+              {
+                "name": "Duplicate rule check",
+                "run": "bundle exec ./bin/cfn_nag_rules"
+              }
+            ]
+          },
+          "acceptance": {
+            "name": "Acceptance",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@master"
+              },
+              {
+                "name": "Set up Ruby 2.5",
+                "uses": "actions/setup-ruby@v1",
+                "with": {
+                  "version": "2.5.x"
+                }
+              },
+              {
+                "name": "Install Bundler",
+                "run": "gem install bundler"
+              },
+              {
+                "name": "e2e",
+                "run": "bash ./scripts/setup_and_run_end_to_end_tests.sh"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2020-01-06T18-14-23Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-431bd084-9fc3-5bc4-90b4-d157874170c4",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/gempush__2020-01-06T18-14-23Z__86930522431324ce740935949bc10e7ca0d27d54.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 13,
+                  "startColumn": 5,
+                  "endLine": 35,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "ec1b96c7eec5863a:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-0e174d76-f234-51f7-8b64-d72f84822823",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/gempush__2020-01-06T18-14-23Z__86930522431324ce740935949bc10e7ca0d27d54.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 36,
+                  "startColumn": 5,
+                  "endLine": 50,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "5c4ac4640e2b827f:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-420ae0e5-7a89-5c1f-93e2-307e453dbfa8",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/gempush__2020-01-06T18-14-23Z__86930522431324ce740935949bc10e7ca0d27d54.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 51,
+                  "startColumn": 5,
+                  "endLine": 61,
+                  "endColumn": 57
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "820aab906a70cfd9:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "gempush__2020-01-06T18-14-23Z__86930522431324ce740935949bc10e7ca0d27d54.yml",
+          "workflow_name": "cfn_nag",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 61,
+          "num_jobs": 3,
+          "steps_per_job": {
+            "commit": 8,
+            "acceptance": 4,
+            "release": 2
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 3,
+            "num_dependencies_between_jobs": 2,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "commit": 8,
+              "acceptance": 4,
+              "release": 2
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 5,
+            "actions_used": [
+              "actions/checkout@master",
+              "actions/setup-ruby@v1"
+            ],
+            "num_run_commands": 9,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "cfn_nag",
+        "true": {
+          "pull_request": {
+            "branches": [
+              "master"
+            ]
+          },
+          "push": {
+            "branches": [
+              "master"
+            ]
+          }
+        },
+        "jobs": {
+          "commit": {
+            "name": "Commit",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@master"
+              },
+              {
+                "name": "Set up Ruby 2.5",
+                "uses": "actions/setup-ruby@v1",
+                "with": {
+                  "version": "2.5.x"
+                }
+              },
+              {
+                "name": "Install Bundler",
+                "run": "gem install bundler"
+              },
+              {
+                "name": "Which bundler?",
+                "run": "bundle -v"
+              },
+              {
+                "name": "Bundle install",
+                "run": "bundle check || bundle install"
+              },
+              {
+                "name": "Rubocop lint",
+                "run": "bundle exec rubocop -D"
+              },
+              {
+                "name": "Rspec tests",
+                "run": "bundle exec rspec --color --require spec_helper spec"
+              },
+              {
+                "name": "Duplicate rule check",
+                "run": "bundle exec ./bin/cfn_nag_rules"
+              }
+            ]
+          },
+          "acceptance": {
+            "name": "Acceptance",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@master"
+              },
+              {
+                "name": "Set up Ruby 2.5",
+                "uses": "actions/setup-ruby@v1",
+                "with": {
+                  "version": "2.5.x"
+                }
+              },
+              {
+                "name": "Install Bundler",
+                "run": "gem install bundler"
+              },
+              {
+                "name": "e2e",
+                "run": "bash ./scripts/setup_and_run_end_to_end_tests.sh"
+              }
+            ]
+          },
+          "release": {
+            "name": "Release",
+            "runs-on": "ubuntu-latest",
+            "needs": [
+              "commit",
+              "acceptance"
+            ],
+            "steps": [
+              {
+                "uses": "actions/checkout@master"
+              },
+              {
+                "name": "Publish to RubyGems and DockerHub",
+                "run": "bash ./scripts/publish.sh",
+                "env": {
+                  "rubygems_api_key": "${{secrets.rubygems_api_key}}",
+                  "docker_user": "${{secrets.docker_user}}",
+                  "docker_password": "${{secrets.docker_password}}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2020-01-06T18-55-12Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-cca0cb9d-cf44-5667-8531-55f3e844eaab",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/gempush__2020-01-06T18-55-12Z__5460369b2155b5e4c80c0235483760bb6541ff06.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 10,
+                  "startColumn": 5,
+                  "endLine": 32,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "ec1b96c7eec5863a:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-422655e3-8859-527c-b100-3c3f1104fa40",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/gempush__2020-01-06T18-55-12Z__5460369b2155b5e4c80c0235483760bb6541ff06.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 33,
+                  "startColumn": 5,
+                  "endLine": 48,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "6add5cf4d7af0655:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-3410d881-42a2-58f0-97a9-3bcf6aa61a5b",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/gempush__2020-01-06T18-55-12Z__5460369b2155b5e4c80c0235483760bb6541ff06.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 49,
+                  "startColumn": 5,
+                  "endLine": 62,
+                  "endColumn": 57
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "7d23ed346700cf2f:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "gempush__2020-01-06T18-55-12Z__5460369b2155b5e4c80c0235483760bb6541ff06.yml",
+          "workflow_name": "cfn_nag",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 62,
+          "num_jobs": 3,
+          "steps_per_job": {
+            "commit": 8,
+            "acceptance": 4,
+            "release": 2
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 3,
+            "num_dependencies_between_jobs": 2,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "commit": 8,
+              "acceptance": 4,
+              "release": 2
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 5,
+            "actions_used": [
+              "actions/checkout@master",
+              "actions/setup-ruby@v1"
+            ],
+            "num_run_commands": 9,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "cfn_nag",
+        "true": {
+          "push": {
+            "branches": [
+              "master"
+            ]
+          }
+        },
+        "jobs": {
+          "commit": {
+            "name": "Commit",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@master"
+              },
+              {
+                "name": "Set up Ruby 2.5",
+                "uses": "actions/setup-ruby@v1",
+                "with": {
+                  "version": "2.5.x"
+                }
+              },
+              {
+                "name": "Install Bundler",
+                "run": "gem install bundler"
+              },
+              {
+                "name": "Which bundler?",
+                "run": "bundle -v"
+              },
+              {
+                "name": "Bundle install",
+                "run": "bundle check || bundle install"
+              },
+              {
+                "name": "Rubocop lint",
+                "run": "bundle exec rubocop -D"
+              },
+              {
+                "name": "Rspec tests",
+                "run": "bundle exec rspec --color --require spec_helper spec"
+              },
+              {
+                "name": "Duplicate rule check",
+                "run": "bundle exec ./bin/cfn_nag_rules"
+              }
+            ]
+          },
+          "acceptance": {
+            "name": "Acceptance",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@master"
+              },
+              {
+                "name": "Set up Ruby 2.5",
+                "uses": "actions/setup-ruby@v1",
+                "with": {
+                  "version": "2.5.x"
+                }
+              },
+              {
+                "name": "Install Bundler",
+                "run": "gem install bundler"
+              },
+              {
+                "name": "e2e",
+                "run": "bash ./scripts/setup_and_run_end_to_end_tests.sh"
+              }
+            ]
+          },
+          "release": {
+            "name": "Release",
+            "runs-on": "ubuntu-latest",
+            "needs": [
+              "commit",
+              "acceptance"
+            ],
+            "steps": [
+              {
+                "uses": "actions/checkout@master",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Publish to RubyGems and DockerHub",
+                "run": "bash ./scripts/publish.sh",
+                "env": {
+                  "rubygems_api_key": "${{secrets.rubygems_api_key}}",
+                  "docker_user": "${{secrets.docker_user}}",
+                  "docker_password": "${{secrets.docker_password}}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2020-01-06T19-04-07Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-0ec95177-5073-5af6-af86-26565a23ac0b",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/gempush__2020-01-06T19-04-07Z__89a21b7c4aca054fb200885d8ac20c61920f029d.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 10,
+                  "startColumn": 5,
+                  "endLine": 32,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "ec1b96c7eec5863a:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-1c63cb06-b733-545e-8828-c9ddb260b124",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/gempush__2020-01-06T19-04-07Z__89a21b7c4aca054fb200885d8ac20c61920f029d.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 33,
+                  "startColumn": 5,
+                  "endLine": 48,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "6add5cf4d7af0655:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-cd92cc5a-709d-53e8-b670-fdde681367e3",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/gempush__2020-01-06T19-04-07Z__89a21b7c4aca054fb200885d8ac20c61920f029d.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 49,
+                  "startColumn": 5,
+                  "endLine": 61,
+                  "endColumn": 57
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "7d23ed346700cf2f:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "gempush__2020-01-06T19-04-07Z__89a21b7c4aca054fb200885d8ac20c61920f029d.yml",
+          "workflow_name": "cfn_nag",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 61,
+          "num_jobs": 3,
+          "steps_per_job": {
+            "commit": 8,
+            "acceptance": 4,
+            "release": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 3,
+            "num_dependencies_between_jobs": 2,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "commit": 8,
+              "acceptance": 4,
+              "release": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 5,
+            "actions_used": [
+              "actions/checkout@master",
+              "actions/checkout@v2",
+              "actions/setup-ruby@v1"
+            ],
+            "num_run_commands": 10,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "cfn_nag",
+        "true": {
+          "push": {
+            "branches": [
+              "master"
+            ]
+          }
+        },
+        "jobs": {
+          "commit": {
+            "name": "Commit",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@master"
+              },
+              {
+                "name": "Set up Ruby 2.5",
+                "uses": "actions/setup-ruby@v1",
+                "with": {
+                  "version": "2.5.x"
+                }
+              },
+              {
+                "name": "Install Bundler",
+                "run": "gem install bundler"
+              },
+              {
+                "name": "Which bundler?",
+                "run": "bundle -v"
+              },
+              {
+                "name": "Bundle install",
+                "run": "bundle check || bundle install"
+              },
+              {
+                "name": "Rubocop lint",
+                "run": "bundle exec rubocop -D"
+              },
+              {
+                "name": "Rspec tests",
+                "run": "bundle exec rspec --color --require spec_helper spec"
+              },
+              {
+                "name": "Duplicate rule check",
+                "run": "bundle exec ./bin/cfn_nag_rules"
+              }
+            ]
+          },
+          "acceptance": {
+            "name": "Acceptance",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@master"
+              },
+              {
+                "name": "Set up Ruby 2.5",
+                "uses": "actions/setup-ruby@v1",
+                "with": {
+                  "version": "2.5.x"
+                }
+              },
+              {
+                "name": "Install Bundler",
+                "run": "gem install bundler"
+              },
+              {
+                "name": "e2e",
+                "run": "bash ./scripts/setup_and_run_end_to_end_tests.sh"
+              }
+            ]
+          },
+          "release": {
+            "name": "Release",
+            "runs-on": "ubuntu-latest",
+            "needs": [
+              "commit",
+              "acceptance"
+            ],
+            "steps": [
+              {
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "run": "git fetch --depth=1 origin +refs/tags/*:refs/tags/*"
+              },
+              {
+                "name": "Publish to RubyGems and DockerHub",
+                "run": "bash ./scripts/publish.sh",
+                "env": {
+                  "rubygems_api_key": "${{secrets.rubygems_api_key}}",
+                  "docker_user": "${{secrets.docker_user}}",
+                  "docker_password": "${{secrets.docker_password}}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2020-01-06T19-10-25Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-12ebb41c-0c99-5403-94ff-aeb6d340a659",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/gempush__2020-01-06T19-10-25Z__2133f5adfb59edf5c95672bb54768a148ceccf88.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 10,
+                  "startColumn": 5,
+                  "endLine": 32,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "ec1b96c7eec5863a:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-da4e1a5c-464c-5f49-8e4e-adf858165bee",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/gempush__2020-01-06T19-10-25Z__2133f5adfb59edf5c95672bb54768a148ceccf88.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 33,
+                  "startColumn": 5,
+                  "endLine": 48,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "6add5cf4d7af0655:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-335d0873-3912-5613-ac3b-9aa03c5cd2c9",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/gempush__2020-01-06T19-10-25Z__2133f5adfb59edf5c95672bb54768a148ceccf88.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 49,
+                  "startColumn": 5,
+                  "endLine": 63,
+                  "endColumn": 57
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "7d23ed346700cf2f:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "gempush__2020-01-06T19-10-25Z__2133f5adfb59edf5c95672bb54768a148ceccf88.yml",
+          "workflow_name": "cfn_nag",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 63,
+          "num_jobs": 3,
+          "steps_per_job": {
+            "commit": 8,
+            "acceptance": 4,
+            "release": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 3,
+            "num_dependencies_between_jobs": 2,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "commit": 8,
+              "acceptance": 4,
+              "release": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 5,
+            "actions_used": [
+              "actions/checkout@master",
+              "actions/checkout@v2",
+              "actions/setup-ruby@v1"
+            ],
+            "num_run_commands": 10,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "cfn_nag",
+        "true": {
+          "push": {
+            "branches": [
+              "master"
+            ]
+          }
+        },
+        "jobs": {
+          "commit": {
+            "name": "Commit",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@master"
+              },
+              {
+                "name": "Set up Ruby 2.5",
+                "uses": "actions/setup-ruby@v1",
+                "with": {
+                  "version": "2.5.x"
+                }
+              },
+              {
+                "name": "Install Bundler",
+                "run": "gem install bundler"
+              },
+              {
+                "name": "Which bundler?",
+                "run": "bundle -v"
+              },
+              {
+                "name": "Bundle install",
+                "run": "bundle check || bundle install"
+              },
+              {
+                "name": "Rubocop lint",
+                "run": "bundle exec rubocop -D"
+              },
+              {
+                "name": "Rspec tests",
+                "run": "bundle exec rspec --color --require spec_helper spec"
+              },
+              {
+                "name": "Duplicate rule check",
+                "run": "bundle exec ./bin/cfn_nag_rules"
+              }
+            ]
+          },
+          "acceptance": {
+            "name": "Acceptance",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@master"
+              },
+              {
+                "name": "Set up Ruby 2.5",
+                "uses": "actions/setup-ruby@v1",
+                "with": {
+                  "version": "2.5.x"
+                }
+              },
+              {
+                "name": "Install Bundler",
+                "run": "gem install bundler"
+              },
+              {
+                "name": "e2e",
+                "run": "bash ./scripts/setup_and_run_end_to_end_tests.sh"
+              }
+            ]
+          },
+          "release": {
+            "name": "Release",
+            "runs-on": "ubuntu-latest",
+            "needs": [
+              "commit",
+              "acceptance"
+            ],
+            "steps": [
+              {
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "run": "git fetch --depth=1 origin +refs/tags/*:refs/tags/*\ngit fetch --prune --unshallow\n"
+              },
+              {
+                "name": "Publish to RubyGems and DockerHub",
+                "run": "bash ./scripts/publish.sh",
+                "env": {
+                  "rubygems_api_key": "${{secrets.rubygems_api_key}}",
+                  "docker_user": "${{secrets.docker_user}}",
+                  "docker_password": "${{secrets.docker_password}}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2020-01-06T19-17-31Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-94df2a91-0189-5886-85f0-6ad87bb639f5",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/gempush__2020-01-06T19-17-31Z__bccb4b785db7d56c809bd788a36316345dc3ba2c.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 10,
+                  "startColumn": 5,
+                  "endLine": 32,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "ec1b96c7eec5863a:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-b34beb6f-b7d3-5eac-903a-fd7b2294d139",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/gempush__2020-01-06T19-17-31Z__bccb4b785db7d56c809bd788a36316345dc3ba2c.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 33,
+                  "startColumn": 5,
+                  "endLine": 48,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "6add5cf4d7af0655:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-81ce9db4-3a1e-54c7-8b22-a09fc2b29d4c",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/gempush__2020-01-06T19-17-31Z__bccb4b785db7d56c809bd788a36316345dc3ba2c.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 49,
+                  "startColumn": 5,
+                  "endLine": 67,
+                  "endColumn": 57
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "7d23ed346700cf2f:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "gempush__2020-01-06T19-17-31Z__bccb4b785db7d56c809bd788a36316345dc3ba2c.yml",
+          "workflow_name": "cfn_nag",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 67,
+          "num_jobs": 3,
+          "steps_per_job": {
+            "commit": 8,
+            "acceptance": 4,
+            "release": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 3,
+            "num_dependencies_between_jobs": 2,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "commit": 8,
+              "acceptance": 4,
+              "release": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 6,
+            "actions_used": [
+              "actions/checkout@master",
+              "actions/checkout@v2",
+              "actions/setup-ruby@v1"
+            ],
+            "num_run_commands": 10,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "cfn_nag",
+        "true": {
+          "push": {
+            "branches": [
+              "master"
+            ]
+          }
+        },
+        "jobs": {
+          "commit": {
+            "name": "Commit",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@master"
+              },
+              {
+                "name": "Set up Ruby 2.5",
+                "uses": "actions/setup-ruby@v1",
+                "with": {
+                  "version": "2.5.x"
+                }
+              },
+              {
+                "name": "Install Bundler",
+                "run": "gem install bundler"
+              },
+              {
+                "name": "Which bundler?",
+                "run": "bundle -v"
+              },
+              {
+                "name": "Bundle install",
+                "run": "bundle check || bundle install"
+              },
+              {
+                "name": "Rubocop lint",
+                "run": "bundle exec rubocop -D"
+              },
+              {
+                "name": "Rspec tests",
+                "run": "bundle exec rspec --color --require spec_helper spec"
+              },
+              {
+                "name": "Duplicate rule check",
+                "run": "bundle exec ./bin/cfn_nag_rules"
+              }
+            ]
+          },
+          "acceptance": {
+            "name": "Acceptance",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@master"
+              },
+              {
+                "name": "Set up Ruby 2.5",
+                "uses": "actions/setup-ruby@v1",
+                "with": {
+                  "version": "2.5.x"
+                }
+              },
+              {
+                "name": "Install Bundler",
+                "run": "gem install bundler"
+              },
+              {
+                "name": "e2e",
+                "run": "bash ./scripts/setup_and_run_end_to_end_tests.sh"
+              }
+            ]
+          },
+          "release": {
+            "name": "Release",
+            "runs-on": "ubuntu-latest",
+            "needs": [
+              "commit",
+              "acceptance"
+            ],
+            "steps": [
+              {
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "run": "git fetch --depth=1 origin +refs/tags/*:refs/tags/*\ngit fetch --prune --unshallow\n"
+              },
+              {
+                "name": "Set up Ruby 2.5",
+                "uses": "actions/setup-ruby@v1",
+                "with": {
+                  "version": "2.5.x"
+                }
+              },
+              {
+                "name": "Publish to RubyGems and DockerH1ub",
+                "run": "bash ./scripts/publish.sh",
+                "env": {
+                  "rubygems_api_key": "${{secrets.rubygems_api_key}}",
+                  "docker_user": "${{secrets.docker_user}}",
+                  "docker_password": "${{secrets.docker_password}}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2020-01-06T19-25-02Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-1644fe49-992d-5cc4-803f-5dcd158b0d66",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/gempush__2020-01-06T19-25-02Z__7ed96bff622752f318ddb78edf0ac1e2c0088543.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 34,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "ec1b96c7eec5863a:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-58c59124-87ff-5300-93d9-5f6e0881284c",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/gempush__2020-01-06T19-25-02Z__7ed96bff622752f318ddb78edf0ac1e2c0088543.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 35,
+                  "startColumn": 5,
+                  "endLine": 50,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "6add5cf4d7af0655:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-a6fca4a1-3e6b-5669-9d18-679f0e3e33dc",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/gempush__2020-01-06T19-25-02Z__7ed96bff622752f318ddb78edf0ac1e2c0088543.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 51,
+                  "startColumn": 5,
+                  "endLine": 69,
+                  "endColumn": 57
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "7d23ed346700cf2f:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "gempush__2020-01-06T19-25-02Z__7ed96bff622752f318ddb78edf0ac1e2c0088543.yml",
+          "workflow_name": "cfn_nag",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 69,
+          "num_jobs": 3,
+          "steps_per_job": {
+            "commit": 8,
+            "acceptance": 4,
+            "release": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 3,
+            "num_dependencies_between_jobs": 2,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "commit": 8,
+              "acceptance": 4,
+              "release": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 6,
+            "actions_used": [
+              "actions/checkout@master",
+              "actions/checkout@v2",
+              "actions/setup-ruby@v1"
+            ],
+            "num_run_commands": 10,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "cfn_nag",
+        "true": {
+          "push": {
+            "branches": [
+              "master"
+            ]
+          }
+        },
+        "env": {
+          "docker_org": "stelligent"
+        },
+        "jobs": {
+          "commit": {
+            "name": "Commit",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@master"
+              },
+              {
+                "name": "Set up Ruby 2.5",
+                "uses": "actions/setup-ruby@v1",
+                "with": {
+                  "version": "2.5.x"
+                }
+              },
+              {
+                "name": "Install Bundler",
+                "run": "gem install bundler"
+              },
+              {
+                "name": "Which bundler?",
+                "run": "bundle -v"
+              },
+              {
+                "name": "Bundle install",
+                "run": "bundle check || bundle install"
+              },
+              {
+                "name": "Rubocop lint",
+                "run": "bundle exec rubocop -D"
+              },
+              {
+                "name": "Rspec tests",
+                "run": "bundle exec rspec --color --require spec_helper spec"
+              },
+              {
+                "name": "Duplicate rule check",
+                "run": "bundle exec ./bin/cfn_nag_rules"
+              }
+            ]
+          },
+          "acceptance": {
+            "name": "Acceptance",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@master"
+              },
+              {
+                "name": "Set up Ruby 2.5",
+                "uses": "actions/setup-ruby@v1",
+                "with": {
+                  "version": "2.5.x"
+                }
+              },
+              {
+                "name": "Install Bundler",
+                "run": "gem install bundler"
+              },
+              {
+                "name": "e2e",
+                "run": "bash ./scripts/setup_and_run_end_to_end_tests.sh"
+              }
+            ]
+          },
+          "release": {
+            "name": "Release",
+            "runs-on": "ubuntu-latest",
+            "needs": [
+              "commit",
+              "acceptance"
+            ],
+            "steps": [
+              {
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "run": "git fetch --depth=1 origin +refs/tags/*:refs/tags/*\ngit fetch --prune --unshallow\n"
+              },
+              {
+                "name": "Set up Ruby 2.5",
+                "uses": "actions/setup-ruby@v1",
+                "with": {
+                  "version": "2.5.x"
+                }
+              },
+              {
+                "name": "Publish to RubyGems and DockerH1ub",
+                "run": "bash ./scripts/publish.sh",
+                "env": {
+                  "rubygems_api_key": "${{secrets.rubygems_api_key}}",
+                  "docker_user": "${{secrets.docker_user}}",
+                  "docker_password": "${{secrets.docker_password}}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2020-01-23T04-28-31Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-f8331588-ebc3-58fd-8d2e-098ed3b216f9",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/gempush__2020-01-23T04-28-31Z__b7fc253109b8b6eeaf1aa13f5e53f582f34a9cdb.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 34,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "ec1b96c7eec5863a:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-e435080d-48c4-5aa1-b971-9212fe6da464",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/gempush__2020-01-23T04-28-31Z__b7fc253109b8b6eeaf1aa13f5e53f582f34a9cdb.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 35,
+                  "startColumn": 5,
+                  "endLine": 50,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "6add5cf4d7af0655:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-b2307a78-8908-5d3c-ab16-92502c654d09",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/gempush__2020-01-23T04-28-31Z__b7fc253109b8b6eeaf1aa13f5e53f582f34a9cdb.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 51,
+                  "startColumn": 5,
+                  "endLine": 78,
+                  "endColumn": 61
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "7d23ed346700cf2f:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "gempush__2020-01-23T04-28-31Z__b7fc253109b8b6eeaf1aa13f5e53f582f34a9cdb.yml",
+          "workflow_name": "cfn_nag",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 78,
+          "num_jobs": 3,
+          "steps_per_job": {
+            "commit": 8,
+            "acceptance": 4,
+            "release": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 3,
+            "num_dependencies_between_jobs": 2,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "commit": 8,
+              "acceptance": 4,
+              "release": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 6,
+            "actions_used": [
+              "actions/checkout@master",
+              "actions/checkout@v2",
+              "actions/setup-ruby@v1"
+            ],
+            "num_run_commands": 11,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "cfn_nag",
+        "true": {
+          "push": {
+            "branches": [
+              "master"
+            ]
+          }
+        },
+        "env": {
+          "docker_org": "stelligent"
+        },
+        "jobs": {
+          "commit": {
+            "name": "Commit",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@master"
+              },
+              {
+                "name": "Set up Ruby 2.5",
+                "uses": "actions/setup-ruby@v1",
+                "with": {
+                  "version": "2.5.x"
+                }
+              },
+              {
+                "name": "Install Bundler",
+                "run": "gem install bundler"
+              },
+              {
+                "name": "Which bundler?",
+                "run": "bundle -v"
+              },
+              {
+                "name": "Bundle install",
+                "run": "bundle check || bundle install"
+              },
+              {
+                "name": "Rubocop lint",
+                "run": "bundle exec rubocop -D"
+              },
+              {
+                "name": "Rspec tests",
+                "run": "bundle exec rspec --color --require spec_helper spec"
+              },
+              {
+                "name": "Duplicate rule check",
+                "run": "bundle exec ./bin/cfn_nag_rules"
+              }
+            ]
+          },
+          "acceptance": {
+            "name": "Acceptance",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@master"
+              },
+              {
+                "name": "Set up Ruby 2.5",
+                "uses": "actions/setup-ruby@v1",
+                "with": {
+                  "version": "2.5.x"
+                }
+              },
+              {
+                "name": "Install Bundler",
+                "run": "gem install bundler"
+              },
+              {
+                "name": "e2e",
+                "run": "bash ./scripts/setup_and_run_end_to_end_tests.sh"
+              }
+            ]
+          },
+          "release": {
+            "name": "Release",
+            "runs-on": "ubuntu-latest",
+            "needs": [
+              "commit",
+              "acceptance"
+            ],
+            "steps": [
+              {
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "run": "git fetch --depth=1 origin +refs/tags/*:refs/tags/*\ngit fetch --prune --unshallow\n"
+              },
+              {
+                "name": "Set up Ruby 2.5",
+                "uses": "actions/setup-ruby@v1",
+                "with": {
+                  "version": "2.5.x"
+                }
+              },
+              {
+                "name": "Publish to RubyGems and DockerHub",
+                "run": "bash ./scripts/publish.sh",
+                "env": {
+                  "rubygems_api_key": "${{secrets.rubygems_api_key}}",
+                  "docker_user": "${{secrets.docker_user}}",
+                  "docker_password": "${{secrets.docker_password}}"
+                }
+              },
+              {
+                "name": "Trigger cfn_nag for CodePipeline SAR publish",
+                "run": "curl -s \\\n     -XPOST \\\n     -u \"cfn_nag-bot:${{secrets.homebrew_tap_bot}}\" \\\n     -H \"Accept: application/vnd.github.everest-preview+json\" \\\n     -H \"Content-Type: application/json\" \\\n     https://api.github.com/repos/stelligent/cfn-nag-pipeline/dispatches \\\n     --data '{\"event_type\": \"build_application\"}'\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2020-01-24T17-02-53Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-5459ce0a-e014-5536-95fe-47f00d0f71d1",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/gempush__2020-01-24T17-02-53Z__16ef4c684f21090005ee9bd0f6603335d43b9cc4.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 34,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "ec1b96c7eec5863a:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-2f6e0d78-4990-5df9-90fb-371b21d33ad3",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/gempush__2020-01-24T17-02-53Z__16ef4c684f21090005ee9bd0f6603335d43b9cc4.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 35,
+                  "startColumn": 5,
+                  "endLine": 50,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "6add5cf4d7af0655:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-6a913c20-8f85-50c2-b371-9fec2cc70381",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/gempush__2020-01-24T17-02-53Z__16ef4c684f21090005ee9bd0f6603335d43b9cc4.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 51,
+                  "startColumn": 5,
+                  "endLine": 87,
+                  "endColumn": 60
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "7d23ed346700cf2f:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "gempush__2020-01-24T17-02-53Z__16ef4c684f21090005ee9bd0f6603335d43b9cc4.yml",
+          "workflow_name": "cfn_nag",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 87,
+          "num_jobs": 3,
+          "steps_per_job": {
+            "commit": 8,
+            "acceptance": 4,
+            "release": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 3,
+            "num_dependencies_between_jobs": 2,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "commit": 8,
+              "acceptance": 4,
+              "release": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 6,
+            "actions_used": [
+              "actions/checkout@master",
+              "actions/checkout@v2",
+              "actions/setup-ruby@v1"
+            ],
+            "num_run_commands": 12,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "cfn_nag",
+        "true": {
+          "push": {
+            "branches": [
+              "master"
+            ]
+          }
+        },
+        "env": {
+          "docker_org": "stelligent"
+        },
+        "jobs": {
+          "commit": {
+            "name": "Commit",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@master"
+              },
+              {
+                "name": "Set up Ruby 2.5",
+                "uses": "actions/setup-ruby@v1",
+                "with": {
+                  "version": "2.5.x"
+                }
+              },
+              {
+                "name": "Install Bundler",
+                "run": "gem install bundler"
+              },
+              {
+                "name": "Which bundler?",
+                "run": "bundle -v"
+              },
+              {
+                "name": "Bundle install",
+                "run": "bundle check || bundle install"
+              },
+              {
+                "name": "Rubocop lint",
+                "run": "bundle exec rubocop -D"
+              },
+              {
+                "name": "Rspec tests",
+                "run": "bundle exec rspec --color --require spec_helper spec"
+              },
+              {
+                "name": "Duplicate rule check",
+                "run": "bundle exec ./bin/cfn_nag_rules"
+              }
+            ]
+          },
+          "acceptance": {
+            "name": "Acceptance",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@master"
+              },
+              {
+                "name": "Set up Ruby 2.5",
+                "uses": "actions/setup-ruby@v1",
+                "with": {
+                  "version": "2.5.x"
+                }
+              },
+              {
+                "name": "Install Bundler",
+                "run": "gem install bundler"
+              },
+              {
+                "name": "e2e",
+                "run": "bash ./scripts/setup_and_run_end_to_end_tests.sh"
+              }
+            ]
+          },
+          "release": {
+            "name": "Release",
+            "runs-on": "ubuntu-latest",
+            "needs": [
+              "commit",
+              "acceptance"
+            ],
+            "steps": [
+              {
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "run": "git fetch --depth=1 origin +refs/tags/*:refs/tags/*\ngit fetch --prune --unshallow\n"
+              },
+              {
+                "name": "Set up Ruby 2.5",
+                "uses": "actions/setup-ruby@v1",
+                "with": {
+                  "version": "2.5.x"
+                }
+              },
+              {
+                "name": "Publish to RubyGems and DockerHub",
+                "run": "bash ./scripts/publish.sh",
+                "env": {
+                  "rubygems_api_key": "${{secrets.rubygems_api_key}}",
+                  "docker_user": "${{secrets.docker_user}}",
+                  "docker_password": "${{secrets.docker_password}}"
+                }
+              },
+              {
+                "name": "Trigger cfn_nag for CodePipeline SAR publish",
+                "run": "curl -s \\\n     -XPOST \\\n     -u \"cfn_nag-bot:${{secrets.homebrew_tap_bot}}\" \\\n     -H \"Accept: application/vnd.github.everest-preview+json\" \\\n     -H \"Content-Type: application/json\" \\\n     https://api.github.com/repos/stelligent/cfn-nag-pipeline/dispatches \\\n     --data '{\"event_type\": \"build_application\"}'\n"
+              },
+              {
+                "name": "Trigger homebrew-tap repo workflow",
+                "run": "curl -s \\\n     -XPOST \\\n     -u \"cfn_nag-bot:${{secrets.homebrew_tap_bot}}\" \\\n     -H \"Accept: application/vnd.github.everest-preview+json\" \\\n     -H \"Content-Type: application/json\" \\\n     https://api.github.com/repos/stelligent/homebrew-tap/dispatches \\\n     --data '{\"event_type\": \"build_application\"}'"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2020-02-03T20-05-11Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-b2420ab5-d08f-59a1-8228-d8b5863517f0",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/gempush__2020-02-03T20-05-11Z__5fc36240d787fbc6beb58ab2b862875245924fd5.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 34,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "ec1b96c7eec5863a:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-893bd1ad-e974-5392-af8c-7e5b594873f5",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/gempush__2020-02-03T20-05-11Z__5fc36240d787fbc6beb58ab2b862875245924fd5.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 35,
+                  "startColumn": 5,
+                  "endLine": 50,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "6add5cf4d7af0655:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-28f42af0-e481-5097-ad96-d0014633b46d",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/gempush__2020-02-03T20-05-11Z__5fc36240d787fbc6beb58ab2b862875245924fd5.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 51,
+                  "startColumn": 5,
+                  "endLine": 87,
+                  "endColumn": 61
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "7d23ed346700cf2f:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "gempush__2020-02-03T20-05-11Z__5fc36240d787fbc6beb58ab2b862875245924fd5.yml",
+          "workflow_name": "cfn_nag",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 87,
+          "num_jobs": 3,
+          "steps_per_job": {
+            "commit": 8,
+            "acceptance": 4,
+            "release": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 3,
+            "num_dependencies_between_jobs": 2,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "commit": 8,
+              "acceptance": 4,
+              "release": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 6,
+            "actions_used": [
+              "actions/checkout@master",
+              "actions/checkout@v2",
+              "actions/setup-ruby@v1"
+            ],
+            "num_run_commands": 12,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "cfn_nag",
+        "true": {
+          "push": {
+            "branches": [
+              "master"
+            ]
+          }
+        },
+        "env": {
+          "docker_org": "stelligent"
+        },
+        "jobs": {
+          "commit": {
+            "name": "Commit",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@master"
+              },
+              {
+                "name": "Set up Ruby 2.5",
+                "uses": "actions/setup-ruby@v1",
+                "with": {
+                  "ruby-version": "2.5.x"
+                }
+              },
+              {
+                "name": "Install Bundler",
+                "run": "gem install bundler"
+              },
+              {
+                "name": "Which bundler?",
+                "run": "bundle -v"
+              },
+              {
+                "name": "Bundle install",
+                "run": "bundle check || bundle install"
+              },
+              {
+                "name": "Rubocop lint",
+                "run": "bundle exec rubocop -D"
+              },
+              {
+                "name": "Rspec tests",
+                "run": "bundle exec rspec --color --require spec_helper spec"
+              },
+              {
+                "name": "Duplicate rule check",
+                "run": "bundle exec ./bin/cfn_nag_rules"
+              }
+            ]
+          },
+          "acceptance": {
+            "name": "Acceptance",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@master"
+              },
+              {
+                "name": "Set up Ruby 2.5",
+                "uses": "actions/setup-ruby@v1",
+                "with": {
+                  "ruby-version": "2.5.x"
+                }
+              },
+              {
+                "name": "Install Bundler",
+                "run": "gem install bundler"
+              },
+              {
+                "name": "e2e",
+                "run": "bash ./scripts/setup_and_run_end_to_end_tests.sh"
+              }
+            ]
+          },
+          "release": {
+            "name": "Release",
+            "runs-on": "ubuntu-latest",
+            "needs": [
+              "commit",
+              "acceptance"
+            ],
+            "steps": [
+              {
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "run": "git fetch --depth=1 origin +refs/tags/*:refs/tags/*\ngit fetch --prune --unshallow\n"
+              },
+              {
+                "name": "Set up Ruby 2.5",
+                "uses": "actions/setup-ruby@v1",
+                "with": {
+                  "ruby-version": "2.5.x"
+                }
+              },
+              {
+                "name": "Publish to RubyGems and DockerHub",
+                "run": "bash ./scripts/publish.sh",
+                "env": {
+                  "rubygems_api_key": "${{secrets.rubygems_api_key}}",
+                  "docker_user": "${{secrets.docker_user}}",
+                  "docker_password": "${{secrets.docker_password}}"
+                }
+              },
+              {
+                "name": "Trigger cfn_nag for CodePipeline SAR publish",
+                "run": "curl -s \\\n     -XPOST \\\n     -u \"cfn_nag-bot:${{secrets.homebrew_tap_bot}}\" \\\n     -H \"Accept: application/vnd.github.everest-preview+json\" \\\n     -H \"Content-Type: application/json\" \\\n     https://api.github.com/repos/stelligent/cfn-nag-pipeline/dispatches \\\n     --data '{\"event_type\": \"build_application\"}'\n"
+              },
+              {
+                "name": "Trigger homebrew-tap repo workflow",
+                "run": "curl -s \\\n     -XPOST \\\n     -u \"cfn_nag-bot:${{secrets.homebrew_tap_bot}}\" \\\n     -H \"Accept: application/vnd.github.everest-preview+json\" \\\n     -H \"Content-Type: application/json\" \\\n     https://api.github.com/repos/stelligent/homebrew-tap/dispatches \\\n     --data '{\"event_type\": \"build_application\"}'\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2020-02-25T15-14-22Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-8663ab0e-8248-5ae0-a819-b167b7eb591f",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/gempush__2020-02-25T15-14-22Z__9ac9ccdc695bd81f579e07aab65c60b5095a37e9.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 34,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "ec1b96c7eec5863a:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-313b2494-b6d5-59e5-b61a-f276efd20d52",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/gempush__2020-02-25T15-14-22Z__9ac9ccdc695bd81f579e07aab65c60b5095a37e9.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 35,
+                  "startColumn": 5,
+                  "endLine": 50,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "6add5cf4d7af0655:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-eb39c1c6-47e6-5868-a248-76902affd79d",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/gempush__2020-02-25T15-14-22Z__9ac9ccdc695bd81f579e07aab65c60b5095a37e9.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 51,
+                  "startColumn": 5,
+                  "endLine": 87,
+                  "endColumn": 61
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "7d23ed346700cf2f:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "gempush__2020-02-25T15-14-22Z__9ac9ccdc695bd81f579e07aab65c60b5095a37e9.yml",
+          "workflow_name": "cfn_nag",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 87,
+          "num_jobs": 3,
+          "steps_per_job": {
+            "commit": 8,
+            "acceptance": 4,
+            "release": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 3,
+            "num_dependencies_between_jobs": 2,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "commit": 8,
+              "acceptance": 4,
+              "release": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 6,
+            "actions_used": [
+              "actions/checkout@master",
+              "actions/checkout@v2",
+              "actions/setup-ruby@v1"
+            ],
+            "num_run_commands": 12,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "cfn_nag",
+        "true": {
+          "push": {
+            "branches": [
+              "master"
+            ]
+          }
+        },
+        "env": {
+          "docker_org": "stelligent"
+        },
+        "jobs": {
+          "commit": {
+            "name": "Commit",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@master"
+              },
+              {
+                "name": "Set up Ruby 2.5",
+                "uses": "actions/setup-ruby@v1",
+                "with": {
+                  "ruby-version": "2.5.x"
+                }
+              },
+              {
+                "name": "Install Bundler",
+                "run": "gem install bundler"
+              },
+              {
+                "name": "Which bundler?",
+                "run": "bundle -v"
+              },
+              {
+                "name": "Bundle install",
+                "run": "bundle check || bundle install"
+              },
+              {
+                "name": "Rubocop lint",
+                "run": "bundle exec rubocop -D"
+              },
+              {
+                "name": "Rspec tests",
+                "run": "bundle exec rspec --require spec_helper spec"
+              },
+              {
+                "name": "Duplicate rule check",
+                "run": "bundle exec ./bin/cfn_nag_rules"
+              }
+            ]
+          },
+          "acceptance": {
+            "name": "Acceptance",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@master"
+              },
+              {
+                "name": "Set up Ruby 2.5",
+                "uses": "actions/setup-ruby@v1",
+                "with": {
+                  "ruby-version": "2.5.x"
+                }
+              },
+              {
+                "name": "Install Bundler",
+                "run": "gem install bundler"
+              },
+              {
+                "name": "e2e",
+                "run": "bash ./scripts/setup_and_run_end_to_end_tests.sh"
+              }
+            ]
+          },
+          "release": {
+            "name": "Release",
+            "runs-on": "ubuntu-latest",
+            "needs": [
+              "commit",
+              "acceptance"
+            ],
+            "steps": [
+              {
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "run": "git fetch --depth=1 origin +refs/tags/*:refs/tags/*\ngit fetch --prune --unshallow\n"
+              },
+              {
+                "name": "Set up Ruby 2.5",
+                "uses": "actions/setup-ruby@v1",
+                "with": {
+                  "ruby-version": "2.5.x"
+                }
+              },
+              {
+                "name": "Publish to RubyGems and DockerHub",
+                "run": "bash ./scripts/publish.sh",
+                "env": {
+                  "rubygems_api_key": "${{secrets.rubygems_api_key}}",
+                  "docker_user": "${{secrets.docker_user}}",
+                  "docker_password": "${{secrets.docker_password}}"
+                }
+              },
+              {
+                "name": "Trigger cfn_nag for CodePipeline SAR publish",
+                "run": "curl -s \\\n     -XPOST \\\n     -u \"cfn_nag-bot:${{secrets.homebrew_tap_bot}}\" \\\n     -H \"Accept: application/vnd.github.everest-preview+json\" \\\n     -H \"Content-Type: application/json\" \\\n     https://api.github.com/repos/stelligent/cfn-nag-pipeline/dispatches \\\n     --data '{\"event_type\": \"build_application\"}'\n"
+              },
+              {
+                "name": "Trigger homebrew-tap repo workflow",
+                "run": "curl -s \\\n     -XPOST \\\n     -u \"cfn_nag-bot:${{secrets.homebrew_tap_bot}}\" \\\n     -H \"Accept: application/vnd.github.everest-preview+json\" \\\n     -H \"Content-Type: application/json\" \\\n     https://api.github.com/repos/stelligent/homebrew-tap/dispatches \\\n     --data '{\"event_type\": \"build_application\"}'\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2020-03-06T18-17-00Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-0f5c3ddc-0f62-5384-ba86-d6f92f2e3970",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/gempush__2020-03-06T18-17-00Z__9935854ea22af7fab376d1af2cdd93732b9008cd.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 34,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "ec1b96c7eec5863a:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-c04e50b0-b580-56d4-ac2b-11a74844cf9a",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/gempush__2020-03-06T18-17-00Z__9935854ea22af7fab376d1af2cdd93732b9008cd.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 35,
+                  "startColumn": 5,
+                  "endLine": 50,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "6add5cf4d7af0655:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-9d4650d9-dc00-597d-a834-85a420d986c4",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/gempush__2020-03-06T18-17-00Z__9935854ea22af7fab376d1af2cdd93732b9008cd.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 51,
+                  "startColumn": 5,
+                  "endLine": 92,
+                  "endColumn": 61
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "7d23ed346700cf2f:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "gempush__2020-03-06T18-17-00Z__9935854ea22af7fab376d1af2cdd93732b9008cd.yml",
+          "workflow_name": "cfn_nag",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 92,
+          "num_jobs": 3,
+          "steps_per_job": {
+            "commit": 8,
+            "acceptance": 4,
+            "release": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 3,
+            "num_dependencies_between_jobs": 2,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "commit": 8,
+              "acceptance": 4,
+              "release": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 6,
+            "actions_used": [
+              "actions/checkout@master",
+              "actions/checkout@v2",
+              "actions/setup-ruby@v1",
+              "release-drafter/release-drafter@master"
+            ],
+            "num_run_commands": 12,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "cfn_nag",
+        "true": {
+          "push": {
+            "branches": [
+              "master"
+            ]
+          }
+        },
+        "env": {
+          "docker_org": "stelligent"
+        },
+        "jobs": {
+          "commit": {
+            "name": "Commit",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@master"
+              },
+              {
+                "name": "Set up Ruby 2.5",
+                "uses": "actions/setup-ruby@v1",
+                "with": {
+                  "ruby-version": "2.5.x"
+                }
+              },
+              {
+                "name": "Install Bundler",
+                "run": "gem install bundler"
+              },
+              {
+                "name": "Which bundler?",
+                "run": "bundle -v"
+              },
+              {
+                "name": "Bundle install",
+                "run": "bundle check || bundle install"
+              },
+              {
+                "name": "Rubocop lint",
+                "run": "bundle exec rubocop -D"
+              },
+              {
+                "name": "Rspec tests",
+                "run": "bundle exec rspec --require spec_helper spec"
+              },
+              {
+                "name": "Duplicate rule check",
+                "run": "bundle exec ./bin/cfn_nag_rules"
+              }
+            ]
+          },
+          "acceptance": {
+            "name": "Acceptance",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@master"
+              },
+              {
+                "name": "Set up Ruby 2.5",
+                "uses": "actions/setup-ruby@v1",
+                "with": {
+                  "ruby-version": "2.5.x"
+                }
+              },
+              {
+                "name": "Install Bundler",
+                "run": "gem install bundler"
+              },
+              {
+                "name": "e2e",
+                "run": "bash ./scripts/setup_and_run_end_to_end_tests.sh"
+              }
+            ]
+          },
+          "release": {
+            "name": "Release",
+            "runs-on": "ubuntu-latest",
+            "needs": [
+              "commit",
+              "acceptance"
+            ],
+            "steps": [
+              {
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "run": "git fetch --depth=1 origin +refs/tags/*:refs/tags/*\ngit fetch --prune --unshallow\n"
+              },
+              {
+                "name": "Publish to RubyGems and DockerHub",
+                "id": "publish",
+                "run": "bash ./scripts/publish.sh",
+                "env": {
+                  "rubygems_api_key": "${{secrets.rubygems_api_key}}",
+                  "docker_user": "${{secrets.docker_user}}",
+                  "docker_password": "${{secrets.docker_password}}"
+                }
+              },
+              {
+                "name": "Create release with changelog",
+                "id": "gh_release",
+                "uses": "release-drafter/release-drafter@master",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                },
+                "with": {
+                  "publish": true,
+                  "version": "${{ steps.publish.outputs.cfn_nag_version }}"
+                }
+              },
+              {
+                "name": "Trigger cfn_nag for CodePipeline SAR publish",
+                "run": "curl -s \\\n     -XPOST \\\n     -u \"cfn_nag-bot:${{secrets.homebrew_tap_bot}}\" \\\n     -H \"Accept: application/vnd.github.everest-preview+json\" \\\n     -H \"Content-Type: application/json\" \\\n     https://api.github.com/repos/${{ env.docker_org }}/cfn-nag-pipeline/dispatches \\\n     --data '{\"event_type\": \"build_application\"}'\n"
+              },
+              {
+                "name": "Trigger homebrew-tap repo workflow",
+                "run": "curl -s \\\n     -XPOST \\\n     -u \"cfn_nag-bot:${{secrets.homebrew_tap_bot}}\" \\\n     -H \"Accept: application/vnd.github.everest-preview+json\" \\\n     -H \"Content-Type: application/json\" \\\n     https://api.github.com/repos/${{ env.docker_org }}/homebrew-tap/dispatches \\\n     --data '{\"event_type\": \"build_application\"}'\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2020-03-18T15-06-01Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-7e0aa49e-9fbc-59b9-8f13-74c511b63db3",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/gempush__2020-03-18T15-06-01Z__ae8a864b98d60a621a1fc0ef183e847c1b4e81fb.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 34,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "ec1b96c7eec5863a:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-d6020565-eceb-5940-a757-6aa878f03760",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/gempush__2020-03-18T15-06-01Z__ae8a864b98d60a621a1fc0ef183e847c1b4e81fb.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 35,
+                  "startColumn": 5,
+                  "endLine": 50,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "6add5cf4d7af0655:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-f25f68a2-5f6a-5de5-8249-dcc2ae9540d2",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/gempush__2020-03-18T15-06-01Z__ae8a864b98d60a621a1fc0ef183e847c1b4e81fb.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 51,
+                  "startColumn": 5,
+                  "endLine": 92,
+                  "endColumn": 61
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "7d23ed346700cf2f:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "gempush__2020-03-18T15-06-01Z__ae8a864b98d60a621a1fc0ef183e847c1b4e81fb.yml",
+          "workflow_name": "cfn_nag",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 92,
+          "num_jobs": 3,
+          "steps_per_job": {
+            "commit": 8,
+            "acceptance": 4,
+            "release": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 3,
+            "num_dependencies_between_jobs": 2,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "commit": 8,
+              "acceptance": 4,
+              "release": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 6,
+            "actions_used": [
+              "actions/checkout@master",
+              "actions/checkout@v2",
+              "actions/setup-ruby@v1",
+              "release-drafter/release-drafter@f677696"
+            ],
+            "num_run_commands": 12,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "cfn_nag",
+        "true": {
+          "push": {
+            "branches": [
+              "master"
+            ]
+          }
+        },
+        "env": {
+          "docker_org": "stelligent"
+        },
+        "jobs": {
+          "commit": {
+            "name": "Commit",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@master"
+              },
+              {
+                "name": "Set up Ruby 2.5",
+                "uses": "actions/setup-ruby@v1",
+                "with": {
+                  "ruby-version": "2.5.x"
+                }
+              },
+              {
+                "name": "Install Bundler",
+                "run": "gem install bundler"
+              },
+              {
+                "name": "Which bundler?",
+                "run": "bundle -v"
+              },
+              {
+                "name": "Bundle install",
+                "run": "bundle check || bundle install"
+              },
+              {
+                "name": "Rubocop lint",
+                "run": "bundle exec rubocop -D"
+              },
+              {
+                "name": "Rspec tests",
+                "run": "bundle exec rspec --require spec_helper spec"
+              },
+              {
+                "name": "Duplicate rule check",
+                "run": "bundle exec ./bin/cfn_nag_rules"
+              }
+            ]
+          },
+          "acceptance": {
+            "name": "Acceptance",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@master"
+              },
+              {
+                "name": "Set up Ruby 2.5",
+                "uses": "actions/setup-ruby@v1",
+                "with": {
+                  "ruby-version": "2.5.x"
+                }
+              },
+              {
+                "name": "Install Bundler",
+                "run": "gem install bundler"
+              },
+              {
+                "name": "e2e",
+                "run": "bash ./scripts/setup_and_run_end_to_end_tests.sh"
+              }
+            ]
+          },
+          "release": {
+            "name": "Release",
+            "runs-on": "ubuntu-latest",
+            "needs": [
+              "commit",
+              "acceptance"
+            ],
+            "steps": [
+              {
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "run": "git fetch --depth=1 origin +refs/tags/*:refs/tags/*\ngit fetch --prune --unshallow\n"
+              },
+              {
+                "name": "Publish to RubyGems and DockerHub",
+                "id": "publish",
+                "run": "bash ./scripts/publish.sh",
+                "env": {
+                  "rubygems_api_key": "${{secrets.rubygems_api_key}}",
+                  "docker_user": "${{secrets.docker_user}}",
+                  "docker_password": "${{secrets.docker_password}}"
+                }
+              },
+              {
+                "name": "Create release with changelog",
+                "id": "gh_release",
+                "uses": "release-drafter/release-drafter@f677696",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                },
+                "with": {
+                  "publish": true,
+                  "version": "${{ steps.publish.outputs.cfn_nag_version }}"
+                }
+              },
+              {
+                "name": "Trigger cfn_nag for CodePipeline SAR publish",
+                "run": "curl -s \\\n     -XPOST \\\n     -u \"cfn_nag-bot:${{secrets.homebrew_tap_bot}}\" \\\n     -H \"Accept: application/vnd.github.everest-preview+json\" \\\n     -H \"Content-Type: application/json\" \\\n     https://api.github.com/repos/${{ env.docker_org }}/cfn-nag-pipeline/dispatches \\\n     --data '{\"event_type\": \"build_application\"}'\n"
+              },
+              {
+                "name": "Trigger homebrew-tap repo workflow",
+                "run": "curl -s \\\n     -XPOST \\\n     -u \"cfn_nag-bot:${{secrets.homebrew_tap_bot}}\" \\\n     -H \"Accept: application/vnd.github.everest-preview+json\" \\\n     -H \"Content-Type: application/json\" \\\n     https://api.github.com/repos/${{ env.docker_org }}/homebrew-tap/dispatches \\\n     --data '{\"event_type\": \"build_application\"}'\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2021-01-19T01-42-38Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-12455ac9-7be3-5df2-874f-ca540276fb83",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/gempush__2021-01-19T01-42-38Z__673eb0563c8599f0be7f22ef97bd6cfe6cdc49e4.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 34,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "ec1b96c7eec5863a:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-f5c9f86f-b1ee-5860-b14a-fa70529aa43b",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/gempush__2021-01-19T01-42-38Z__673eb0563c8599f0be7f22ef97bd6cfe6cdc49e4.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 35,
+                  "startColumn": 5,
+                  "endLine": 50,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "6add5cf4d7af0655:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-1c439b4f-ec30-5173-8c04-d2ed21a38aa3",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/gempush__2021-01-19T01-42-38Z__673eb0563c8599f0be7f22ef97bd6cfe6cdc49e4.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 51,
+                  "startColumn": 5,
+                  "endLine": 92,
+                  "endColumn": 61
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "7d23ed346700cf2f:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "gempush__2021-01-19T01-42-38Z__673eb0563c8599f0be7f22ef97bd6cfe6cdc49e4.yml",
+          "workflow_name": "cfn_nag",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 92,
+          "num_jobs": 3,
+          "steps_per_job": {
+            "commit": 8,
+            "acceptance": 4,
+            "release": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 3,
+            "num_dependencies_between_jobs": 2,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "commit": 8,
+              "acceptance": 4,
+              "release": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 6,
+            "actions_used": [
+              "actions/checkout@master",
+              "actions/checkout@v2",
+              "actions/setup-ruby@v1",
+              "release-drafter/release-drafter@f677696"
+            ],
+            "num_run_commands": 12,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "cfn_nag",
+        "true": {
+          "push": {
+            "branches": [
+              "master"
+            ]
+          }
+        },
+        "env": {
+          "docker_org": "stelligent"
+        },
+        "jobs": {
+          "commit": {
+            "name": "Commit",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@master"
+              },
+              {
+                "name": "Set up Ruby 2.5",
+                "uses": "actions/setup-ruby@v1",
+                "with": {
+                  "ruby-version": "2.5.x"
+                }
+              },
+              {
+                "name": "Install Bundler",
+                "run": "gem install bundler"
+              },
+              {
+                "name": "Which bundler?",
+                "run": "bundle -v"
+              },
+              {
+                "name": "Bundle install",
+                "run": "bundle check || bundle install"
+              },
+              {
+                "name": "Rubocop lint",
+                "run": "bundle exec rubocop -D"
+              },
+              {
+                "name": "Rspec tests",
+                "run": "bundle exec rspec --require spec_helper spec"
+              },
+              {
+                "name": "Duplicate rule check",
+                "run": "bundle exec ./bin/cfn_nag_rules"
+              }
+            ]
+          },
+          "acceptance": {
+            "name": "Acceptance",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@master"
+              },
+              {
+                "name": "Set up Ruby 2.5",
+                "uses": "actions/setup-ruby@v1",
+                "with": {
+                  "ruby-version": "2.5.x"
+                }
+              },
+              {
+                "name": "Install Bundler",
+                "run": "gem install bundler"
+              },
+              {
+                "name": "e2e",
+                "run": "bash ./scripts/setup_and_run_end_to_end_tests.sh"
+              }
+            ]
+          },
+          "release": {
+            "name": "Release",
+            "runs-on": "ubuntu-latest",
+            "needs": [
+              "commit",
+              "acceptance"
+            ],
+            "steps": [
+              {
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "run": "git fetch --depth=1 origin +refs/tags/*:refs/tags/*\ngit fetch --prune --unshallow\n"
+              },
+              {
+                "name": "Publish to RubyGems and DockerHub",
+                "id": "publish",
+                "run": "bash ./scripts/publish.sh",
+                "env": {
+                  "rubygems_api_key": "${{secrets.rubygems_api_key}}",
+                  "docker_user": "${{secrets.docker_user}}",
+                  "docker_password": "${{secrets.docker_password}}"
+                }
+              },
+              {
+                "name": "Create release with changelog",
+                "id": "gh_release",
+                "uses": "release-drafter/release-drafter@f677696",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                },
+                "with": {
+                  "publish": true,
+                  "version": "${{ steps.publish.outputs.cfn_nag_version }}"
+                }
+              },
+              {
+                "name": "Trigger cfn_nag for CodePipeline SAR publish",
+                "run": "curl -s \\\n     -XPOST \\\n     -u \"stelligent-releasebot:${{secrets.GITHUB_TOKEN}}\" \\\n     -H \"Accept: application/vnd.github.everest-preview+json\" \\\n     -H \"Content-Type: application/json\" \\\n     https://api.github.com/repos/${{ env.docker_org }}/cfn-nag-pipeline/dispatches \\\n     --data '{\"event_type\": \"build_application\"}'\n"
+              },
+              {
+                "name": "Trigger homebrew-tap repo workflow",
+                "run": "curl -s \\\n     -XPOST \\\n     -u \"stelligent-releasebot:${{secrets.GITHUB_TOKEN}}\" \\\n     -H \"Accept: application/vnd.github.everest-preview+json\" \\\n     -H \"Content-Type: application/json\" \\\n     https://api.github.com/repos/${{ env.docker_org }}/homebrew-tap/dispatches \\\n     --data '{\"event_type\": \"build_application\"}'\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2021-01-29T18-34-48Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-5434241f-cc0d-5390-a8ab-f14cd0dabb40",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/gempush__2021-01-29T18-34-48Z__9529a3a7a1a6f73ca2c8175c5003f14e5570a07a.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 33,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "2b64d405b2a0a736:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-0ddb4c1c-c182-5f20-b3bd-90b218542049",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/gempush__2021-01-29T18-34-48Z__9529a3a7a1a6f73ca2c8175c5003f14e5570a07a.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 34,
+                  "startColumn": 5,
+                  "endLine": 51,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "856030bd86178036:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-af678a45-9c15-5798-a9c7-20a213674f74",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/gempush__2021-01-29T18-34-48Z__9529a3a7a1a6f73ca2c8175c5003f14e5570a07a.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 52,
+                  "startColumn": 5,
+                  "endLine": 94,
+                  "endColumn": 61
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "7d23ed346700cf2f:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "gempush__2021-01-29T18-34-48Z__9529a3a7a1a6f73ca2c8175c5003f14e5570a07a.yml",
+          "workflow_name": "cfn_nag",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 94,
+          "num_jobs": 3,
+          "steps_per_job": {
+            "commit": 5,
+            "acceptance": 3,
+            "release": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 3,
+            "num_dependencies_between_jobs": 2,
+            "num_matrix_strategies": 2,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "commit": 5,
+              "acceptance": 3,
+              "release": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 6,
+            "actions_used": [
+              "actions/checkout@master",
+              "actions/checkout@v2",
+              "release-drafter/release-drafter@f677696",
+              "ruby/setup-ruby@v1"
+            ],
+            "num_run_commands": 8,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "cfn_nag",
+        "true": {
+          "push": {
+            "branches": [
+              "master"
+            ]
+          }
+        },
+        "env": {
+          "docker_org": "stelligent"
+        },
+        "jobs": {
+          "commit": {
+            "name": "Commit",
+            "runs-on": "ubuntu-latest",
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "ruby": [
+                  "2.5",
+                  "3.0"
+                ]
+              }
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@master"
+              },
+              {
+                "name": "Set up Ruby",
+                "uses": "ruby/setup-ruby@v1",
+                "with": {
+                  "ruby-version": "${{ matrix.ruby }}",
+                  "bundler-cache": true
+                }
+              },
+              {
+                "name": "Rubocop lint",
+                "run": "bundle exec rubocop -D"
+              },
+              {
+                "name": "Rspec tests",
+                "run": "bundle exec rspec --require spec_helper spec"
+              },
+              {
+                "name": "Duplicate rule check",
+                "run": "bundle exec ./bin/cfn_nag_rules"
+              }
+            ]
+          },
+          "acceptance": {
+            "name": "Acceptance",
+            "runs-on": "ubuntu-latest",
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "ruby": [
+                  "2.5",
+                  "3.0"
+                ]
+              }
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@master"
+              },
+              {
+                "name": "Set up Ruby",
+                "uses": "ruby/setup-ruby@v1",
+                "with": {
+                  "ruby-version": "${{ matrix.ruby }}"
+                }
+              },
+              {
+                "name": "e2e",
+                "run": "bash ./scripts/setup_and_run_end_to_end_tests.sh"
+              }
+            ]
+          },
+          "release": {
+            "name": "Release",
+            "runs-on": "ubuntu-latest",
+            "needs": [
+              "commit",
+              "acceptance"
+            ],
+            "steps": [
+              {
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "run": "git fetch --depth=1 origin +refs/tags/*:refs/tags/*\ngit fetch --prune --unshallow\n"
+              },
+              {
+                "name": "Publish to RubyGems and DockerHub",
+                "id": "publish",
+                "run": "bash ./scripts/publish.sh",
+                "env": {
+                  "rubygems_api_key": "${{secrets.rubygems_api_key}}",
+                  "docker_user": "${{secrets.docker_user}}",
+                  "docker_password": "${{secrets.docker_password}}"
+                }
+              },
+              {
+                "name": "Create release with changelog",
+                "id": "gh_release",
+                "uses": "release-drafter/release-drafter@f677696",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                },
+                "with": {
+                  "publish": true,
+                  "version": "${{ steps.publish.outputs.cfn_nag_version }}"
+                }
+              },
+              {
+                "name": "Trigger cfn_nag for CodePipeline SAR publish",
+                "run": "curl -s \\\n     -X POST \\\n     -u \"stelligent-releasebot:${{secrets.GITHUB_TOKEN}}\" \\\n     -H \"Accept: application/vnd.github.v3+json\" \\\n     -H \"Content-Type: application/json\" \\\n     https://api.github.com/repos/${{ env.docker_org }}/cfn-nag-pipeline/dispatches \\\n     --data '{\"event_type\": \"build_application\"}'\n"
+              },
+              {
+                "name": "Trigger homebrew-tap repo workflow",
+                "run": "curl -s \\\n     -X POST \\\n     -u \"stelligent-releasebot:${{secrets.GITHUB_TOKEN}}\" \\\n     -H \"Accept: application/vnd.github.v3+json\" \\\n     -H \"Content-Type: application/json\" \\\n     https://api.github.com/repos/${{ env.docker_org }}/homebrew-tap/dispatches \\\n     --data '{\"event_type\": \"build_application\"}'\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2021-01-19T02-21-21Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-6933c04b-fba4-51cd-8b62-43f0be274b7b",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/gempush__2021-01-19T02-21-21Z__427e432e05cbb34c06b867c95110031c7ae71a8a.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 34,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "ec1b96c7eec5863a:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-b37adfe3-b8fa-50c1-a8f7-58443f2024fe",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/gempush__2021-01-19T02-21-21Z__427e432e05cbb34c06b867c95110031c7ae71a8a.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 35,
+                  "startColumn": 5,
+                  "endLine": 50,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "6add5cf4d7af0655:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-a70f3d68-b7a7-5a3f-82ea-dba8cb4dd1f6",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/gempush__2021-01-19T02-21-21Z__427e432e05cbb34c06b867c95110031c7ae71a8a.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 51,
+                  "startColumn": 5,
+                  "endLine": 92,
+                  "endColumn": 61
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "7d23ed346700cf2f:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "gempush__2021-01-19T02-21-21Z__427e432e05cbb34c06b867c95110031c7ae71a8a.yml",
+          "workflow_name": "cfn_nag",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 92,
+          "num_jobs": 3,
+          "steps_per_job": {
+            "commit": 8,
+            "acceptance": 4,
+            "release": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 3,
+            "num_dependencies_between_jobs": 2,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "commit": 8,
+              "acceptance": 4,
+              "release": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 6,
+            "actions_used": [
+              "actions/checkout@master",
+              "actions/checkout@v2",
+              "actions/setup-ruby@v1",
+              "release-drafter/release-drafter@f677696"
+            ],
+            "num_run_commands": 12,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "cfn_nag",
+        "true": {
+          "push": {
+            "branches": [
+              "master"
+            ]
+          }
+        },
+        "env": {
+          "docker_org": "stelligent"
+        },
+        "jobs": {
+          "commit": {
+            "name": "Commit",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@master"
+              },
+              {
+                "name": "Set up Ruby 2.5",
+                "uses": "actions/setup-ruby@v1",
+                "with": {
+                  "ruby-version": "2.5.x"
+                }
+              },
+              {
+                "name": "Install Bundler",
+                "run": "gem install bundler"
+              },
+              {
+                "name": "Which bundler?",
+                "run": "bundle -v"
+              },
+              {
+                "name": "Bundle install",
+                "run": "bundle check || bundle install"
+              },
+              {
+                "name": "Rubocop lint",
+                "run": "bundle exec rubocop -D"
+              },
+              {
+                "name": "Rspec tests",
+                "run": "bundle exec rspec --require spec_helper spec"
+              },
+              {
+                "name": "Duplicate rule check",
+                "run": "bundle exec ./bin/cfn_nag_rules"
+              }
+            ]
+          },
+          "acceptance": {
+            "name": "Acceptance",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@master"
+              },
+              {
+                "name": "Set up Ruby 2.5",
+                "uses": "actions/setup-ruby@v1",
+                "with": {
+                  "ruby-version": "2.5.x"
+                }
+              },
+              {
+                "name": "Install Bundler",
+                "run": "gem install bundler"
+              },
+              {
+                "name": "e2e",
+                "run": "bash ./scripts/setup_and_run_end_to_end_tests.sh"
+              }
+            ]
+          },
+          "release": {
+            "name": "Release",
+            "runs-on": "ubuntu-latest",
+            "needs": [
+              "commit",
+              "acceptance"
+            ],
+            "steps": [
+              {
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "run": "git fetch --depth=1 origin +refs/tags/*:refs/tags/*\ngit fetch --prune --unshallow\n"
+              },
+              {
+                "name": "Publish to RubyGems and DockerHub",
+                "id": "publish",
+                "run": "bash ./scripts/publish.sh",
+                "env": {
+                  "rubygems_api_key": "${{secrets.rubygems_api_key}}",
+                  "docker_user": "${{secrets.docker_user}}",
+                  "docker_password": "${{secrets.docker_password}}"
+                }
+              },
+              {
+                "name": "Create release with changelog",
+                "id": "gh_release",
+                "uses": "release-drafter/release-drafter@f677696",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                },
+                "with": {
+                  "publish": true,
+                  "version": "${{ steps.publish.outputs.cfn_nag_version }}"
+                }
+              },
+              {
+                "name": "Trigger cfn_nag for CodePipeline SAR publish",
+                "run": "curl -s \\\n     -XPOST \\\n     -u \"stelligent-releasebot:${{secrets.GITHUB_TOKEN}}\" \\\n     -H \"Accept: application/vnd.github.v3+json\" \\\n     -H \"Content-Type: application/json\" \\\n     https://api.github.com/repos/${{ env.docker_org }}/cfn-nag-pipeline/dispatches \\\n     --data '{\"event_type\": \"build_application\"}'\n"
+              },
+              {
+                "name": "Trigger homebrew-tap repo workflow",
+                "run": "curl -s \\\n     -XPOST \\\n     -u \"stelligent-releasebot:${{secrets.GITHUB_TOKEN}}\" \\\n     -H \"Accept: application/vnd.github.v3+json\" \\\n     -H \"Content-Type: application/json\" \\\n     https://api.github.com/repos/${{ env.docker_org }}/homebrew-tap/dispatches \\\n     --data '{\"event_type\": \"build_application\"}'\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2021-03-26T20-40-10Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-f7da3870-868d-5f4f-be6d-b5e39d67ee4b",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/gempush__2021-03-26T20-40-10Z__8567d6d7913fb9f00e294e38dce1ac79910f00ed.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 33,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "2b64d405b2a0a736:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-ce12404a-5faa-54e8-94d2-b2b7c0387902",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/gempush__2021-03-26T20-40-10Z__8567d6d7913fb9f00e294e38dce1ac79910f00ed.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 34,
+                  "startColumn": 5,
+                  "endLine": 51,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "856030bd86178036:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-ac00559e-f138-5b7d-94a6-739e3948ff7e",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/gempush__2021-03-26T20-40-10Z__8567d6d7913fb9f00e294e38dce1ac79910f00ed.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 52,
+                  "startColumn": 5,
+                  "endLine": 94,
+                  "endColumn": 61
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "7d23ed346700cf2f:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "gempush__2021-03-26T20-40-10Z__8567d6d7913fb9f00e294e38dce1ac79910f00ed.yml",
+          "workflow_name": "cfn_nag",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 94,
+          "num_jobs": 3,
+          "steps_per_job": {
+            "commit": 5,
+            "acceptance": 3,
+            "release": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 3,
+            "num_dependencies_between_jobs": 2,
+            "num_matrix_strategies": 2,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "commit": 5,
+              "acceptance": 3,
+              "release": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 6,
+            "actions_used": [
+              "actions/checkout@master",
+              "actions/checkout@v2",
+              "release-drafter/release-drafter@v5",
+              "ruby/setup-ruby@v1"
+            ],
+            "num_run_commands": 8,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "cfn_nag",
+        "true": {
+          "push": {
+            "branches": [
+              "master"
+            ]
+          }
+        },
+        "env": {
+          "docker_org": "stelligent"
+        },
+        "jobs": {
+          "commit": {
+            "name": "Commit",
+            "runs-on": "ubuntu-latest",
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "ruby": [
+                  "2.5",
+                  "3.0"
+                ]
+              }
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@master"
+              },
+              {
+                "name": "Set up Ruby",
+                "uses": "ruby/setup-ruby@v1",
+                "with": {
+                  "ruby-version": "${{ matrix.ruby }}",
+                  "bundler-cache": true
+                }
+              },
+              {
+                "name": "Rubocop lint",
+                "run": "bundle exec rubocop -D"
+              },
+              {
+                "name": "Rspec tests",
+                "run": "bundle exec rspec --require spec_helper spec"
+              },
+              {
+                "name": "Duplicate rule check",
+                "run": "bundle exec ./bin/cfn_nag_rules"
+              }
+            ]
+          },
+          "acceptance": {
+            "name": "Acceptance",
+            "runs-on": "ubuntu-latest",
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "ruby": [
+                  "2.5",
+                  "3.0"
+                ]
+              }
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@master"
+              },
+              {
+                "name": "Set up Ruby",
+                "uses": "ruby/setup-ruby@v1",
+                "with": {
+                  "ruby-version": "${{ matrix.ruby }}"
+                }
+              },
+              {
+                "name": "e2e",
+                "run": "bash ./scripts/setup_and_run_end_to_end_tests.sh"
+              }
+            ]
+          },
+          "release": {
+            "name": "Release",
+            "runs-on": "ubuntu-latest",
+            "needs": [
+              "commit",
+              "acceptance"
+            ],
+            "steps": [
+              {
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "run": "git fetch --depth=1 origin +refs/tags/*:refs/tags/*\ngit fetch --prune --unshallow\n"
+              },
+              {
+                "name": "Publish to RubyGems and DockerHub",
+                "id": "publish",
+                "run": "bash ./scripts/publish.sh",
+                "env": {
+                  "rubygems_api_key": "${{secrets.rubygems_api_key}}",
+                  "docker_user": "${{secrets.docker_user}}",
+                  "docker_password": "${{secrets.docker_password}}"
+                }
+              },
+              {
+                "name": "Create release with changelog",
+                "id": "gh_release",
+                "uses": "release-drafter/release-drafter@v5",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                },
+                "with": {
+                  "publish": true,
+                  "version": "${{ steps.publish.outputs.cfn_nag_version }}"
+                }
+              },
+              {
+                "name": "Trigger cfn_nag for CodePipeline SAR publish",
+                "run": "curl -s \\\n     -X POST \\\n     -u \"stelligent-releasebot:${{secrets.GITHUB_TOKEN}}\" \\\n     -H \"Accept: application/vnd.github.v3+json\" \\\n     -H \"Content-Type: application/json\" \\\n     https://api.github.com/repos/${{ env.docker_org }}/cfn-nag-pipeline/dispatches \\\n     --data '{\"event_type\": \"build_application\"}'\n"
+              },
+              {
+                "name": "Trigger homebrew-tap repo workflow",
+                "run": "curl -s \\\n     -X POST \\\n     -u \"stelligent-releasebot:${{secrets.GITHUB_TOKEN}}\" \\\n     -H \"Accept: application/vnd.github.v3+json\" \\\n     -H \"Content-Type: application/json\" \\\n     https://api.github.com/repos/${{ env.docker_org }}/homebrew-tap/dispatches \\\n     --data '{\"event_type\": \"build_application\"}'\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2021-04-14T19-05-18Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-3602c5d9-fc7a-5666-9288-c80d19560ce5",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/gempush__2021-04-14T19-05-18Z__bb4855024a55f85d82c9883b4bc688362fd5a847.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 33,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "2b64d405b2a0a736:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-6c4cc11f-e978-5fb7-b1df-d6e07eff0743",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/gempush__2021-04-14T19-05-18Z__bb4855024a55f85d82c9883b4bc688362fd5a847.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 34,
+                  "startColumn": 5,
+                  "endLine": 51,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "856030bd86178036:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-20d73850-b308-5a05-952b-478a08ae9d12",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/gempush__2021-04-14T19-05-18Z__bb4855024a55f85d82c9883b4bc688362fd5a847.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 52,
+                  "startColumn": 5,
+                  "endLine": 85,
+                  "endColumn": 61
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "7d23ed346700cf2f:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "gempush__2021-04-14T19-05-18Z__bb4855024a55f85d82c9883b4bc688362fd5a847.yml",
+          "workflow_name": "cfn_nag",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 85,
+          "num_jobs": 3,
+          "steps_per_job": {
+            "commit": 5,
+            "acceptance": 3,
+            "release": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 3,
+            "num_dependencies_between_jobs": 2,
+            "num_matrix_strategies": 2,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "commit": 5,
+              "acceptance": 3,
+              "release": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 6,
+            "actions_used": [
+              "actions/checkout@master",
+              "actions/checkout@v2",
+              "release-drafter/release-drafter@v5",
+              "ruby/setup-ruby@v1"
+            ],
+            "num_run_commands": 7,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "cfn_nag",
+        "true": {
+          "push": {
+            "branches": [
+              "master"
+            ]
+          }
+        },
+        "env": {
+          "docker_org": "stelligent"
+        },
+        "jobs": {
+          "commit": {
+            "name": "Commit",
+            "runs-on": "ubuntu-latest",
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "ruby": [
+                  "2.5",
+                  "3.0"
+                ]
+              }
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@master"
+              },
+              {
+                "name": "Set up Ruby",
+                "uses": "ruby/setup-ruby@v1",
+                "with": {
+                  "ruby-version": "${{ matrix.ruby }}",
+                  "bundler-cache": true
+                }
+              },
+              {
+                "name": "Rubocop lint",
+                "run": "bundle exec rubocop -D"
+              },
+              {
+                "name": "Rspec tests",
+                "run": "bundle exec rspec --require spec_helper spec"
+              },
+              {
+                "name": "Duplicate rule check",
+                "run": "bundle exec ./bin/cfn_nag_rules"
+              }
+            ]
+          },
+          "acceptance": {
+            "name": "Acceptance",
+            "runs-on": "ubuntu-latest",
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "ruby": [
+                  "2.5",
+                  "3.0"
+                ]
+              }
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@master"
+              },
+              {
+                "name": "Set up Ruby",
+                "uses": "ruby/setup-ruby@v1",
+                "with": {
+                  "ruby-version": "${{ matrix.ruby }}"
+                }
+              },
+              {
+                "name": "e2e",
+                "run": "bash ./scripts/setup_and_run_end_to_end_tests.sh"
+              }
+            ]
+          },
+          "release": {
+            "name": "Release",
+            "runs-on": "ubuntu-latest",
+            "needs": [
+              "commit",
+              "acceptance"
+            ],
+            "steps": [
+              {
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "run": "git fetch --depth=1 origin +refs/tags/*:refs/tags/*\ngit fetch --prune --unshallow\n"
+              },
+              {
+                "name": "Publish to RubyGems and DockerHub",
+                "id": "publish",
+                "run": "bash ./scripts/publish.sh",
+                "env": {
+                  "rubygems_api_key": "${{secrets.rubygems_api_key}}",
+                  "docker_user": "${{secrets.docker_user}}",
+                  "docker_password": "${{secrets.docker_password}}"
+                }
+              },
+              {
+                "name": "Create release with changelog",
+                "id": "gh_release",
+                "uses": "release-drafter/release-drafter@v5",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                },
+                "with": {
+                  "publish": true,
+                  "version": "${{ steps.publish.outputs.cfn_nag_version }}"
+                }
+              },
+              {
+                "name": "Trigger cfn_nag for CodePipeline SAR publish",
+                "run": "curl -s \\\n     -X POST \\\n     -u \"stelligent-releasebot:${{secrets.GITHUB_TOKEN}}\" \\\n     -H \"Accept: application/vnd.github.v3+json\" \\\n     -H \"Content-Type: application/json\" \\\n     https://api.github.com/repos/${{ env.docker_org }}/cfn-nag-pipeline/dispatches \\\n     --data '{\"event_type\": \"build_application\"}'\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2021-10-29T17-34-41Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-f64ab024-df00-574d-8d6c-5f5595d8838f",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/gempush__2021-10-29T17-34-41Z__f4b78de24a48a747ceb922b726744ec8750d2593.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 13,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "93e343e48c2cf322:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-c0fa52b0-bfca-5b7c-ad91-6035e5a67d68",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/gempush__2021-10-29T17-34-41Z__f4b78de24a48a747ceb922b726744ec8750d2593.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 14,
+                  "startColumn": 5,
+                  "endLine": 47,
+                  "endColumn": 61
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "2d6ee3045af020ba:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "gempush__2021-10-29T17-34-41Z__f4b78de24a48a747ceb922b726744ec8750d2593.yml",
+          "workflow_name": "cfn_nag",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 47,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "tests-linting": 0,
+            "release": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 1,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "tests-linting": 0,
+              "release": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "actions/checkout@v2",
+              "release-drafter/release-drafter@v5"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "cfn_nag",
+        "true": {
+          "push": {
+            "branches": [
+              "master"
+            ]
+          }
+        },
+        "env": {
+          "docker_org": "stelligent"
+        },
+        "jobs": {
+          "tests-linting": {
+            "uses": "stelligent/cfn_nag/.github/workflows/tests-linting.yml@master"
+          },
+          "release": {
+            "name": "Release",
+            "runs-on": "ubuntu-latest",
+            "needs": [
+              "tests-linting"
+            ],
+            "steps": [
+              {
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "run": "git fetch --depth=1 origin +refs/tags/*:refs/tags/*\ngit fetch --prune --unshallow\n"
+              },
+              {
+                "name": "Publish to RubyGems and DockerHub",
+                "id": "publish",
+                "run": "bash ./scripts/publish.sh",
+                "env": {
+                  "rubygems_api_key": "${{secrets.rubygems_api_key}}",
+                  "docker_user": "${{secrets.docker_user}}",
+                  "docker_password": "${{secrets.docker_password}}"
+                }
+              },
+              {
+                "name": "Create release with changelog",
+                "id": "gh_release",
+                "uses": "release-drafter/release-drafter@v5",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                },
+                "with": {
+                  "publish": true,
+                  "version": "${{ steps.publish.outputs.cfn_nag_version }}"
+                }
+              },
+              {
+                "name": "Trigger cfn_nag for CodePipeline SAR publish",
+                "run": "curl -s \\\n     -X POST \\\n     -u \"stelligent-releasebot:${{secrets.GITHUB_TOKEN}}\" \\\n     -H \"Accept: application/vnd.github.v3+json\" \\\n     -H \"Content-Type: application/json\" \\\n     https://api.github.com/repos/${{ env.docker_org }}/cfn-nag-pipeline/dispatches \\\n     --data '{\"event_type\": \"build_application\"}'\n"
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

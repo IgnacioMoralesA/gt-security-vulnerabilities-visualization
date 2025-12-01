@@ -1,0 +1,3029 @@
+{
+  "repo_owner": "diggerhq",
+  "repo_name": "digger",
+  "workflow_name": "taco-release",
+  "history": {
+    "2025-09-17T23-02-24Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "taco-release__2025-09-17T23-02-24Z__5dbdd1f5da510a8d47b757804f271a6ebb378bf0.yml",
+          "workflow_name": "taco-release",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "packages": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 216,
+          "num_jobs": 3,
+          "steps_per_job": {
+            "build": 7,
+            "build-docker": 7,
+            "create-release": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 3,
+            "num_dependencies_between_jobs": 2,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 7,
+              "build-docker": 7,
+              "create-release": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 14,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/download-artifact@v4",
+              "actions/setup-go@v5",
+              "actions/upload-artifact@v4",
+              "docker/build-push-action@v5",
+              "docker/login-action@v3",
+              "docker/metadata-action@v5",
+              "docker/setup-buildx-action@v3",
+              "softprops/action-gh-release@v1"
+            ],
+            "num_run_commands": 5,
+            "steps_with_conditionals": 6,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "taco-release",
+        "true": {
+          "push": {
+            "tags": [
+              "taco/cmd/taco/v*",
+              "taco/cmd/statesman/v*"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "packages": "write"
+        },
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-latest",
+            "strategy": {
+              "matrix": {
+                "include": [
+                  {
+                    "os": "linux",
+                    "arch": "amd64",
+                    "goos": "linux",
+                    "goarch": "amd64"
+                  },
+                  {
+                    "os": "linux",
+                    "arch": "arm64",
+                    "goos": "linux",
+                    "goarch": "arm64"
+                  },
+                  {
+                    "os": "darwin",
+                    "arch": "amd64",
+                    "goos": "darwin",
+                    "goarch": "amd64"
+                  },
+                  {
+                    "os": "darwin",
+                    "arch": "arm64",
+                    "goos": "darwin",
+                    "goarch": "arm64"
+                  },
+                  {
+                    "os": "windows",
+                    "arch": "amd64",
+                    "goos": "windows",
+                    "goarch": "amd64"
+                  }
+                ]
+              }
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.24"
+                }
+              },
+              {
+                "name": "Derive app dir and version",
+                "id": "meta",
+                "run": "TAG=\"${GITHUB_REF_NAME}\"          # e.g. taco/cli/v1.2.3\nAPP_DIR=\"${TAG%/v*}\"              # taco/cli\nVERSION=\"${TAG##*/}\"              # v1.2.3\necho \"app_dir=$APP_DIR\" >> $GITHUB_OUTPUT\necho \"version=$VERSION\" >> $GITHUB_OUTPUT\n"
+              },
+              {
+                "name": "Build CLI",
+                "if": "startsWith(steps.meta.outputs.app_dir, 'taco/cmd/taco')",
+                "working-directory": "taco/cmd/taco",
+                "run": "CGO_ENABLED=0 GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build \\\n  -ldflags=\"-X 'main.Version=${{ steps.meta.outputs.version }}' -X 'main.Commit=${{ github.sha }}' -s -w\" \\\n  -o taco-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }} .\n"
+              },
+              {
+                "name": "Build Statesman",
+                "if": "startsWith(steps.meta.outputs.app_dir, 'taco/cmd/statesman')",
+                "working-directory": "taco/cmd/statesman",
+                "run": "CGO_ENABLED=0 GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build \\\n  -ldflags=\"-X 'main.Version=${{ steps.meta.outputs.version }}' -X 'main.Commit=${{ github.sha }}' -s -w\" \\\n  -o statesman-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }} .\n"
+              },
+              {
+                "name": "Upload CLI artifacts",
+                "if": "startsWith(steps.meta.outputs.app_dir, 'taco/cmd/taco')",
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "taco-cli-${{ matrix.os }}-${{ matrix.arch }}",
+                  "path": "taco/cmd/taco/taco-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }}"
+                }
+              },
+              {
+                "name": "Upload Statesman artifacts",
+                "if": "startsWith(steps.meta.outputs.app_dir, 'taco/cmd/statesman')",
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "taco-statesman-${{ matrix.os }}-${{ matrix.arch }}",
+                  "path": "taco/cmd/statesman/statesman-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }}"
+                }
+              }
+            ]
+          },
+          "build-docker": {
+            "if": "startsWith(github.ref_name, 'taco/cmd/statesman/')",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.24"
+                }
+              },
+              {
+                "name": "Derive version",
+                "id": "meta",
+                "run": "TAG=\"${GITHUB_REF_NAME}\"          # e.g. taco/statesman/v1.2.3\nVERSION=\"${TAG##*/}\"              # v1.2.3\necho \"version=$VERSION\" >> $GITHUB_OUTPUT\n"
+              },
+              {
+                "name": "Set up Docker Buildx",
+                "uses": "docker/setup-buildx-action@v3"
+              },
+              {
+                "name": "Log in to Container Registry",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.actor }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Extract metadata",
+                "id": "docker-meta",
+                "uses": "docker/metadata-action@v5",
+                "with": {
+                  "images": "ghcr.io/${{ github.repository }}/taco-statesman",
+                  "tags": "type=ref,event=tag\ntype=semver,pattern={{version}}\ntype=semver,pattern={{major}}.{{minor}}\ntype=raw,value=latest,enable={{is_default_branch}}\n"
+                }
+              },
+              {
+                "name": "Build and push Docker image",
+                "uses": "docker/build-push-action@v5",
+                "with": {
+                  "context": "./taco",
+                  "file": "./taco/Dockerfile_statesman",
+                  "push": true,
+                  "tags": "${{ steps.docker-meta.outputs.tags }}",
+                  "labels": "${{ steps.docker-meta.outputs.labels }}",
+                  "build-args": "COMMIT_SHA=${{ github.sha }}\nVERSION=${{ steps.meta.outputs.version }}\n"
+                }
+              }
+            ]
+          },
+          "create-release": {
+            "needs": [
+              "build",
+              "build-docker"
+            ],
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Derive app dir and version",
+                "id": "meta",
+                "run": "TAG=\"${GITHUB_REF_NAME}\"          # e.g. taco/cli/v1.2.3\nAPP_DIR=\"${TAG%/v*}\"              # taco/cli\nVERSION=\"${TAG##*/}\"              # v1.2.3\necho \"app_dir=$APP_DIR\" >> $GITHUB_OUTPUT\necho \"version=$VERSION\" >> $GITHUB_OUTPUT\n"
+              },
+              {
+                "name": "Download all artifacts",
+                "uses": "actions/download-artifact@v4"
+              },
+              {
+                "name": "Create release for CLI",
+                "if": "startsWith(steps.meta.outputs.app_dir, 'taco/cmd/taco')",
+                "uses": "softprops/action-gh-release@v1",
+                "with": {
+                  "tag_name": "${{ github.ref_name }}",
+                  "name": "Taco CLI ${{ steps.meta.outputs.version }}",
+                  "body": "## Taco CLI ${{ steps.meta.outputs.version }}\n\n### Downloads\n- **Linux AMD64**: [taco-linux-amd64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-linux-amd64)\n- **Linux ARM64**: [taco-linux-arm64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-linux-arm64)\n- **macOS AMD64**: [taco-darwin-amd64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-darwin-amd64)\n- **macOS ARM64**: [taco-darwin-arm64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-darwin-arm64)\n- **Windows AMD64**: [taco-windows-amd64.exe](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-windows-amd64.exe)\n\n### Installation\nDownload the appropriate binary for your platform and make it executable:\n```bash\nchmod +x taco-<platform>-<arch>\nsudo mv taco-<platform>-<arch> /usr/local/bin/taco\n```\n",
+                  "files": "taco-cli-*/taco-*\n",
+                  "draft": false,
+                  "prerelease": false
+                }
+              },
+              {
+                "name": "Create release for Statesman",
+                "if": "startsWith(steps.meta.outputs.app_dir, 'taco/cmd/statesman')",
+                "uses": "softprops/action-gh-release@v1",
+                "with": {
+                  "tag_name": "${{ github.ref_name }}",
+                  "name": "Taco Statesman ${{ steps.meta.outputs.version }}",
+                  "body": "## Taco Statesman ${{ steps.meta.outputs.version }}\n\n### Downloads\n- **Linux AMD64**: [statesman-linux-amd64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-linux-amd64)\n- **Linux ARM64**: [statesman-linux-arm64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-linux-arm64)\n- **macOS AMD64**: [statesman-darwin-amd64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-darwin-amd64)\n- **macOS ARM64**: [statesman-darwin-arm64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-darwin-arm64)\n- **Windows AMD64**: [statesman-windows-amd64.exe](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-windows-amd64.exe)\n\n### Docker\n```bash\ndocker pull ghcr.io/${{ github.repository }}/taco-statesman:${{ steps.meta.outputs.version }}\n```\n\n### Installation\nDownload the appropriate binary for your platform and make it executable:\n```bash\nchmod +x statesman-<platform>-<arch>\nsudo mv statesman-<platform>-<arch> /usr/local/bin/statesman\n```\n",
+                  "files": "taco-statesman-*/statesman-*\n",
+                  "draft": false,
+                  "prerelease": false
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-09-17T23-44-41Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "taco-release__2025-09-17T23-44-41Z__3e56285589fbbff1995ba9b509b6184eb9b1efd1.yml",
+          "workflow_name": "taco-release",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "packages": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 230,
+          "num_jobs": 3,
+          "steps_per_job": {
+            "build": 7,
+            "build-docker": 7,
+            "create-release": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 3,
+            "num_dependencies_between_jobs": 2,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 7,
+              "build-docker": 7,
+              "create-release": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 14,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/download-artifact@v4",
+              "actions/setup-go@v5",
+              "actions/upload-artifact@v4",
+              "docker/build-push-action@v5",
+              "docker/login-action@v3",
+              "docker/metadata-action@v5",
+              "docker/setup-buildx-action@v3",
+              "softprops/action-gh-release@v1"
+            ],
+            "num_run_commands": 5,
+            "steps_with_conditionals": 6,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "taco-release",
+        "true": {
+          "push": {
+            "tags": [
+              "taco/cmd/taco/v*",
+              "taco/cmd/statesman/v*"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "packages": "write"
+        },
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-latest",
+            "strategy": {
+              "matrix": {
+                "include": [
+                  {
+                    "os": "linux",
+                    "arch": "amd64",
+                    "goos": "linux",
+                    "goarch": "amd64"
+                  },
+                  {
+                    "os": "linux",
+                    "arch": "arm64",
+                    "goos": "linux",
+                    "goarch": "arm64"
+                  },
+                  {
+                    "os": "linux",
+                    "arch": 386,
+                    "goos": "linux",
+                    "goarch": 386
+                  },
+                  {
+                    "os": "darwin",
+                    "arch": "amd64",
+                    "goos": "darwin",
+                    "goarch": "amd64"
+                  },
+                  {
+                    "os": "darwin",
+                    "arch": "arm64",
+                    "goos": "darwin",
+                    "goarch": "arm64"
+                  },
+                  {
+                    "os": "windows",
+                    "arch": "amd64",
+                    "goos": "windows",
+                    "goarch": "amd64"
+                  },
+                  {
+                    "os": "windows",
+                    "arch": 386,
+                    "goos": "windows",
+                    "goarch": 386
+                  }
+                ]
+              }
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.24"
+                }
+              },
+              {
+                "name": "Derive app dir and version",
+                "id": "meta",
+                "run": "TAG=\"${GITHUB_REF_NAME}\"          # e.g. taco/cli/v1.2.3\nAPP_DIR=\"${TAG%/v*}\"              # taco/cli\nVERSION=\"${TAG##*/}\"              # v1.2.3\necho \"app_dir=$APP_DIR\" >> $GITHUB_OUTPUT\necho \"version=$VERSION\" >> $GITHUB_OUTPUT\n"
+              },
+              {
+                "name": "Build CLI",
+                "if": "startsWith(steps.meta.outputs.app_dir, 'taco/cmd/taco')",
+                "working-directory": "taco/cmd/taco",
+                "run": "CGO_ENABLED=0 GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build \\\n  -ldflags=\"-X 'main.Version=${{ steps.meta.outputs.version }}' -X 'main.Commit=${{ github.sha }}' -s -w\" \\\n  -o taco-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }} .\nsha256sum taco-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }} > taco-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }}.sha256\n"
+              },
+              {
+                "name": "Build Statesman",
+                "if": "startsWith(steps.meta.outputs.app_dir, 'taco/cmd/statesman')",
+                "working-directory": "taco/cmd/statesman",
+                "run": "CGO_ENABLED=0 GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build \\\n  -ldflags=\"-X 'main.Version=${{ steps.meta.outputs.version }}' -X 'main.Commit=${{ github.sha }}' -s -w\" \\\n  -o statesman-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }} .\nsha256sum statesman-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }} > statesman-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }}.sha256\n"
+              },
+              {
+                "name": "Upload CLI artifacts",
+                "if": "startsWith(steps.meta.outputs.app_dir, 'taco/cmd/taco')",
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "taco-cli-${{ matrix.os }}-${{ matrix.arch }}",
+                  "path": "taco/cmd/taco/taco-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }}*"
+                }
+              },
+              {
+                "name": "Upload Statesman artifacts",
+                "if": "startsWith(steps.meta.outputs.app_dir, 'taco/cmd/statesman')",
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "taco-statesman-${{ matrix.os }}-${{ matrix.arch }}",
+                  "path": "taco/cmd/statesman/statesman-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }}*"
+                }
+              }
+            ]
+          },
+          "build-docker": {
+            "if": "startsWith(github.ref_name, 'taco/cmd/statesman/')",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.24"
+                }
+              },
+              {
+                "name": "Derive version",
+                "id": "meta",
+                "run": "TAG=\"${GITHUB_REF_NAME}\"          # e.g. taco/statesman/v1.2.3\nVERSION=\"${TAG##*/}\"              # v1.2.3\necho \"version=$VERSION\" >> $GITHUB_OUTPUT\n"
+              },
+              {
+                "name": "Set up Docker Buildx",
+                "uses": "docker/setup-buildx-action@v3"
+              },
+              {
+                "name": "Log in to Container Registry",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.actor }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Extract metadata",
+                "id": "docker-meta",
+                "uses": "docker/metadata-action@v5",
+                "with": {
+                  "images": "ghcr.io/${{ github.repository }}/taco-statesman",
+                  "tags": "type=ref,event=tag\ntype=semver,pattern={{version}}\ntype=semver,pattern={{major}}.{{minor}}\ntype=raw,value=latest\n"
+                }
+              },
+              {
+                "name": "Build and push Docker image",
+                "uses": "docker/build-push-action@v5",
+                "with": {
+                  "context": "./taco",
+                  "file": "./taco/Dockerfile_statesman",
+                  "push": true,
+                  "tags": "${{ steps.docker-meta.outputs.tags }}",
+                  "labels": "${{ steps.docker-meta.outputs.labels }}",
+                  "build-args": "COMMIT_SHA=${{ github.sha }}\nVERSION=${{ steps.meta.outputs.version }}\n"
+                }
+              }
+            ]
+          },
+          "create-release": {
+            "needs": [
+              "build",
+              "build-docker"
+            ],
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Derive app dir and version",
+                "id": "meta",
+                "run": "TAG=\"${GITHUB_REF_NAME}\"          # e.g. taco/cli/v1.2.3\nAPP_DIR=\"${TAG%/v*}\"              # taco/cli\nVERSION=\"${TAG##*/}\"              # v1.2.3\necho \"app_dir=$APP_DIR\" >> $GITHUB_OUTPUT\necho \"version=$VERSION\" >> $GITHUB_OUTPUT\n"
+              },
+              {
+                "name": "Download all artifacts",
+                "uses": "actions/download-artifact@v4"
+              },
+              {
+                "name": "Create release for CLI",
+                "if": "startsWith(steps.meta.outputs.app_dir, 'taco/cmd/taco')",
+                "uses": "softprops/action-gh-release@v1",
+                "with": {
+                  "tag_name": "${{ github.ref_name }}",
+                  "name": "Taco CLI ${{ steps.meta.outputs.version }}",
+                  "body": "## Taco CLI ${{ steps.meta.outputs.version }}\n\n### Downloads\n- **Linux AMD64**: [taco-linux-amd64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-linux-amd64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-linux-amd64.sha256))\n- **Linux ARM64**: [taco-linux-arm64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-linux-arm64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-linux-arm64.sha256))\n- **Linux 386**: [taco-linux-386](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-linux-386) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-linux-386.sha256))\n- **macOS AMD64**: [taco-darwin-amd64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-darwin-amd64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-darwin-amd64.sha256))\n- **macOS ARM64**: [taco-darwin-arm64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-darwin-arm64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-darwin-arm64.sha256))\n- **Windows AMD64**: [taco-windows-amd64.exe](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-windows-amd64.exe) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-windows-amd64.exe.sha256))\n- **Windows 386**: [taco-windows-386.exe](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-windows-386.exe) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-windows-386.exe.sha256))\n\n### Installation\nDownload the appropriate binary for your platform and make it executable:\n```bash\nchmod +x taco-<platform>-<arch>\nsudo mv taco-<platform>-<arch> /usr/local/bin/taco\n```\n",
+                  "files": "taco-cli-*/*\n",
+                  "draft": false,
+                  "prerelease": false
+                }
+              },
+              {
+                "name": "Create release for Statesman",
+                "if": "startsWith(steps.meta.outputs.app_dir, 'taco/cmd/statesman')",
+                "uses": "softprops/action-gh-release@v1",
+                "with": {
+                  "tag_name": "${{ github.ref_name }}",
+                  "name": "Taco Statesman ${{ steps.meta.outputs.version }}",
+                  "body": "## Taco Statesman ${{ steps.meta.outputs.version }}\n\n### Downloads\n- **Linux AMD64**: [statesman-linux-amd64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-linux-amd64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-linux-amd64.sha256))\n- **Linux ARM64**: [statesman-linux-arm64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-linux-arm64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-linux-arm64.sha256))\n- **Linux 386**: [statesman-linux-386](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-linux-386) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-linux-386.sha256))\n- **macOS AMD64**: [statesman-darwin-amd64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-darwin-amd64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-darwin-amd64.sha256))\n- **macOS ARM64**: [statesman-darwin-arm64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-darwin-arm64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-darwin-arm64.sha256))\n- **Windows AMD64**: [statesman-windows-amd64.exe](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-windows-amd64.exe) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-windows-amd64.exe.sha256))\n- **Windows 386**: [statesman-windows-386.exe](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-windows-386.exe) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-windows-386.exe.sha256))\n\n### Docker\n```bash\ndocker pull ghcr.io/${{ github.repository }}/taco-statesman:${{ steps.meta.outputs.version }}\n```\n\n### Installation\nDownload the appropriate binary for your platform and make it executable:\n```bash\nchmod +x statesman-<platform>-<arch>\nsudo mv statesman-<platform>-<arch> /usr/local/bin/statesman\n```\n",
+                  "files": "taco-statesman-*/*\n",
+                  "draft": false,
+                  "prerelease": false
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-09-17T23-53-07Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "taco-release__2025-09-17T23-53-07Z__aa191d95ce819b5f94c3247ef55a6c75a74aaafe.yml",
+          "workflow_name": "taco-release",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "packages": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 236,
+          "num_jobs": 3,
+          "steps_per_job": {
+            "build": 7,
+            "build-docker": 7,
+            "create-release": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 3,
+            "num_dependencies_between_jobs": 2,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 7,
+              "build-docker": 7,
+              "create-release": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 14,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/download-artifact@v4",
+              "actions/setup-go@v5",
+              "actions/upload-artifact@v4",
+              "docker/build-push-action@v5",
+              "docker/login-action@v3",
+              "docker/metadata-action@v5",
+              "docker/setup-buildx-action@v3",
+              "softprops/action-gh-release@v1"
+            ],
+            "num_run_commands": 5,
+            "steps_with_conditionals": 6,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "taco-release",
+        "true": {
+          "push": {
+            "tags": [
+              "taco/cli/v*",
+              "taco/statesman/v*"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "packages": "write"
+        },
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-latest",
+            "strategy": {
+              "matrix": {
+                "include": [
+                  {
+                    "os": "linux",
+                    "arch": "amd64",
+                    "goos": "linux",
+                    "goarch": "amd64"
+                  },
+                  {
+                    "os": "linux",
+                    "arch": "arm64",
+                    "goos": "linux",
+                    "goarch": "arm64"
+                  },
+                  {
+                    "os": "linux",
+                    "arch": 386,
+                    "goos": "linux",
+                    "goarch": 386
+                  },
+                  {
+                    "os": "darwin",
+                    "arch": "amd64",
+                    "goos": "darwin",
+                    "goarch": "amd64"
+                  },
+                  {
+                    "os": "darwin",
+                    "arch": "arm64",
+                    "goos": "darwin",
+                    "goarch": "arm64"
+                  },
+                  {
+                    "os": "windows",
+                    "arch": "amd64",
+                    "goos": "windows",
+                    "goarch": "amd64"
+                  },
+                  {
+                    "os": "windows",
+                    "arch": 386,
+                    "goos": "windows",
+                    "goarch": 386
+                  }
+                ]
+              }
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.24"
+                }
+              },
+              {
+                "name": "Derive app dir and version",
+                "id": "meta",
+                "run": "TAG=\"${GITHUB_REF_NAME}\"          # e.g. taco/cli/v1.2.3\nAPP_DIR=\"${TAG%/v*}\"              # taco/cli\nVERSION=\"${TAG##*/}\"              # v1.2.3\necho \"app_dir=$APP_DIR\" >> $GITHUB_OUTPUT\necho \"version=$VERSION\" >> $GITHUB_OUTPUT\n# Map to actual directory paths\nif [ \"$APP_DIR\" = \"taco/cli\" ]; then\n  echo \"build_dir=taco/cmd/taco\" >> $GITHUB_OUTPUT\nelif [ \"$APP_DIR\" = \"taco/statesman\" ]; then\n  echo \"build_dir=taco/cmd/statesman\" >> $GITHUB_OUTPUT\nfi\n"
+              },
+              {
+                "name": "Build CLI",
+                "if": "startsWith(steps.meta.outputs.app_dir, 'taco/cli')",
+                "working-directory": "taco/cmd/taco",
+                "run": "CGO_ENABLED=0 GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build \\\n  -ldflags=\"-X 'main.Version=${{ steps.meta.outputs.version }}' -X 'main.Commit=${{ github.sha }}' -s -w\" \\\n  -o taco-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }} .\nsha256sum taco-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }} > taco-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }}.sha256\n"
+              },
+              {
+                "name": "Build Statesman",
+                "if": "startsWith(steps.meta.outputs.app_dir, 'taco/statesman')",
+                "working-directory": "taco/cmd/statesman",
+                "run": "CGO_ENABLED=0 GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build \\\n  -ldflags=\"-X 'main.Version=${{ steps.meta.outputs.version }}' -X 'main.Commit=${{ github.sha }}' -s -w\" \\\n  -o statesman-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }} .\nsha256sum statesman-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }} > statesman-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }}.sha256\n"
+              },
+              {
+                "name": "Upload CLI artifacts",
+                "if": "startsWith(steps.meta.outputs.app_dir, 'taco/cli')",
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "taco-cli-${{ matrix.os }}-${{ matrix.arch }}",
+                  "path": "taco/cmd/taco/taco-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }}*"
+                }
+              },
+              {
+                "name": "Upload Statesman artifacts",
+                "if": "startsWith(steps.meta.outputs.app_dir, 'taco/statesman')",
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "taco-statesman-${{ matrix.os }}-${{ matrix.arch }}",
+                  "path": "taco/cmd/statesman/statesman-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }}*"
+                }
+              }
+            ]
+          },
+          "build-docker": {
+            "if": "startsWith(github.ref_name, 'taco/statesman/')",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.24"
+                }
+              },
+              {
+                "name": "Derive version",
+                "id": "meta",
+                "run": "TAG=\"${GITHUB_REF_NAME}\"          # e.g. taco/statesman/v1.2.3\nVERSION=\"${TAG##*/}\"              # v1.2.3\necho \"version=$VERSION\" >> $GITHUB_OUTPUT\n"
+              },
+              {
+                "name": "Set up Docker Buildx",
+                "uses": "docker/setup-buildx-action@v3"
+              },
+              {
+                "name": "Log in to Container Registry",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.actor }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Extract metadata",
+                "id": "docker-meta",
+                "uses": "docker/metadata-action@v5",
+                "with": {
+                  "images": "ghcr.io/${{ github.repository }}/taco-statesman",
+                  "tags": "type=ref,event=tag\ntype=semver,pattern={{version}}\ntype=semver,pattern={{major}}.{{minor}}\ntype=raw,value=latest\n"
+                }
+              },
+              {
+                "name": "Build and push Docker image",
+                "uses": "docker/build-push-action@v5",
+                "with": {
+                  "context": "./taco",
+                  "file": "./taco/Dockerfile_statesman",
+                  "push": true,
+                  "tags": "${{ steps.docker-meta.outputs.tags }}",
+                  "labels": "${{ steps.docker-meta.outputs.labels }}",
+                  "build-args": "COMMIT_SHA=${{ github.sha }}\nVERSION=${{ steps.meta.outputs.version }}\n"
+                }
+              }
+            ]
+          },
+          "create-release": {
+            "needs": [
+              "build",
+              "build-docker"
+            ],
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Derive app dir and version",
+                "id": "meta",
+                "run": "TAG=\"${GITHUB_REF_NAME}\"          # e.g. taco/cli/v1.2.3\nAPP_DIR=\"${TAG%/v*}\"              # taco/cli\nVERSION=\"${TAG##*/}\"              # v1.2.3\necho \"app_dir=$APP_DIR\" >> $GITHUB_OUTPUT\necho \"version=$VERSION\" >> $GITHUB_OUTPUT\n"
+              },
+              {
+                "name": "Download all artifacts",
+                "uses": "actions/download-artifact@v4"
+              },
+              {
+                "name": "Create release for CLI",
+                "if": "startsWith(steps.meta.outputs.app_dir, 'taco/cli')",
+                "uses": "softprops/action-gh-release@v1",
+                "with": {
+                  "tag_name": "${{ github.ref_name }}",
+                  "name": "taco/cli/${{ steps.meta.outputs.version }}",
+                  "body": "## Taco CLI ${{ steps.meta.outputs.version }}\n\n### Downloads\n- **Linux AMD64**: [taco-linux-amd64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-linux-amd64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-linux-amd64.sha256))\n- **Linux ARM64**: [taco-linux-arm64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-linux-arm64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-linux-arm64.sha256))\n- **Linux 386**: [taco-linux-386](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-linux-386) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-linux-386.sha256))\n- **macOS AMD64**: [taco-darwin-amd64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-darwin-amd64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-darwin-amd64.sha256))\n- **macOS ARM64**: [taco-darwin-arm64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-darwin-arm64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-darwin-arm64.sha256))\n- **Windows AMD64**: [taco-windows-amd64.exe](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-windows-amd64.exe) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-windows-amd64.exe.sha256))\n- **Windows 386**: [taco-windows-386.exe](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-windows-386.exe) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-windows-386.exe.sha256))\n\n### Installation\nDownload the appropriate binary for your platform and make it executable:\n```bash\nchmod +x taco-<platform>-<arch>\nsudo mv taco-<platform>-<arch> /usr/local/bin/taco\n```\n",
+                  "files": "taco-cli-*/*\n",
+                  "draft": false,
+                  "prerelease": false
+                }
+              },
+              {
+                "name": "Create release for Statesman",
+                "if": "startsWith(steps.meta.outputs.app_dir, 'taco/statesman')",
+                "uses": "softprops/action-gh-release@v1",
+                "with": {
+                  "tag_name": "${{ github.ref_name }}",
+                  "name": "taco/statesman/${{ steps.meta.outputs.version }}",
+                  "body": "## Taco Statesman ${{ steps.meta.outputs.version }}\n\n### Downloads\n- **Linux AMD64**: [statesman-linux-amd64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-linux-amd64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-linux-amd64.sha256))\n- **Linux ARM64**: [statesman-linux-arm64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-linux-arm64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-linux-arm64.sha256))\n- **Linux 386**: [statesman-linux-386](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-linux-386) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-linux-386.sha256))\n- **macOS AMD64**: [statesman-darwin-amd64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-darwin-amd64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-darwin-amd64.sha256))\n- **macOS ARM64**: [statesman-darwin-arm64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-darwin-arm64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-darwin-arm64.sha256))\n- **Windows AMD64**: [statesman-windows-amd64.exe](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-windows-amd64.exe) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-windows-amd64.exe.sha256))\n- **Windows 386**: [statesman-windows-386.exe](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-windows-386.exe) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-windows-386.exe.sha256))\n\n### Docker\n```bash\ndocker pull ghcr.io/${{ github.repository }}/taco-statesman:${{ steps.meta.outputs.version }}\n```\n\n### Installation\nDownload the appropriate binary for your platform and make it executable:\n```bash\nchmod +x statesman-<platform>-<arch>\nsudo mv statesman-<platform>-<arch> /usr/local/bin/statesman\n```\n",
+                  "files": "taco-statesman-*/*\n",
+                  "draft": false,
+                  "prerelease": false
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-09-18T00-27-55Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "taco-release__2025-09-18T00-27-55Z__e80d8bfc233a04ba1bb9fa0d56abda2a58e06077.yml",
+          "workflow_name": "taco-release",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "packages": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 256,
+          "num_jobs": 4,
+          "steps_per_job": {
+            "build": 7,
+            "build-docker": 7,
+            "create-release-cli": 4,
+            "create-release-statesman": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 4,
+            "num_dependencies_between_jobs": 3,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 7,
+              "build-docker": 7,
+              "create-release-cli": 4,
+              "create-release-statesman": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 16,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/download-artifact@v4",
+              "actions/setup-go@v5",
+              "actions/upload-artifact@v4",
+              "docker/build-push-action@v5",
+              "docker/login-action@v3",
+              "docker/metadata-action@v5",
+              "docker/setup-buildx-action@v3",
+              "softprops/action-gh-release@v1"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 4,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "taco-release",
+        "true": {
+          "push": {
+            "tags": [
+              "taco/cli/v*",
+              "taco/statesman/v*"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "packages": "write"
+        },
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-latest",
+            "strategy": {
+              "matrix": {
+                "include": [
+                  {
+                    "os": "linux",
+                    "arch": "amd64",
+                    "goos": "linux",
+                    "goarch": "amd64"
+                  },
+                  {
+                    "os": "linux",
+                    "arch": "arm64",
+                    "goos": "linux",
+                    "goarch": "arm64"
+                  },
+                  {
+                    "os": "linux",
+                    "arch": 386,
+                    "goos": "linux",
+                    "goarch": 386
+                  },
+                  {
+                    "os": "darwin",
+                    "arch": "amd64",
+                    "goos": "darwin",
+                    "goarch": "amd64"
+                  },
+                  {
+                    "os": "darwin",
+                    "arch": "arm64",
+                    "goos": "darwin",
+                    "goarch": "arm64"
+                  },
+                  {
+                    "os": "windows",
+                    "arch": "amd64",
+                    "goos": "windows",
+                    "goarch": "amd64"
+                  },
+                  {
+                    "os": "windows",
+                    "arch": 386,
+                    "goos": "windows",
+                    "goarch": 386
+                  }
+                ]
+              }
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.24"
+                }
+              },
+              {
+                "name": "Derive app dir and version",
+                "id": "meta",
+                "run": "TAG=\"${GITHUB_REF_NAME}\"          # e.g. taco/cli/v1.2.3\nAPP_DIR=\"${TAG%/v*}\"              # taco/cli\nVERSION=\"${TAG##*/}\"              # v1.2.3\necho \"app_dir=$APP_DIR\" >> $GITHUB_OUTPUT\necho \"version=$VERSION\" >> $GITHUB_OUTPUT\n# Map to actual directory paths\nif [ \"$APP_DIR\" = \"taco/cli\" ]; then\n  echo \"build_dir=taco/cmd/taco\" >> $GITHUB_OUTPUT\nelif [ \"$APP_DIR\" = \"taco/statesman\" ]; then\n  echo \"build_dir=taco/cmd/statesman\" >> $GITHUB_OUTPUT\nfi\n"
+              },
+              {
+                "name": "Build CLI",
+                "if": "startsWith(steps.meta.outputs.app_dir, 'taco/cli')",
+                "working-directory": "taco/cmd/taco",
+                "run": "CGO_ENABLED=0 GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build \\\n  -ldflags=\"-X 'main.Version=${{ steps.meta.outputs.version }}' -X 'main.Commit=${{ github.sha }}' -s -w\" \\\n  -o taco-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }} .\nsha256sum taco-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }} > taco-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }}.sha256\n"
+              },
+              {
+                "name": "Build Statesman",
+                "if": "startsWith(steps.meta.outputs.app_dir, 'taco/statesman')",
+                "working-directory": "taco/cmd/statesman",
+                "run": "CGO_ENABLED=0 GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build \\\n  -ldflags=\"-X 'main.Version=${{ steps.meta.outputs.version }}' -X 'main.Commit=${{ github.sha }}' -s -w\" \\\n  -o statesman-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }} .\nsha256sum statesman-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }} > statesman-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }}.sha256\n"
+              },
+              {
+                "name": "Upload CLI artifacts",
+                "if": "startsWith(steps.meta.outputs.app_dir, 'taco/cli')",
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "taco-cli-${{ matrix.os }}-${{ matrix.arch }}",
+                  "path": "taco/cmd/taco/taco-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }}*"
+                }
+              },
+              {
+                "name": "Upload Statesman artifacts",
+                "if": "startsWith(steps.meta.outputs.app_dir, 'taco/statesman')",
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "taco-statesman-${{ matrix.os }}-${{ matrix.arch }}",
+                  "path": "taco/cmd/statesman/statesman-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }}*"
+                }
+              }
+            ]
+          },
+          "build-docker": {
+            "if": "startsWith(github.ref_name, 'taco/statesman/')",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.24"
+                }
+              },
+              {
+                "name": "Derive version",
+                "id": "meta",
+                "run": "TAG=\"${GITHUB_REF_NAME}\"          # e.g. taco/statesman/v1.2.3\nVERSION=\"${TAG##*/}\"              # v1.2.3\necho \"version=$VERSION\" >> $GITHUB_OUTPUT\n"
+              },
+              {
+                "name": "Set up Docker Buildx",
+                "uses": "docker/setup-buildx-action@v3"
+              },
+              {
+                "name": "Log in to Container Registry",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.actor }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Extract metadata",
+                "id": "docker-meta",
+                "uses": "docker/metadata-action@v5",
+                "with": {
+                  "images": "ghcr.io/${{ github.repository }}/taco-statesman",
+                  "tags": "type=ref,event=tag\ntype=semver,pattern={{version}}\ntype=semver,pattern={{major}}.{{minor}}\ntype=raw,value=latest\n"
+                }
+              },
+              {
+                "name": "Build and push Docker image",
+                "uses": "docker/build-push-action@v5",
+                "with": {
+                  "context": "./taco",
+                  "file": "./taco/Dockerfile_statesman",
+                  "push": true,
+                  "tags": "${{ steps.docker-meta.outputs.tags }}",
+                  "labels": "${{ steps.docker-meta.outputs.labels }}",
+                  "build-args": "COMMIT_SHA=${{ github.sha }}\nVERSION=${{ steps.meta.outputs.version }}\n"
+                }
+              }
+            ]
+          },
+          "create-release-cli": {
+            "if": "startsWith(github.ref_name, 'taco/cli/')",
+            "needs": [
+              "build"
+            ],
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Derive app dir and version",
+                "id": "meta",
+                "run": "TAG=\"${GITHUB_REF_NAME}\"          # e.g. taco/cli/v1.2.3\nAPP_DIR=\"${TAG%/v*}\"              # taco/cli\nVERSION=\"${TAG##*/}\"              # v1.2.3\necho \"app_dir=$APP_DIR\" >> $GITHUB_OUTPUT\necho \"version=$VERSION\" >> $GITHUB_OUTPUT\n"
+              },
+              {
+                "name": "Download all artifacts",
+                "uses": "actions/download-artifact@v4"
+              },
+              {
+                "name": "Create release for CLI",
+                "uses": "softprops/action-gh-release@v1",
+                "with": {
+                  "tag_name": "${{ github.ref_name }}",
+                  "name": "taco/cli/${{ steps.meta.outputs.version }}",
+                  "body": "## Taco CLI ${{ steps.meta.outputs.version }}\n\n### Downloads\n- **Linux AMD64**: [taco-linux-amd64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-linux-amd64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-linux-amd64.sha256))\n- **Linux ARM64**: [taco-linux-arm64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-linux-arm64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-linux-arm64.sha256))\n- **Linux 386**: [taco-linux-386](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-linux-386) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-linux-386.sha256))\n- **macOS AMD64**: [taco-darwin-amd64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-darwin-amd64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-darwin-amd64.sha256))\n- **macOS ARM64**: [taco-darwin-arm64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-darwin-arm64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-darwin-arm64.sha256))\n- **Windows AMD64**: [taco-windows-amd64.exe](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-windows-amd64.exe) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-windows-amd64.exe.sha256))\n- **Windows 386**: [taco-windows-386.exe](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-windows-386.exe) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-windows-386.exe.sha256))\n\n### Installation\nDownload the appropriate binary for your platform and make it executable:\n```bash\nchmod +x taco-<platform>-<arch>\nsudo mv taco-<platform>-<arch> /usr/local/bin/taco\n```\n",
+                  "files": "taco-cli-*/*\n",
+                  "draft": false,
+                  "prerelease": false
+                }
+              }
+            ]
+          },
+          "create-release-statesman": {
+            "if": "startsWith(github.ref_name, 'taco/statesman/')",
+            "needs": [
+              "build",
+              "build-docker"
+            ],
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Derive app dir and version",
+                "id": "meta",
+                "run": "TAG=\"${GITHUB_REF_NAME}\"          # e.g. taco/statesman/v1.2.3\nAPP_DIR=\"${TAG%/v*}\"              # taco/statesman\nVERSION=\"${TAG##*/}\"              # v1.2.3\necho \"app_dir=$APP_DIR\" >> $GITHUB_OUTPUT\necho \"version=$VERSION\" >> $GITHUB_OUTPUT\n"
+              },
+              {
+                "name": "Download all artifacts",
+                "uses": "actions/download-artifact@v4"
+              },
+              {
+                "name": "Create release for Statesman",
+                "uses": "softprops/action-gh-release@v1",
+                "with": {
+                  "tag_name": "${{ github.ref_name }}",
+                  "name": "taco/statesman/${{ steps.meta.outputs.version }}",
+                  "body": "## Taco Statesman ${{ steps.meta.outputs.version }}\n\n### Downloads\n- **Linux AMD64**: [statesman-linux-amd64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-linux-amd64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-linux-amd64.sha256))\n- **Linux ARM64**: [statesman-linux-arm64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-linux-arm64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-linux-arm64.sha256))\n- **Linux 386**: [statesman-linux-386](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-linux-386) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-linux-386.sha256))\n- **macOS AMD64**: [statesman-darwin-amd64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-darwin-amd64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-darwin-amd64.sha256))\n- **macOS ARM64**: [statesman-darwin-arm64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-darwin-arm64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-darwin-arm64.sha256))\n- **Windows AMD64**: [statesman-windows-amd64.exe](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-windows-amd64.exe) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-windows-amd64.exe.sha256))\n- **Windows 386**: [statesman-windows-386.exe](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-windows-386.exe) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-windows-386.exe.sha256))\n\n### Docker\n```bash\ndocker pull ghcr.io/${{ github.repository }}/taco-statesman:${{ steps.meta.outputs.version }}\n```\n\n### Installation\nDownload the appropriate binary for your platform and make it executable:\n```bash\nchmod +x statesman-<platform>-<arch>\nsudo mv statesman-<platform>-<arch> /usr/local/bin/statesman\n```\n",
+                  "files": "taco-statesman-*/*\n",
+                  "draft": false,
+                  "prerelease": false
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-09-18T21-24-51Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "taco-release__2025-09-18T21-24-51Z__700b41185805fdb1046459c0c85c98d1af3a843f.yml",
+          "workflow_name": "taco-release",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "packages": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 250,
+          "num_jobs": 4,
+          "steps_per_job": {
+            "build": 7,
+            "build-docker": 7,
+            "create-release-cli": 4,
+            "create-release-statesman": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 4,
+            "num_dependencies_between_jobs": 3,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 7,
+              "build-docker": 7,
+              "create-release-cli": 4,
+              "create-release-statesman": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 16,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/download-artifact@v4",
+              "actions/setup-go@v5",
+              "actions/upload-artifact@v4",
+              "docker/build-push-action@v5",
+              "docker/login-action@v3",
+              "docker/metadata-action@v5",
+              "docker/setup-buildx-action@v3",
+              "softprops/action-gh-release@v1"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 4,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "taco-release",
+        "true": {
+          "push": {
+            "tags": [
+              "taco/cmd/taco/v*",
+              "taco/cmd/statesman/v*"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "packages": "write"
+        },
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-latest",
+            "strategy": {
+              "matrix": {
+                "include": [
+                  {
+                    "os": "linux",
+                    "arch": "amd64",
+                    "goos": "linux",
+                    "goarch": "amd64"
+                  },
+                  {
+                    "os": "linux",
+                    "arch": "arm64",
+                    "goos": "linux",
+                    "goarch": "arm64"
+                  },
+                  {
+                    "os": "linux",
+                    "arch": 386,
+                    "goos": "linux",
+                    "goarch": 386
+                  },
+                  {
+                    "os": "darwin",
+                    "arch": "amd64",
+                    "goos": "darwin",
+                    "goarch": "amd64"
+                  },
+                  {
+                    "os": "darwin",
+                    "arch": "arm64",
+                    "goos": "darwin",
+                    "goarch": "arm64"
+                  },
+                  {
+                    "os": "windows",
+                    "arch": "amd64",
+                    "goos": "windows",
+                    "goarch": "amd64"
+                  },
+                  {
+                    "os": "windows",
+                    "arch": 386,
+                    "goos": "windows",
+                    "goarch": 386
+                  }
+                ]
+              }
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.24"
+                }
+              },
+              {
+                "name": "Derive app dir and version",
+                "id": "meta",
+                "run": "TAG=\"${GITHUB_REF_NAME}\"          # e.g. taco/cmd/taco/v1.2.3\nAPP_DIR=\"${TAG%/v*}\"              # taco/cmd/taco\nVERSION=\"${TAG##*/}\"              # v1.2.3\necho \"app_dir=$APP_DIR\" >> $GITHUB_OUTPUT\necho \"version=$VERSION\" >> $GITHUB_OUTPUT\n"
+              },
+              {
+                "name": "Build CLI",
+                "if": "startsWith(steps.meta.outputs.app_dir, 'taco/cmd/taco')",
+                "working-directory": "taco/cmd/taco",
+                "run": "CGO_ENABLED=0 GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build \\\n  -ldflags=\"-X 'main.Version=${{ steps.meta.outputs.version }}' -X 'main.Commit=${{ github.sha }}' -s -w\" \\\n  -o taco-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }} .\nsha256sum taco-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }} > taco-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }}.sha256\n"
+              },
+              {
+                "name": "Build Statesman",
+                "if": "startsWith(steps.meta.outputs.app_dir, 'taco/cmd/statesman')",
+                "working-directory": "taco/cmd/statesman",
+                "run": "CGO_ENABLED=0 GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build \\\n  -ldflags=\"-X 'main.Version=${{ steps.meta.outputs.version }}' -X 'main.Commit=${{ github.sha }}' -s -w\" \\\n  -o statesman-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }} .\nsha256sum statesman-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }} > statesman-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }}.sha256\n"
+              },
+              {
+                "name": "Upload CLI artifacts",
+                "if": "startsWith(steps.meta.outputs.app_dir, 'taco/cmd/taco')",
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "taco-cli-${{ matrix.os }}-${{ matrix.arch }}",
+                  "path": "taco/cmd/taco/taco-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }}*"
+                }
+              },
+              {
+                "name": "Upload Statesman artifacts",
+                "if": "startsWith(steps.meta.outputs.app_dir, 'taco/cmd/statesman')",
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "taco-statesman-${{ matrix.os }}-${{ matrix.arch }}",
+                  "path": "taco/cmd/statesman/statesman-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }}*"
+                }
+              }
+            ]
+          },
+          "build-docker": {
+            "if": "startsWith(github.ref_name, 'taco/cmd/statesman/')",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.24"
+                }
+              },
+              {
+                "name": "Derive version",
+                "id": "meta",
+                "run": "TAG=\"${GITHUB_REF_NAME}\"          # e.g. taco/cmd/statesman/v1.2.3\nVERSION=\"${TAG##*/}\"              # v1.2.3\necho \"version=$VERSION\" >> $GITHUB_OUTPUT\n"
+              },
+              {
+                "name": "Set up Docker Buildx",
+                "uses": "docker/setup-buildx-action@v3"
+              },
+              {
+                "name": "Log in to Container Registry",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.actor }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Extract metadata",
+                "id": "docker-meta",
+                "uses": "docker/metadata-action@v5",
+                "with": {
+                  "images": "ghcr.io/${{ github.repository }}/taco-statesman",
+                  "tags": "type=ref,event=tag\ntype=semver,pattern={{version}}\ntype=semver,pattern={{major}}.{{minor}}\ntype=raw,value=latest\n"
+                }
+              },
+              {
+                "name": "Build and push Docker image",
+                "uses": "docker/build-push-action@v5",
+                "with": {
+                  "context": "./taco",
+                  "file": "./taco/Dockerfile_statesman",
+                  "push": true,
+                  "tags": "${{ steps.docker-meta.outputs.tags }}",
+                  "labels": "${{ steps.docker-meta.outputs.labels }}",
+                  "build-args": "COMMIT_SHA=${{ github.sha }}\nVERSION=${{ steps.meta.outputs.version }}\n"
+                }
+              }
+            ]
+          },
+          "create-release-cli": {
+            "if": "startsWith(github.ref_name, 'taco/cmd/taco/')",
+            "needs": [
+              "build"
+            ],
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Derive app dir and version",
+                "id": "meta",
+                "run": "TAG=\"${GITHUB_REF_NAME}\"          # e.g. taco/cmd/taco/v1.2.3\nAPP_DIR=\"${TAG%/v*}\"              # taco/cmd/taco\nVERSION=\"${TAG##*/}\"              # v1.2.3\necho \"app_dir=$APP_DIR\" >> $GITHUB_OUTPUT\necho \"version=$VERSION\" >> $GITHUB_OUTPUT\n"
+              },
+              {
+                "name": "Download all artifacts",
+                "uses": "actions/download-artifact@v4"
+              },
+              {
+                "name": "Create release for CLI",
+                "uses": "softprops/action-gh-release@v1",
+                "with": {
+                  "tag_name": "${{ github.ref_name }}",
+                  "name": "taco/cli/${{ steps.meta.outputs.version }}",
+                  "body": "## Taco CLI ${{ steps.meta.outputs.version }}\n\n### Downloads\n- **Linux AMD64**: [taco-linux-amd64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-linux-amd64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-linux-amd64.sha256))\n- **Linux ARM64**: [taco-linux-arm64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-linux-arm64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-linux-arm64.sha256))\n- **Linux 386**: [taco-linux-386](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-linux-386) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-linux-386.sha256))\n- **macOS AMD64**: [taco-darwin-amd64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-darwin-amd64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-darwin-amd64.sha256))\n- **macOS ARM64**: [taco-darwin-arm64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-darwin-arm64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-darwin-arm64.sha256))\n- **Windows AMD64**: [taco-windows-amd64.exe](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-windows-amd64.exe) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-windows-amd64.exe.sha256))\n- **Windows 386**: [taco-windows-386.exe](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-windows-386.exe) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-windows-386.exe.sha256))\n\n### Installation\nDownload the appropriate binary for your platform and make it executable:\n```bash\nchmod +x taco-<platform>-<arch>\nsudo mv taco-<platform>-<arch> /usr/local/bin/taco\n```\n",
+                  "files": "taco-cli-*/*\n",
+                  "draft": false,
+                  "prerelease": false
+                }
+              }
+            ]
+          },
+          "create-release-statesman": {
+            "if": "startsWith(github.ref_name, 'taco/cmd/statesman/')",
+            "needs": [
+              "build",
+              "build-docker"
+            ],
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Derive app dir and version",
+                "id": "meta",
+                "run": "TAG=\"${GITHUB_REF_NAME}\"          # e.g. taco/cmd/statesman/v1.2.3\nAPP_DIR=\"${TAG%/v*}\"              # taco/cmd/statesman\nVERSION=\"${TAG##*/}\"              # v1.2.3\necho \"app_dir=$APP_DIR\" >> $GITHUB_OUTPUT\necho \"version=$VERSION\" >> $GITHUB_OUTPUT\n"
+              },
+              {
+                "name": "Download all artifacts",
+                "uses": "actions/download-artifact@v4"
+              },
+              {
+                "name": "Create release for Statesman",
+                "uses": "softprops/action-gh-release@v1",
+                "with": {
+                  "tag_name": "${{ github.ref_name }}",
+                  "name": "taco/statesman/${{ steps.meta.outputs.version }}",
+                  "body": "## Taco Statesman ${{ steps.meta.outputs.version }}\n\n### Downloads\n- **Linux AMD64**: [statesman-linux-amd64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-linux-amd64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-linux-amd64.sha256))\n- **Linux ARM64**: [statesman-linux-arm64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-linux-arm64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-linux-arm64.sha256))\n- **Linux 386**: [statesman-linux-386](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-linux-386) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-linux-386.sha256))\n- **macOS AMD64**: [statesman-darwin-amd64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-darwin-amd64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-darwin-amd64.sha256))\n- **macOS ARM64**: [statesman-darwin-arm64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-darwin-arm64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-darwin-arm64.sha256))\n- **Windows AMD64**: [statesman-windows-amd64.exe](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-windows-amd64.exe) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-windows-amd64.exe.sha256))\n- **Windows 386**: [statesman-windows-386.exe](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-windows-386.exe) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-windows-386.exe.sha256))\n\n### Docker\n```bash\ndocker pull ghcr.io/${{ github.repository }}/taco-statesman:${{ steps.meta.outputs.version }}\n```\n\n### Installation\nDownload the appropriate binary for your platform and make it executable:\n```bash\nchmod +x statesman-<platform>-<arch>\nsudo mv statesman-<platform>-<arch> /usr/local/bin/statesman\n```\n",
+                  "files": "taco-statesman-*/*\n",
+                  "draft": false,
+                  "prerelease": false
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-09-18T21-29-18Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "taco-release__2025-09-18T21-29-18Z__32c89a11694f0c21c907ecbefd46294f960dffcc.yml",
+          "workflow_name": "taco-release",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "packages": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 256,
+          "num_jobs": 4,
+          "steps_per_job": {
+            "build": 7,
+            "build-docker": 7,
+            "create-release-cli": 4,
+            "create-release-statesman": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 4,
+            "num_dependencies_between_jobs": 3,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 7,
+              "build-docker": 7,
+              "create-release-cli": 4,
+              "create-release-statesman": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 16,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/download-artifact@v4",
+              "actions/setup-go@v5",
+              "actions/upload-artifact@v4",
+              "docker/build-push-action@v5",
+              "docker/login-action@v3",
+              "docker/metadata-action@v5",
+              "docker/setup-buildx-action@v3",
+              "softprops/action-gh-release@v1"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 4,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "taco-release",
+        "true": {
+          "push": {
+            "tags": [
+              "taco/cli/v*",
+              "taco/statesman/v*"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "packages": "write"
+        },
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-latest",
+            "strategy": {
+              "matrix": {
+                "include": [
+                  {
+                    "os": "linux",
+                    "arch": "amd64",
+                    "goos": "linux",
+                    "goarch": "amd64"
+                  },
+                  {
+                    "os": "linux",
+                    "arch": "arm64",
+                    "goos": "linux",
+                    "goarch": "arm64"
+                  },
+                  {
+                    "os": "linux",
+                    "arch": 386,
+                    "goos": "linux",
+                    "goarch": 386
+                  },
+                  {
+                    "os": "darwin",
+                    "arch": "amd64",
+                    "goos": "darwin",
+                    "goarch": "amd64"
+                  },
+                  {
+                    "os": "darwin",
+                    "arch": "arm64",
+                    "goos": "darwin",
+                    "goarch": "arm64"
+                  },
+                  {
+                    "os": "windows",
+                    "arch": "amd64",
+                    "goos": "windows",
+                    "goarch": "amd64"
+                  },
+                  {
+                    "os": "windows",
+                    "arch": 386,
+                    "goos": "windows",
+                    "goarch": 386
+                  }
+                ]
+              }
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.24"
+                }
+              },
+              {
+                "name": "Derive app dir and version",
+                "id": "meta",
+                "run": "TAG=\"${GITHUB_REF_NAME}\"          # e.g. taco/cli/v1.2.3\nAPP_DIR=\"${TAG%/v*}\"              # taco/cli\nVERSION=\"${TAG##*/}\"              # v1.2.3\necho \"app_dir=$APP_DIR\" >> $GITHUB_OUTPUT\necho \"version=$VERSION\" >> $GITHUB_OUTPUT\n# Map to actual directory paths\nif [ \"$APP_DIR\" = \"taco/cli\" ]; then\n  echo \"build_dir=taco/cmd/taco\" >> $GITHUB_OUTPUT\nelif [ \"$APP_DIR\" = \"taco/statesman\" ]; then\n  echo \"build_dir=taco/cmd/statesman\" >> $GITHUB_OUTPUT\nfi\n"
+              },
+              {
+                "name": "Build CLI",
+                "if": "startsWith(steps.meta.outputs.app_dir, 'taco/cli')",
+                "working-directory": "${{ steps.meta.outputs.build_dir }}",
+                "run": "CGO_ENABLED=0 GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build \\\n  -ldflags=\"-X 'main.Version=${{ steps.meta.outputs.version }}' -X 'main.Commit=${{ github.sha }}' -s -w\" \\\n  -o taco-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }} .\nsha256sum taco-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }} > taco-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }}.sha256\n"
+              },
+              {
+                "name": "Build Statesman",
+                "if": "startsWith(steps.meta.outputs.app_dir, 'taco/statesman')",
+                "working-directory": "${{ steps.meta.outputs.build_dir }}",
+                "run": "CGO_ENABLED=0 GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build \\\n  -ldflags=\"-X 'main.Version=${{ steps.meta.outputs.version }}' -X 'main.Commit=${{ github.sha }}' -s -w\" \\\n  -o statesman-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }} .\nsha256sum statesman-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }} > statesman-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }}.sha256\n"
+              },
+              {
+                "name": "Upload CLI artifacts",
+                "if": "startsWith(steps.meta.outputs.app_dir, 'taco/cli')",
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "taco-cli-${{ matrix.os }}-${{ matrix.arch }}",
+                  "path": "${{ steps.meta.outputs.build_dir }}/taco-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }}*"
+                }
+              },
+              {
+                "name": "Upload Statesman artifacts",
+                "if": "startsWith(steps.meta.outputs.app_dir, 'taco/statesman')",
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "taco-statesman-${{ matrix.os }}-${{ matrix.arch }}",
+                  "path": "${{ steps.meta.outputs.build_dir }}/statesman-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }}*"
+                }
+              }
+            ]
+          },
+          "build-docker": {
+            "if": "startsWith(github.ref_name, 'taco/statesman/')",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.24"
+                }
+              },
+              {
+                "name": "Derive version",
+                "id": "meta",
+                "run": "TAG=\"${GITHUB_REF_NAME}\"          # e.g. taco/statesman/v1.2.3\nVERSION=\"${TAG##*/}\"              # v1.2.3\necho \"version=$VERSION\" >> $GITHUB_OUTPUT\n"
+              },
+              {
+                "name": "Set up Docker Buildx",
+                "uses": "docker/setup-buildx-action@v3"
+              },
+              {
+                "name": "Log in to Container Registry",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.actor }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Extract metadata",
+                "id": "docker-meta",
+                "uses": "docker/metadata-action@v5",
+                "with": {
+                  "images": "ghcr.io/${{ github.repository }}/taco-statesman",
+                  "tags": "type=ref,event=tag\ntype=semver,pattern={{version}}\ntype=semver,pattern={{major}}.{{minor}}\ntype=raw,value=latest\n"
+                }
+              },
+              {
+                "name": "Build and push Docker image",
+                "uses": "docker/build-push-action@v5",
+                "with": {
+                  "context": "./taco",
+                  "file": "./taco/Dockerfile_statesman",
+                  "push": true,
+                  "tags": "${{ steps.docker-meta.outputs.tags }}",
+                  "labels": "${{ steps.docker-meta.outputs.labels }}",
+                  "build-args": "COMMIT_SHA=${{ github.sha }}\nVERSION=${{ steps.meta.outputs.version }}\n"
+                }
+              }
+            ]
+          },
+          "create-release-cli": {
+            "if": "startsWith(github.ref_name, 'taco/cli/')",
+            "needs": [
+              "build"
+            ],
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Derive app dir and version",
+                "id": "meta",
+                "run": "TAG=\"${GITHUB_REF_NAME}\"          # e.g. taco/cli/v1.2.3\nAPP_DIR=\"${TAG%/v*}\"              # taco/cli\nVERSION=\"${TAG##*/}\"              # v1.2.3\necho \"app_dir=$APP_DIR\" >> $GITHUB_OUTPUT\necho \"version=$VERSION\" >> $GITHUB_OUTPUT\n"
+              },
+              {
+                "name": "Download all artifacts",
+                "uses": "actions/download-artifact@v4"
+              },
+              {
+                "name": "Create release for CLI",
+                "uses": "softprops/action-gh-release@v1",
+                "with": {
+                  "tag_name": "${{ github.ref_name }}",
+                  "name": "taco/cli/${{ steps.meta.outputs.version }}",
+                  "body": "## Taco CLI ${{ steps.meta.outputs.version }}\n\n### Downloads\n- **Linux AMD64**: [taco-linux-amd64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-linux-amd64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-linux-amd64.sha256))\n- **Linux ARM64**: [taco-linux-arm64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-linux-arm64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-linux-arm64.sha256))\n- **Linux 386**: [taco-linux-386](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-linux-386) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-linux-386.sha256))\n- **macOS AMD64**: [taco-darwin-amd64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-darwin-amd64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-darwin-amd64.sha256))\n- **macOS ARM64**: [taco-darwin-arm64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-darwin-arm64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-darwin-arm64.sha256))\n- **Windows AMD64**: [taco-windows-amd64.exe](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-windows-amd64.exe) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-windows-amd64.exe.sha256))\n- **Windows 386**: [taco-windows-386.exe](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-windows-386.exe) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-windows-386.exe.sha256))\n\n### Installation\nDownload the appropriate binary for your platform and make it executable:\n```bash\nchmod +x taco-<platform>-<arch>\nsudo mv taco-<platform>-<arch> /usr/local/bin/taco\n```\n",
+                  "files": "taco-cli-*/*\n",
+                  "draft": false,
+                  "prerelease": false
+                }
+              }
+            ]
+          },
+          "create-release-statesman": {
+            "if": "startsWith(github.ref_name, 'taco/statesman/')",
+            "needs": [
+              "build",
+              "build-docker"
+            ],
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Derive app dir and version",
+                "id": "meta",
+                "run": "TAG=\"${GITHUB_REF_NAME}\"          # e.g. taco/statesman/v1.2.3\nAPP_DIR=\"${TAG%/v*}\"              # taco/statesman\nVERSION=\"${TAG##*/}\"              # v1.2.3\necho \"app_dir=$APP_DIR\" >> $GITHUB_OUTPUT\necho \"version=$VERSION\" >> $GITHUB_OUTPUT\n"
+              },
+              {
+                "name": "Download all artifacts",
+                "uses": "actions/download-artifact@v4"
+              },
+              {
+                "name": "Create release for Statesman",
+                "uses": "softprops/action-gh-release@v1",
+                "with": {
+                  "tag_name": "${{ github.ref_name }}",
+                  "name": "taco/statesman/${{ steps.meta.outputs.version }}",
+                  "body": "## Taco Statesman ${{ steps.meta.outputs.version }}\n\n### Downloads\n- **Linux AMD64**: [statesman-linux-amd64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-linux-amd64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-linux-amd64.sha256))\n- **Linux ARM64**: [statesman-linux-arm64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-linux-arm64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-linux-arm64.sha256))\n- **Linux 386**: [statesman-linux-386](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-linux-386) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-linux-386.sha256))\n- **macOS AMD64**: [statesman-darwin-amd64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-darwin-amd64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-darwin-amd64.sha256))\n- **macOS ARM64**: [statesman-darwin-arm64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-darwin-arm64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-darwin-arm64.sha256))\n- **Windows AMD64**: [statesman-windows-amd64.exe](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-windows-amd64.exe) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-windows-amd64.exe.sha256))\n- **Windows 386**: [statesman-windows-386.exe](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-windows-386.exe) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-windows-386.exe.sha256))\n\n### Docker\n```bash\ndocker pull ghcr.io/${{ github.repository }}/taco-statesman:${{ steps.meta.outputs.version }}\n```\n\n### Installation\nDownload the appropriate binary for your platform and make it executable:\n```bash\nchmod +x statesman-<platform>-<arch>\nsudo mv statesman-<platform>-<arch> /usr/local/bin/statesman\n```\n",
+                  "files": "taco-statesman-*/*\n",
+                  "draft": false,
+                  "prerelease": false
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-09-19T16-25-59Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "taco-release__2025-09-19T16-25-59Z__ad0249c4fe8a130cf6bec65d4a3bc5f35b8a0c55.yml",
+          "workflow_name": "taco-release",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "packages": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 263,
+          "num_jobs": 4,
+          "steps_per_job": {
+            "build": 8,
+            "build-docker": 7,
+            "create-release-cli": 4,
+            "create-release-statesman": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 4,
+            "num_dependencies_between_jobs": 3,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 8,
+              "build-docker": 7,
+              "create-release-cli": 4,
+              "create-release-statesman": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 16,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/download-artifact@v4",
+              "actions/setup-go@v5",
+              "actions/upload-artifact@v4",
+              "docker/build-push-action@v5",
+              "docker/login-action@v3",
+              "docker/metadata-action@v5",
+              "docker/setup-buildx-action@v3",
+              "softprops/action-gh-release@v1"
+            ],
+            "num_run_commands": 7,
+            "steps_with_conditionals": 4,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "taco-release",
+        "true": {
+          "push": {
+            "tags": [
+              "taco/cli/v*",
+              "taco/statesman/v*"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "packages": "write"
+        },
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-latest",
+            "strategy": {
+              "matrix": {
+                "include": [
+                  {
+                    "os": "linux",
+                    "arch": "amd64",
+                    "goos": "linux",
+                    "goarch": "amd64"
+                  },
+                  {
+                    "os": "linux",
+                    "arch": "arm64",
+                    "goos": "linux",
+                    "goarch": "arm64"
+                  },
+                  {
+                    "os": "linux",
+                    "arch": 386,
+                    "goos": "linux",
+                    "goarch": 386
+                  },
+                  {
+                    "os": "darwin",
+                    "arch": "amd64",
+                    "goos": "darwin",
+                    "goarch": "amd64"
+                  },
+                  {
+                    "os": "darwin",
+                    "arch": "arm64",
+                    "goos": "darwin",
+                    "goarch": "arm64"
+                  },
+                  {
+                    "os": "windows",
+                    "arch": "amd64",
+                    "goos": "windows",
+                    "goarch": "amd64"
+                  },
+                  {
+                    "os": "windows",
+                    "arch": 386,
+                    "goos": "windows",
+                    "goarch": 386
+                  }
+                ]
+              }
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.24"
+                }
+              },
+              {
+                "name": "Clean build directory",
+                "run": "# Remove any existing binaries to prevent contamination\nfind . -name \"dgctl*\" -type f -delete || true\nfind . -name \"taco*\" -type f -executable -delete || true\nfind . -name \"statesman*\" -type f -executable -delete || true\n"
+              },
+              {
+                "name": "Derive app dir and version",
+                "id": "meta",
+                "run": "TAG=\"${GITHUB_REF_NAME}\"          # e.g. taco/cli/v1.2.3\nAPP_DIR=\"${TAG%/v*}\"              # taco/cli\nVERSION=\"${TAG##*/}\"              # v1.2.3\necho \"app_dir=$APP_DIR\" >> $GITHUB_OUTPUT\necho \"version=$VERSION\" >> $GITHUB_OUTPUT\n# Map to actual directory paths\nif [ \"$APP_DIR\" = \"taco/cli\" ]; then\n  echo \"build_dir=taco/cmd/taco\" >> $GITHUB_OUTPUT\nelif [ \"$APP_DIR\" = \"taco/statesman\" ]; then\n  echo \"build_dir=taco/cmd/statesman\" >> $GITHUB_OUTPUT\nfi\n"
+              },
+              {
+                "name": "Build CLI",
+                "if": "startsWith(steps.meta.outputs.app_dir, 'taco/cli')",
+                "working-directory": "${{ steps.meta.outputs.build_dir }}",
+                "run": "CGO_ENABLED=0 GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build \\\n  -ldflags=\"-X 'main.Version=${{ steps.meta.outputs.version }}' -X 'main.Commit=${{ github.sha }}' -s -w\" \\\n  -o taco-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }} .\nsha256sum taco-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }} > taco-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }}.sha256\n"
+              },
+              {
+                "name": "Build Statesman",
+                "if": "startsWith(steps.meta.outputs.app_dir, 'taco/statesman')",
+                "working-directory": "${{ steps.meta.outputs.build_dir }}",
+                "run": "CGO_ENABLED=0 GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build \\\n  -ldflags=\"-X 'main.Version=${{ steps.meta.outputs.version }}' -X 'main.Commit=${{ github.sha }}' -s -w\" \\\n  -o statesman-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }} .\nsha256sum statesman-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }} > statesman-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }}.sha256\n"
+              },
+              {
+                "name": "Upload CLI artifacts",
+                "if": "startsWith(steps.meta.outputs.app_dir, 'taco/cli')",
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "taco-cli-${{ matrix.os }}-${{ matrix.arch }}",
+                  "path": "${{ steps.meta.outputs.build_dir }}/taco-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }}*"
+                }
+              },
+              {
+                "name": "Upload Statesman artifacts",
+                "if": "startsWith(steps.meta.outputs.app_dir, 'taco/statesman')",
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "taco-statesman-${{ matrix.os }}-${{ matrix.arch }}",
+                  "path": "${{ steps.meta.outputs.build_dir }}/statesman-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }}*"
+                }
+              }
+            ]
+          },
+          "build-docker": {
+            "if": "startsWith(github.ref_name, 'taco/statesman/')",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.24"
+                }
+              },
+              {
+                "name": "Derive version",
+                "id": "meta",
+                "run": "TAG=\"${GITHUB_REF_NAME}\"          # e.g. taco/statesman/v1.2.3\nVERSION=\"${TAG##*/}\"              # v1.2.3\necho \"version=$VERSION\" >> $GITHUB_OUTPUT\n"
+              },
+              {
+                "name": "Set up Docker Buildx",
+                "uses": "docker/setup-buildx-action@v3"
+              },
+              {
+                "name": "Log in to Container Registry",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.actor }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Extract metadata",
+                "id": "docker-meta",
+                "uses": "docker/metadata-action@v5",
+                "with": {
+                  "images": "ghcr.io/${{ github.repository }}/taco-statesman",
+                  "tags": "type=ref,event=tag\ntype=semver,pattern={{version}}\ntype=semver,pattern={{major}}.{{minor}}\ntype=raw,value=latest\n"
+                }
+              },
+              {
+                "name": "Build and push Docker image",
+                "uses": "docker/build-push-action@v5",
+                "with": {
+                  "context": "./taco",
+                  "file": "./taco/Dockerfile_statesman",
+                  "push": true,
+                  "tags": "${{ steps.docker-meta.outputs.tags }}",
+                  "labels": "${{ steps.docker-meta.outputs.labels }}",
+                  "build-args": "COMMIT_SHA=${{ github.sha }}\nVERSION=${{ steps.meta.outputs.version }}\n"
+                }
+              }
+            ]
+          },
+          "create-release-cli": {
+            "if": "startsWith(github.ref_name, 'taco/cli/')",
+            "needs": [
+              "build"
+            ],
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Derive app dir and version",
+                "id": "meta",
+                "run": "TAG=\"${GITHUB_REF_NAME}\"          # e.g. taco/cli/v1.2.3\nAPP_DIR=\"${TAG%/v*}\"              # taco/cli\nVERSION=\"${TAG##*/}\"              # v1.2.3\necho \"app_dir=$APP_DIR\" >> $GITHUB_OUTPUT\necho \"version=$VERSION\" >> $GITHUB_OUTPUT\n"
+              },
+              {
+                "name": "Download all artifacts",
+                "uses": "actions/download-artifact@v4"
+              },
+              {
+                "name": "Create release for CLI",
+                "uses": "softprops/action-gh-release@v1",
+                "with": {
+                  "tag_name": "${{ github.ref_name }}",
+                  "name": "taco/cli/${{ steps.meta.outputs.version }}",
+                  "body": "## Taco CLI ${{ steps.meta.outputs.version }}\n\n### Downloads\n- **Linux AMD64**: [taco-linux-amd64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-linux-amd64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-linux-amd64.sha256))\n- **Linux ARM64**: [taco-linux-arm64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-linux-arm64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-linux-arm64.sha256))\n- **Linux 386**: [taco-linux-386](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-linux-386) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-linux-386.sha256))\n- **macOS AMD64**: [taco-darwin-amd64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-darwin-amd64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-darwin-amd64.sha256))\n- **macOS ARM64**: [taco-darwin-arm64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-darwin-arm64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-darwin-arm64.sha256))\n- **Windows AMD64**: [taco-windows-amd64.exe](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-windows-amd64.exe) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-windows-amd64.exe.sha256))\n- **Windows 386**: [taco-windows-386.exe](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-windows-386.exe) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-windows-386.exe.sha256))\n\n### Installation\nDownload the appropriate binary for your platform and make it executable:\n```bash\nchmod +x taco-<platform>-<arch>\nsudo mv taco-<platform>-<arch> /usr/local/bin/taco\n```\n",
+                  "files": "taco-cli-*/*\n",
+                  "draft": false,
+                  "prerelease": false
+                }
+              }
+            ]
+          },
+          "create-release-statesman": {
+            "if": "startsWith(github.ref_name, 'taco/statesman/')",
+            "needs": [
+              "build",
+              "build-docker"
+            ],
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Derive app dir and version",
+                "id": "meta",
+                "run": "TAG=\"${GITHUB_REF_NAME}\"          # e.g. taco/statesman/v1.2.3\nAPP_DIR=\"${TAG%/v*}\"              # taco/statesman\nVERSION=\"${TAG##*/}\"              # v1.2.3\necho \"app_dir=$APP_DIR\" >> $GITHUB_OUTPUT\necho \"version=$VERSION\" >> $GITHUB_OUTPUT\n"
+              },
+              {
+                "name": "Download all artifacts",
+                "uses": "actions/download-artifact@v4"
+              },
+              {
+                "name": "Create release for Statesman",
+                "uses": "softprops/action-gh-release@v1",
+                "with": {
+                  "tag_name": "${{ github.ref_name }}",
+                  "name": "taco/statesman/${{ steps.meta.outputs.version }}",
+                  "body": "## Taco Statesman ${{ steps.meta.outputs.version }}\n\n### Downloads\n- **Linux AMD64**: [statesman-linux-amd64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-linux-amd64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-linux-amd64.sha256))\n- **Linux ARM64**: [statesman-linux-arm64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-linux-arm64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-linux-arm64.sha256))\n- **Linux 386**: [statesman-linux-386](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-linux-386) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-linux-386.sha256))\n- **macOS AMD64**: [statesman-darwin-amd64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-darwin-amd64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-darwin-amd64.sha256))\n- **macOS ARM64**: [statesman-darwin-arm64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-darwin-arm64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-darwin-arm64.sha256))\n- **Windows AMD64**: [statesman-windows-amd64.exe](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-windows-amd64.exe) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-windows-amd64.exe.sha256))\n- **Windows 386**: [statesman-windows-386.exe](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-windows-386.exe) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-windows-386.exe.sha256))\n\n### Docker\n```bash\ndocker pull ghcr.io/${{ github.repository }}/taco-statesman:${{ steps.meta.outputs.version }}\n```\n\n### Installation\nDownload the appropriate binary for your platform and make it executable:\n```bash\nchmod +x statesman-<platform>-<arch>\nsudo mv statesman-<platform>-<arch> /usr/local/bin/statesman\n```\n",
+                  "files": "taco-statesman-*/*\n",
+                  "draft": false,
+                  "prerelease": false
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-09-19T19-18-33Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "taco-release__2025-09-19T19-18-33Z__36b38c583fd1c5c7116bd4317842dfefb1daa58c.yml",
+          "workflow_name": "taco-release",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "packages": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 264,
+          "num_jobs": 4,
+          "steps_per_job": {
+            "build": 8,
+            "build-docker": 7,
+            "create-release-cli": 4,
+            "create-release-statesman": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 4,
+            "num_dependencies_between_jobs": 3,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 8,
+              "build-docker": 7,
+              "create-release-cli": 4,
+              "create-release-statesman": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 16,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/download-artifact@v4",
+              "actions/setup-go@v5",
+              "actions/upload-artifact@v4",
+              "docker/build-push-action@v5",
+              "docker/login-action@v3",
+              "docker/metadata-action@v5",
+              "docker/setup-buildx-action@v3",
+              "softprops/action-gh-release@v1"
+            ],
+            "num_run_commands": 7,
+            "steps_with_conditionals": 4,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "taco-release",
+        "true": {
+          "push": {
+            "tags": [
+              "taco/cli/v*",
+              "taco/statesman/v*"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "packages": "write"
+        },
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-latest",
+            "strategy": {
+              "matrix": {
+                "include": [
+                  {
+                    "os": "linux",
+                    "arch": "amd64",
+                    "goos": "linux",
+                    "goarch": "amd64"
+                  },
+                  {
+                    "os": "linux",
+                    "arch": "arm64",
+                    "goos": "linux",
+                    "goarch": "arm64"
+                  },
+                  {
+                    "os": "linux",
+                    "arch": 386,
+                    "goos": "linux",
+                    "goarch": 386
+                  },
+                  {
+                    "os": "darwin",
+                    "arch": "amd64",
+                    "goos": "darwin",
+                    "goarch": "amd64"
+                  },
+                  {
+                    "os": "darwin",
+                    "arch": "arm64",
+                    "goos": "darwin",
+                    "goarch": "arm64"
+                  },
+                  {
+                    "os": "windows",
+                    "arch": "amd64",
+                    "goos": "windows",
+                    "goarch": "amd64"
+                  },
+                  {
+                    "os": "windows",
+                    "arch": 386,
+                    "goos": "windows",
+                    "goarch": 386
+                  }
+                ]
+              }
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.24"
+                }
+              },
+              {
+                "name": "Clean build directory",
+                "run": "# Remove any existing binaries to prevent contamination\nfind . -name \"dgctl*\" -type f -delete || true\nfind . -name \"taco*\" -type f -executable -delete || true\nfind . -name \"statesman*\" -type f -executable -delete || true\n"
+              },
+              {
+                "name": "Derive app dir and version",
+                "id": "meta",
+                "run": "TAG=\"${GITHUB_REF_NAME}\"          # e.g. taco/cli/v1.2.3\nAPP_DIR=\"${TAG%/v*}\"              # taco/cli\nVERSION=\"${TAG##*/}\"              # v1.2.3\necho \"app_dir=$APP_DIR\" >> $GITHUB_OUTPUT\necho \"version=$VERSION\" >> $GITHUB_OUTPUT\n# Map to actual directory paths\nif [ \"$APP_DIR\" = \"taco/cli\" ]; then\n  echo \"build_dir=taco/cmd/taco\" >> $GITHUB_OUTPUT\nelif [ \"$APP_DIR\" = \"taco/statesman\" ]; then\n  echo \"build_dir=taco/cmd/statesman\" >> $GITHUB_OUTPUT\nfi\n"
+              },
+              {
+                "name": "Build CLI",
+                "if": "startsWith(steps.meta.outputs.app_dir, 'taco/cli')",
+                "working-directory": "${{ steps.meta.outputs.build_dir }}",
+                "run": "CGO_ENABLED=0 GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build \\\n  -ldflags=\"-X 'main.Version=${{ steps.meta.outputs.version }}' -X 'main.Commit=${{ github.sha }}' -s -w\" \\\n  -o taco-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }} .\nsha256sum taco-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }} > taco-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }}.sha256\n"
+              },
+              {
+                "name": "Build Statesman",
+                "if": "startsWith(steps.meta.outputs.app_dir, 'taco/statesman')",
+                "working-directory": "${{ steps.meta.outputs.build_dir }}",
+                "run": "CGO_ENABLED=0 GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build \\\n  -ldflags=\"-X 'main.Version=${{ steps.meta.outputs.version }}' -X 'main.Commit=${{ github.sha }}' -s -w\" \\\n  -o statesman-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }} .\nsha256sum statesman-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }} > statesman-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }}.sha256\n"
+              },
+              {
+                "name": "Upload CLI artifacts",
+                "if": "startsWith(steps.meta.outputs.app_dir, 'taco/cli')",
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "taco-cli-${{ matrix.os }}-${{ matrix.arch }}",
+                  "path": "${{ steps.meta.outputs.build_dir }}/taco-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }}*"
+                }
+              },
+              {
+                "name": "Upload Statesman artifacts",
+                "if": "startsWith(steps.meta.outputs.app_dir, 'taco/statesman')",
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "taco-statesman-${{ matrix.os }}-${{ matrix.arch }}",
+                  "path": "${{ steps.meta.outputs.build_dir }}/statesman-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }}*"
+                }
+              }
+            ]
+          },
+          "build-docker": {
+            "if": "startsWith(github.ref_name, 'taco/statesman/')",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.24"
+                }
+              },
+              {
+                "name": "Derive version",
+                "id": "meta",
+                "run": "TAG=\"${GITHUB_REF_NAME}\"          # e.g. taco/statesman/v1.2.3\nVERSION=\"${TAG##*/}\"              # v1.2.3\necho \"version=$VERSION\" >> $GITHUB_OUTPUT\n"
+              },
+              {
+                "name": "Set up Docker Buildx",
+                "uses": "docker/setup-buildx-action@v3"
+              },
+              {
+                "name": "Log in to Container Registry",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.actor }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Extract metadata",
+                "id": "docker-meta",
+                "uses": "docker/metadata-action@v5",
+                "with": {
+                  "images": "ghcr.io/${{ github.repository }}/taco-statesman",
+                  "tags": "type=ref,event=tag\ntype=semver,pattern={{version}}\ntype=semver,pattern={{major}}.{{minor}}\ntype=raw,value=latest\n"
+                }
+              },
+              {
+                "name": "Build and push Docker image",
+                "uses": "docker/build-push-action@v5",
+                "with": {
+                  "context": "./taco",
+                  "file": "./taco/Dockerfile_statesman",
+                  "push": true,
+                  "platforms": "linux/amd64,linux/arm64,linux/386",
+                  "tags": "${{ steps.docker-meta.outputs.tags }}",
+                  "labels": "${{ steps.docker-meta.outputs.labels }}",
+                  "build-args": "COMMIT_SHA=${{ github.sha }}\nVERSION=${{ steps.meta.outputs.version }}\n"
+                }
+              }
+            ]
+          },
+          "create-release-cli": {
+            "if": "startsWith(github.ref_name, 'taco/cli/')",
+            "needs": [
+              "build"
+            ],
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Derive app dir and version",
+                "id": "meta",
+                "run": "TAG=\"${GITHUB_REF_NAME}\"          # e.g. taco/cli/v1.2.3\nAPP_DIR=\"${TAG%/v*}\"              # taco/cli\nVERSION=\"${TAG##*/}\"              # v1.2.3\necho \"app_dir=$APP_DIR\" >> $GITHUB_OUTPUT\necho \"version=$VERSION\" >> $GITHUB_OUTPUT\n"
+              },
+              {
+                "name": "Download all artifacts",
+                "uses": "actions/download-artifact@v4"
+              },
+              {
+                "name": "Create release for CLI",
+                "uses": "softprops/action-gh-release@v1",
+                "with": {
+                  "tag_name": "${{ github.ref_name }}",
+                  "name": "taco/cli/${{ steps.meta.outputs.version }}",
+                  "body": "## Taco CLI ${{ steps.meta.outputs.version }}\n\n### Downloads\n- **Linux AMD64**: [taco-linux-amd64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-linux-amd64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-linux-amd64.sha256))\n- **Linux ARM64**: [taco-linux-arm64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-linux-arm64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-linux-arm64.sha256))\n- **Linux 386**: [taco-linux-386](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-linux-386) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-linux-386.sha256))\n- **macOS AMD64**: [taco-darwin-amd64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-darwin-amd64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-darwin-amd64.sha256))\n- **macOS ARM64**: [taco-darwin-arm64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-darwin-arm64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-darwin-arm64.sha256))\n- **Windows AMD64**: [taco-windows-amd64.exe](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-windows-amd64.exe) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-windows-amd64.exe.sha256))\n- **Windows 386**: [taco-windows-386.exe](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-windows-386.exe) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-windows-386.exe.sha256))\n\n### Installation\nDownload the appropriate binary for your platform and make it executable:\n```bash\nchmod +x taco-<platform>-<arch>\nsudo mv taco-<platform>-<arch> /usr/local/bin/taco\n```\n",
+                  "files": "taco-cli-*/*\n",
+                  "draft": false,
+                  "prerelease": false
+                }
+              }
+            ]
+          },
+          "create-release-statesman": {
+            "if": "startsWith(github.ref_name, 'taco/statesman/')",
+            "needs": [
+              "build",
+              "build-docker"
+            ],
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Derive app dir and version",
+                "id": "meta",
+                "run": "TAG=\"${GITHUB_REF_NAME}\"          # e.g. taco/statesman/v1.2.3\nAPP_DIR=\"${TAG%/v*}\"              # taco/statesman\nVERSION=\"${TAG##*/}\"              # v1.2.3\necho \"app_dir=$APP_DIR\" >> $GITHUB_OUTPUT\necho \"version=$VERSION\" >> $GITHUB_OUTPUT\n"
+              },
+              {
+                "name": "Download all artifacts",
+                "uses": "actions/download-artifact@v4"
+              },
+              {
+                "name": "Create release for Statesman",
+                "uses": "softprops/action-gh-release@v1",
+                "with": {
+                  "tag_name": "${{ github.ref_name }}",
+                  "name": "taco/statesman/${{ steps.meta.outputs.version }}",
+                  "body": "## Taco Statesman ${{ steps.meta.outputs.version }}\n\n### Downloads\n- **Linux AMD64**: [statesman-linux-amd64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-linux-amd64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-linux-amd64.sha256))\n- **Linux ARM64**: [statesman-linux-arm64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-linux-arm64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-linux-arm64.sha256))\n- **Linux 386**: [statesman-linux-386](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-linux-386) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-linux-386.sha256))\n- **macOS AMD64**: [statesman-darwin-amd64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-darwin-amd64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-darwin-amd64.sha256))\n- **macOS ARM64**: [statesman-darwin-arm64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-darwin-arm64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-darwin-arm64.sha256))\n- **Windows AMD64**: [statesman-windows-amd64.exe](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-windows-amd64.exe) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-windows-amd64.exe.sha256))\n- **Windows 386**: [statesman-windows-386.exe](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-windows-386.exe) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-windows-386.exe.sha256))\n\n### Docker\n```bash\ndocker pull ghcr.io/${{ github.repository }}/taco-statesman:${{ steps.meta.outputs.version }}\n```\n\n### Installation\nDownload the appropriate binary for your platform and make it executable:\n```bash\nchmod +x statesman-<platform>-<arch>\nsudo mv statesman-<platform>-<arch> /usr/local/bin/statesman\n```\n",
+                  "files": "taco-statesman-*/*\n",
+                  "draft": false,
+                  "prerelease": false
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-09-19T19-35-58Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "taco-release__2025-09-19T19-35-58Z__1cb69dba7224c1bcfbae1bde2a11c979631ce8bf.yml",
+          "workflow_name": "taco-release",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "packages": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 264,
+          "num_jobs": 4,
+          "steps_per_job": {
+            "build": 8,
+            "build-docker": 7,
+            "create-release-cli": 4,
+            "create-release-statesman": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 4,
+            "num_dependencies_between_jobs": 3,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 8,
+              "build-docker": 7,
+              "create-release-cli": 4,
+              "create-release-statesman": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 16,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/download-artifact@v4",
+              "actions/setup-go@v5",
+              "actions/upload-artifact@v4",
+              "docker/build-push-action@v5",
+              "docker/login-action@v3",
+              "docker/metadata-action@v5",
+              "docker/setup-buildx-action@v3",
+              "softprops/action-gh-release@v1"
+            ],
+            "num_run_commands": 7,
+            "steps_with_conditionals": 4,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "taco-release",
+        "true": {
+          "push": {
+            "tags": [
+              "taco/cli/v*",
+              "taco/statesman/v*"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "packages": "write"
+        },
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-latest",
+            "strategy": {
+              "matrix": {
+                "include": [
+                  {
+                    "os": "linux",
+                    "arch": "amd64",
+                    "goos": "linux",
+                    "goarch": "amd64"
+                  },
+                  {
+                    "os": "linux",
+                    "arch": "arm64",
+                    "goos": "linux",
+                    "goarch": "arm64"
+                  },
+                  {
+                    "os": "linux",
+                    "arch": 386,
+                    "goos": "linux",
+                    "goarch": 386
+                  },
+                  {
+                    "os": "darwin",
+                    "arch": "amd64",
+                    "goos": "darwin",
+                    "goarch": "amd64"
+                  },
+                  {
+                    "os": "darwin",
+                    "arch": "arm64",
+                    "goos": "darwin",
+                    "goarch": "arm64"
+                  },
+                  {
+                    "os": "windows",
+                    "arch": "amd64",
+                    "goos": "windows",
+                    "goarch": "amd64"
+                  },
+                  {
+                    "os": "windows",
+                    "arch": 386,
+                    "goos": "windows",
+                    "goarch": 386
+                  }
+                ]
+              }
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.24"
+                }
+              },
+              {
+                "name": "Clean build directory",
+                "run": "# Remove any existing binaries to prevent contamination\nfind . -name \"dgctl*\" -type f -delete || true\nfind . -name \"taco*\" -type f -executable -delete || true\nfind . -name \"statesman*\" -type f -executable -delete || true\n"
+              },
+              {
+                "name": "Derive app dir and version",
+                "id": "meta",
+                "run": "TAG=\"${GITHUB_REF_NAME}\"          # e.g. taco/cli/v1.2.3\nAPP_DIR=\"${TAG%/v*}\"              # taco/cli\nVERSION=\"${TAG##*/}\"              # v1.2.3\necho \"app_dir=$APP_DIR\" >> $GITHUB_OUTPUT\necho \"version=$VERSION\" >> $GITHUB_OUTPUT\n# Map to actual directory paths\nif [ \"$APP_DIR\" = \"taco/cli\" ]; then\n  echo \"build_dir=taco/cmd/taco\" >> $GITHUB_OUTPUT\nelif [ \"$APP_DIR\" = \"taco/statesman\" ]; then\n  echo \"build_dir=taco/cmd/statesman\" >> $GITHUB_OUTPUT\nfi\n"
+              },
+              {
+                "name": "Build CLI",
+                "if": "startsWith(steps.meta.outputs.app_dir, 'taco/cli')",
+                "working-directory": "${{ steps.meta.outputs.build_dir }}",
+                "run": "CGO_ENABLED=0 GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build \\\n  -ldflags=\"-X 'main.Version=${{ steps.meta.outputs.version }}' -X 'main.Commit=${{ github.sha }}' -s -w\" \\\n  -o taco-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }} .\nsha256sum taco-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }} > taco-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }}.sha256\n"
+              },
+              {
+                "name": "Build Statesman",
+                "if": "startsWith(steps.meta.outputs.app_dir, 'taco/statesman')",
+                "working-directory": "${{ steps.meta.outputs.build_dir }}",
+                "run": "CGO_ENABLED=0 GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build \\\n  -ldflags=\"-X 'main.Version=${{ steps.meta.outputs.version }}' -X 'main.Commit=${{ github.sha }}' -s -w\" \\\n  -o statesman-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }} .\nsha256sum statesman-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }} > statesman-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }}.sha256\n"
+              },
+              {
+                "name": "Upload CLI artifacts",
+                "if": "startsWith(steps.meta.outputs.app_dir, 'taco/cli')",
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "taco-cli-${{ matrix.os }}-${{ matrix.arch }}",
+                  "path": "${{ steps.meta.outputs.build_dir }}/taco-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }}*"
+                }
+              },
+              {
+                "name": "Upload Statesman artifacts",
+                "if": "startsWith(steps.meta.outputs.app_dir, 'taco/statesman')",
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "taco-statesman-${{ matrix.os }}-${{ matrix.arch }}",
+                  "path": "${{ steps.meta.outputs.build_dir }}/statesman-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }}*"
+                }
+              }
+            ]
+          },
+          "build-docker": {
+            "if": "startsWith(github.ref_name, 'taco/statesman/')",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.24"
+                }
+              },
+              {
+                "name": "Derive version",
+                "id": "meta",
+                "run": "TAG=\"${GITHUB_REF_NAME}\"          # e.g. taco/statesman/v1.2.3\nVERSION=\"${TAG##*/}\"              # v1.2.3\necho \"version=$VERSION\" >> $GITHUB_OUTPUT\n"
+              },
+              {
+                "name": "Set up Docker Buildx",
+                "uses": "docker/setup-buildx-action@v3"
+              },
+              {
+                "name": "Log in to Container Registry",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.actor }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Extract metadata",
+                "id": "docker-meta",
+                "uses": "docker/metadata-action@v5",
+                "with": {
+                  "images": "ghcr.io/${{ github.repository }}/taco-statesman",
+                  "tags": "type=ref,event=tag\ntype=semver,pattern={{version}}\ntype=semver,pattern={{major}}.{{minor}}\ntype=raw,value=latest\n"
+                }
+              },
+              {
+                "name": "Build and push Docker image",
+                "uses": "docker/build-push-action@v5",
+                "with": {
+                  "context": "./taco",
+                  "file": "./taco/Dockerfile_statesman",
+                  "push": true,
+                  "platforms": "linux/amd64,linux/arm64",
+                  "tags": "${{ steps.docker-meta.outputs.tags }}",
+                  "labels": "${{ steps.docker-meta.outputs.labels }}",
+                  "build-args": "COMMIT_SHA=${{ github.sha }}\nVERSION=${{ steps.meta.outputs.version }}\n"
+                }
+              }
+            ]
+          },
+          "create-release-cli": {
+            "if": "startsWith(github.ref_name, 'taco/cli/')",
+            "needs": [
+              "build"
+            ],
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Derive app dir and version",
+                "id": "meta",
+                "run": "TAG=\"${GITHUB_REF_NAME}\"          # e.g. taco/cli/v1.2.3\nAPP_DIR=\"${TAG%/v*}\"              # taco/cli\nVERSION=\"${TAG##*/}\"              # v1.2.3\necho \"app_dir=$APP_DIR\" >> $GITHUB_OUTPUT\necho \"version=$VERSION\" >> $GITHUB_OUTPUT\n"
+              },
+              {
+                "name": "Download all artifacts",
+                "uses": "actions/download-artifact@v4"
+              },
+              {
+                "name": "Create release for CLI",
+                "uses": "softprops/action-gh-release@v1",
+                "with": {
+                  "tag_name": "${{ github.ref_name }}",
+                  "name": "taco/cli/${{ steps.meta.outputs.version }}",
+                  "body": "## Taco CLI ${{ steps.meta.outputs.version }}\n\n### Downloads\n- **Linux AMD64**: [taco-linux-amd64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-linux-amd64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-linux-amd64.sha256))\n- **Linux ARM64**: [taco-linux-arm64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-linux-arm64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-linux-arm64.sha256))\n- **Linux 386**: [taco-linux-386](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-linux-386) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-linux-386.sha256))\n- **macOS AMD64**: [taco-darwin-amd64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-darwin-amd64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-darwin-amd64.sha256))\n- **macOS ARM64**: [taco-darwin-arm64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-darwin-arm64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-darwin-arm64.sha256))\n- **Windows AMD64**: [taco-windows-amd64.exe](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-windows-amd64.exe) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-windows-amd64.exe.sha256))\n- **Windows 386**: [taco-windows-386.exe](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-windows-386.exe) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-windows-386.exe.sha256))\n\n### Installation\nDownload the appropriate binary for your platform and make it executable:\n```bash\nchmod +x taco-<platform>-<arch>\nsudo mv taco-<platform>-<arch> /usr/local/bin/taco\n```\n",
+                  "files": "taco-cli-*/*\n",
+                  "draft": false,
+                  "prerelease": false
+                }
+              }
+            ]
+          },
+          "create-release-statesman": {
+            "if": "startsWith(github.ref_name, 'taco/statesman/')",
+            "needs": [
+              "build",
+              "build-docker"
+            ],
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Derive app dir and version",
+                "id": "meta",
+                "run": "TAG=\"${GITHUB_REF_NAME}\"          # e.g. taco/statesman/v1.2.3\nAPP_DIR=\"${TAG%/v*}\"              # taco/statesman\nVERSION=\"${TAG##*/}\"              # v1.2.3\necho \"app_dir=$APP_DIR\" >> $GITHUB_OUTPUT\necho \"version=$VERSION\" >> $GITHUB_OUTPUT\n"
+              },
+              {
+                "name": "Download all artifacts",
+                "uses": "actions/download-artifact@v4"
+              },
+              {
+                "name": "Create release for Statesman",
+                "uses": "softprops/action-gh-release@v1",
+                "with": {
+                  "tag_name": "${{ github.ref_name }}",
+                  "name": "taco/statesman/${{ steps.meta.outputs.version }}",
+                  "body": "## Taco Statesman ${{ steps.meta.outputs.version }}\n\n### Downloads\n- **Linux AMD64**: [statesman-linux-amd64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-linux-amd64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-linux-amd64.sha256))\n- **Linux ARM64**: [statesman-linux-arm64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-linux-arm64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-linux-arm64.sha256))\n- **Linux 386**: [statesman-linux-386](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-linux-386) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-linux-386.sha256))\n- **macOS AMD64**: [statesman-darwin-amd64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-darwin-amd64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-darwin-amd64.sha256))\n- **macOS ARM64**: [statesman-darwin-arm64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-darwin-arm64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-darwin-arm64.sha256))\n- **Windows AMD64**: [statesman-windows-amd64.exe](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-windows-amd64.exe) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-windows-amd64.exe.sha256))\n- **Windows 386**: [statesman-windows-386.exe](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-windows-386.exe) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-windows-386.exe.sha256))\n\n### Docker\n```bash\ndocker pull ghcr.io/${{ github.repository }}/taco-statesman:${{ steps.meta.outputs.version }}\n```\n\n### Installation\nDownload the appropriate binary for your platform and make it executable:\n```bash\nchmod +x statesman-<platform>-<arch>\nsudo mv statesman-<platform>-<arch> /usr/local/bin/statesman\n```\n",
+                  "files": "taco-statesman-*/*\n",
+                  "draft": false,
+                  "prerelease": false
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-09-19T20-14-31Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "taco-release__2025-09-19T20-14-31Z__edae6d2a64cf0ecaae42046f1a4825eddfaa5669.yml",
+          "workflow_name": "taco-release",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "packages": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 263,
+          "num_jobs": 4,
+          "steps_per_job": {
+            "build": 8,
+            "build-docker": 7,
+            "create-release-cli": 4,
+            "create-release-statesman": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 4,
+            "num_dependencies_between_jobs": 3,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 8,
+              "build-docker": 7,
+              "create-release-cli": 4,
+              "create-release-statesman": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 16,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/download-artifact@v4",
+              "actions/setup-go@v5",
+              "actions/upload-artifact@v4",
+              "docker/build-push-action@v5",
+              "docker/login-action@v3",
+              "docker/metadata-action@v5",
+              "docker/setup-buildx-action@v3",
+              "softprops/action-gh-release@v1"
+            ],
+            "num_run_commands": 7,
+            "steps_with_conditionals": 4,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "taco-release",
+        "true": {
+          "push": {
+            "tags": [
+              "taco/cli/v*",
+              "taco/statesman/v*"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "packages": "write"
+        },
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-latest",
+            "strategy": {
+              "matrix": {
+                "include": [
+                  {
+                    "os": "linux",
+                    "arch": "amd64",
+                    "goos": "linux",
+                    "goarch": "amd64"
+                  },
+                  {
+                    "os": "linux",
+                    "arch": "arm64",
+                    "goos": "linux",
+                    "goarch": "arm64"
+                  },
+                  {
+                    "os": "linux",
+                    "arch": 386,
+                    "goos": "linux",
+                    "goarch": 386
+                  },
+                  {
+                    "os": "darwin",
+                    "arch": "amd64",
+                    "goos": "darwin",
+                    "goarch": "amd64"
+                  },
+                  {
+                    "os": "darwin",
+                    "arch": "arm64",
+                    "goos": "darwin",
+                    "goarch": "arm64"
+                  },
+                  {
+                    "os": "windows",
+                    "arch": "amd64",
+                    "goos": "windows",
+                    "goarch": "amd64"
+                  },
+                  {
+                    "os": "windows",
+                    "arch": 386,
+                    "goos": "windows",
+                    "goarch": 386
+                  }
+                ]
+              }
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.24"
+                }
+              },
+              {
+                "name": "Clean build directory",
+                "run": "# Remove any existing binaries to prevent contamination\nfind . -name \"dgctl*\" -type f -delete || true\nfind . -name \"taco*\" -type f -executable -delete || true\nfind . -name \"statesman*\" -type f -executable -delete || true\n"
+              },
+              {
+                "name": "Derive app dir and version",
+                "id": "meta",
+                "run": "TAG=\"${GITHUB_REF_NAME}\"          # e.g. taco/cli/v1.2.3\nAPP_DIR=\"${TAG%/v*}\"              # taco/cli\nVERSION=\"${TAG##*/}\"              # v1.2.3\necho \"app_dir=$APP_DIR\" >> $GITHUB_OUTPUT\necho \"version=$VERSION\" >> $GITHUB_OUTPUT\n# Map to actual directory paths\nif [ \"$APP_DIR\" = \"taco/cli\" ]; then\n  echo \"build_dir=taco/cmd/taco\" >> $GITHUB_OUTPUT\nelif [ \"$APP_DIR\" = \"taco/statesman\" ]; then\n  echo \"build_dir=taco/cmd/statesman\" >> $GITHUB_OUTPUT\nfi\n"
+              },
+              {
+                "name": "Build CLI",
+                "if": "startsWith(steps.meta.outputs.app_dir, 'taco/cli')",
+                "working-directory": "${{ steps.meta.outputs.build_dir }}",
+                "run": "CGO_ENABLED=0 GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build \\\n  -ldflags=\"-X 'main.Version=${{ steps.meta.outputs.version }}' -X 'main.Commit=${{ github.sha }}' -s -w\" \\\n  -o taco-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }} .\nsha256sum taco-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }} > taco-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }}.sha256\n"
+              },
+              {
+                "name": "Build Statesman",
+                "if": "startsWith(steps.meta.outputs.app_dir, 'taco/statesman')",
+                "working-directory": "${{ steps.meta.outputs.build_dir }}",
+                "run": "CGO_ENABLED=0 GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build \\\n  -ldflags=\"-X 'main.Version=${{ steps.meta.outputs.version }}' -X 'main.Commit=${{ github.sha }}' -s -w\" \\\n  -o statesman-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }} .\nsha256sum statesman-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }} > statesman-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }}.sha256\n"
+              },
+              {
+                "name": "Upload CLI artifacts",
+                "if": "startsWith(steps.meta.outputs.app_dir, 'taco/cli')",
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "taco-cli-${{ matrix.os }}-${{ matrix.arch }}",
+                  "path": "${{ steps.meta.outputs.build_dir }}/taco-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }}*"
+                }
+              },
+              {
+                "name": "Upload Statesman artifacts",
+                "if": "startsWith(steps.meta.outputs.app_dir, 'taco/statesman')",
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "taco-statesman-${{ matrix.os }}-${{ matrix.arch }}",
+                  "path": "${{ steps.meta.outputs.build_dir }}/statesman-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.goos == 'windows' && '.exe' || '' }}*"
+                }
+              }
+            ]
+          },
+          "build-docker": {
+            "if": "startsWith(github.ref_name, 'taco/statesman/')",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.24"
+                }
+              },
+              {
+                "name": "Derive version",
+                "id": "meta",
+                "run": "TAG=\"${GITHUB_REF_NAME}\"          # e.g. taco/statesman/v1.2.3\nVERSION=\"${TAG##*/}\"              # v1.2.3\necho \"version=$VERSION\" >> $GITHUB_OUTPUT\n"
+              },
+              {
+                "name": "Set up Docker Buildx",
+                "uses": "docker/setup-buildx-action@v3"
+              },
+              {
+                "name": "Log in to Container Registry",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.actor }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Extract metadata",
+                "id": "docker-meta",
+                "uses": "docker/metadata-action@v5",
+                "with": {
+                  "images": "ghcr.io/${{ github.repository }}/taco-statesman",
+                  "tags": "type=raw,value=${{ steps.meta.outputs.version }}\ntype=ref,event=tag\ntype=raw,value=latest\n"
+                }
+              },
+              {
+                "name": "Build and push Docker image",
+                "uses": "docker/build-push-action@v5",
+                "with": {
+                  "context": "./taco",
+                  "file": "./taco/Dockerfile_statesman",
+                  "push": true,
+                  "platforms": "linux/amd64,linux/arm64",
+                  "tags": "${{ steps.docker-meta.outputs.tags }}",
+                  "labels": "${{ steps.docker-meta.outputs.labels }}",
+                  "build-args": "COMMIT_SHA=${{ github.sha }}\nVERSION=${{ steps.meta.outputs.version }}\n"
+                }
+              }
+            ]
+          },
+          "create-release-cli": {
+            "if": "startsWith(github.ref_name, 'taco/cli/')",
+            "needs": [
+              "build"
+            ],
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Derive app dir and version",
+                "id": "meta",
+                "run": "TAG=\"${GITHUB_REF_NAME}\"          # e.g. taco/cli/v1.2.3\nAPP_DIR=\"${TAG%/v*}\"              # taco/cli\nVERSION=\"${TAG##*/}\"              # v1.2.3\necho \"app_dir=$APP_DIR\" >> $GITHUB_OUTPUT\necho \"version=$VERSION\" >> $GITHUB_OUTPUT\n"
+              },
+              {
+                "name": "Download all artifacts",
+                "uses": "actions/download-artifact@v4"
+              },
+              {
+                "name": "Create release for CLI",
+                "uses": "softprops/action-gh-release@v1",
+                "with": {
+                  "tag_name": "${{ github.ref_name }}",
+                  "name": "taco/cli/${{ steps.meta.outputs.version }}",
+                  "body": "## Taco CLI ${{ steps.meta.outputs.version }}\n\n### Downloads\n- **Linux AMD64**: [taco-linux-amd64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-linux-amd64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-linux-amd64.sha256))\n- **Linux ARM64**: [taco-linux-arm64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-linux-arm64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-linux-arm64.sha256))\n- **Linux 386**: [taco-linux-386](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-linux-386) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-linux-386.sha256))\n- **macOS AMD64**: [taco-darwin-amd64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-darwin-amd64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-darwin-amd64.sha256))\n- **macOS ARM64**: [taco-darwin-arm64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-darwin-arm64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-darwin-arm64.sha256))\n- **Windows AMD64**: [taco-windows-amd64.exe](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-windows-amd64.exe) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-windows-amd64.exe.sha256))\n- **Windows 386**: [taco-windows-386.exe](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-windows-386.exe) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/taco-windows-386.exe.sha256))\n\n### Installation\nDownload the appropriate binary for your platform and make it executable:\n```bash\nchmod +x taco-<platform>-<arch>\nsudo mv taco-<platform>-<arch> /usr/local/bin/taco\n```\n",
+                  "files": "taco-cli-*/*\n",
+                  "draft": false,
+                  "prerelease": false
+                }
+              }
+            ]
+          },
+          "create-release-statesman": {
+            "if": "startsWith(github.ref_name, 'taco/statesman/')",
+            "needs": [
+              "build",
+              "build-docker"
+            ],
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Derive app dir and version",
+                "id": "meta",
+                "run": "TAG=\"${GITHUB_REF_NAME}\"          # e.g. taco/statesman/v1.2.3\nAPP_DIR=\"${TAG%/v*}\"              # taco/statesman\nVERSION=\"${TAG##*/}\"              # v1.2.3\necho \"app_dir=$APP_DIR\" >> $GITHUB_OUTPUT\necho \"version=$VERSION\" >> $GITHUB_OUTPUT\n"
+              },
+              {
+                "name": "Download all artifacts",
+                "uses": "actions/download-artifact@v4"
+              },
+              {
+                "name": "Create release for Statesman",
+                "uses": "softprops/action-gh-release@v1",
+                "with": {
+                  "tag_name": "${{ github.ref_name }}",
+                  "name": "taco/statesman/${{ steps.meta.outputs.version }}",
+                  "body": "## Taco Statesman ${{ steps.meta.outputs.version }}\n\n### Downloads\n- **Linux AMD64**: [statesman-linux-amd64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-linux-amd64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-linux-amd64.sha256))\n- **Linux ARM64**: [statesman-linux-arm64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-linux-arm64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-linux-arm64.sha256))\n- **Linux 386**: [statesman-linux-386](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-linux-386) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-linux-386.sha256))\n- **macOS AMD64**: [statesman-darwin-amd64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-darwin-amd64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-darwin-amd64.sha256))\n- **macOS ARM64**: [statesman-darwin-arm64](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-darwin-arm64) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-darwin-arm64.sha256))\n- **Windows AMD64**: [statesman-windows-amd64.exe](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-windows-amd64.exe) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-windows-amd64.exe.sha256))\n- **Windows 386**: [statesman-windows-386.exe](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-windows-386.exe) ([checksum](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/statesman-windows-386.exe.sha256))\n\n### Docker\n```bash\ndocker pull ghcr.io/${{ github.repository }}/taco-statesman:${{ steps.meta.outputs.version }}\n```\n\n### Installation\nDownload the appropriate binary for your platform and make it executable:\n```bash\nchmod +x statesman-<platform>-<arch>\nsudo mv statesman-<platform>-<arch> /usr/local/bin/statesman\n```\n",
+                  "files": "taco-statesman-*/*\n",
+                  "draft": false,
+                  "prerelease": false
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

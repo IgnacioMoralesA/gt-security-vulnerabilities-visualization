@@ -1,0 +1,564 @@
+{
+  "repo_owner": "benchmark-action",
+  "repo_name": "github-action-benchmark",
+  "workflow_name": "julia",
+  "history": {
+    "2021-12-04T13-04-00Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "julia__2021-12-04T13-04-00Z__3c0e5b7a11f3b188f0cf2287d8bb60c029c530d7.yml",
+          "workflow_name": "Julia Example with BenchmarkTools.jl",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "deployments": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 61,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "benchmark": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "benchmark": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/cache@v1",
+              "actions/checkout@v2",
+              "benchmark-action/github-action-benchmark@v1",
+              "julia-actions/setup-julia@v1"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Julia Example with BenchmarkTools.jl",
+        "true": {
+          "push": {
+            "branches": [
+              "master"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "deployments": "write"
+        },
+        "jobs": {
+          "benchmark": {
+            "name": "Run julia benchmark example",
+            "runs-on": "${{ matrix.os }}",
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "version": [
+                  "1"
+                ],
+                "os": [
+                  "ubuntu-latest"
+                ],
+                "arch": [
+                  "x64"
+                ]
+              }
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "uses": "julia-actions/setup-julia@v1",
+                "with": {
+                  "version": "${{ matrix.version }}",
+                  "arch": "${{ matrix.arch }}"
+                }
+              },
+              {
+                "uses": "actions/cache@v1",
+                "env": {
+                  "cache-name": "cache-artifacts"
+                },
+                "with": {
+                  "path": "~/.julia/artifacts",
+                  "key": "runner.os\u2212test\u2212env.cache\u2212name\u2212{{ hashFiles('**/Project.toml') }}",
+                  "restore-keys": "runner.os\u2212test\u2212\n${{ env.cache-name }}-\n${{ runner.os }}-test-\n${{ runner.os }}-\n"
+                }
+              },
+              {
+                "name": "Run benchmark",
+                "run": "cd examples/julia\njulia --project --color=yes -e '\n  using Pkg;\n  Pkg.instantiate();\n  include(\"fib.jl\")'\n"
+              },
+              {
+                "name": "Store benchmark result",
+                "uses": "benchmark-action/github-action-benchmark@v1",
+                "with": {
+                  "name": "Julia benchmark result",
+                  "tool": "julia",
+                  "output-file-path": "examples/julia/output.json",
+                  "github-token": "${{ secrets.GITHUB_TOKEN }}",
+                  "auto-push": true,
+                  "alert-threshold": "200%",
+                  "comment-on-alert": true,
+                  "fail-on-alert": true,
+                  "alert-comment-cc-users": "@findmyway"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-05-28T15-54-07Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "julia__2022-05-28T15-54-07Z__0e77d47f88d46be363b44052613c0b60bf208243.yml",
+          "workflow_name": "Julia Example with BenchmarkTools.jl",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "deployments": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 79,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "benchmark": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "benchmark": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 5,
+            "actions_used": [
+              "actions/cache@v1",
+              "actions/checkout@v2",
+              "benchmark-action/github-action-benchmark@v1",
+              "julia-actions/setup-julia@v1"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Julia Example with BenchmarkTools.jl",
+        "true": {
+          "push": {
+            "branches": [
+              "master"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "deployments": "write"
+        },
+        "jobs": {
+          "benchmark": {
+            "name": "Run julia benchmark example",
+            "runs-on": "${{ matrix.os }}",
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "version": [
+                  "1"
+                ],
+                "os": [
+                  "ubuntu-latest"
+                ],
+                "arch": [
+                  "x64"
+                ]
+              }
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "uses": "julia-actions/setup-julia@v1",
+                "with": {
+                  "version": "${{ matrix.version }}",
+                  "arch": "${{ matrix.arch }}"
+                }
+              },
+              {
+                "uses": "actions/cache@v1",
+                "env": {
+                  "cache-name": "cache-artifacts"
+                },
+                "with": {
+                  "path": "~/.julia/artifacts",
+                  "key": "runner.os\u2212test\u2212env.cache\u2212name\u2212{{ hashFiles('**/Project.toml') }}",
+                  "restore-keys": "runner.os\u2212test\u2212\n${{ env.cache-name }}-\n${{ runner.os }}-test-\n${{ runner.os }}-\n"
+                }
+              },
+              {
+                "name": "Run benchmark",
+                "run": "cd examples/julia\njulia --project --color=yes -e '\n  using Pkg;\n  Pkg.instantiate();\n  include(\"fib.jl\")'\n"
+              },
+              {
+                "name": "Store benchmark result",
+                "uses": "benchmark-action/github-action-benchmark@v1",
+                "with": {
+                  "name": "Julia benchmark result",
+                  "tool": "julia",
+                  "output-file-path": "examples/julia/output.json",
+                  "github-token": "${{ secrets.GITHUB_TOKEN }}",
+                  "auto-push": true,
+                  "alert-threshold": "200%",
+                  "comment-on-alert": true,
+                  "fail-on-alert": true,
+                  "alert-comment-cc-users": "@ktrz,@findmyway"
+                }
+              },
+              {
+                "name": "Store benchmark result - separate results repo",
+                "if": false,
+                "uses": "benchmark-action/github-action-benchmark@v1",
+                "with": {
+                  "name": "Julia benchmark result",
+                  "tool": "julia",
+                  "output-file-path": "examples/julia/output.json",
+                  "github-token": "${{ secrets.BENCHMARK_ACTION_BOT_TOKEN }}",
+                  "auto-push": true,
+                  "alert-threshold": "200%",
+                  "comment-on-alert": true,
+                  "fail-on-alert": true,
+                  "alert-comment-cc-users": "@ktrz,@findmyway",
+                  "gh-repository": "github.com/benchmark-action/github-action-benchmark-results"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-05-28T16-04-35Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "julia__2022-05-28T16-04-35Z__ba450747be524122c5ce53c8d9587160154eaed3.yml",
+          "workflow_name": "Julia Example with BenchmarkTools.jl",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "deployments": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 78,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "benchmark": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "benchmark": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 5,
+            "actions_used": [
+              "actions/cache@v1",
+              "actions/checkout@v2",
+              "benchmark-action/github-action-benchmark@v1",
+              "julia-actions/setup-julia@v1"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Julia Example with BenchmarkTools.jl",
+        "true": {
+          "push": {
+            "branches": [
+              "master"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "deployments": "write"
+        },
+        "jobs": {
+          "benchmark": {
+            "name": "Run julia benchmark example",
+            "runs-on": "${{ matrix.os }}",
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "version": [
+                  "1"
+                ],
+                "os": [
+                  "ubuntu-latest"
+                ],
+                "arch": [
+                  "x64"
+                ]
+              }
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "uses": "julia-actions/setup-julia@v1",
+                "with": {
+                  "version": "${{ matrix.version }}",
+                  "arch": "${{ matrix.arch }}"
+                }
+              },
+              {
+                "uses": "actions/cache@v1",
+                "env": {
+                  "cache-name": "cache-artifacts"
+                },
+                "with": {
+                  "path": "~/.julia/artifacts",
+                  "key": "runner.os\u2212test\u2212env.cache\u2212name\u2212{{ hashFiles('**/Project.toml') }}",
+                  "restore-keys": "runner.os\u2212test\u2212\n${{ env.cache-name }}-\n${{ runner.os }}-test-\n${{ runner.os }}-\n"
+                }
+              },
+              {
+                "name": "Run benchmark",
+                "run": "cd examples/julia\njulia --project --color=yes -e '\n  using Pkg;\n  Pkg.instantiate();\n  include(\"fib.jl\")'\n"
+              },
+              {
+                "name": "Store benchmark result",
+                "uses": "benchmark-action/github-action-benchmark@v1",
+                "with": {
+                  "name": "Julia benchmark result",
+                  "tool": "julia",
+                  "output-file-path": "examples/julia/output.json",
+                  "github-token": "${{ secrets.GITHUB_TOKEN }}",
+                  "auto-push": true,
+                  "alert-threshold": "200%",
+                  "comment-on-alert": true,
+                  "fail-on-alert": true,
+                  "alert-comment-cc-users": "@ktrz,@findmyway"
+                }
+              },
+              {
+                "name": "Store benchmark result - separate results repo",
+                "uses": "benchmark-action/github-action-benchmark@v1",
+                "with": {
+                  "name": "Julia benchmark result",
+                  "tool": "julia",
+                  "output-file-path": "examples/julia/output.json",
+                  "github-token": "${{ secrets.BENCHMARK_ACTION_BOT_TOKEN }}",
+                  "auto-push": true,
+                  "alert-threshold": "200%",
+                  "comment-on-alert": true,
+                  "fail-on-alert": true,
+                  "alert-comment-cc-users": "@ktrz,@findmyway",
+                  "gh-repository": "github.com/benchmark-action/github-action-benchmark-results"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-01-24T15-49-01Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "julia__2024-01-24T15-49-01Z__83426c04e20ff3faef1257b544e08620a88c4551.yml",
+          "workflow_name": "Julia Example with BenchmarkTools.jl",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "deployments": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 78,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "benchmark": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "benchmark": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 5,
+            "actions_used": [
+              "actions/cache@v4",
+              "actions/checkout@v4",
+              "benchmark-action/github-action-benchmark@v1",
+              "julia-actions/setup-julia@v1"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Julia Example with BenchmarkTools.jl",
+        "true": {
+          "push": {
+            "branches": [
+              "master"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "deployments": "write"
+        },
+        "jobs": {
+          "benchmark": {
+            "name": "Run julia benchmark example",
+            "runs-on": "${{ matrix.os }}",
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "version": [
+                  "1"
+                ],
+                "os": [
+                  "ubuntu-latest"
+                ],
+                "arch": [
+                  "x64"
+                ]
+              }
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "uses": "julia-actions/setup-julia@v1",
+                "with": {
+                  "version": "${{ matrix.version }}",
+                  "arch": "${{ matrix.arch }}"
+                }
+              },
+              {
+                "uses": "actions/cache@v4",
+                "env": {
+                  "cache-name": "cache-artifacts"
+                },
+                "with": {
+                  "path": "~/.julia/artifacts",
+                  "key": "runner.os\u2212test\u2212env.cache\u2212name\u2212{{ hashFiles('**/Project.toml') }}",
+                  "restore-keys": "runner.os\u2212test\u2212\n${{ env.cache-name }}-\n${{ runner.os }}-test-\n${{ runner.os }}-\n"
+                }
+              },
+              {
+                "name": "Run benchmark",
+                "run": "cd examples/julia\njulia --project --color=yes -e '\n  using Pkg;\n  Pkg.instantiate();\n  include(\"fib.jl\")'\n"
+              },
+              {
+                "name": "Store benchmark result",
+                "uses": "benchmark-action/github-action-benchmark@v1",
+                "with": {
+                  "name": "Julia benchmark result",
+                  "tool": "julia",
+                  "output-file-path": "examples/julia/output.json",
+                  "github-token": "${{ secrets.GITHUB_TOKEN }}",
+                  "auto-push": true,
+                  "alert-threshold": "200%",
+                  "comment-on-alert": true,
+                  "fail-on-alert": true,
+                  "alert-comment-cc-users": "@ktrz,@findmyway"
+                }
+              },
+              {
+                "name": "Store benchmark result - separate results repo",
+                "uses": "benchmark-action/github-action-benchmark@v1",
+                "with": {
+                  "name": "Julia benchmark result",
+                  "tool": "julia",
+                  "output-file-path": "examples/julia/output.json",
+                  "github-token": "${{ secrets.BENCHMARK_ACTION_BOT_TOKEN }}",
+                  "auto-push": true,
+                  "alert-threshold": "200%",
+                  "comment-on-alert": true,
+                  "fail-on-alert": true,
+                  "alert-comment-cc-users": "@ktrz,@findmyway",
+                  "gh-repository": "github.com/benchmark-action/github-action-benchmark-results"
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

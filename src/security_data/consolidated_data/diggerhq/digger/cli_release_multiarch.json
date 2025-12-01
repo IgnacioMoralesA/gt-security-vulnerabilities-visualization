@@ -1,0 +1,489 @@
+{
+  "repo_owner": "diggerhq",
+  "repo_name": "digger",
+  "workflow_name": "cli_release_multiarch",
+  "history": {
+    "2024-02-27T12-03-07Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-9ff26c52-5048-509a-ac86-94649b0545d2",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/cli_release_multiarch__2024-02-27T12-03-07Z__22cf3b3eeeb3684c07015998601ccfdc9b239d9e.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 9,
+                  "startColumn": 5,
+                  "endLine": 44,
+                  "endColumn": 55
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "b24a4803425db665:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "cli_release_multiarch__2024-02-27T12-03-07Z__22cf3b3eeeb3684c07015998601ccfdc9b239d9e.yml",
+          "workflow_name": "release cli multi architecture",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 44,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "binary": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "binary": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5",
+              "actions/upload-release-asset@v1"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "release cli multi architecture",
+        "true": {
+          "release": {
+            "branches": [
+              "go"
+            ],
+            "types": [
+              "released"
+            ]
+          }
+        },
+        "jobs": {
+          "binary": {
+            "strategy": {
+              "matrix": {
+                "arch": [
+                  "arm",
+                  "arm64",
+                  "amd64",
+                  386
+                ],
+                "os": [
+                  "linux",
+                  "darwin",
+                  "freebsd",
+                  "windows"
+                ],
+                "exclude": [
+                  {
+                    "os": "darwin",
+                    "arch": "arm"
+                  },
+                  {
+                    "os": "darwin",
+                    "arch": 386
+                  }
+                ]
+              }
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Download Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.21.1"
+                },
+                "id": "go"
+              },
+              {
+                "name": "Check out repository",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Build",
+                "run": "echo \"Tag that is going to be used as digger version: ${{ github.event.release.tag_name }}\"\nenv GOOS=${{matrix.os}} GOARCH=${{matrix.arch}} CGO_ENABLED=0 go build -ldflags=\"-X digger/pkg/utils.version=${{ github.event.release.tag_name }}\" -o digger ./cli/cmd/digger\n"
+              },
+              {
+                "name": "Publish linux-x64 exec to github",
+                "id": "upload-release-asset-linux-x64",
+                "uses": "actions/upload-release-asset@v1",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                },
+                "with": {
+                  "upload_url": "${{ github.event.release.upload_url }}",
+                  "asset_path": "digger",
+                  "asset_name": "digger-cli-${{matrix.os}}-${{matrix.arch}}",
+                  "asset_content_type": "application/octet-stream"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-05-20T00-26-44Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-8ec357b8-e0bf-5071-97d1-0030a5535ce5",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/cli_release_multiarch__2025-05-20T00-26-44Z__20cefd9faf4bffe8f41bd82ef12b4c4494cca032.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 13,
+                  "startColumn": 5,
+                  "endLine": 44,
+                  "endColumn": 34
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "9dd3d2c14351f182:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "cli_release_multiarch__2025-05-20T00-26-44Z__20cefd9faf4bffe8f41bd82ef12b4c4494cca032.yml",
+          "workflow_name": "release cli multi architecture",
+          "triggers": {
+            "release": {
+              "branches": [
+                "go"
+              ],
+              "types": [
+                "released"
+              ]
+            }
+          },
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 44,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "binary": 2
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 1
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "binary": 2
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "actions/checkout@v4",
+              "wangyoucao577/go-release-action@8fa1e8368c8465264d64e0198208e10f71474c87"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "release cli multi architecture",
+        "true": {
+          "release": {
+            "branches": [
+              "go"
+            ],
+            "types": [
+              "released"
+            ]
+          }
+        },
+        "jobs": {
+          "binary": {
+            "strategy": {
+              "matrix": {
+                "arch": [
+                  "arm",
+                  "arm64",
+                  "amd64",
+                  "386"
+                ],
+                "os": [
+                  "linux",
+                  "darwin",
+                  "freebsd",
+                  "windows"
+                ],
+                "exclude": [
+                  {
+                    "os": "darwin",
+                    "arch": "arm"
+                  },
+                  {
+                    "os": "darwin",
+                    "arch": "386"
+                  }
+                ]
+              }
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Check out repository",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Build and publish binary artifact to GitHub",
+                "id": "build-and-release-binary",
+                "uses": "wangyoucao577/go-release-action@8fa1e8368c8465264d64e0198208e10f71474c87",
+                "with": {
+                  "github_token": "${{ secrets.GITHUB_TOKEN }}",
+                  "goos": "${{ matrix.os }}",
+                  "goarch": "${{ matrix.arch }}",
+                  "goversion": "1.24.0",
+                  "project_path": "./cli/cmd/digger",
+                  "binary_name": "digger",
+                  "pre_command": "export CGO_ENABLED=0",
+                  "ldflags": "${{ matrix.ldflags }}",
+                  "sha256sum": true,
+                  "md5sum": false,
+                  "asset_name": "digger-cli-${{matrix.os}}-${{matrix.arch}}",
+                  "compress_assets": false
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-06-12T09-30-15Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-833d2871-2dad-5f32-bde5-b418a31699bc",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/cli_release_multiarch__2024-06-12T09-30-15Z__d38a43b691445680c4ea4b481ee0a5def94b1a45.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 13,
+                  "startColumn": 5,
+                  "endLine": 44,
+                  "endColumn": 34
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "9dd3d2c14351f182:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "cli_release_multiarch__2024-06-12T09-30-15Z__d38a43b691445680c4ea4b481ee0a5def94b1a45.yml",
+          "workflow_name": "release cli multi architecture",
+          "triggers": {
+            "release": {
+              "branches": [
+                "go"
+              ],
+              "types": [
+                "released"
+              ]
+            }
+          },
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 44,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "binary": 2
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 1
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "binary": 2
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "actions/checkout@v4",
+              "wangyoucao577/go-release-action@8fa1e8368c8465264d64e0198208e10f71474c87"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "release cli multi architecture",
+        "true": {
+          "release": {
+            "branches": [
+              "go"
+            ],
+            "types": [
+              "released"
+            ]
+          }
+        },
+        "jobs": {
+          "binary": {
+            "strategy": {
+              "matrix": {
+                "arch": [
+                  "arm",
+                  "arm64",
+                  "amd64",
+                  "386"
+                ],
+                "os": [
+                  "linux",
+                  "darwin",
+                  "freebsd",
+                  "windows"
+                ],
+                "exclude": [
+                  {
+                    "os": "darwin",
+                    "arch": "arm"
+                  },
+                  {
+                    "os": "darwin",
+                    "arch": "386"
+                  }
+                ]
+              }
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Check out repository",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Build and publish binary artifact to GitHub",
+                "id": "build-and-release-binary",
+                "uses": "wangyoucao577/go-release-action@8fa1e8368c8465264d64e0198208e10f71474c87",
+                "with": {
+                  "github_token": "${{ secrets.GITHUB_TOKEN }}",
+                  "goos": "${{ matrix.os }}",
+                  "goarch": "${{ matrix.arch }}",
+                  "goversion": "1.21.1",
+                  "project_path": "./cli/cmd/digger",
+                  "binary_name": "digger",
+                  "pre_command": "export CGO_ENABLED=0",
+                  "ldflags": "${{ matrix.ldflags }}",
+                  "sha256sum": true,
+                  "md5sum": false,
+                  "asset_name": "digger-cli-${{matrix.os}}-${{matrix.arch}}",
+                  "compress_assets": false
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

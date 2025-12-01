@@ -1,0 +1,861 @@
+{
+  "repo_owner": "diggerhq",
+  "repo_name": "digger",
+  "workflow_name": "ee_cli_release",
+  "history": {
+    "2024-02-28T17-46-28Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-7bbab649-2ce0-588c-9eb1-20e903d01066",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ee_cli_release__2024-02-28T17-46-28Z__f9a1d753c2f2b6f51ba696aed366e5d88163caa7.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 9,
+                  "startColumn": 5,
+                  "endLine": 33,
+                  "endColumn": 55
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "ef0d22a1050a8ea0:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "ee_cli_release__2024-02-28T17-46-28Z__f9a1d753c2f2b6f51ba696aed366e5d88163caa7.yml",
+          "workflow_name": "release ee cli",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 33,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "binary": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "binary": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5",
+              "actions/upload-release-asset@v1"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "release ee cli",
+        "true": {
+          "release": {
+            "branches": [
+              "go"
+            ],
+            "types": [
+              "released"
+            ]
+          }
+        },
+        "jobs": {
+          "binary": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Download Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.21.1"
+                },
+                "id": "go"
+              },
+              {
+                "name": "Check out repository",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Build",
+                "run": "echo \"Tag that is going to be used as digger version: ${{ github.event.release.tag_name }}\"\nenv GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags=\"-X digger/pkg/utils.version=${{ github.event.release.tag_name }}\" -o digger ./ee/cli/cmd/digger\n"
+              },
+              {
+                "name": "Publish linux-x64 exec to github",
+                "id": "upload-release-asset-linux-x64",
+                "uses": "actions/upload-release-asset@v1",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                },
+                "with": {
+                  "upload_url": "${{ github.event.release.upload_url }}",
+                  "asset_path": "digger",
+                  "asset_name": "digger-ee-cli-Linux-X64",
+                  "asset_content_type": "application/octet-stream"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-06-12T09-30-15Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-80349a5c-67d2-541c-8baa-fee7d1fa080c",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ee_cli_release__2024-06-12T09-30-15Z__d38a43b691445680c4ea4b481ee0a5def94b1a45.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 13,
+                  "startColumn": 5,
+                  "endLine": 39,
+                  "endColumn": 56
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "c7b0c7f095f872ab:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "ee_cli_release__2024-06-12T09-30-15Z__d38a43b691445680c4ea4b481ee0a5def94b1a45.yml",
+          "workflow_name": "release ee cli",
+          "triggers": {
+            "release": {
+              "branches": [
+                "go"
+              ],
+              "types": [
+                "released"
+              ]
+            }
+          },
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 39,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "binary": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 1
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "binary": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5",
+              "actions/upload-release-asset@v1"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "release ee cli",
+        "true": {
+          "release": {
+            "branches": [
+              "go"
+            ],
+            "types": [
+              "released"
+            ]
+          }
+        },
+        "jobs": {
+          "binary": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Download Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.21.1"
+                },
+                "id": "go"
+              },
+              {
+                "name": "Check out repository",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Build",
+                "run": "echo \"Tag that is going to be used as digger version: ${{ github.event.release.tag_name }}\"\nenv GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags=\"-X digger/pkg/utils.version=${{ github.event.release.tag_name }}\" -o digger ./ee/cli/cmd/digger\n"
+              },
+              {
+                "name": "Publish linux-x64 exec to github",
+                "id": "upload-release-asset-linux-x64",
+                "uses": "actions/upload-release-asset@v1",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                },
+                "with": {
+                  "upload_url": "${{ github.event.release.upload_url }}",
+                  "asset_path": "digger",
+                  "asset_name": "digger-ee-cli-Linux-X64",
+                  "asset_content_type": "application/octet-stream"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-03-27T14-56-27Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-99520949-4256-5e5e-aead-e762da9601a2",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ee_cli_release__2025-03-27T14-56-27Z__28a8ecd4ccb31f9196b1cbc9ceb14025059f97dc.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 13,
+                  "startColumn": 5,
+                  "endLine": 40,
+                  "endColumn": 34
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "c7b0c7f095f872ab:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "ee_cli_release__2025-03-27T14-56-27Z__28a8ecd4ccb31f9196b1cbc9ceb14025059f97dc.yml",
+          "workflow_name": "release ee cli",
+          "triggers": {
+            "release": {
+              "branches": [
+                "go"
+              ],
+              "types": [
+                "released"
+              ]
+            }
+          },
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 41,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "binary": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 1
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "binary": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5",
+              "wangyoucao577/go-release-action@8fa1e8368c8465264d64e0198208e10f71474c87"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "release ee cli",
+        "true": {
+          "release": {
+            "branches": [
+              "go"
+            ],
+            "types": [
+              "released"
+            ]
+          }
+        },
+        "jobs": {
+          "binary": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Download Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.21.1"
+                },
+                "id": "go"
+              },
+              {
+                "name": "Check out repository",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Publish linux-x64 exec to github",
+                "id": "build-and-release-binary",
+                "uses": "wangyoucao577/go-release-action@8fa1e8368c8465264d64e0198208e10f71474c87",
+                "with": {
+                  "github_token": "${{ secrets.GITHUB_TOKEN }}",
+                  "goos": "linux",
+                  "goarch": "amd64",
+                  "goversion": "1.21.1",
+                  "project_path": "./ee/cli/cmd/digger",
+                  "binary_name": "digger",
+                  "pre_command": "export CGO_ENABLED=0",
+                  "ldflags": "${{ matrix.ldflags }}",
+                  "sha256sum": true,
+                  "md5sum": false,
+                  "asset_name": "digger-ee-cli-Linux-X64",
+                  "compress_assets": false
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-03-17T11-36-20Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-d1352b6c-2266-5bb0-93da-2cf92dd33807",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ee_cli_release__2025-03-17T11-36-20Z__cde840e52079553b350d0c21ea38eed504373b04.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 13,
+                  "startColumn": 5,
+                  "endLine": 40,
+                  "endColumn": 34
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "c7b0c7f095f872ab:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "ee_cli_release__2025-03-17T11-36-20Z__cde840e52079553b350d0c21ea38eed504373b04.yml",
+          "workflow_name": "release ee cli",
+          "triggers": {
+            "release": {
+              "branches": [
+                "go"
+              ],
+              "types": [
+                "released"
+              ]
+            }
+          },
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 41,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "binary": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 1
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "binary": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5",
+              "wangyoucao577/go-release-action@8fa1e8368c8465264d64e0198208e10f71474c87"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "release ee cli",
+        "true": {
+          "release": {
+            "branches": [
+              "go"
+            ],
+            "types": [
+              "released"
+            ]
+          }
+        },
+        "jobs": {
+          "binary": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Download Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.21.1"
+                },
+                "id": "go"
+              },
+              {
+                "name": "Check out repository",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Publish linux-x64 exec to github",
+                "id": "build-and-release-binary",
+                "uses": "wangyoucao577/go-release-action@8fa1e8368c8465264d64e0198208e10f71474c87",
+                "with": {
+                  "github_token": "${{ secrets.GITHUB_TOKEN }}",
+                  "goos": "linux",
+                  "goarch": "amd64",
+                  "goversion": "1.21.1",
+                  "project_path": "./cli/cmd/digger",
+                  "binary_name": "digger",
+                  "pre_command": "export CGO_ENABLED=0",
+                  "ldflags": "${{ matrix.ldflags }}",
+                  "sha256sum": true,
+                  "md5sum": false,
+                  "asset_name": "digger-ee-cli-Linux-X64",
+                  "compress_assets": false
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-05-20T00-26-44Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-00990d32-6e16-56a5-938a-0e643ddf9cf7",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ee_cli_release__2025-05-20T00-26-44Z__20cefd9faf4bffe8f41bd82ef12b4c4494cca032.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 13,
+                  "startColumn": 5,
+                  "endLine": 40,
+                  "endColumn": 34
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "c7b0c832e0facefd:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "ee_cli_release__2025-05-20T00-26-44Z__20cefd9faf4bffe8f41bd82ef12b4c4494cca032.yml",
+          "workflow_name": "release ee cli",
+          "triggers": {
+            "release": {
+              "branches": [
+                "go"
+              ],
+              "types": [
+                "released"
+              ]
+            }
+          },
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 41,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "binary": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 1
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "binary": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5",
+              "wangyoucao577/go-release-action@8fa1e8368c8465264d64e0198208e10f71474c87"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "release ee cli",
+        "true": {
+          "release": {
+            "branches": [
+              "go"
+            ],
+            "types": [
+              "released"
+            ]
+          }
+        },
+        "jobs": {
+          "binary": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Download Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.24.0"
+                },
+                "id": "go"
+              },
+              {
+                "name": "Check out repository",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Publish linux-x64 exec to github",
+                "id": "build-and-release-binary",
+                "uses": "wangyoucao577/go-release-action@8fa1e8368c8465264d64e0198208e10f71474c87",
+                "with": {
+                  "github_token": "${{ secrets.GITHUB_TOKEN }}",
+                  "goos": "linux",
+                  "goarch": "amd64",
+                  "goversion": "1.24.0",
+                  "project_path": "./ee/cli/cmd/digger",
+                  "binary_name": "digger",
+                  "pre_command": "export CGO_ENABLED=0",
+                  "ldflags": "${{ matrix.ldflags }}",
+                  "sha256sum": true,
+                  "md5sum": false,
+                  "asset_name": "digger-ee-cli-Linux-X64",
+                  "compress_assets": false
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-09-19T16-48-40Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-1e4f8034-9062-5a6d-a6c8-b34c0506bf7a",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ee_cli_release__2025-09-19T16-48-40Z__0ef0d81fa3da3b3687824c305389fea22f90ed2d.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 13,
+                  "startColumn": 5,
+                  "endLine": 41,
+                  "endColumn": 34
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "29345c5d0a96e842:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "ee_cli_release__2025-09-19T16-48-40Z__0ef0d81fa3da3b3687824c305389fea22f90ed2d.yml",
+          "workflow_name": "release ee cli",
+          "triggers": {
+            "release": {
+              "branches": [
+                "go"
+              ],
+              "types": [
+                "released"
+              ]
+            }
+          },
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 42,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "binary": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 1
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "binary": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5",
+              "wangyoucao577/go-release-action@8fa1e8368c8465264d64e0198208e10f71474c87"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "release ee cli",
+        "true": {
+          "release": {
+            "branches": [
+              "go"
+            ],
+            "types": [
+              "released"
+            ]
+          }
+        },
+        "jobs": {
+          "binary": {
+            "if": "!startsWith(github.event.release.tag_name, 'taco/')",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Download Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.24.0"
+                },
+                "id": "go"
+              },
+              {
+                "name": "Check out repository",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Publish linux-x64 exec to github",
+                "id": "build-and-release-binary",
+                "uses": "wangyoucao577/go-release-action@8fa1e8368c8465264d64e0198208e10f71474c87",
+                "with": {
+                  "github_token": "${{ secrets.GITHUB_TOKEN }}",
+                  "goos": "linux",
+                  "goarch": "amd64",
+                  "goversion": "1.24.0",
+                  "project_path": "./ee/cli/cmd/digger",
+                  "binary_name": "digger",
+                  "pre_command": "export CGO_ENABLED=0",
+                  "ldflags": "${{ matrix.ldflags }}",
+                  "sha256sum": true,
+                  "md5sum": false,
+                  "asset_name": "digger-ee-cli-Linux-X64",
+                  "compress_assets": false
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

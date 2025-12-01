@@ -1,0 +1,110 @@
+{
+  "repo_owner": "stelligent",
+  "repo_name": "cfn_nag",
+  "workflow_name": "codeql-analysis",
+  "history": {
+    "2021-10-27T21-54-46Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "codeql-analysis__2021-10-27T21-54-46Z__39a1b7bf5a2474f69c7c1006c4e970d7e5efb869.yml",
+          "workflow_name": "CodeQL",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 41,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "analyze": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "analyze": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v2",
+              "github/codeql-action/analyze@v1",
+              "github/codeql-action/init@v1"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "CodeQL",
+        "true": {
+          "push": {
+            "branches": [
+              "master"
+            ]
+          },
+          "pull_request": {
+            "branches": [
+              "master"
+            ]
+          },
+          "schedule": [
+            {
+              "cron": "37 8 * * 0"
+            }
+          ]
+        },
+        "jobs": {
+          "analyze": {
+            "name": "Analyze",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "actions": "read",
+              "contents": "read",
+              "security-events": "write"
+            },
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "language": [
+                  "ruby"
+                ]
+              }
+            },
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "name": "Initialize CodeQL",
+                "uses": "github/codeql-action/init@v1",
+                "with": {
+                  "languages": "${{ matrix.language }}"
+                }
+              },
+              {
+                "name": "Perform CodeQL Analysis",
+                "uses": "github/codeql-action/analyze@v1"
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

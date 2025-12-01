@@ -1,0 +1,654 @@
+{
+  "repo_owner": "vn7n24fzkq",
+  "repo_name": "github-profile-summary-cards",
+  "workflow_name": "test-and-lint",
+  "history": {
+    "2023-02-17T10-01-10Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-039586ca-5f1d-5c0f-89c0-d15cd84d736b",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/test-and-lint__2023-02-17T10-01-10Z__056135adbdc0dd9049d0c4549dafca4801e0a6e5.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 11,
+                  "startColumn": 5,
+                  "endLine": 46,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "99b2dd308b29d0f5:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-36d867e9-d656-560c-b4c3-6ab8e0e1afd6",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/test-and-lint__2023-02-17T10-01-10Z__056135adbdc0dd9049d0c4549dafca4801e0a6e5.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 47,
+                  "startColumn": 5,
+                  "endLine": 63,
+                  "endColumn": 25
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "200828ff33488ede:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test-and-lint__2023-02-17T10-01-10Z__056135adbdc0dd9049d0c4549dafca4801e0a6e5.yml",
+          "workflow_name": "Test and Lint",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 63,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "tests": 6,
+            "lint": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 2,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "tests": 6,
+              "lint": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 6,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-node@v3",
+              "runforesight/foresight-test-kit-action@v1",
+              "runforesight/foresight-workflow-kit-action@v1"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Test and Lint",
+        "true": {
+          "push": {
+            "branches-ignore": [
+              "release"
+            ]
+          },
+          "pull_request": {
+            "branches": [
+              "master"
+            ]
+          }
+        },
+        "jobs": {
+          "tests": {
+            "name": "Tests",
+            "runs-on": "ubuntu-latest",
+            "strategy": {
+              "matrix": {
+                "node-version": [
+                  "16.x"
+                ]
+              }
+            },
+            "steps": [
+              {
+                "name": "Collect Workflow Telemetry",
+                "uses": "runforesight/foresight-workflow-kit-action@v1",
+                "if": "success() || failure()",
+                "with": {
+                  "api_key": "${{ secrets.foresight_api_key }}"
+                }
+              },
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Use Node.js ${{ matrix.node-version }}",
+                "uses": "actions/setup-node@v3",
+                "with": {
+                  "node-version": "${{ matrix.node-version }}",
+                  "cache": "npm"
+                }
+              },
+              {
+                "run": "npm install"
+              },
+              {
+                "run": "npm run test"
+              },
+              {
+                "name": "Analyze Test and/or Coverage Results",
+                "uses": "runforesight/foresight-test-kit-action@v1",
+                "if": "success() || failure()",
+                "with": {
+                  "api_key": "${{ secrets.foresight_api_key }}",
+                  "test_format": "JUNIT",
+                  "test_framework": "JEST",
+                  "test_path": "./junit.xml",
+                  "coverage_format": "JACOCO/XML",
+                  "coverage_path": "./coverage"
+                }
+              }
+            ]
+          },
+          "lint": {
+            "name": "Lint",
+            "runs-on": "ubuntu-latest",
+            "strategy": {
+              "matrix": {
+                "node-version": [
+                  "16.x"
+                ]
+              }
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Use Node.js ${{ matrix.node-version }}",
+                "uses": "actions/setup-node@v3",
+                "with": {
+                  "node-version": "${{ matrix.node-version }}",
+                  "cache": "npm"
+                }
+              },
+              {
+                "run": "npm install"
+              },
+              {
+                "run": "npm run lint"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-02-25T11-40-54Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-b30502cb-2aad-5b47-9c33-c28686840416",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/test-and-lint__2024-02-25T11-40-54Z__6480f19c1a0eb0d17da906c4d38c588a74ce7128.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 11,
+                  "startColumn": 5,
+                  "endLine": 46,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "99b2dd308b29d0f5:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-fbb7f992-1d0a-512f-9f5a-04c00a536aa4",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/test-and-lint__2024-02-25T11-40-54Z__6480f19c1a0eb0d17da906c4d38c588a74ce7128.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 47,
+                  "startColumn": 5,
+                  "endLine": 63,
+                  "endColumn": 25
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "200828ff33488ede:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test-and-lint__2024-02-25T11-40-54Z__6480f19c1a0eb0d17da906c4d38c588a74ce7128.yml",
+          "workflow_name": "Test and Lint",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 63,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "tests": 6,
+            "lint": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 2,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "tests": 6,
+              "lint": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 6,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-node@v3",
+              "runforesight/foresight-test-kit-action@v1",
+              "runforesight/foresight-workflow-kit-action@v1"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Test and Lint",
+        "true": {
+          "push": {
+            "branches-ignore": [
+              "release"
+            ]
+          },
+          "pull_request": {
+            "branches": [
+              "main"
+            ]
+          }
+        },
+        "jobs": {
+          "tests": {
+            "name": "Tests",
+            "runs-on": "ubuntu-latest",
+            "strategy": {
+              "matrix": {
+                "node-version": [
+                  "16.x"
+                ]
+              }
+            },
+            "steps": [
+              {
+                "name": "Collect Workflow Telemetry",
+                "uses": "runforesight/foresight-workflow-kit-action@v1",
+                "if": "success() || failure()",
+                "with": {
+                  "api_key": "${{ secrets.foresight_api_key }}"
+                }
+              },
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Use Node.js ${{ matrix.node-version }}",
+                "uses": "actions/setup-node@v3",
+                "with": {
+                  "node-version": "${{ matrix.node-version }}",
+                  "cache": "npm"
+                }
+              },
+              {
+                "run": "npm install"
+              },
+              {
+                "run": "npm run test"
+              },
+              {
+                "name": "Analyze Test and/or Coverage Results",
+                "uses": "runforesight/foresight-test-kit-action@v1",
+                "if": "success() || failure()",
+                "with": {
+                  "api_key": "${{ secrets.foresight_api_key }}",
+                  "test_format": "JUNIT",
+                  "test_framework": "JEST",
+                  "test_path": "./junit.xml",
+                  "coverage_format": "JACOCO/XML",
+                  "coverage_path": "./coverage"
+                }
+              }
+            ]
+          },
+          "lint": {
+            "name": "Lint",
+            "runs-on": "ubuntu-latest",
+            "strategy": {
+              "matrix": {
+                "node-version": [
+                  "16.x"
+                ]
+              }
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Use Node.js ${{ matrix.node-version }}",
+                "uses": "actions/setup-node@v3",
+                "with": {
+                  "node-version": "${{ matrix.node-version }}",
+                  "cache": "npm"
+                }
+              },
+              {
+                "run": "npm install"
+              },
+              {
+                "run": "npm run lint"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-05-12T14-54-49Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-8718f729-ae55-5286-a926-55a6e85a16d1",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/test-and-lint__2024-05-12T14-54-49Z__c945b892e97d1228faa6f4fdc84021085e613582.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 11,
+                  "startColumn": 5,
+                  "endLine": 39,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "c0b405046059e588:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-cdd1e922-5fe0-5f21-92f3-6185107b4246",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/test-and-lint__2024-05-12T14-54-49Z__c945b892e97d1228faa6f4fdc84021085e613582.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 40,
+                  "startColumn": 5,
+                  "endLine": 49,
+                  "endColumn": 25
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "991f9e5324d9edcd:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test-and-lint__2024-05-12T14-54-49Z__c945b892e97d1228faa6f4fdc84021085e613582.yml",
+          "workflow_name": "Test and Lint",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 49,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "tests": 6,
+            "lint": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "tests": 6,
+              "lint": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 6,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-node@v4",
+              "catchpoint/foresight-test-kit-action@v1",
+              "catchpoint/foresight-workflow-kit-action@v1"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Test and Lint",
+        "true": {
+          "push": {
+            "branches-ignore": [
+              "release"
+            ]
+          },
+          "pull_request": {
+            "branches": [
+              "main"
+            ]
+          }
+        },
+        "jobs": {
+          "tests": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Collect Workflow Telemetry",
+                "uses": "catchpoint/foresight-workflow-kit-action@v1",
+                "if": "success() || failure()",
+                "with": {
+                  "api_key": "${{ secrets.foresight_api_key }}"
+                }
+              },
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Use Node.js 20",
+                "uses": "actions/setup-node@v4",
+                "with": {
+                  "node-version-file": ".node-version",
+                  "cache": "npm"
+                }
+              },
+              {
+                "run": "npm install"
+              },
+              {
+                "run": "npm run test"
+              },
+              {
+                "name": "Analyze Test and/or Coverage Results",
+                "uses": "catchpoint/foresight-test-kit-action@v1",
+                "if": "success() || failure()",
+                "with": {
+                  "api_key": "${{ secrets.foresight_api_key }}",
+                  "test_format": "JUNIT",
+                  "test_framework": "JEST",
+                  "test_path": "./junit.xml",
+                  "coverage_format": "JACOCO/XML",
+                  "coverage_path": "./coverage"
+                }
+              }
+            ]
+          },
+          "lint": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Use Node.js 20",
+                "uses": "actions/setup-node@v4",
+                "with": {
+                  "node-version-file": ".node-version",
+                  "cache": "npm"
+                }
+              },
+              {
+                "run": "npm install"
+              },
+              {
+                "run": "npm run lint"
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

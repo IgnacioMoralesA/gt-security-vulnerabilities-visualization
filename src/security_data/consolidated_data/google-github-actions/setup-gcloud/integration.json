@@ -1,0 +1,3125 @@
+{
+  "repo_owner": "google-github-actions",
+  "repo_name": "setup-gcloud",
+  "workflow_name": "integration",
+  "history": {
+    "2022-11-10T21-43-12Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "integration__2022-11-10T21-43-12Z__65a3df0bf4718c9085a0d74b6ed025323f668ccc.yml",
+          "workflow_name": "Integration",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": {
+            "group": "${{ github.workflow }}-${{ github.head_ref || github.ref }}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 109,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "integration": 15
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "integration": 15
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 9,
+            "actions_used": [
+              "./",
+              "actions/checkout@v3",
+              "google-github-actions/auth@main"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Integration",
+        "true": {
+          "push": {
+            "branches": [
+              "main"
+            ]
+          },
+          "pull_request": {
+            "branches": [
+              "main"
+            ]
+          },
+          "workflow_dispatch": null
+        },
+        "concurrency": {
+          "group": "${{ github.workflow }}-${{ github.head_ref || github.ref }}",
+          "cancel-in-progress": true
+        },
+        "jobs": {
+          "integration": {
+            "if": "${{ github.event_name == 'push' || github.repository == github.event.pull_request.head.repo.full_name && github.actor != 'dependabot[bot]' }}",
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "os": [
+                  "ubuntu-latest",
+                  "windows-latest",
+                  "macos-latest"
+                ]
+              }
+            },
+            "runs-on": "${{ matrix.os }}",
+            "permissions": {
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v3",
+                "with": {
+                  "node-version": "16.x"
+                }
+              },
+              {
+                "name": "Build",
+                "run": "npm ci && npm run build"
+              },
+              {
+                "name": "Install version",
+                "uses": "./",
+                "with": {
+                  "version": "374.0.0"
+                }
+              },
+              {
+                "name": "Install latest",
+                "uses": "./",
+                "with": {
+                  "version": "latest"
+                }
+              },
+              {
+                "name": "Check defaults",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_ACCOUNT": "(unset)",
+                  "TEST_PROJECT_ID": "(unset)"
+                }
+              },
+              {
+                "name": "Install components",
+                "uses": "./",
+                "with": {
+                  "install_components": "cloud-run-proxy"
+                }
+              },
+              {
+                "name": "Check components",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_COMPONENTS": "cloud-run-proxy"
+                }
+              },
+              {
+                "name": "Set project ID",
+                "uses": "./",
+                "with": {
+                  "project_id": "${{ secrets.PROJECT_ID }}"
+                }
+              },
+              {
+                "name": "Check project ID",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_PROJECT_ID": "${{ secrets.PROJECT_ID }}"
+                }
+              },
+              {
+                "name": "Authenticate via WIF",
+                "uses": "google-github-actions/auth@main",
+                "with": {
+                  "workload_identity_provider": "${{ secrets.WIF_PROVIDER_NAME }}",
+                  "service_account": "${{ secrets.WIF_SERVICE_ACCOUNT_EMAIL }}"
+                }
+              },
+              {
+                "name": "Setup gcloud with WIF",
+                "uses": "./"
+              },
+              {
+                "name": "Check WIF authentication",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_ACCOUNT": "${{ secrets.WIF_SERVICE_ACCOUNT_EMAIL }}",
+                  "TEST_PROJECT_ID": "${{ secrets.WIF_PROJECT_ID }}"
+                }
+              },
+              {
+                "name": "Authenticate via SAKE",
+                "uses": "google-github-actions/auth@main",
+                "with": {
+                  "credentials_json": "${{ secrets.SAKE_SERVICE_ACCOUNT_KEY_JSON }}"
+                }
+              },
+              {
+                "name": "Setup gcloud with SAKE",
+                "uses": "./"
+              },
+              {
+                "name": "Check WIF authentication",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_ACCOUNT": "${{ secrets.SAKE_SERVICE_ACCOUNT_EMAIL }}",
+                  "TEST_PROJECT_ID": "${{ secrets.SAKE_PROJECT_ID }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-12-10T14-46-16Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "integration__2022-12-10T14-46-16Z__3639833216a3fd9cea5f2960b2dd35f6f3b5b5a7.yml",
+          "workflow_name": "Integration",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": {
+            "group": "${{ github.workflow }}-${{ github.head_ref || github.ref }}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 111,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "integration": 16
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "integration": 16
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 10,
+            "actions_used": [
+              "./",
+              "actions/checkout@v3",
+              "actions/setup-node@v3",
+              "google-github-actions/auth@main"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Integration",
+        "true": {
+          "push": {
+            "branches": [
+              "main"
+            ]
+          },
+          "pull_request": {
+            "branches": [
+              "main"
+            ]
+          },
+          "workflow_dispatch": null
+        },
+        "concurrency": {
+          "group": "${{ github.workflow }}-${{ github.head_ref || github.ref }}",
+          "cancel-in-progress": true
+        },
+        "jobs": {
+          "integration": {
+            "if": "${{ github.event_name == 'push' || github.repository == github.event.pull_request.head.repo.full_name && github.actor != 'dependabot[bot]' }}",
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "os": [
+                  "ubuntu-latest",
+                  "windows-latest",
+                  "macos-latest"
+                ]
+              }
+            },
+            "runs-on": "${{ matrix.os }}",
+            "permissions": {
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "uses": "actions/setup-node@v3",
+                "with": {
+                  "node-version": "16.x"
+                }
+              },
+              {
+                "name": "Build",
+                "run": "npm ci && npm run build"
+              },
+              {
+                "name": "Install version",
+                "uses": "./",
+                "with": {
+                  "version": "374.0.0"
+                }
+              },
+              {
+                "name": "Install latest",
+                "uses": "./",
+                "with": {
+                  "version": "latest"
+                }
+              },
+              {
+                "name": "Check defaults",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_ACCOUNT": "(unset)",
+                  "TEST_PROJECT_ID": "(unset)"
+                }
+              },
+              {
+                "name": "Install components",
+                "uses": "./",
+                "with": {
+                  "install_components": "cloud-run-proxy"
+                }
+              },
+              {
+                "name": "Check components",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_COMPONENTS": "cloud-run-proxy"
+                }
+              },
+              {
+                "name": "Set project ID",
+                "uses": "./",
+                "with": {
+                  "project_id": "${{ secrets.PROJECT_ID }}"
+                }
+              },
+              {
+                "name": "Check project ID",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_PROJECT_ID": "${{ secrets.PROJECT_ID }}"
+                }
+              },
+              {
+                "name": "Authenticate via WIF",
+                "uses": "google-github-actions/auth@main",
+                "with": {
+                  "workload_identity_provider": "${{ secrets.WIF_PROVIDER_NAME }}",
+                  "service_account": "${{ secrets.SERVICE_ACCOUNT_EMAIL }}"
+                }
+              },
+              {
+                "name": "Setup gcloud with WIF",
+                "uses": "./"
+              },
+              {
+                "name": "Check WIF authentication",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_ACCOUNT": "${{ secrets.SERVICE_ACCOUNT_EMAIL }}",
+                  "TEST_PROJECT_ID": "${{ secrets.PROJECT_ID }}"
+                }
+              },
+              {
+                "name": "Authenticate via SAKE",
+                "uses": "google-github-actions/auth@main",
+                "with": {
+                  "credentials_json": "${{ secrets.SERVICE_ACCOUNT_KEY_JSON }}"
+                }
+              },
+              {
+                "name": "Setup gcloud with SAKE",
+                "uses": "./"
+              },
+              {
+                "name": "Check SAKE authentication",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_ACCOUNT": "${{ secrets.SERVICE_ACCOUNT_EMAIL }}",
+                  "TEST_PROJECT_ID": "${{ secrets.PROJECT_ID }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-02-03T00-21-19Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "integration__2023-02-03T00-21-19Z__10b5bd2b6dc4627639f114efa83db2b9a8a4f409.yml",
+          "workflow_name": "Integration",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": {
+            "group": "${{ github.workflow }}-${{ github.head_ref || github.ref }}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 123,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "integration": 18
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "integration": 18
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 12,
+            "actions_used": [
+              "./",
+              "actions/checkout@v3",
+              "actions/setup-node@v3",
+              "google-github-actions/auth@main"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Integration",
+        "true": {
+          "push": {
+            "branches": [
+              "main"
+            ]
+          },
+          "pull_request": {
+            "branches": [
+              "main"
+            ]
+          },
+          "workflow_dispatch": null
+        },
+        "concurrency": {
+          "group": "${{ github.workflow }}-${{ github.head_ref || github.ref }}",
+          "cancel-in-progress": true
+        },
+        "jobs": {
+          "integration": {
+            "if": "${{ github.event_name == 'push' || github.repository == github.event.pull_request.head.repo.full_name && github.actor != 'dependabot[bot]' }}",
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "os": [
+                  "ubuntu-latest",
+                  "windows-latest",
+                  "macos-latest"
+                ]
+              }
+            },
+            "runs-on": "${{ matrix.os }}",
+            "permissions": {
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "uses": "actions/setup-node@v3",
+                "with": {
+                  "node-version": "16.x"
+                }
+              },
+              {
+                "name": "Build",
+                "run": "npm ci && npm run build"
+              },
+              {
+                "name": "Install constraint",
+                "uses": "./",
+                "with": {
+                  "skip_install": true
+                }
+              },
+              {
+                "name": "Install constraint",
+                "uses": "./",
+                "with": {
+                  "version": ">= 1.0.0"
+                }
+              },
+              {
+                "name": "Install version",
+                "uses": "./",
+                "with": {
+                  "version": "374.0.0"
+                }
+              },
+              {
+                "name": "Install latest",
+                "uses": "./",
+                "with": {
+                  "version": "latest"
+                }
+              },
+              {
+                "name": "Check defaults",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_ACCOUNT": "(unset)",
+                  "TEST_PROJECT_ID": "(unset)"
+                }
+              },
+              {
+                "name": "Install components",
+                "uses": "./",
+                "with": {
+                  "install_components": "cloud-run-proxy"
+                }
+              },
+              {
+                "name": "Check components",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_COMPONENTS": "cloud-run-proxy"
+                }
+              },
+              {
+                "name": "Set project ID",
+                "uses": "./",
+                "with": {
+                  "project_id": "${{ secrets.PROJECT_ID }}"
+                }
+              },
+              {
+                "name": "Check project ID",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_PROJECT_ID": "${{ secrets.PROJECT_ID }}"
+                }
+              },
+              {
+                "name": "Authenticate via WIF",
+                "uses": "google-github-actions/auth@main",
+                "with": {
+                  "workload_identity_provider": "${{ secrets.WIF_PROVIDER_NAME }}",
+                  "service_account": "${{ secrets.SERVICE_ACCOUNT_EMAIL }}"
+                }
+              },
+              {
+                "name": "Setup gcloud with WIF",
+                "uses": "./"
+              },
+              {
+                "name": "Check WIF authentication",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_ACCOUNT": "${{ secrets.SERVICE_ACCOUNT_EMAIL }}",
+                  "TEST_PROJECT_ID": "${{ secrets.PROJECT_ID }}"
+                }
+              },
+              {
+                "name": "Authenticate via SAKE",
+                "uses": "google-github-actions/auth@main",
+                "with": {
+                  "credentials_json": "${{ secrets.SERVICE_ACCOUNT_KEY_JSON }}"
+                }
+              },
+              {
+                "name": "Setup gcloud with SAKE",
+                "uses": "./"
+              },
+              {
+                "name": "Check SAKE authentication",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_ACCOUNT": "${{ secrets.SERVICE_ACCOUNT_EMAIL }}",
+                  "TEST_PROJECT_ID": "${{ secrets.PROJECT_ID }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-03-24T20-46-01Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "integration__2023-03-24T20-46-01Z__4e6442470fe0747b349ee6bc1ede2b47d35fc518.yml",
+          "workflow_name": "Integration",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": {
+            "group": "${{ github.workflow }}-${{ github.head_ref || github.ref }}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 123,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "integration": 18
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "integration": 18
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 12,
+            "actions_used": [
+              "./",
+              "actions/checkout@v3",
+              "actions/setup-node@v3",
+              "google-github-actions/auth@main"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Integration",
+        "true": {
+          "push": {
+            "branches": [
+              "main"
+            ]
+          },
+          "pull_request": {
+            "branches": [
+              "main"
+            ]
+          },
+          "workflow_dispatch": null
+        },
+        "concurrency": {
+          "group": "${{ github.workflow }}-${{ github.head_ref || github.ref }}",
+          "cancel-in-progress": true
+        },
+        "jobs": {
+          "integration": {
+            "if": "${{ github.event_name == 'push' || github.repository == github.event.pull_request.head.repo.full_name && github.actor != 'dependabot[bot]' }}",
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "os": [
+                  "ubuntu-latest",
+                  "windows-latest",
+                  "macos-latest"
+                ]
+              }
+            },
+            "runs-on": "${{ matrix.os }}",
+            "permissions": {
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "uses": "actions/setup-node@v3",
+                "with": {
+                  "node-version": "16.x"
+                }
+              },
+              {
+                "name": "Build",
+                "run": "npm ci && npm run build"
+              },
+              {
+                "name": "Install constraint",
+                "uses": "./",
+                "with": {
+                  "skip_install": true
+                }
+              },
+              {
+                "name": "Install constraint",
+                "uses": "./",
+                "with": {
+                  "version": ">= 1.0.0"
+                }
+              },
+              {
+                "name": "Install version",
+                "uses": "./",
+                "with": {
+                  "version": "374.0.0"
+                }
+              },
+              {
+                "name": "Install latest",
+                "uses": "./",
+                "with": {
+                  "version": "latest"
+                }
+              },
+              {
+                "name": "Check defaults",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_ACCOUNT": "(unset)",
+                  "TEST_PROJECT_ID": "(unset)"
+                }
+              },
+              {
+                "name": "Install components",
+                "uses": "./",
+                "with": {
+                  "install_components": "cloud-run-proxy"
+                }
+              },
+              {
+                "name": "Check components",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_COMPONENTS": "cloud-run-proxy"
+                }
+              },
+              {
+                "name": "Set project ID",
+                "uses": "./",
+                "with": {
+                  "project_id": "${{ vars.PROJECT_ID }}"
+                }
+              },
+              {
+                "name": "Check project ID",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_PROJECT_ID": "${{ vars.PROJECT_ID }}"
+                }
+              },
+              {
+                "name": "Authenticate via WIF",
+                "uses": "google-github-actions/auth@main",
+                "with": {
+                  "workload_identity_provider": "${{ vars.WIF_PROVIDER_NAME }}",
+                  "service_account": "${{ vars.SERVICE_ACCOUNT_EMAIL }}"
+                }
+              },
+              {
+                "name": "Setup gcloud with WIF",
+                "uses": "./"
+              },
+              {
+                "name": "Check WIF authentication",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_ACCOUNT": "${{ vars.SERVICE_ACCOUNT_EMAIL }}",
+                  "TEST_PROJECT_ID": "${{ vars.PROJECT_ID }}"
+                }
+              },
+              {
+                "name": "Authenticate via SAKE",
+                "uses": "google-github-actions/auth@main",
+                "with": {
+                  "credentials_json": "${{ secrets.SERVICE_ACCOUNT_KEY_JSON }}"
+                }
+              },
+              {
+                "name": "Setup gcloud with SAKE",
+                "uses": "./"
+              },
+              {
+                "name": "Check SAKE authentication",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_ACCOUNT": "${{ vars.SERVICE_ACCOUNT_EMAIL }}",
+                  "TEST_PROJECT_ID": "${{ vars.PROJECT_ID }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-11-07T15-00-56Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "integration__2023-11-07T15-00-56Z__602747fdf0744cdd55709b3dab7a8d86f5fc7333.yml",
+          "workflow_name": "Integration",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": {
+            "group": "${{ github.workflow }}-${{ github.head_ref || github.ref }}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 123,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "integration": 18
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "integration": 18
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 12,
+            "actions_used": [
+              "./",
+              "actions/checkout@v4",
+              "actions/setup-node@v3",
+              "google-github-actions/auth@main"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Integration",
+        "true": {
+          "push": {
+            "branches": [
+              "main"
+            ]
+          },
+          "pull_request": {
+            "branches": [
+              "main"
+            ]
+          },
+          "workflow_dispatch": null
+        },
+        "concurrency": {
+          "group": "${{ github.workflow }}-${{ github.head_ref || github.ref }}",
+          "cancel-in-progress": true
+        },
+        "jobs": {
+          "integration": {
+            "if": "${{ github.event_name == 'push' || github.repository == github.event.pull_request.head.repo.full_name && github.actor != 'dependabot[bot]' }}",
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "os": [
+                  "ubuntu-latest",
+                  "windows-latest",
+                  "macos-latest"
+                ]
+              }
+            },
+            "runs-on": "${{ matrix.os }}",
+            "permissions": {
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "uses": "actions/setup-node@v3",
+                "with": {
+                  "node-version": "20.x"
+                }
+              },
+              {
+                "name": "Build",
+                "run": "npm ci && npm run build"
+              },
+              {
+                "name": "Install constraint",
+                "uses": "./",
+                "with": {
+                  "skip_install": true
+                }
+              },
+              {
+                "name": "Install constraint",
+                "uses": "./",
+                "with": {
+                  "version": ">= 1.0.0"
+                }
+              },
+              {
+                "name": "Install version",
+                "uses": "./",
+                "with": {
+                  "version": "374.0.0"
+                }
+              },
+              {
+                "name": "Install latest",
+                "uses": "./",
+                "with": {
+                  "version": "latest"
+                }
+              },
+              {
+                "name": "Check defaults",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_ACCOUNT": "(unset)",
+                  "TEST_PROJECT_ID": "(unset)"
+                }
+              },
+              {
+                "name": "Install components",
+                "uses": "./",
+                "with": {
+                  "install_components": "cloud-run-proxy"
+                }
+              },
+              {
+                "name": "Check components",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_COMPONENTS": "cloud-run-proxy"
+                }
+              },
+              {
+                "name": "Set project ID",
+                "uses": "./",
+                "with": {
+                  "project_id": "${{ vars.PROJECT_ID }}"
+                }
+              },
+              {
+                "name": "Check project ID",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_PROJECT_ID": "${{ vars.PROJECT_ID }}"
+                }
+              },
+              {
+                "name": "Authenticate via WIF",
+                "uses": "google-github-actions/auth@main",
+                "with": {
+                  "workload_identity_provider": "${{ vars.WIF_PROVIDER_NAME }}",
+                  "service_account": "${{ vars.SERVICE_ACCOUNT_EMAIL }}"
+                }
+              },
+              {
+                "name": "Setup gcloud with WIF",
+                "uses": "./"
+              },
+              {
+                "name": "Check WIF authentication",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_ACCOUNT": "${{ vars.SERVICE_ACCOUNT_EMAIL }}",
+                  "TEST_PROJECT_ID": "${{ vars.PROJECT_ID }}"
+                }
+              },
+              {
+                "name": "Authenticate via SAKE",
+                "uses": "google-github-actions/auth@main",
+                "with": {
+                  "credentials_json": "${{ secrets.SERVICE_ACCOUNT_KEY_JSON }}"
+                }
+              },
+              {
+                "name": "Setup gcloud with SAKE",
+                "uses": "./"
+              },
+              {
+                "name": "Check SAKE authentication",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_ACCOUNT": "${{ vars.SERVICE_ACCOUNT_EMAIL }}",
+                  "TEST_PROJECT_ID": "${{ vars.PROJECT_ID }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-11-08T14-21-19Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "integration__2023-11-08T14-21-19Z__63496e652100112a8db8a71668b77c67aa1ab071.yml",
+          "workflow_name": "Integration",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": {
+            "group": "${{ github.workflow }}-${{ github.head_ref || github.ref }}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 123,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "integration": 18
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "integration": 18
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 12,
+            "actions_used": [
+              "./",
+              "actions/checkout@v4",
+              "actions/setup-node@v4",
+              "google-github-actions/auth@main"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Integration",
+        "true": {
+          "push": {
+            "branches": [
+              "main"
+            ]
+          },
+          "pull_request": {
+            "branches": [
+              "main"
+            ]
+          },
+          "workflow_dispatch": null
+        },
+        "concurrency": {
+          "group": "${{ github.workflow }}-${{ github.head_ref || github.ref }}",
+          "cancel-in-progress": true
+        },
+        "jobs": {
+          "integration": {
+            "if": "${{ github.event_name == 'push' || github.repository == github.event.pull_request.head.repo.full_name && github.actor != 'dependabot[bot]' }}",
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "os": [
+                  "ubuntu-latest",
+                  "windows-latest",
+                  "macos-latest"
+                ]
+              }
+            },
+            "runs-on": "${{ matrix.os }}",
+            "permissions": {
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "uses": "actions/setup-node@v4",
+                "with": {
+                  "node-version": "20.x"
+                }
+              },
+              {
+                "name": "Build",
+                "run": "npm ci && npm run build"
+              },
+              {
+                "name": "Install constraint",
+                "uses": "./",
+                "with": {
+                  "skip_install": true
+                }
+              },
+              {
+                "name": "Install constraint",
+                "uses": "./",
+                "with": {
+                  "version": ">= 1.0.0"
+                }
+              },
+              {
+                "name": "Install version",
+                "uses": "./",
+                "with": {
+                  "version": "374.0.0"
+                }
+              },
+              {
+                "name": "Install latest",
+                "uses": "./",
+                "with": {
+                  "version": "latest"
+                }
+              },
+              {
+                "name": "Check defaults",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_ACCOUNT": "(unset)",
+                  "TEST_PROJECT_ID": "(unset)"
+                }
+              },
+              {
+                "name": "Install components",
+                "uses": "./",
+                "with": {
+                  "install_components": "cloud-run-proxy"
+                }
+              },
+              {
+                "name": "Check components",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_COMPONENTS": "cloud-run-proxy"
+                }
+              },
+              {
+                "name": "Set project ID",
+                "uses": "./",
+                "with": {
+                  "project_id": "${{ vars.PROJECT_ID }}"
+                }
+              },
+              {
+                "name": "Check project ID",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_PROJECT_ID": "${{ vars.PROJECT_ID }}"
+                }
+              },
+              {
+                "name": "Authenticate via WIF",
+                "uses": "google-github-actions/auth@main",
+                "with": {
+                  "workload_identity_provider": "${{ vars.WIF_PROVIDER_NAME }}",
+                  "service_account": "${{ vars.SERVICE_ACCOUNT_EMAIL }}"
+                }
+              },
+              {
+                "name": "Setup gcloud with WIF",
+                "uses": "./"
+              },
+              {
+                "name": "Check WIF authentication",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_ACCOUNT": "${{ vars.SERVICE_ACCOUNT_EMAIL }}",
+                  "TEST_PROJECT_ID": "${{ vars.PROJECT_ID }}"
+                }
+              },
+              {
+                "name": "Authenticate via SAKE",
+                "uses": "google-github-actions/auth@main",
+                "with": {
+                  "credentials_json": "${{ secrets.SERVICE_ACCOUNT_KEY_JSON }}"
+                }
+              },
+              {
+                "name": "Setup gcloud with SAKE",
+                "uses": "./"
+              },
+              {
+                "name": "Check SAKE authentication",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_ACCOUNT": "${{ vars.SERVICE_ACCOUNT_EMAIL }}",
+                  "TEST_PROJECT_ID": "${{ vars.PROJECT_ID }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-12-04T13-48-54Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "integration__2023-12-04T13-48-54Z__7c7fdb013a8b6110c2be651135a704ef79c91e5f.yml",
+          "workflow_name": "Integration",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": {
+            "group": "${{ github.workflow }}-${{ github.head_ref || github.ref }}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 125,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "integration": 18
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "integration": 18
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 12,
+            "actions_used": [
+              "./",
+              "actions/checkout@v4",
+              "actions/setup-node@v4",
+              "google-github-actions/auth@main"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Integration",
+        "true": {
+          "push": {
+            "branches": [
+              "main",
+              "release/**/*"
+            ]
+          },
+          "pull_request": {
+            "branches": [
+              "main",
+              "release/**/*"
+            ]
+          },
+          "workflow_dispatch": null
+        },
+        "concurrency": {
+          "group": "${{ github.workflow }}-${{ github.head_ref || github.ref }}",
+          "cancel-in-progress": true
+        },
+        "jobs": {
+          "integration": {
+            "if": "${{ github.event_name == 'push' || github.repository == github.event.pull_request.head.repo.full_name && github.actor != 'dependabot[bot]' }}",
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "os": [
+                  "ubuntu-latest",
+                  "windows-latest",
+                  "macos-latest"
+                ]
+              }
+            },
+            "runs-on": "${{ matrix.os }}",
+            "permissions": {
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "uses": "actions/setup-node@v4",
+                "with": {
+                  "node-version": "20.x"
+                }
+              },
+              {
+                "name": "Build",
+                "run": "npm ci && npm run build"
+              },
+              {
+                "name": "Install constraint",
+                "uses": "./",
+                "with": {
+                  "skip_install": true
+                }
+              },
+              {
+                "name": "Install constraint",
+                "uses": "./",
+                "with": {
+                  "version": ">= 1.0.0"
+                }
+              },
+              {
+                "name": "Install version",
+                "uses": "./",
+                "with": {
+                  "version": "374.0.0"
+                }
+              },
+              {
+                "name": "Install latest",
+                "uses": "./",
+                "with": {
+                  "version": "latest"
+                }
+              },
+              {
+                "name": "Check defaults",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_ACCOUNT": "(unset)",
+                  "TEST_PROJECT_ID": "(unset)"
+                }
+              },
+              {
+                "name": "Install components",
+                "uses": "./",
+                "with": {
+                  "install_components": "cloud-run-proxy"
+                }
+              },
+              {
+                "name": "Check components",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_COMPONENTS": "cloud-run-proxy"
+                }
+              },
+              {
+                "name": "Set project ID",
+                "uses": "./",
+                "with": {
+                  "project_id": "${{ vars.PROJECT_ID }}"
+                }
+              },
+              {
+                "name": "Check project ID",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_PROJECT_ID": "${{ vars.PROJECT_ID }}"
+                }
+              },
+              {
+                "name": "Authenticate via WIF",
+                "uses": "google-github-actions/auth@main",
+                "with": {
+                  "workload_identity_provider": "${{ vars.WIF_PROVIDER_NAME }}",
+                  "service_account": "${{ vars.SERVICE_ACCOUNT_EMAIL }}"
+                }
+              },
+              {
+                "name": "Setup gcloud with WIF",
+                "uses": "./"
+              },
+              {
+                "name": "Check WIF authentication",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_ACCOUNT": "${{ vars.SERVICE_ACCOUNT_EMAIL }}",
+                  "TEST_PROJECT_ID": "${{ vars.PROJECT_ID }}"
+                }
+              },
+              {
+                "name": "Authenticate via SAKE",
+                "uses": "google-github-actions/auth@main",
+                "with": {
+                  "credentials_json": "${{ secrets.SERVICE_ACCOUNT_KEY_JSON }}"
+                }
+              },
+              {
+                "name": "Setup gcloud with SAKE",
+                "uses": "./"
+              },
+              {
+                "name": "Check SAKE authentication",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_ACCOUNT": "${{ vars.SERVICE_ACCOUNT_EMAIL }}",
+                  "TEST_PROJECT_ID": "${{ vars.PROJECT_ID }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-12-13T15-30-18Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "integration__2023-12-13T15-30-18Z__87d5265a435cd198594a1ec7e97e4540ee8b9c1e.yml",
+          "workflow_name": "Integration",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": {
+            "group": "${{ github.workflow }}-${{ github.head_ref || github.ref }}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 125,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "integration": 18
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "integration": 18
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 12,
+            "actions_used": [
+              "./",
+              "actions/checkout@v4",
+              "actions/setup-node@v4",
+              "google-github-actions/auth@v2"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Integration",
+        "true": {
+          "push": {
+            "branches": [
+              "main",
+              "release/**/*"
+            ]
+          },
+          "pull_request": {
+            "branches": [
+              "main",
+              "release/**/*"
+            ]
+          },
+          "workflow_dispatch": null
+        },
+        "concurrency": {
+          "group": "${{ github.workflow }}-${{ github.head_ref || github.ref }}",
+          "cancel-in-progress": true
+        },
+        "jobs": {
+          "integration": {
+            "if": "${{ github.event_name == 'push' || github.repository == github.event.pull_request.head.repo.full_name && github.actor != 'dependabot[bot]' }}",
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "os": [
+                  "ubuntu-latest",
+                  "windows-latest",
+                  "macos-latest"
+                ]
+              }
+            },
+            "runs-on": "${{ matrix.os }}",
+            "permissions": {
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "uses": "actions/setup-node@v4",
+                "with": {
+                  "node-version": "20.x"
+                }
+              },
+              {
+                "name": "Build",
+                "run": "npm ci && npm run build"
+              },
+              {
+                "name": "Install constraint",
+                "uses": "./",
+                "with": {
+                  "skip_install": true
+                }
+              },
+              {
+                "name": "Install constraint",
+                "uses": "./",
+                "with": {
+                  "version": ">= 1.0.0"
+                }
+              },
+              {
+                "name": "Install version",
+                "uses": "./",
+                "with": {
+                  "version": "374.0.0"
+                }
+              },
+              {
+                "name": "Install latest",
+                "uses": "./",
+                "with": {
+                  "version": "latest"
+                }
+              },
+              {
+                "name": "Check defaults",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_ACCOUNT": "(unset)",
+                  "TEST_PROJECT_ID": "(unset)"
+                }
+              },
+              {
+                "name": "Install components",
+                "uses": "./",
+                "with": {
+                  "install_components": "cloud-run-proxy"
+                }
+              },
+              {
+                "name": "Check components",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_COMPONENTS": "cloud-run-proxy"
+                }
+              },
+              {
+                "name": "Set project ID",
+                "uses": "./",
+                "with": {
+                  "project_id": "${{ vars.PROJECT_ID }}"
+                }
+              },
+              {
+                "name": "Check project ID",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_PROJECT_ID": "${{ vars.PROJECT_ID }}"
+                }
+              },
+              {
+                "name": "Authenticate via WIF",
+                "uses": "google-github-actions/auth@v2",
+                "with": {
+                  "workload_identity_provider": "${{ vars.WIF_PROVIDER_NAME }}",
+                  "service_account": "${{ vars.SERVICE_ACCOUNT_EMAIL }}"
+                }
+              },
+              {
+                "name": "Setup gcloud with WIF",
+                "uses": "./"
+              },
+              {
+                "name": "Check WIF authentication",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_ACCOUNT": "${{ vars.SERVICE_ACCOUNT_EMAIL }}",
+                  "TEST_PROJECT_ID": "${{ vars.PROJECT_ID }}"
+                }
+              },
+              {
+                "name": "Authenticate via SAKE",
+                "uses": "google-github-actions/auth@v2",
+                "with": {
+                  "credentials_json": "${{ secrets.SERVICE_ACCOUNT_KEY_JSON }}"
+                }
+              },
+              {
+                "name": "Setup gcloud with SAKE",
+                "uses": "./"
+              },
+              {
+                "name": "Check SAKE authentication",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_ACCOUNT": "${{ vars.SERVICE_ACCOUNT_EMAIL }}",
+                  "TEST_PROJECT_ID": "${{ vars.PROJECT_ID }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-12-21T04-12-47Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "integration__2023-12-21T04-12-47Z__0c32996ccb17f02aad9bfa7dcc490f9115e67709.yml",
+          "workflow_name": "Integration",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": {
+            "group": "${{ github.workflow }}-${{ github.head_ref || github.ref }}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 125,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "integration": 18
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "integration": 18
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 12,
+            "actions_used": [
+              "./",
+              "actions/checkout@v4",
+              "actions/setup-node@v4",
+              "google-github-actions/auth@v2"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Integration",
+        "true": {
+          "push": {
+            "branches": [
+              "main",
+              "release/**/*"
+            ]
+          },
+          "pull_request": {
+            "branches": [
+              "main",
+              "release/**/*"
+            ]
+          },
+          "workflow_dispatch": null
+        },
+        "concurrency": {
+          "group": "${{ github.workflow }}-${{ github.head_ref || github.ref }}",
+          "cancel-in-progress": true
+        },
+        "jobs": {
+          "integration": {
+            "if": "${{ github.event_name == 'push' || github.repository == github.event.pull_request.head.repo.full_name && github.actor != 'dependabot[bot]' }}",
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "os": [
+                  "ubuntu-latest",
+                  "windows-latest",
+                  "macos-latest"
+                ]
+              }
+            },
+            "runs-on": "${{ matrix.os }}",
+            "permissions": {
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "uses": "actions/setup-node@v4",
+                "with": {
+                  "node-version": "20.x"
+                }
+              },
+              {
+                "name": "Build",
+                "run": "npm ci && npm run build"
+              },
+              {
+                "name": "Skip install",
+                "uses": "./",
+                "with": {
+                  "skip_install": true
+                }
+              },
+              {
+                "name": "Install constraint",
+                "uses": "./",
+                "with": {
+                  "version": ">= 1.0.0"
+                }
+              },
+              {
+                "name": "Install version",
+                "uses": "./",
+                "with": {
+                  "version": "374.0.0"
+                }
+              },
+              {
+                "name": "Install latest",
+                "uses": "./",
+                "with": {
+                  "version": "latest"
+                }
+              },
+              {
+                "name": "Check defaults",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_ACCOUNT": "(unset)",
+                  "TEST_PROJECT_ID": "(unset)"
+                }
+              },
+              {
+                "name": "Install components",
+                "uses": "./",
+                "with": {
+                  "install_components": "cloud-run-proxy"
+                }
+              },
+              {
+                "name": "Check components",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_COMPONENTS": "cloud-run-proxy"
+                }
+              },
+              {
+                "name": "Set project ID",
+                "uses": "./",
+                "with": {
+                  "project_id": "${{ vars.PROJECT_ID }}"
+                }
+              },
+              {
+                "name": "Check project ID",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_PROJECT_ID": "${{ vars.PROJECT_ID }}"
+                }
+              },
+              {
+                "name": "Authenticate via WIF",
+                "uses": "google-github-actions/auth@v2",
+                "with": {
+                  "workload_identity_provider": "${{ vars.WIF_PROVIDER_NAME }}",
+                  "service_account": "${{ vars.SERVICE_ACCOUNT_EMAIL }}"
+                }
+              },
+              {
+                "name": "Setup gcloud with WIF",
+                "uses": "./"
+              },
+              {
+                "name": "Check WIF authentication",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_ACCOUNT": "${{ vars.SERVICE_ACCOUNT_EMAIL }}",
+                  "TEST_PROJECT_ID": "${{ vars.PROJECT_ID }}"
+                }
+              },
+              {
+                "name": "Authenticate via SAKE",
+                "uses": "google-github-actions/auth@v2",
+                "with": {
+                  "credentials_json": "${{ secrets.SERVICE_ACCOUNT_KEY_JSON }}"
+                }
+              },
+              {
+                "name": "Setup gcloud with SAKE",
+                "uses": "./"
+              },
+              {
+                "name": "Check SAKE authentication",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_ACCOUNT": "${{ vars.SERVICE_ACCOUNT_EMAIL }}",
+                  "TEST_PROJECT_ID": "${{ vars.PROJECT_ID }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-01-28T17-15-16Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "integration__2025-01-28T17-15-16Z__25043b08d04e573bd8f468495feb10e6a5715267.yml",
+          "workflow_name": "Integration",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": {
+            "group": "${{ github.workflow }}-${{ github.head_ref || github.ref }}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 125,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "integration": 18
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "integration": 18
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 12,
+            "actions_used": [
+              "./",
+              "actions/checkout@v4",
+              "actions/setup-node@v4",
+              "google-github-actions/auth@v2"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Integration",
+        "true": {
+          "push": {
+            "branches": [
+              "main",
+              "release/**/*"
+            ]
+          },
+          "pull_request": {
+            "branches": [
+              "main",
+              "release/**/*"
+            ]
+          },
+          "workflow_dispatch": null
+        },
+        "concurrency": {
+          "group": "${{ github.workflow }}-${{ github.head_ref || github.ref }}",
+          "cancel-in-progress": true
+        },
+        "jobs": {
+          "integration": {
+            "if": "${{ github.event_name == 'workflow_dispatch' || github.event_name == 'push' || github.repository == github.event.pull_request.head.repo.full_name && github.actor != 'dependabot[bot]' }}",
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "os": [
+                  "ubuntu-latest",
+                  "windows-latest",
+                  "macos-latest"
+                ]
+              }
+            },
+            "runs-on": "${{ matrix.os }}",
+            "permissions": {
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "uses": "actions/setup-node@v4",
+                "with": {
+                  "node-version": "20.x"
+                }
+              },
+              {
+                "name": "Build",
+                "run": "npm ci && npm run build"
+              },
+              {
+                "name": "Skip install",
+                "uses": "./",
+                "with": {
+                  "skip_install": true
+                }
+              },
+              {
+                "name": "Install constraint",
+                "uses": "./",
+                "with": {
+                  "version": ">= 1.0.0"
+                }
+              },
+              {
+                "name": "Install version",
+                "uses": "./",
+                "with": {
+                  "version": "374.0.0"
+                }
+              },
+              {
+                "name": "Install latest",
+                "uses": "./",
+                "with": {
+                  "version": "latest"
+                }
+              },
+              {
+                "name": "Check defaults",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_ACCOUNT": "(unset)",
+                  "TEST_PROJECT_ID": "(unset)"
+                }
+              },
+              {
+                "name": "Install components",
+                "uses": "./",
+                "with": {
+                  "install_components": "cloud-run-proxy"
+                }
+              },
+              {
+                "name": "Check components",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_COMPONENTS": "cloud-run-proxy"
+                }
+              },
+              {
+                "name": "Set project ID",
+                "uses": "./",
+                "with": {
+                  "project_id": "${{ vars.PROJECT_ID }}"
+                }
+              },
+              {
+                "name": "Check project ID",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_PROJECT_ID": "${{ vars.PROJECT_ID }}"
+                }
+              },
+              {
+                "name": "Authenticate via WIF",
+                "uses": "google-github-actions/auth@v2",
+                "with": {
+                  "workload_identity_provider": "${{ vars.WIF_PROVIDER_NAME }}",
+                  "service_account": "${{ vars.SERVICE_ACCOUNT_EMAIL }}"
+                }
+              },
+              {
+                "name": "Setup gcloud with WIF",
+                "uses": "./"
+              },
+              {
+                "name": "Check WIF authentication",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_ACCOUNT": "${{ vars.SERVICE_ACCOUNT_EMAIL }}",
+                  "TEST_PROJECT_ID": "${{ vars.PROJECT_ID }}"
+                }
+              },
+              {
+                "name": "Authenticate via SAKE",
+                "uses": "google-github-actions/auth@v2",
+                "with": {
+                  "credentials_json": "${{ secrets.SERVICE_ACCOUNT_KEY_JSON }}"
+                }
+              },
+              {
+                "name": "Setup gcloud with SAKE",
+                "uses": "./"
+              },
+              {
+                "name": "Check SAKE authentication",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_ACCOUNT": "${{ vars.SERVICE_ACCOUNT_EMAIL }}",
+                  "TEST_PROJECT_ID": "${{ vars.PROJECT_ID }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-01-31T21-27-07Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "integration__2025-01-31T21-27-07Z__0c0751a334df96bd97a58506905a494041dfdec0.yml",
+          "workflow_name": "Integration",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": {
+            "group": "${{ github.workflow }}-${{ github.head_ref || github.ref }}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 125,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "integration": 18
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "integration": 18
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 12,
+            "actions_used": [
+              "./",
+              "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+              "actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a",
+              "google-github-actions/auth@v2"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Integration",
+        "true": {
+          "push": {
+            "branches": [
+              "main",
+              "release/**/*"
+            ]
+          },
+          "pull_request": {
+            "branches": [
+              "main",
+              "release/**/*"
+            ]
+          },
+          "workflow_dispatch": null
+        },
+        "concurrency": {
+          "group": "${{ github.workflow }}-${{ github.head_ref || github.ref }}",
+          "cancel-in-progress": true
+        },
+        "jobs": {
+          "integration": {
+            "if": "${{ github.event_name == 'workflow_dispatch' || github.event_name == 'push' || github.repository == github.event.pull_request.head.repo.full_name && github.actor != 'dependabot[bot]' }}",
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "os": [
+                  "ubuntu-latest",
+                  "windows-latest",
+                  "macos-latest"
+                ]
+              }
+            },
+            "runs-on": "${{ matrix.os }}",
+            "permissions": {
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
+              },
+              {
+                "uses": "actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a",
+                "with": {
+                  "node-version": "20.x"
+                }
+              },
+              {
+                "name": "Build",
+                "run": "npm ci && npm run build"
+              },
+              {
+                "name": "Skip install",
+                "uses": "./",
+                "with": {
+                  "skip_install": true
+                }
+              },
+              {
+                "name": "Install constraint",
+                "uses": "./",
+                "with": {
+                  "version": ">= 1.0.0"
+                }
+              },
+              {
+                "name": "Install version",
+                "uses": "./",
+                "with": {
+                  "version": "374.0.0"
+                }
+              },
+              {
+                "name": "Install latest",
+                "uses": "./",
+                "with": {
+                  "version": "latest"
+                }
+              },
+              {
+                "name": "Check defaults",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_ACCOUNT": "(unset)",
+                  "TEST_PROJECT_ID": "(unset)"
+                }
+              },
+              {
+                "name": "Install components",
+                "uses": "./",
+                "with": {
+                  "install_components": "cloud-run-proxy"
+                }
+              },
+              {
+                "name": "Check components",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_COMPONENTS": "cloud-run-proxy"
+                }
+              },
+              {
+                "name": "Set project ID",
+                "uses": "./",
+                "with": {
+                  "project_id": "${{ vars.PROJECT_ID }}"
+                }
+              },
+              {
+                "name": "Check project ID",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_PROJECT_ID": "${{ vars.PROJECT_ID }}"
+                }
+              },
+              {
+                "name": "Authenticate via WIF",
+                "uses": "google-github-actions/auth@v2",
+                "with": {
+                  "workload_identity_provider": "${{ vars.WIF_PROVIDER_NAME }}",
+                  "service_account": "${{ vars.SERVICE_ACCOUNT_EMAIL }}"
+                }
+              },
+              {
+                "name": "Setup gcloud with WIF",
+                "uses": "./"
+              },
+              {
+                "name": "Check WIF authentication",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_ACCOUNT": "${{ vars.SERVICE_ACCOUNT_EMAIL }}",
+                  "TEST_PROJECT_ID": "${{ vars.PROJECT_ID }}"
+                }
+              },
+              {
+                "name": "Authenticate via SAKE",
+                "uses": "google-github-actions/auth@v2",
+                "with": {
+                  "credentials_json": "${{ secrets.SERVICE_ACCOUNT_KEY_JSON }}"
+                }
+              },
+              {
+                "name": "Setup gcloud with SAKE",
+                "uses": "./"
+              },
+              {
+                "name": "Check SAKE authentication",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_ACCOUNT": "${{ vars.SERVICE_ACCOUNT_EMAIL }}",
+                  "TEST_PROJECT_ID": "${{ vars.PROJECT_ID }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-07-18T01-03-57Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "integration__2025-07-18T01-03-57Z__98d8f78fcc2354c736499a506ad9e7be3f4c2640.yml",
+          "workflow_name": "Integration",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": {
+            "group": "${{ github.workflow }}-${{ github.head_ref || github.ref }}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 126,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "integration": 18
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "integration": 18
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 12,
+            "actions_used": [
+              "./",
+              "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+              "actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a",
+              "google-github-actions/auth@v2"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Integration",
+        "true": {
+          "push": {
+            "branches": [
+              "main",
+              "release/**/*"
+            ]
+          },
+          "pull_request": {
+            "branches": [
+              "main",
+              "release/**/*"
+            ]
+          },
+          "workflow_dispatch": null
+        },
+        "concurrency": {
+          "group": "${{ github.workflow }}-${{ github.head_ref || github.ref }}",
+          "cancel-in-progress": true
+        },
+        "jobs": {
+          "integration": {
+            "if": "${{ github.event_name == 'workflow_dispatch' || github.event_name == 'push' || github.repository == github.event.pull_request.head.repo.full_name && github.actor != 'dependabot[bot]' }}",
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "os": [
+                  "ubuntu-latest",
+                  "windows-latest",
+                  "macos-latest"
+                ]
+              }
+            },
+            "runs-on": "${{ matrix.os }}",
+            "permissions": {
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
+              },
+              {
+                "uses": "actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a",
+                "with": {
+                  "node-version-file": "package.json"
+                }
+              },
+              {
+                "name": "Build",
+                "run": "npm ci && npm run build"
+              },
+              {
+                "name": "Skip install",
+                "uses": "./",
+                "with": {
+                  "skip_install": true
+                }
+              },
+              {
+                "name": "Install constraint",
+                "uses": "./",
+                "with": {
+                  "version": ">= 1.0.0"
+                }
+              },
+              {
+                "name": "Install version",
+                "uses": "./",
+                "with": {
+                  "version": "374.0.0"
+                }
+              },
+              {
+                "name": "Install latest",
+                "uses": "./",
+                "with": {
+                  "version": "latest"
+                }
+              },
+              {
+                "name": "Check defaults",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_ACCOUNT": "(unset)",
+                  "TEST_PROJECT_ID": "(unset)"
+                }
+              },
+              {
+                "name": "Install components",
+                "uses": "./",
+                "with": {
+                  "install_components": "cloud-run-proxy"
+                }
+              },
+              {
+                "name": "Check components",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_COMPONENTS": "cloud-run-proxy"
+                }
+              },
+              {
+                "name": "Set project ID",
+                "uses": "./",
+                "with": {
+                  "project_id": "${{ vars.PROJECT_ID }}"
+                }
+              },
+              {
+                "name": "Check project ID",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_PROJECT_ID": "${{ vars.PROJECT_ID }}"
+                }
+              },
+              {
+                "name": "Authenticate via WIF",
+                "uses": "google-github-actions/auth@v2",
+                "with": {
+                  "workload_identity_provider": "${{ vars.WIF_PROVIDER_NAME }}",
+                  "service_account": "${{ vars.SERVICE_ACCOUNT_EMAIL }}"
+                }
+              },
+              {
+                "name": "Setup gcloud with WIF",
+                "uses": "./"
+              },
+              {
+                "name": "Check WIF authentication",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_ACCOUNT": "${{ vars.SERVICE_ACCOUNT_EMAIL }}",
+                  "TEST_PROJECT_ID": "${{ vars.PROJECT_ID }}"
+                }
+              },
+              {
+                "name": "Authenticate via SAKE",
+                "uses": "google-github-actions/auth@v2",
+                "with": {
+                  "credentials_json": "${{ secrets.SERVICE_ACCOUNT_KEY_JSON }}"
+                }
+              },
+              {
+                "name": "Setup gcloud with SAKE",
+                "uses": "./"
+              },
+              {
+                "name": "Check SAKE authentication",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_ACCOUNT": "${{ vars.SERVICE_ACCOUNT_EMAIL }}",
+                  "TEST_PROJECT_ID": "${{ vars.PROJECT_ID }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-07-18T20-02-58Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "integration__2025-07-18T20-02-58Z__e838bc6edfe3907980c74d5aad506fd6e173b0d6.yml",
+          "workflow_name": "Integration",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": {
+            "group": "${{ github.workflow }}-${{ github.head_ref || github.ref }}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 126,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "integration": 18
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "integration": 18
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 12,
+            "actions_used": [
+              "./",
+              "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+              "actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+              "google-github-actions/auth@v2"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Integration",
+        "true": {
+          "push": {
+            "branches": [
+              "main",
+              "release/**/*"
+            ]
+          },
+          "pull_request": {
+            "branches": [
+              "main",
+              "release/**/*"
+            ]
+          },
+          "workflow_dispatch": null
+        },
+        "concurrency": {
+          "group": "${{ github.workflow }}-${{ github.head_ref || github.ref }}",
+          "cancel-in-progress": true
+        },
+        "jobs": {
+          "integration": {
+            "if": "${{ github.event_name == 'workflow_dispatch' || github.event_name == 'push' || github.repository == github.event.pull_request.head.repo.full_name && github.actor != 'dependabot[bot]' }}",
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "os": [
+                  "ubuntu-latest",
+                  "windows-latest",
+                  "macos-latest"
+                ]
+              }
+            },
+            "runs-on": "${{ matrix.os }}",
+            "permissions": {
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
+              },
+              {
+                "uses": "actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+                "with": {
+                  "node-version-file": "package.json"
+                }
+              },
+              {
+                "name": "Build",
+                "run": "npm ci && npm run build"
+              },
+              {
+                "name": "Skip install",
+                "uses": "./",
+                "with": {
+                  "skip_install": true
+                }
+              },
+              {
+                "name": "Install constraint",
+                "uses": "./",
+                "with": {
+                  "version": ">= 1.0.0"
+                }
+              },
+              {
+                "name": "Install version",
+                "uses": "./",
+                "with": {
+                  "version": "374.0.0"
+                }
+              },
+              {
+                "name": "Install latest",
+                "uses": "./",
+                "with": {
+                  "version": "latest"
+                }
+              },
+              {
+                "name": "Check defaults",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_ACCOUNT": "(unset)",
+                  "TEST_PROJECT_ID": "(unset)"
+                }
+              },
+              {
+                "name": "Install components",
+                "uses": "./",
+                "with": {
+                  "install_components": "cloud-run-proxy"
+                }
+              },
+              {
+                "name": "Check components",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_COMPONENTS": "cloud-run-proxy"
+                }
+              },
+              {
+                "name": "Set project ID",
+                "uses": "./",
+                "with": {
+                  "project_id": "${{ vars.PROJECT_ID }}"
+                }
+              },
+              {
+                "name": "Check project ID",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_PROJECT_ID": "${{ vars.PROJECT_ID }}"
+                }
+              },
+              {
+                "name": "Authenticate via WIF",
+                "uses": "google-github-actions/auth@v2",
+                "with": {
+                  "workload_identity_provider": "${{ vars.WIF_PROVIDER_NAME }}",
+                  "service_account": "${{ vars.SERVICE_ACCOUNT_EMAIL }}"
+                }
+              },
+              {
+                "name": "Setup gcloud with WIF",
+                "uses": "./"
+              },
+              {
+                "name": "Check WIF authentication",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_ACCOUNT": "${{ vars.SERVICE_ACCOUNT_EMAIL }}",
+                  "TEST_PROJECT_ID": "${{ vars.PROJECT_ID }}"
+                }
+              },
+              {
+                "name": "Authenticate via SAKE",
+                "uses": "google-github-actions/auth@v2",
+                "with": {
+                  "credentials_json": "${{ secrets.SERVICE_ACCOUNT_KEY_JSON }}"
+                }
+              },
+              {
+                "name": "Setup gcloud with SAKE",
+                "uses": "./"
+              },
+              {
+                "name": "Check SAKE authentication",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_ACCOUNT": "${{ vars.SERVICE_ACCOUNT_EMAIL }}",
+                  "TEST_PROJECT_ID": "${{ vars.PROJECT_ID }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-08-08T20-35-06Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "integration__2025-08-08T20-35-06Z__ef52f8c087fe78d43262625448b746144fe6448c.yml",
+          "workflow_name": "Integration",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": {
+            "group": "${{ github.workflow }}-${{ github.head_ref || github.ref }}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 136,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "integration": 18
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "integration": 18
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 12,
+            "actions_used": [
+              "./",
+              "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+              "actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+              "google-github-actions/auth@v2"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Integration",
+        "true": {
+          "push": {
+            "branches": [
+              "main",
+              "release/**/*"
+            ]
+          },
+          "pull_request": {
+            "branches": [
+              "main",
+              "release/**/*"
+            ]
+          },
+          "workflow_dispatch": null
+        },
+        "concurrency": {
+          "group": "${{ github.workflow }}-${{ github.head_ref || github.ref }}",
+          "cancel-in-progress": true
+        },
+        "jobs": {
+          "integration": {
+            "if": "${{ github.event_name == 'workflow_dispatch' || github.event_name == 'push' || github.repository == github.event.pull_request.head.repo.full_name && github.actor != 'dependabot[bot]' }}",
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "os": [
+                  "ubuntu-latest",
+                  "windows-latest",
+                  "macos-latest"
+                ]
+              }
+            },
+            "runs-on": "${{ matrix.os }}",
+            "permissions": {
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
+              },
+              {
+                "uses": "actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+                "with": {
+                  "node-version-file": "package.json"
+                }
+              },
+              {
+                "name": "Build",
+                "run": "npm ci && npm run build"
+              },
+              {
+                "name": "Skip install",
+                "uses": "./",
+                "with": {
+                  "skip_install": true,
+                  "skip_tool_cache": true
+                }
+              },
+              {
+                "name": "Install constraint",
+                "uses": "./",
+                "with": {
+                  "version": ">= 1.0.0",
+                  "skip_tool_cache": true
+                }
+              },
+              {
+                "name": "Install version",
+                "uses": "./",
+                "with": {
+                  "version": "374.0.0",
+                  "skip_tool_cache": true
+                }
+              },
+              {
+                "name": "Install latest",
+                "uses": "./",
+                "with": {
+                  "version": "latest",
+                  "skip_tool_cache": true
+                }
+              },
+              {
+                "name": "Check defaults",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_ACCOUNT": "(unset)",
+                  "TEST_PROJECT_ID": "(unset)"
+                }
+              },
+              {
+                "name": "Install components",
+                "uses": "./",
+                "with": {
+                  "install_components": "cloud-run-proxy",
+                  "skip_tool_cache": true
+                }
+              },
+              {
+                "name": "Check components",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_COMPONENTS": "cloud-run-proxy"
+                }
+              },
+              {
+                "name": "Set project ID",
+                "uses": "./",
+                "with": {
+                  "project_id": "${{ vars.PROJECT_ID }}",
+                  "skip_tool_cache": true
+                }
+              },
+              {
+                "name": "Check project ID",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_PROJECT_ID": "${{ vars.PROJECT_ID }}"
+                }
+              },
+              {
+                "name": "Authenticate via WIF",
+                "uses": "google-github-actions/auth@v2",
+                "with": {
+                  "workload_identity_provider": "${{ vars.WIF_PROVIDER_NAME }}",
+                  "service_account": "${{ vars.SERVICE_ACCOUNT_EMAIL }}"
+                }
+              },
+              {
+                "name": "Setup gcloud with WIF",
+                "uses": "./",
+                "with": {
+                  "skip_tool_cache": true
+                }
+              },
+              {
+                "name": "Check WIF authentication",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_ACCOUNT": "${{ vars.SERVICE_ACCOUNT_EMAIL }}",
+                  "TEST_PROJECT_ID": "${{ vars.PROJECT_ID }}"
+                }
+              },
+              {
+                "name": "Authenticate via SAKE",
+                "uses": "google-github-actions/auth@v2",
+                "with": {
+                  "credentials_json": "${{ secrets.SERVICE_ACCOUNT_KEY_JSON }}"
+                }
+              },
+              {
+                "name": "Setup gcloud with SAKE",
+                "uses": "./",
+                "with": {
+                  "skip_tool_cache": true
+                }
+              },
+              {
+                "name": "Check SAKE authentication",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_ACCOUNT": "${{ vars.SERVICE_ACCOUNT_EMAIL }}",
+                  "TEST_PROJECT_ID": "${{ vars.PROJECT_ID }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-08-25T01-51-10Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "integration__2025-08-25T01-51-10Z__f7c29183d6310acc4d89a82a2e4a06374e259082.yml",
+          "workflow_name": "Integration",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": {
+            "group": "${{ github.workflow }}-${{ github.head_ref || github.ref }}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 126,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "integration": 18
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "integration": 18
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 12,
+            "actions_used": [
+              "./",
+              "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+              "actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+              "google-github-actions/auth@v2"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Integration",
+        "true": {
+          "push": {
+            "branches": [
+              "main",
+              "release/**/*"
+            ]
+          },
+          "pull_request": {
+            "branches": [
+              "main",
+              "release/**/*"
+            ]
+          },
+          "workflow_dispatch": null
+        },
+        "concurrency": {
+          "group": "${{ github.workflow }}-${{ github.head_ref || github.ref }}",
+          "cancel-in-progress": true
+        },
+        "jobs": {
+          "integration": {
+            "if": "${{ github.event_name == 'workflow_dispatch' || github.event_name == 'push' || github.repository == github.event.pull_request.head.repo.full_name && github.actor != 'dependabot[bot]' }}",
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "os": [
+                  "ubuntu-latest",
+                  "windows-latest",
+                  "macos-latest"
+                ]
+              }
+            },
+            "runs-on": "${{ matrix.os }}",
+            "permissions": {
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
+              },
+              {
+                "uses": "actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+                "with": {
+                  "node-version-file": "package.json"
+                }
+              },
+              {
+                "name": "Build",
+                "run": "npm ci && npm run build"
+              },
+              {
+                "name": "Skip install",
+                "uses": "./",
+                "with": {
+                  "skip_install": true
+                }
+              },
+              {
+                "name": "Install constraint",
+                "uses": "./",
+                "with": {
+                  "version": ">= 1.0.0"
+                }
+              },
+              {
+                "name": "Install version",
+                "uses": "./",
+                "with": {
+                  "version": "374.0.0"
+                }
+              },
+              {
+                "name": "Install latest",
+                "uses": "./",
+                "with": {
+                  "version": "latest"
+                }
+              },
+              {
+                "name": "Check defaults",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_ACCOUNT": "(unset)",
+                  "TEST_PROJECT_ID": "(unset)"
+                }
+              },
+              {
+                "name": "Install components",
+                "uses": "./",
+                "with": {
+                  "install_components": "cloud-run-proxy"
+                }
+              },
+              {
+                "name": "Check components",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_COMPONENTS": "cloud-run-proxy"
+                }
+              },
+              {
+                "name": "Set project ID",
+                "uses": "./",
+                "with": {
+                  "project_id": "${{ vars.PROJECT_ID }}"
+                }
+              },
+              {
+                "name": "Check project ID",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_PROJECT_ID": "${{ vars.PROJECT_ID }}"
+                }
+              },
+              {
+                "name": "Authenticate via WIF",
+                "uses": "google-github-actions/auth@v2",
+                "with": {
+                  "workload_identity_provider": "${{ vars.WIF_PROVIDER_NAME }}",
+                  "service_account": "${{ vars.SERVICE_ACCOUNT_EMAIL }}"
+                }
+              },
+              {
+                "name": "Setup gcloud with WIF",
+                "uses": "./"
+              },
+              {
+                "name": "Check WIF authentication",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_ACCOUNT": "${{ vars.SERVICE_ACCOUNT_EMAIL }}",
+                  "TEST_PROJECT_ID": "${{ vars.PROJECT_ID }}"
+                }
+              },
+              {
+                "name": "Authenticate via SAKE",
+                "uses": "google-github-actions/auth@v2",
+                "with": {
+                  "credentials_json": "${{ secrets.SERVICE_ACCOUNT_KEY_JSON }}"
+                }
+              },
+              {
+                "name": "Setup gcloud with SAKE",
+                "uses": "./"
+              },
+              {
+                "name": "Check SAKE authentication",
+                "run": "npm run integration",
+                "env": {
+                  "TEST_ACCOUNT": "${{ vars.SERVICE_ACCOUNT_EMAIL }}",
+                  "TEST_PROJECT_ID": "${{ vars.PROJECT_ID }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

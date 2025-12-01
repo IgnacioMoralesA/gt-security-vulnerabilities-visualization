@@ -1,0 +1,129 @@
+{
+  "repo_owner": "stelligent",
+  "repo_name": "cfn_nag",
+  "workflow_name": "vscode_remote_development",
+  "history": {
+    "2020-02-14T17-56-52Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-9615d8ec-1722-5735-a632-5810cba24085",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/vscode_remote_development__2020-02-14T17-56-52Z__23887695f285d810ec30ef7d91c73fb7ca3c23e7.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 33,
+                  "endColumn": 55
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "169c26f4d6f161df:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "vscode_remote_development__2020-02-14T17-56-52Z__23887695f285d810ec30ef7d91c73fb7ca3c23e7.yml",
+          "workflow_name": "VS Code DockerHub Build & Push",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 33,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 1,
+            "actions_used": [
+              "actions/checkout@master"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "VS Code DockerHub Build & Push",
+        "true": {
+          "push": {
+            "branches": [
+              "master"
+            ],
+            "paths": [
+              ".devcontainer/**"
+            ]
+          }
+        },
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "checkout",
+                "uses": "actions/checkout@master"
+              },
+              {
+                "name": "docker login",
+                "env": {
+                  "DOCKER_USER": "${{ secrets.docker_user }}",
+                  "DOCKER_PASSWORD": "${{ secrets.docker_password }}"
+                },
+                "run": "echo $DOCKER_PASSWORD | docker login -u $DOCKER_USER --password-stdin\n"
+              },
+              {
+                "name": "Build & Push to DockerHub",
+                "env": {
+                  "DOCKER_ORG": "stelligent",
+                  "DOCKER_REPO": "vscode-remote-cfn_nag"
+                },
+                "run": "docker build -t $DOCKER_ORG/$DOCKER_REPO:${GITHUB_SHA::8} --file .devcontainer/build/Dockerfile .\ndocker tag $DOCKER_ORG/$DOCKER_REPO:${GITHUB_SHA::8} $DOCKER_ORG/$DOCKER_REPO:latest\ndocker push $DOCKER_ORG/$DOCKER_REPO:${GITHUB_SHA::8}\ndocker push $DOCKER_ORG/$DOCKER_REPO:latest\n"
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

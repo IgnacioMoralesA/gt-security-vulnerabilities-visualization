@@ -1,0 +1,4178 @@
+{
+  "repo_owner": "trufflesecurity",
+  "repo_name": "trufflehog",
+  "workflow_name": "test",
+  "history": {
+    "2022-01-19T00-59-18Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2022-01-19T00-59-18Z__d6ffadb1ee7dfc3f539da54d73031845c1b20892.yml",
+          "workflow_name": "Test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 26,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "test": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v2",
+              "actions/setup-go@v2",
+              "google-github-actions/auth@v0"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "true": [
+          "push",
+          "pull_request"
+        ],
+        "name": "Test",
+        "jobs": {
+          "test": {
+            "strategy": {
+              "matrix": {
+                "go-version": [
+                  "1.17.x"
+                ],
+                "os": [
+                  "ubuntu-latest"
+                ]
+              }
+            },
+            "runs-on": "${{ matrix.os }}",
+            "permissions": {
+              "contents": "read",
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v2",
+                "with": {
+                  "go-version": "${{ matrix.go-version }}"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "id": "auth",
+                "uses": "google-github-actions/auth@v0",
+                "with": {
+                  "workload_identity_provider": "projects/811013774421/locations/global/workloadIdentityPools/github-pool/providers/github-provider",
+                  "service_account": "github-ci-external@trufflehog-testing.iam.gserviceaccount.com"
+                }
+              },
+              {
+                "name": "Test",
+                "run": "go test -timeout 30s ./..."
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-02-16T02-54-47Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2022-02-16T02-54-47Z__f7dca85d2d3344b727ea6996ffcf99075637b8a4.yml",
+          "workflow_name": "Test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 60,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "test": 4,
+            "test-detectors": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 2,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 4,
+              "test-detectors": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 1,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 6,
+            "actions_used": [
+              "actions/checkout@v2",
+              "actions/setup-go@v2",
+              "google-github-actions/auth@v0"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 1
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Test",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ],
+            "branches": [
+              "main"
+            ]
+          },
+          "pull_request": null
+        },
+        "jobs": {
+          "test": {
+            "strategy": {
+              "matrix": {
+                "go-version": [
+                  "1.17.x"
+                ],
+                "os": [
+                  "ubuntu-latest"
+                ]
+              }
+            },
+            "runs-on": "${{ matrix.os }}",
+            "permissions": {
+              "contents": "read",
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v2",
+                "with": {
+                  "go-version": "${{ matrix.go-version }}"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "id": "auth",
+                "uses": "google-github-actions/auth@v0",
+                "with": {
+                  "workload_identity_provider": "projects/811013774421/locations/global/workloadIdentityPools/github-pool/providers/github-provider",
+                  "service_account": "github-ci-external@trufflehog-testing.iam.gserviceaccount.com"
+                }
+              },
+              {
+                "name": "Test",
+                "run": "make test"
+              }
+            ]
+          },
+          "test-detectors": {
+            "strategy": {
+              "matrix": {
+                "go-version": [
+                  "1.17.x"
+                ],
+                "os": [
+                  "ubuntu-latest"
+                ]
+              }
+            },
+            "runs-on": "${{ matrix.os }}",
+            "permissions": {
+              "contents": "read",
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v2",
+                "with": {
+                  "go-version": "${{ matrix.go-version }}"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "id": "auth",
+                "uses": "google-github-actions/auth@v0",
+                "with": {
+                  "workload_identity_provider": "projects/811013774421/locations/global/workloadIdentityPools/github-pool/providers/github-provider",
+                  "service_account": "github-ci-external@trufflehog-testing.iam.gserviceaccount.com"
+                }
+              },
+              {
+                "name": "Test",
+                "run": "make test-detectors",
+                "continue-on-error": true
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-03-04T16-39-23Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2022-03-04T16-39-23Z__79cd8dc7d3864932e2155c14d7d693bb96f7e8e1.yml",
+          "workflow_name": "Test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 60,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "test": 4,
+            "test-detectors": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 2,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 4,
+              "test-detectors": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 1,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 6,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-go@v2",
+              "google-github-actions/auth@v0"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 1
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Test",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ],
+            "branches": [
+              "main"
+            ]
+          },
+          "pull_request": null
+        },
+        "jobs": {
+          "test": {
+            "strategy": {
+              "matrix": {
+                "go-version": [
+                  "1.17.x"
+                ],
+                "os": [
+                  "ubuntu-latest"
+                ]
+              }
+            },
+            "runs-on": "${{ matrix.os }}",
+            "permissions": {
+              "contents": "read",
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v2",
+                "with": {
+                  "go-version": "${{ matrix.go-version }}"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "id": "auth",
+                "uses": "google-github-actions/auth@v0",
+                "with": {
+                  "workload_identity_provider": "projects/811013774421/locations/global/workloadIdentityPools/github-pool/providers/github-provider",
+                  "service_account": "github-ci-external@trufflehog-testing.iam.gserviceaccount.com"
+                }
+              },
+              {
+                "name": "Test",
+                "run": "make test"
+              }
+            ]
+          },
+          "test-detectors": {
+            "strategy": {
+              "matrix": {
+                "go-version": [
+                  "1.17.x"
+                ],
+                "os": [
+                  "ubuntu-latest"
+                ]
+              }
+            },
+            "runs-on": "${{ matrix.os }}",
+            "permissions": {
+              "contents": "read",
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v2",
+                "with": {
+                  "go-version": "${{ matrix.go-version }}"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "id": "auth",
+                "uses": "google-github-actions/auth@v0",
+                "with": {
+                  "workload_identity_provider": "projects/811013774421/locations/global/workloadIdentityPools/github-pool/providers/github-provider",
+                  "service_account": "github-ci-external@trufflehog-testing.iam.gserviceaccount.com"
+                }
+              },
+              {
+                "name": "Test",
+                "run": "make test-detectors",
+                "continue-on-error": true
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-04-11T23-36-04Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2022-04-11T23-36-04Z__7019fa1686258828b46c8d9935b917ba007ba6b0.yml",
+          "workflow_name": "Test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 60,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "test": 4,
+            "test-detectors": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 2,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 4,
+              "test-detectors": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 1,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 6,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-go@v3",
+              "google-github-actions/auth@v0"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 1
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Test",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ],
+            "branches": [
+              "main"
+            ]
+          },
+          "pull_request": null
+        },
+        "jobs": {
+          "test": {
+            "strategy": {
+              "matrix": {
+                "go-version": [
+                  "1.17.x"
+                ],
+                "os": [
+                  "ubuntu-latest"
+                ]
+              }
+            },
+            "runs-on": "${{ matrix.os }}",
+            "permissions": {
+              "contents": "read",
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v3",
+                "with": {
+                  "go-version": "${{ matrix.go-version }}"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "id": "auth",
+                "uses": "google-github-actions/auth@v0",
+                "with": {
+                  "workload_identity_provider": "projects/811013774421/locations/global/workloadIdentityPools/github-pool/providers/github-provider",
+                  "service_account": "github-ci-external@trufflehog-testing.iam.gserviceaccount.com"
+                }
+              },
+              {
+                "name": "Test",
+                "run": "make test"
+              }
+            ]
+          },
+          "test-detectors": {
+            "strategy": {
+              "matrix": {
+                "go-version": [
+                  "1.17.x"
+                ],
+                "os": [
+                  "ubuntu-latest"
+                ]
+              }
+            },
+            "runs-on": "${{ matrix.os }}",
+            "permissions": {
+              "contents": "read",
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v3",
+                "with": {
+                  "go-version": "${{ matrix.go-version }}"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "id": "auth",
+                "uses": "google-github-actions/auth@v0",
+                "with": {
+                  "workload_identity_provider": "projects/811013774421/locations/global/workloadIdentityPools/github-pool/providers/github-provider",
+                  "service_account": "github-ci-external@trufflehog-testing.iam.gserviceaccount.com"
+                }
+              },
+              {
+                "name": "Test",
+                "run": "make test-detectors",
+                "continue-on-error": true
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-05-19T16-01-50Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2022-05-19T16-01-50Z__4d3c2d70e5a431a632324ec595d010dd1c8136e3.yml",
+          "workflow_name": "Test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 52,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "test": 4,
+            "test-detectors": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 4,
+              "test-detectors": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 1,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 6,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-go@v3",
+              "google-github-actions/auth@v0"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 1
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Test",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ],
+            "branches": [
+              "main"
+            ]
+          },
+          "pull_request": null
+        },
+        "jobs": {
+          "test": {
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "contents": "read",
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v3",
+                "with": {
+                  "go-version": "1.18"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "id": "auth",
+                "uses": "google-github-actions/auth@v0",
+                "with": {
+                  "workload_identity_provider": "projects/811013774421/locations/global/workloadIdentityPools/github-pool/providers/github-provider",
+                  "service_account": "github-ci-external@trufflehog-testing.iam.gserviceaccount.com"
+                }
+              },
+              {
+                "name": "Test",
+                "run": "make test"
+              }
+            ]
+          },
+          "test-detectors": {
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "contents": "read",
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v3",
+                "with": {
+                  "go-version": "1.18"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "id": "auth",
+                "uses": "google-github-actions/auth@v0",
+                "with": {
+                  "workload_identity_provider": "projects/811013774421/locations/global/workloadIdentityPools/github-pool/providers/github-provider",
+                  "service_account": "github-ci-external@trufflehog-testing.iam.gserviceaccount.com"
+                }
+              },
+              {
+                "name": "Test",
+                "run": "make test-detectors",
+                "continue-on-error": true
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-09-19T20-23-25Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2022-09-19T20-23-25Z__fcd580406ec23351fcbedb6b00e90fd94f579680.yml",
+          "workflow_name": "Test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 52,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "test": 4,
+            "test-detectors": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 4,
+              "test-detectors": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 1,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 6,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-go@v3",
+              "google-github-actions/auth@v0"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 1
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Test",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ],
+            "branches": [
+              "main"
+            ]
+          },
+          "pull_request": null
+        },
+        "jobs": {
+          "test": {
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "contents": "read",
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v3",
+                "with": {
+                  "go-version": "1.18"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "id": "auth",
+                "uses": "google-github-actions/auth@v0",
+                "with": {
+                  "workload_identity_provider": "projects/811013774421/locations/global/workloadIdentityPools/github-pool/providers/github-provider",
+                  "service_account": "github-ci-external@trufflehog-testing.iam.gserviceaccount.com"
+                }
+              },
+              {
+                "name": "Test",
+                "run": "make test-integration"
+              }
+            ]
+          },
+          "test-detectors": {
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "contents": "read",
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v3",
+                "with": {
+                  "go-version": "1.18"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "id": "auth",
+                "uses": "google-github-actions/auth@v0",
+                "with": {
+                  "workload_identity_provider": "projects/811013774421/locations/global/workloadIdentityPools/github-pool/providers/github-provider",
+                  "service_account": "github-ci-external@trufflehog-testing.iam.gserviceaccount.com"
+                }
+              },
+              {
+                "name": "Test",
+                "run": "make test-detectors",
+                "continue-on-error": true
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-11-16T16-46-26Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2022-11-16T16-46-26Z__1228127d12f5b011fc0d4585f05fb4b8e27fb275.yml",
+          "workflow_name": "Test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 52,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "test": 4,
+            "test-detectors": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 4,
+              "test-detectors": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 1,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 6,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-go@v3",
+              "google-github-actions/auth@v1"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 1
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Test",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ],
+            "branches": [
+              "main"
+            ]
+          },
+          "pull_request": null
+        },
+        "jobs": {
+          "test": {
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "contents": "read",
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v3",
+                "with": {
+                  "go-version": "1.18"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "id": "auth",
+                "uses": "google-github-actions/auth@v1",
+                "with": {
+                  "workload_identity_provider": "projects/811013774421/locations/global/workloadIdentityPools/github-pool/providers/github-provider",
+                  "service_account": "github-ci-external@trufflehog-testing.iam.gserviceaccount.com"
+                }
+              },
+              {
+                "name": "Test",
+                "run": "make test-integration"
+              }
+            ]
+          },
+          "test-detectors": {
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "contents": "read",
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v3",
+                "with": {
+                  "go-version": "1.18"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "id": "auth",
+                "uses": "google-github-actions/auth@v1",
+                "with": {
+                  "workload_identity_provider": "projects/811013774421/locations/global/workloadIdentityPools/github-pool/providers/github-provider",
+                  "service_account": "github-ci-external@trufflehog-testing.iam.gserviceaccount.com"
+                }
+              },
+              {
+                "name": "Test",
+                "run": "make test-detectors",
+                "continue-on-error": true
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-03-21T19-50-12Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2023-03-21T19-50-12Z__87c9e0db0763f8e371700cb8abc8bb0f596b2ccf.yml",
+          "workflow_name": "Test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 52,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "test": 4,
+            "test-detectors": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 4,
+              "test-detectors": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 1,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 6,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-go@v4",
+              "google-github-actions/auth@v1"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 1
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Test",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ],
+            "branches": [
+              "main"
+            ]
+          },
+          "pull_request": null
+        },
+        "jobs": {
+          "test": {
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "contents": "read",
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v4",
+                "with": {
+                  "go-version": "1.18"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "id": "auth",
+                "uses": "google-github-actions/auth@v1",
+                "with": {
+                  "workload_identity_provider": "projects/811013774421/locations/global/workloadIdentityPools/github-pool/providers/github-provider",
+                  "service_account": "github-ci-external@trufflehog-testing.iam.gserviceaccount.com"
+                }
+              },
+              {
+                "name": "Test",
+                "run": "make test-integration"
+              }
+            ]
+          },
+          "test-detectors": {
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "contents": "read",
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v4",
+                "with": {
+                  "go-version": "1.18"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "id": "auth",
+                "uses": "google-github-actions/auth@v1",
+                "with": {
+                  "workload_identity_provider": "projects/811013774421/locations/global/workloadIdentityPools/github-pool/providers/github-provider",
+                  "service_account": "github-ci-external@trufflehog-testing.iam.gserviceaccount.com"
+                }
+              },
+              {
+                "name": "Test",
+                "run": "make test-detectors",
+                "continue-on-error": true
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-03-31T21-37-03Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2023-03-31T21-37-03Z__9b941efa1a29aad75da4a5088db5f5908af28b57.yml",
+          "workflow_name": "Test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 52,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "test": 4,
+            "test-detectors": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 4,
+              "test-detectors": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 1,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 6,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-go@v4",
+              "google-github-actions/auth@v1"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 1
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Test",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ],
+            "branches": [
+              "main"
+            ]
+          },
+          "pull_request": null
+        },
+        "jobs": {
+          "test": {
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "contents": "read",
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v4",
+                "with": {
+                  "go-version": "1.20"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "id": "auth",
+                "uses": "google-github-actions/auth@v1",
+                "with": {
+                  "workload_identity_provider": "projects/811013774421/locations/global/workloadIdentityPools/github-pool/providers/github-provider",
+                  "service_account": "github-ci-external@trufflehog-testing.iam.gserviceaccount.com"
+                }
+              },
+              {
+                "name": "Test",
+                "run": "make test-integration"
+              }
+            ]
+          },
+          "test-detectors": {
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "contents": "read",
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v4",
+                "with": {
+                  "go-version": "1.20"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "id": "auth",
+                "uses": "google-github-actions/auth@v1",
+                "with": {
+                  "workload_identity_provider": "projects/811013774421/locations/global/workloadIdentityPools/github-pool/providers/github-provider",
+                  "service_account": "github-ci-external@trufflehog-testing.iam.gserviceaccount.com"
+                }
+              },
+              {
+                "name": "Test",
+                "run": "make test-detectors",
+                "continue-on-error": true
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-05-19T19-31-20Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2023-05-19T19-31-20Z__1d9d6b60395802fcb36c233fbc9156e13dfc2cbf.yml",
+          "workflow_name": "Test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 53,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "test": 4,
+            "test-detectors": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 4,
+              "test-detectors": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 1,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 6,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-go@v4",
+              "google-github-actions/auth@v1"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 1
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Test",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ],
+            "branches": [
+              "main"
+            ]
+          },
+          "pull_request": null
+        },
+        "jobs": {
+          "test": {
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "actions": "read",
+              "contents": "read",
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v4",
+                "with": {
+                  "go-version": "1.20"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "id": "auth",
+                "uses": "google-github-actions/auth@v1",
+                "with": {
+                  "workload_identity_provider": "projects/811013774421/locations/global/workloadIdentityPools/github-pool/providers/github-provider",
+                  "service_account": "github-ci-external@trufflehog-testing.iam.gserviceaccount.com"
+                }
+              },
+              {
+                "name": "Test",
+                "run": "make test-integration"
+              }
+            ]
+          },
+          "test-detectors": {
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "actions": "read",
+              "contents": "read",
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v4",
+                "with": {
+                  "go-version": "1.20"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "id": "auth",
+                "uses": "google-github-actions/auth@v1",
+                "with": {
+                  "workload_identity_provider": "projects/811013774421/locations/global/workloadIdentityPools/github-pool/providers/github-provider",
+                  "service_account": "github-ci-external@trufflehog-testing.iam.gserviceaccount.com"
+                }
+              },
+              {
+                "name": "Test",
+                "run": "make test-detectors",
+                "continue-on-error": true
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-07-11T13-13-00Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2023-07-11T13-13-00Z__0bbe62cec5e6a3be9ed7142feeaddc3c14337891.yml",
+          "workflow_name": "Test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 70,
+          "num_jobs": 3,
+          "steps_per_job": {
+            "test": 4,
+            "test-detectors": 4,
+            "test-fork": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 3,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 4,
+              "test-detectors": 4,
+              "test-fork": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 1,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 8,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-go@v4",
+              "google-github-actions/auth@v1"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 1
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Test",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ],
+            "branches": [
+              "main"
+            ]
+          },
+          "pull_request": null
+        },
+        "jobs": {
+          "test": {
+            "if": "${{ ! github.event.pull_request.head.repo.fork }}",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "actions": "read",
+              "contents": "read",
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v4",
+                "with": {
+                  "go-version": "1.20"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "id": "auth",
+                "uses": "google-github-actions/auth@v1",
+                "with": {
+                  "workload_identity_provider": "projects/811013774421/locations/global/workloadIdentityPools/github-pool/providers/github-provider",
+                  "service_account": "github-ci-external@trufflehog-testing.iam.gserviceaccount.com"
+                }
+              },
+              {
+                "name": "Test",
+                "run": "make test-integration"
+              }
+            ]
+          },
+          "test-detectors": {
+            "if": "${{ ! github.event.pull_request.head.repo.fork }}",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "actions": "read",
+              "contents": "read",
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v4",
+                "with": {
+                  "go-version": "1.20"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "id": "auth",
+                "uses": "google-github-actions/auth@v1",
+                "with": {
+                  "workload_identity_provider": "projects/811013774421/locations/global/workloadIdentityPools/github-pool/providers/github-provider",
+                  "service_account": "github-ci-external@trufflehog-testing.iam.gserviceaccount.com"
+                }
+              },
+              {
+                "name": "Test",
+                "run": "make test-detectors",
+                "continue-on-error": true
+              }
+            ]
+          },
+          "test-fork": {
+            "if": "${{ github.event.pull_request.head.repo.fork }}",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "actions": "read",
+              "contents": "read"
+            },
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v4",
+                "with": {
+                  "go-version": "1.20"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Test",
+                "run": "make test-forks"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-08-01T20-25-33Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2023-08-01T20-25-33Z__b906a51d5c7b0e4a340c73dd2c0806f511c6dd53.yml",
+          "workflow_name": "Test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 70,
+          "num_jobs": 3,
+          "steps_per_job": {
+            "test": 4,
+            "test-detectors": 4,
+            "test-community": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 3,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 4,
+              "test-detectors": 4,
+              "test-community": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 1,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 8,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-go@v4",
+              "google-github-actions/auth@v1"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 1
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Test",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ],
+            "branches": [
+              "main"
+            ]
+          },
+          "pull_request": null
+        },
+        "jobs": {
+          "test": {
+            "if": "${{ ! github.event.pull_request.head.repo.fork }}",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "actions": "read",
+              "contents": "read",
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v4",
+                "with": {
+                  "go-version": "1.20"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "id": "auth",
+                "uses": "google-github-actions/auth@v1",
+                "with": {
+                  "workload_identity_provider": "projects/811013774421/locations/global/workloadIdentityPools/github-pool/providers/github-provider",
+                  "service_account": "github-ci-external@trufflehog-testing.iam.gserviceaccount.com"
+                }
+              },
+              {
+                "name": "Test",
+                "run": "make test-integration"
+              }
+            ]
+          },
+          "test-detectors": {
+            "if": "${{ ! github.event.pull_request.head.repo.fork }}",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "actions": "read",
+              "contents": "read",
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v4",
+                "with": {
+                  "go-version": "1.20"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "id": "auth",
+                "uses": "google-github-actions/auth@v1",
+                "with": {
+                  "workload_identity_provider": "projects/811013774421/locations/global/workloadIdentityPools/github-pool/providers/github-provider",
+                  "service_account": "github-ci-external@trufflehog-testing.iam.gserviceaccount.com"
+                }
+              },
+              {
+                "name": "Test",
+                "run": "make test-detectors",
+                "continue-on-error": true
+              }
+            ]
+          },
+          "test-community": {
+            "if": "${{ github.event.pull_request.head.repo.fork }}",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "actions": "read",
+              "contents": "read"
+            },
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v4",
+                "with": {
+                  "go-version": "1.20"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Test",
+                "run": "make test-community"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-08-14T20-36-25Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2023-08-14T20-36-25Z__eee01e036194906d6483f596a517d836769c7b52.yml",
+          "workflow_name": "Test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 70,
+          "num_jobs": 3,
+          "steps_per_job": {
+            "test": 4,
+            "test-detectors": 4,
+            "test-community": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 3,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 4,
+              "test-detectors": 4,
+              "test-community": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 1,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 8,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-go@v4",
+              "google-github-actions/auth@v1"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 1
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Test",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ],
+            "branches": [
+              "main"
+            ]
+          },
+          "pull_request": null
+        },
+        "jobs": {
+          "test": {
+            "if": "${{ ! github.event.pull_request.head.repo.fork }}",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "actions": "read",
+              "contents": "read",
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v4",
+                "with": {
+                  "go-version": "1.21"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "id": "auth",
+                "uses": "google-github-actions/auth@v1",
+                "with": {
+                  "workload_identity_provider": "projects/811013774421/locations/global/workloadIdentityPools/github-pool/providers/github-provider",
+                  "service_account": "github-ci-external@trufflehog-testing.iam.gserviceaccount.com"
+                }
+              },
+              {
+                "name": "Test",
+                "run": "make test-integration"
+              }
+            ]
+          },
+          "test-detectors": {
+            "if": "${{ ! github.event.pull_request.head.repo.fork }}",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "actions": "read",
+              "contents": "read",
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v4",
+                "with": {
+                  "go-version": "1.21"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "id": "auth",
+                "uses": "google-github-actions/auth@v1",
+                "with": {
+                  "workload_identity_provider": "projects/811013774421/locations/global/workloadIdentityPools/github-pool/providers/github-provider",
+                  "service_account": "github-ci-external@trufflehog-testing.iam.gserviceaccount.com"
+                }
+              },
+              {
+                "name": "Test",
+                "run": "make test-detectors",
+                "continue-on-error": true
+              }
+            ]
+          },
+          "test-community": {
+            "if": "${{ github.event.pull_request.head.repo.fork }}",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "actions": "read",
+              "contents": "read"
+            },
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v4",
+                "with": {
+                  "go-version": "1.21"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Test",
+                "run": "make test-community"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-09-13T16-34-53Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2023-09-13T16-34-53Z__b4329e082557324252e751eb21d3e2722f34a728.yml",
+          "workflow_name": "Test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 92,
+          "num_jobs": 3,
+          "steps_per_job": {
+            "test": 4,
+            "test-detectors": 4,
+            "test-community": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 3,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 4,
+              "test-detectors": 4,
+              "test-community": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 1,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 10,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-go@v4",
+              "buildpulse/buildpulse-action@main",
+              "google-github-actions/auth@v1",
+              "mikepenz/action-junit-report@v3"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 3,
+            "steps_with_continue_on_error": 1
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Test",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ],
+            "branches": [
+              "main"
+            ]
+          },
+          "pull_request": null
+        },
+        "jobs": {
+          "test": {
+            "if": "${{ ! github.event.pull_request.head.repo.fork }}",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "actions": "read",
+              "contents": "read",
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v4",
+                "with": {
+                  "go-version": "1.21"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "id": "auth",
+                "uses": "google-github-actions/auth@v1",
+                "with": {
+                  "workload_identity_provider": "projects/811013774421/locations/global/workloadIdentityPools/github-pool/providers/github-provider",
+                  "service_account": "github-ci-external@trufflehog-testing.iam.gserviceaccount.com"
+                }
+              },
+              {
+                "name": "Test",
+                "run": "make test-integration"
+              }
+            ]
+          },
+          "test-detectors": {
+            "if": "${{ ! github.event.pull_request.head.repo.fork }}",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "actions": "read",
+              "contents": "read",
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v4",
+                "with": {
+                  "go-version": "1.21"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "id": "auth",
+                "uses": "google-github-actions/auth@v1",
+                "with": {
+                  "workload_identity_provider": "projects/811013774421/locations/global/workloadIdentityPools/github-pool/providers/github-provider",
+                  "service_account": "github-ci-external@trufflehog-testing.iam.gserviceaccount.com"
+                }
+              },
+              {
+                "name": "Test",
+                "run": "make test-detectors",
+                "continue-on-error": true
+              }
+            ]
+          },
+          "test-community": {
+            "if": "${{ github.event.pull_request.head.repo.fork }}",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "actions": "read",
+              "contents": "read"
+            },
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v4",
+                "with": {
+                  "go-version": "1.21"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Set up gotestsum",
+                "run": "go install gotest.tools/gotestsum@latest\nmkdir -p tmp/test-results\n"
+              },
+              {
+                "name": "Test",
+                "run": "CGO_ENABLED=1 gotestsum --junitfile tmp/test-results/test.xml --raw-command -- go test -json -tags=sources $(go list ./... | grep -v /vendor/ | grep -v pkg/detectors | grep -v pkg/sources)\n",
+                "if": "${{ success() || failure() }}"
+              },
+              {
+                "name": "Upload test results to BuildPulse for flaky test detection",
+                "if": "!cancelled()",
+                "uses": "buildpulse/buildpulse-action@main",
+                "with": {
+                  "account": 79229934,
+                  "repository": 77726177,
+                  "path": "tmp/test-results/*.xml\n",
+                  "key": "${{ secrets.BUILDPULSE_ACCESS_KEY_ID }}",
+                  "secret": "${{ secrets.BUILDPULSE_SECRET_ACCESS_KEY }}",
+                  "tags": "community"
+                }
+              },
+              {
+                "name": "Annotate test results",
+                "uses": "mikepenz/action-junit-report@v3",
+                "if": "success() || failure()",
+                "with": {
+                  "report_paths": "tmp/test-results/*.xml"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-09-13T20-25-12Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2023-09-13T20-25-12Z__bbc3be3b6cadc3d999f2f8f418f4cb20e9f6a9ad.yml",
+          "workflow_name": "Test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 94,
+          "num_jobs": 3,
+          "steps_per_job": {
+            "test": 8,
+            "test-detectors": 4,
+            "test-community": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 3,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 8,
+              "test-detectors": 4,
+              "test-community": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 1,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 10,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-go@v4",
+              "buildpulse/buildpulse-action@main",
+              "google-github-actions/auth@v1",
+              "mikepenz/action-junit-report@v3"
+            ],
+            "num_run_commands": 5,
+            "steps_with_conditionals": 3,
+            "steps_with_continue_on_error": 1
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Test",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ],
+            "branches": [
+              "main"
+            ]
+          },
+          "pull_request": null
+        },
+        "jobs": {
+          "test": {
+            "if": "${{ ! github.event.pull_request.head.repo.fork }}",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "actions": "read",
+              "contents": "read",
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v4",
+                "with": {
+                  "go-version": "1.21"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "id": "auth",
+                "uses": "google-github-actions/auth@v1",
+                "with": {
+                  "workload_identity_provider": "projects/811013774421/locations/global/workloadIdentityPools/github-pool/providers/github-provider",
+                  "service_account": "github-ci-external@trufflehog-testing.iam.gserviceaccount.com"
+                }
+              },
+              {
+                "name": "Test",
+                "run": "make test-integration"
+              },
+              {
+                "name": "Set up gotestsum",
+                "run": "go install gotest.tools/gotestsum@latest\nmkdir -p tmp/test-results\n"
+              },
+              {
+                "name": "Test",
+                "run": "CGO_ENABLED=1 gotestsum --junitfile tmp/test-results/test.xml --raw-command -- go test -json -tags=sources $(go list ./... | grep -v /vendor/ | grep -v pkg/detectors)\n",
+                "if": "${{ success() || failure() }}"
+              },
+              {
+                "name": "Upload test results to BuildPulse for flaky test detection",
+                "if": "!cancelled()",
+                "uses": "buildpulse/buildpulse-action@main",
+                "with": {
+                  "account": 79229934,
+                  "repository": 77726177,
+                  "path": "tmp/test-results/*.xml\n",
+                  "key": "${{ secrets.BUILDPULSE_ACCESS_KEY_ID }}",
+                  "secret": "${{ secrets.BUILDPULSE_SECRET_ACCESS_KEY }}",
+                  "tags": "integration"
+                }
+              },
+              {
+                "name": "Annotate test results",
+                "uses": "mikepenz/action-junit-report@v3",
+                "if": "success() || failure()",
+                "with": {
+                  "report_paths": "tmp/test-results/*.xml"
+                }
+              }
+            ]
+          },
+          "test-detectors": {
+            "if": "${{ ! github.event.pull_request.head.repo.fork }}",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "actions": "read",
+              "contents": "read",
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v4",
+                "with": {
+                  "go-version": "1.21"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "id": "auth",
+                "uses": "google-github-actions/auth@v1",
+                "with": {
+                  "workload_identity_provider": "projects/811013774421/locations/global/workloadIdentityPools/github-pool/providers/github-provider",
+                  "service_account": "github-ci-external@trufflehog-testing.iam.gserviceaccount.com"
+                }
+              },
+              {
+                "name": "Test",
+                "run": "make test-detectors",
+                "continue-on-error": true
+              }
+            ]
+          },
+          "test-community": {
+            "if": "${{ github.event.pull_request.head.repo.fork }}",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "actions": "read",
+              "contents": "read"
+            },
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v4",
+                "with": {
+                  "go-version": "1.21"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Test",
+                "run": "make test-community"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-09-21T17-32-40Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2023-09-21T17-32-40Z__b66bd9544c96346052fdc1814d577a88bc835c9a.yml",
+          "workflow_name": "Test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 69,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "test": 7,
+            "test-community": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 7,
+              "test-community": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 7,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-go@v4",
+              "buildpulse/buildpulse-action@main",
+              "google-github-actions/auth@v1",
+              "mikepenz/action-junit-report@v3"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 3,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Test",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ],
+            "branches": [
+              "main"
+            ]
+          },
+          "pull_request": null
+        },
+        "jobs": {
+          "test": {
+            "if": "${{ ! github.event.pull_request.head.repo.fork }}",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "actions": "read",
+              "contents": "read",
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v4",
+                "with": {
+                  "go-version": "1.21"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "id": "auth",
+                "uses": "google-github-actions/auth@v1",
+                "with": {
+                  "workload_identity_provider": "projects/811013774421/locations/global/workloadIdentityPools/github-pool/providers/github-provider",
+                  "service_account": "github-ci-external@trufflehog-testing.iam.gserviceaccount.com"
+                }
+              },
+              {
+                "name": "Set up gotestsum",
+                "run": "go install gotest.tools/gotestsum@latest\nmkdir -p tmp/test-results\n"
+              },
+              {
+                "name": "Test",
+                "run": "CGO_ENABLED=1 gotestsum --junitfile tmp/test-results/test.xml --raw-command -- go test -json -tags=sources $(go list ./... | grep -v /vendor/ | grep -v pkg/detectors)\n",
+                "if": "${{ success() || failure() }}"
+              },
+              {
+                "name": "Upload test results to BuildPulse for flaky test detection",
+                "if": "${{ !cancelled() }}",
+                "uses": "buildpulse/buildpulse-action@main",
+                "with": {
+                  "account": 79229934,
+                  "repository": 77726177,
+                  "path": "tmp/test-results/*.xml\n",
+                  "key": "${{ secrets.BUILDPULSE_ACCESS_KEY_ID }}",
+                  "secret": "${{ secrets.BUILDPULSE_SECRET_ACCESS_KEY }}",
+                  "tags": "integration"
+                }
+              },
+              {
+                "name": "Annotate test results",
+                "uses": "mikepenz/action-junit-report@v3",
+                "if": "success() || failure()",
+                "with": {
+                  "report_paths": "tmp/test-results/*.xml"
+                }
+              }
+            ]
+          },
+          "test-community": {
+            "if": "${{ github.event.pull_request.head.repo.fork }}",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "actions": "read",
+              "contents": "read"
+            },
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v4",
+                "with": {
+                  "go-version": "1.21"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Test",
+                "run": "make test-community"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-10-02T14-37-57Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2023-10-02T14-37-57Z__c7965b2df6d1f5d0a20ad9eecadf002fd74a8b5c.yml",
+          "workflow_name": "Test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 69,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "test": 7,
+            "test-community": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 7,
+              "test-community": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 7,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v4",
+              "buildpulse/buildpulse-action@main",
+              "google-github-actions/auth@v1",
+              "mikepenz/action-junit-report@v3"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 3,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Test",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ],
+            "branches": [
+              "main"
+            ]
+          },
+          "pull_request": null
+        },
+        "jobs": {
+          "test": {
+            "if": "${{ ! github.event.pull_request.head.repo.fork }}",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "actions": "read",
+              "contents": "read",
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v4",
+                "with": {
+                  "go-version": "1.21"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "id": "auth",
+                "uses": "google-github-actions/auth@v1",
+                "with": {
+                  "workload_identity_provider": "projects/811013774421/locations/global/workloadIdentityPools/github-pool/providers/github-provider",
+                  "service_account": "github-ci-external@trufflehog-testing.iam.gserviceaccount.com"
+                }
+              },
+              {
+                "name": "Set up gotestsum",
+                "run": "go install gotest.tools/gotestsum@latest\nmkdir -p tmp/test-results\n"
+              },
+              {
+                "name": "Test",
+                "run": "CGO_ENABLED=1 gotestsum --junitfile tmp/test-results/test.xml --raw-command -- go test -json -tags=sources $(go list ./... | grep -v /vendor/ | grep -v pkg/detectors)\n",
+                "if": "${{ success() || failure() }}"
+              },
+              {
+                "name": "Upload test results to BuildPulse for flaky test detection",
+                "if": "${{ !cancelled() }}",
+                "uses": "buildpulse/buildpulse-action@main",
+                "with": {
+                  "account": 79229934,
+                  "repository": 77726177,
+                  "path": "tmp/test-results/*.xml\n",
+                  "key": "${{ secrets.BUILDPULSE_ACCESS_KEY_ID }}",
+                  "secret": "${{ secrets.BUILDPULSE_SECRET_ACCESS_KEY }}",
+                  "tags": "integration"
+                }
+              },
+              {
+                "name": "Annotate test results",
+                "uses": "mikepenz/action-junit-report@v3",
+                "if": "success() || failure()",
+                "with": {
+                  "report_paths": "tmp/test-results/*.xml"
+                }
+              }
+            ]
+          },
+          "test-community": {
+            "if": "${{ github.event.pull_request.head.repo.fork }}",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "actions": "read",
+              "contents": "read"
+            },
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v4",
+                "with": {
+                  "go-version": "1.21"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Test",
+                "run": "make test-community"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-10-02T14-40-00Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2023-10-02T14-40-00Z__222a47d9f329b80c09e1896254fc55f7fccb96d4.yml",
+          "workflow_name": "Test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 69,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "test": 7,
+            "test-community": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 7,
+              "test-community": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 7,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v4",
+              "buildpulse/buildpulse-action@main",
+              "google-github-actions/auth@v1",
+              "mikepenz/action-junit-report@v4"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 3,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Test",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ],
+            "branches": [
+              "main"
+            ]
+          },
+          "pull_request": null
+        },
+        "jobs": {
+          "test": {
+            "if": "${{ ! github.event.pull_request.head.repo.fork }}",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "actions": "read",
+              "contents": "read",
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v4",
+                "with": {
+                  "go-version": "1.21"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "id": "auth",
+                "uses": "google-github-actions/auth@v1",
+                "with": {
+                  "workload_identity_provider": "projects/811013774421/locations/global/workloadIdentityPools/github-pool/providers/github-provider",
+                  "service_account": "github-ci-external@trufflehog-testing.iam.gserviceaccount.com"
+                }
+              },
+              {
+                "name": "Set up gotestsum",
+                "run": "go install gotest.tools/gotestsum@latest\nmkdir -p tmp/test-results\n"
+              },
+              {
+                "name": "Test",
+                "run": "CGO_ENABLED=1 gotestsum --junitfile tmp/test-results/test.xml --raw-command -- go test -json -tags=sources $(go list ./... | grep -v /vendor/ | grep -v pkg/detectors)\n",
+                "if": "${{ success() || failure() }}"
+              },
+              {
+                "name": "Upload test results to BuildPulse for flaky test detection",
+                "if": "${{ !cancelled() }}",
+                "uses": "buildpulse/buildpulse-action@main",
+                "with": {
+                  "account": 79229934,
+                  "repository": 77726177,
+                  "path": "tmp/test-results/*.xml\n",
+                  "key": "${{ secrets.BUILDPULSE_ACCESS_KEY_ID }}",
+                  "secret": "${{ secrets.BUILDPULSE_SECRET_ACCESS_KEY }}",
+                  "tags": "integration"
+                }
+              },
+              {
+                "name": "Annotate test results",
+                "uses": "mikepenz/action-junit-report@v4",
+                "if": "success() || failure()",
+                "with": {
+                  "report_paths": "tmp/test-results/*.xml"
+                }
+              }
+            ]
+          },
+          "test-community": {
+            "if": "${{ github.event.pull_request.head.repo.fork }}",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "actions": "read",
+              "contents": "read"
+            },
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v4",
+                "with": {
+                  "go-version": "1.21"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Test",
+                "run": "make test-community"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-12-05T00-46-56Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2023-12-05T00-46-56Z__16cf8584954d2f35967f6a8629f556ad1291d083.yml",
+          "workflow_name": "Test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 69,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "test": 7,
+            "test-community": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 7,
+              "test-community": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 7,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v4",
+              "buildpulse/buildpulse-action@main",
+              "google-github-actions/auth@v2",
+              "mikepenz/action-junit-report@v4"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 3,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Test",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ],
+            "branches": [
+              "main"
+            ]
+          },
+          "pull_request": null
+        },
+        "jobs": {
+          "test": {
+            "if": "${{ ! github.event.pull_request.head.repo.fork }}",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "actions": "read",
+              "contents": "read",
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v4",
+                "with": {
+                  "go-version": "1.21"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "id": "auth",
+                "uses": "google-github-actions/auth@v2",
+                "with": {
+                  "workload_identity_provider": "projects/811013774421/locations/global/workloadIdentityPools/github-pool/providers/github-provider",
+                  "service_account": "github-ci-external@trufflehog-testing.iam.gserviceaccount.com"
+                }
+              },
+              {
+                "name": "Set up gotestsum",
+                "run": "go install gotest.tools/gotestsum@latest\nmkdir -p tmp/test-results\n"
+              },
+              {
+                "name": "Test",
+                "run": "CGO_ENABLED=1 gotestsum --junitfile tmp/test-results/test.xml --raw-command -- go test -json -tags=sources $(go list ./... | grep -v /vendor/ | grep -v pkg/detectors)\n",
+                "if": "${{ success() || failure() }}"
+              },
+              {
+                "name": "Upload test results to BuildPulse for flaky test detection",
+                "if": "${{ !cancelled() }}",
+                "uses": "buildpulse/buildpulse-action@main",
+                "with": {
+                  "account": 79229934,
+                  "repository": 77726177,
+                  "path": "tmp/test-results/*.xml\n",
+                  "key": "${{ secrets.BUILDPULSE_ACCESS_KEY_ID }}",
+                  "secret": "${{ secrets.BUILDPULSE_SECRET_ACCESS_KEY }}",
+                  "tags": "integration"
+                }
+              },
+              {
+                "name": "Annotate test results",
+                "uses": "mikepenz/action-junit-report@v4",
+                "if": "success() || failure()",
+                "with": {
+                  "report_paths": "tmp/test-results/*.xml"
+                }
+              }
+            ]
+          },
+          "test-community": {
+            "if": "${{ github.event.pull_request.head.repo.fork }}",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "actions": "read",
+              "contents": "read"
+            },
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v4",
+                "with": {
+                  "go-version": "1.21"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Test",
+                "run": "make test-community"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-12-15T00-48-48Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2023-12-15T00-48-48Z__b0fab16ad4b5cc42c38ee4e2ee362aa3c47dea24.yml",
+          "workflow_name": "Test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 69,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "test": 7,
+            "test-community": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 7,
+              "test-community": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 7,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v4",
+              "buildpulse/buildpulse-action@main",
+              "google-github-actions/auth@v2",
+              "mikepenz/action-junit-report@v4"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 3,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Test",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ],
+            "branches": [
+              "main"
+            ]
+          },
+          "pull_request": null
+        },
+        "jobs": {
+          "test": {
+            "if": "${{ github.repository == 'trufflesecurity/trufflehog' && !github.event.pull_request.head.repo.fork }}",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "actions": "read",
+              "contents": "read",
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v4",
+                "with": {
+                  "go-version": "1.21"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "id": "auth",
+                "uses": "google-github-actions/auth@v2",
+                "with": {
+                  "workload_identity_provider": "projects/811013774421/locations/global/workloadIdentityPools/github-pool/providers/github-provider",
+                  "service_account": "github-ci-external@trufflehog-testing.iam.gserviceaccount.com"
+                }
+              },
+              {
+                "name": "Set up gotestsum",
+                "run": "go install gotest.tools/gotestsum@latest\nmkdir -p tmp/test-results\n"
+              },
+              {
+                "name": "Test",
+                "run": "CGO_ENABLED=1 gotestsum --junitfile tmp/test-results/test.xml --raw-command -- go test -json -tags=sources $(go list ./... | grep -v /vendor/ | grep -v pkg/detectors)\n",
+                "if": "${{ success() || failure() }}"
+              },
+              {
+                "name": "Upload test results to BuildPulse for flaky test detection",
+                "if": "${{ !cancelled() }}",
+                "uses": "buildpulse/buildpulse-action@main",
+                "with": {
+                  "account": 79229934,
+                  "repository": 77726177,
+                  "path": "tmp/test-results/*.xml\n",
+                  "key": "${{ secrets.BUILDPULSE_ACCESS_KEY_ID }}",
+                  "secret": "${{ secrets.BUILDPULSE_SECRET_ACCESS_KEY }}",
+                  "tags": "integration"
+                }
+              },
+              {
+                "name": "Annotate test results",
+                "uses": "mikepenz/action-junit-report@v4",
+                "if": "success() || failure()",
+                "with": {
+                  "report_paths": "tmp/test-results/*.xml"
+                }
+              }
+            ]
+          },
+          "test-community": {
+            "if": "${{ github.event.pull_request.head.repo.fork }}",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "actions": "read",
+              "contents": "read"
+            },
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v4",
+                "with": {
+                  "go-version": "1.21"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Test",
+                "run": "make test-community"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-02-13T03-15-50Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2024-02-13T03-15-50Z__774c48545eda5446d0045714317e5d7db670a4d6.yml",
+          "workflow_name": "Test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 69,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "test": 7,
+            "test-community": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 7,
+              "test-community": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 7,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5",
+              "buildpulse/buildpulse-action@main",
+              "google-github-actions/auth@v2",
+              "mikepenz/action-junit-report@v4"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 3,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Test",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ],
+            "branches": [
+              "main"
+            ]
+          },
+          "pull_request": null
+        },
+        "jobs": {
+          "test": {
+            "if": "${{ github.repository == 'trufflesecurity/trufflehog' && !github.event.pull_request.head.repo.fork }}",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "actions": "read",
+              "contents": "read",
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.21"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "id": "auth",
+                "uses": "google-github-actions/auth@v2",
+                "with": {
+                  "workload_identity_provider": "projects/811013774421/locations/global/workloadIdentityPools/github-pool/providers/github-provider",
+                  "service_account": "github-ci-external@trufflehog-testing.iam.gserviceaccount.com"
+                }
+              },
+              {
+                "name": "Set up gotestsum",
+                "run": "go install gotest.tools/gotestsum@latest\nmkdir -p tmp/test-results\n"
+              },
+              {
+                "name": "Test",
+                "run": "CGO_ENABLED=1 gotestsum --junitfile tmp/test-results/test.xml --raw-command -- go test -json -tags=sources $(go list ./... | grep -v /vendor/ | grep -v pkg/detectors)\n",
+                "if": "${{ success() || failure() }}"
+              },
+              {
+                "name": "Upload test results to BuildPulse for flaky test detection",
+                "if": "${{ !cancelled() }}",
+                "uses": "buildpulse/buildpulse-action@main",
+                "with": {
+                  "account": 79229934,
+                  "repository": 77726177,
+                  "path": "tmp/test-results/*.xml\n",
+                  "key": "${{ secrets.BUILDPULSE_ACCESS_KEY_ID }}",
+                  "secret": "${{ secrets.BUILDPULSE_SECRET_ACCESS_KEY }}",
+                  "tags": "integration"
+                }
+              },
+              {
+                "name": "Annotate test results",
+                "uses": "mikepenz/action-junit-report@v4",
+                "if": "success() || failure()",
+                "with": {
+                  "report_paths": "tmp/test-results/*.xml"
+                }
+              }
+            ]
+          },
+          "test-community": {
+            "if": "${{ github.event.pull_request.head.repo.fork }}",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "actions": "read",
+              "contents": "read"
+            },
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.21"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Test",
+                "run": "make test-community"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-03-22T15-23-04Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2024-03-22T15-23-04Z__41d58739bd32b0180af3a863a764f9163586e37a.yml",
+          "workflow_name": "Test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 69,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "test": 7,
+            "test-community": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 7,
+              "test-community": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 7,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5",
+              "buildpulse/buildpulse-action@main",
+              "google-github-actions/auth@v2",
+              "mikepenz/action-junit-report@v4"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 3,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Test",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ],
+            "branches": [
+              "main"
+            ]
+          },
+          "pull_request": null
+        },
+        "jobs": {
+          "test": {
+            "if": "${{ github.repository == 'trufflesecurity/trufflehog' && !github.event.pull_request.head.repo.fork }}",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "actions": "read",
+              "contents": "read",
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.22"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "id": "auth",
+                "uses": "google-github-actions/auth@v2",
+                "with": {
+                  "workload_identity_provider": "projects/811013774421/locations/global/workloadIdentityPools/github-pool/providers/github-provider",
+                  "service_account": "github-ci-external@trufflehog-testing.iam.gserviceaccount.com"
+                }
+              },
+              {
+                "name": "Set up gotestsum",
+                "run": "go install gotest.tools/gotestsum@latest\nmkdir -p tmp/test-results\n"
+              },
+              {
+                "name": "Test",
+                "run": "CGO_ENABLED=1 gotestsum --junitfile tmp/test-results/test.xml --raw-command -- go test -json -tags=sources $(go list ./... | grep -v /vendor/ | grep -v pkg/detectors)\n",
+                "if": "${{ success() || failure() }}"
+              },
+              {
+                "name": "Upload test results to BuildPulse for flaky test detection",
+                "if": "${{ !cancelled() }}",
+                "uses": "buildpulse/buildpulse-action@main",
+                "with": {
+                  "account": 79229934,
+                  "repository": 77726177,
+                  "path": "tmp/test-results/*.xml\n",
+                  "key": "${{ secrets.BUILDPULSE_ACCESS_KEY_ID }}",
+                  "secret": "${{ secrets.BUILDPULSE_SECRET_ACCESS_KEY }}",
+                  "tags": "integration"
+                }
+              },
+              {
+                "name": "Annotate test results",
+                "uses": "mikepenz/action-junit-report@v4",
+                "if": "success() || failure()",
+                "with": {
+                  "report_paths": "tmp/test-results/*.xml"
+                }
+              }
+            ]
+          },
+          "test-community": {
+            "if": "${{ github.event.pull_request.head.repo.fork }}",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "actions": "read",
+              "contents": "read"
+            },
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.22"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Test",
+                "run": "make test-community"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-09-06T21-09-13Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2024-09-06T21-09-13Z__bc2d00710aa3067c7e0f4dcbabdb46f764c595dc.yml",
+          "workflow_name": "Test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 69,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "test": 7,
+            "test-community": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 7,
+              "test-community": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 7,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5",
+              "buildpulse/buildpulse-action@main",
+              "google-github-actions/auth@v2",
+              "mikepenz/action-junit-report@v4"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 3,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Test",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ],
+            "branches": [
+              "main"
+            ]
+          },
+          "pull_request": null
+        },
+        "jobs": {
+          "test": {
+            "if": "${{ github.repository == 'trufflesecurity/trufflehog' && !github.event.pull_request.head.repo.fork }}",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "actions": "read",
+              "contents": "read",
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.22"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "id": "auth",
+                "uses": "google-github-actions/auth@v2",
+                "with": {
+                  "workload_identity_provider": "projects/811013774421/locations/global/workloadIdentityPools/github-pool/providers/github-provider",
+                  "service_account": "github-ci-external@trufflehog-testing.iam.gserviceaccount.com"
+                }
+              },
+              {
+                "name": "Set up gotestsum",
+                "run": "go install gotest.tools/gotestsum@latest\nmkdir -p tmp/test-results\n"
+              },
+              {
+                "name": "Test",
+                "run": "CGO_ENABLED=1 gotestsum --junitfile tmp/test-results/test.xml --raw-command -- go test -json -tags=sources $(go list ./... | grep -v /vendor/ | grep -v pkg/detectors | grep -v pkg/analyzer/analyzers)\n",
+                "if": "${{ success() || failure() }}"
+              },
+              {
+                "name": "Upload test results to BuildPulse for flaky test detection",
+                "if": "${{ !cancelled() }}",
+                "uses": "buildpulse/buildpulse-action@main",
+                "with": {
+                  "account": 79229934,
+                  "repository": 77726177,
+                  "path": "tmp/test-results/*.xml\n",
+                  "key": "${{ secrets.BUILDPULSE_ACCESS_KEY_ID }}",
+                  "secret": "${{ secrets.BUILDPULSE_SECRET_ACCESS_KEY }}",
+                  "tags": "integration"
+                }
+              },
+              {
+                "name": "Annotate test results",
+                "uses": "mikepenz/action-junit-report@v4",
+                "if": "success() || failure()",
+                "with": {
+                  "report_paths": "tmp/test-results/*.xml"
+                }
+              }
+            ]
+          },
+          "test-community": {
+            "if": "${{ github.event.pull_request.head.repo.fork }}",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "actions": "read",
+              "contents": "read"
+            },
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.22"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Test",
+                "run": "make test-community"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-09-27T16-55-15Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2024-09-27T16-55-15Z__5f3b4521d705436bb4723c5639121faf21872fc5.yml",
+          "workflow_name": "Test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 69,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "test": 7,
+            "test-community": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 7,
+              "test-community": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 7,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5",
+              "buildpulse/buildpulse-action@main",
+              "google-github-actions/auth@v2",
+              "mikepenz/action-junit-report@v4"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 3,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Test",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ],
+            "branches": [
+              "main"
+            ]
+          },
+          "pull_request": null
+        },
+        "jobs": {
+          "test": {
+            "if": "${{ github.repository == 'trufflesecurity/trufflehog' && !github.event.pull_request.head.repo.fork }}",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "actions": "read",
+              "contents": "read",
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.23"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "id": "auth",
+                "uses": "google-github-actions/auth@v2",
+                "with": {
+                  "workload_identity_provider": "projects/811013774421/locations/global/workloadIdentityPools/github-pool/providers/github-provider",
+                  "service_account": "github-ci-external@trufflehog-testing.iam.gserviceaccount.com"
+                }
+              },
+              {
+                "name": "Set up gotestsum",
+                "run": "go install gotest.tools/gotestsum@latest\nmkdir -p tmp/test-results\n"
+              },
+              {
+                "name": "Test",
+                "run": "CGO_ENABLED=1 gotestsum --junitfile tmp/test-results/test.xml --raw-command -- go test -json -tags=sources $(go list ./... | grep -v /vendor/ | grep -v pkg/detectors | grep -v pkg/analyzer/analyzers)\n",
+                "if": "${{ success() || failure() }}"
+              },
+              {
+                "name": "Upload test results to BuildPulse for flaky test detection",
+                "if": "${{ !cancelled() }}",
+                "uses": "buildpulse/buildpulse-action@main",
+                "with": {
+                  "account": 79229934,
+                  "repository": 77726177,
+                  "path": "tmp/test-results/*.xml\n",
+                  "key": "${{ secrets.BUILDPULSE_ACCESS_KEY_ID }}",
+                  "secret": "${{ secrets.BUILDPULSE_SECRET_ACCESS_KEY }}",
+                  "tags": "integration"
+                }
+              },
+              {
+                "name": "Annotate test results",
+                "uses": "mikepenz/action-junit-report@v4",
+                "if": "success() || failure()",
+                "with": {
+                  "report_paths": "tmp/test-results/*.xml"
+                }
+              }
+            ]
+          },
+          "test-community": {
+            "if": "${{ github.event.pull_request.head.repo.fork }}",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "actions": "read",
+              "contents": "read"
+            },
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.23"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Test",
+                "run": "make test-community"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-11-13T20-37-05Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2024-11-13T20-37-05Z__3a87188b5c5df1a2e0ca4cddc35e8afa0075dfd7.yml",
+          "workflow_name": "Test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 69,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "test": 7,
+            "test-community": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 7,
+              "test-community": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 7,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5",
+              "buildpulse/buildpulse-action@main",
+              "google-github-actions/auth@v2",
+              "mikepenz/action-junit-report@v5"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 3,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Test",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ],
+            "branches": [
+              "main"
+            ]
+          },
+          "pull_request": null
+        },
+        "jobs": {
+          "test": {
+            "if": "${{ github.repository == 'trufflesecurity/trufflehog' && !github.event.pull_request.head.repo.fork }}",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "actions": "read",
+              "contents": "read",
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.23"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "id": "auth",
+                "uses": "google-github-actions/auth@v2",
+                "with": {
+                  "workload_identity_provider": "projects/811013774421/locations/global/workloadIdentityPools/github-pool/providers/github-provider",
+                  "service_account": "github-ci-external@trufflehog-testing.iam.gserviceaccount.com"
+                }
+              },
+              {
+                "name": "Set up gotestsum",
+                "run": "go install gotest.tools/gotestsum@latest\nmkdir -p tmp/test-results\n"
+              },
+              {
+                "name": "Test",
+                "run": "CGO_ENABLED=1 gotestsum --junitfile tmp/test-results/test.xml --raw-command -- go test -json -tags=sources $(go list ./... | grep -v /vendor/ | grep -v pkg/detectors | grep -v pkg/analyzer/analyzers)\n",
+                "if": "${{ success() || failure() }}"
+              },
+              {
+                "name": "Upload test results to BuildPulse for flaky test detection",
+                "if": "${{ !cancelled() }}",
+                "uses": "buildpulse/buildpulse-action@main",
+                "with": {
+                  "account": 79229934,
+                  "repository": 77726177,
+                  "path": "tmp/test-results/*.xml\n",
+                  "key": "${{ secrets.BUILDPULSE_ACCESS_KEY_ID }}",
+                  "secret": "${{ secrets.BUILDPULSE_SECRET_ACCESS_KEY }}",
+                  "tags": "integration"
+                }
+              },
+              {
+                "name": "Annotate test results",
+                "uses": "mikepenz/action-junit-report@v5",
+                "if": "success() || failure()",
+                "with": {
+                  "report_paths": "tmp/test-results/*.xml"
+                }
+              }
+            ]
+          },
+          "test-community": {
+            "if": "${{ github.event.pull_request.head.repo.fork }}",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "actions": "read",
+              "contents": "read"
+            },
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.23"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Test",
+                "run": "make test-community"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-01-14T14-16-35Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2025-01-14T14-16-35Z__1571f92baaa1c6875d84cbafeae2f373dab6a8e2.yml",
+          "workflow_name": "Test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 69,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "test": 7,
+            "test-community": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 7,
+              "test-community": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 7,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5",
+              "buildpulse/buildpulse-action@main",
+              "google-github-actions/auth@v2",
+              "mikepenz/action-junit-report@v5"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 3,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Test",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ],
+            "branches": [
+              "main"
+            ]
+          },
+          "pull_request": null
+        },
+        "jobs": {
+          "test": {
+            "if": "${{ github.repository == 'trufflesecurity/trufflehog' && !github.event.pull_request.head.repo.fork }}",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "actions": "read",
+              "contents": "read",
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.23"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "id": "auth",
+                "uses": "google-github-actions/auth@v2",
+                "with": {
+                  "workload_identity_provider": "projects/811013774421/locations/global/workloadIdentityPools/github-pool/providers/github-provider",
+                  "service_account": "github-ci-external@trufflehog-testing.iam.gserviceaccount.com"
+                }
+              },
+              {
+                "name": "Set up gotestsum",
+                "run": "go install gotest.tools/gotestsum@latest\nmkdir -p tmp/test-results\n"
+              },
+              {
+                "name": "Test",
+                "run": "CGO_ENABLED=1 gotestsum --junitfile tmp/test-results/test.xml --raw-command -- go test -json -tags=sources $(go list ./... | grep -v /vendor/ | grep -v pkg/analyzer/analyzers)\n",
+                "if": "${{ success() || failure() }}"
+              },
+              {
+                "name": "Upload test results to BuildPulse for flaky test detection",
+                "if": "${{ !cancelled() }}",
+                "uses": "buildpulse/buildpulse-action@main",
+                "with": {
+                  "account": 79229934,
+                  "repository": 77726177,
+                  "path": "tmp/test-results/*.xml\n",
+                  "key": "${{ secrets.BUILDPULSE_ACCESS_KEY_ID }}",
+                  "secret": "${{ secrets.BUILDPULSE_SECRET_ACCESS_KEY }}",
+                  "tags": "integration"
+                }
+              },
+              {
+                "name": "Annotate test results",
+                "uses": "mikepenz/action-junit-report@v5",
+                "if": "success() || failure()",
+                "with": {
+                  "report_paths": "tmp/test-results/*.xml"
+                }
+              }
+            ]
+          },
+          "test-community": {
+            "if": "${{ github.event.pull_request.head.repo.fork }}",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "actions": "read",
+              "contents": "read"
+            },
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.23"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Test",
+                "run": "make test-community"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-04-02T03-45-42Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2025-04-02T03-45-42Z__9a59a7a52a9699a94be4725bc0f4fbfe911429ef.yml",
+          "workflow_name": "Test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 69,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "test": 7,
+            "test-community": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 7,
+              "test-community": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 7,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5",
+              "buildpulse/buildpulse-action@main",
+              "google-github-actions/auth@v2",
+              "mikepenz/action-junit-report@v5"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 3,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Test",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ],
+            "branches": [
+              "main"
+            ]
+          },
+          "pull_request": null
+        },
+        "jobs": {
+          "test": {
+            "if": "${{ github.repository == 'trufflesecurity/trufflehog' && !github.event.pull_request.head.repo.fork }}",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "actions": "read",
+              "contents": "read",
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.24"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "id": "auth",
+                "uses": "google-github-actions/auth@v2",
+                "with": {
+                  "workload_identity_provider": "projects/811013774421/locations/global/workloadIdentityPools/github-pool/providers/github-provider",
+                  "service_account": "github-ci-external@trufflehog-testing.iam.gserviceaccount.com"
+                }
+              },
+              {
+                "name": "Set up gotestsum",
+                "run": "go install gotest.tools/gotestsum@latest\nmkdir -p tmp/test-results\n"
+              },
+              {
+                "name": "Test",
+                "run": "CGO_ENABLED=1 gotestsum --junitfile tmp/test-results/test.xml --raw-command -- go test -json -tags=sources $(go list ./... | grep -v /vendor/ | grep -v pkg/analyzer/analyzers)\n",
+                "if": "${{ success() || failure() }}"
+              },
+              {
+                "name": "Upload test results to BuildPulse for flaky test detection",
+                "if": "${{ !cancelled() }}",
+                "uses": "buildpulse/buildpulse-action@main",
+                "with": {
+                  "account": 79229934,
+                  "repository": 77726177,
+                  "path": "tmp/test-results/*.xml\n",
+                  "key": "${{ secrets.BUILDPULSE_ACCESS_KEY_ID }}",
+                  "secret": "${{ secrets.BUILDPULSE_SECRET_ACCESS_KEY }}",
+                  "tags": "integration"
+                }
+              },
+              {
+                "name": "Annotate test results",
+                "uses": "mikepenz/action-junit-report@v5",
+                "if": "success() || failure()",
+                "with": {
+                  "report_paths": "tmp/test-results/*.xml"
+                }
+              }
+            ]
+          },
+          "test-community": {
+            "if": "${{ github.event.pull_request.head.repo.fork }}",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "actions": "read",
+              "contents": "read"
+            },
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.24"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Test",
+                "run": "make test-community"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-05-19T23-18-13Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2025-05-19T23-18-13Z__fa703eacf669db678b9f402eeda5cbaef02f59f0.yml",
+          "workflow_name": "Test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 69,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "test": 7,
+            "test-community": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test": 7,
+              "test-community": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 7,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5",
+              "buildpulse/buildpulse-action@main",
+              "google-github-actions/auth@v2",
+              "mikepenz/action-junit-report@v5"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 3,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Test",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ],
+            "branches": [
+              "main"
+            ]
+          },
+          "pull_request": null
+        },
+        "jobs": {
+          "test": {
+            "if": "${{ github.repository == 'trufflesecurity/trufflehog' && !github.event.pull_request.head.repo.fork }}",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "actions": "read",
+              "contents": "read",
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.24"
+                }
+              },
+              {
+                "id": "auth",
+                "uses": "google-github-actions/auth@v2",
+                "with": {
+                  "workload_identity_provider": "projects/811013774421/locations/global/workloadIdentityPools/github-pool/providers/github-provider",
+                  "service_account": "github-ci-external@trufflehog-testing.iam.gserviceaccount.com"
+                }
+              },
+              {
+                "name": "Set up gotestsum",
+                "run": "go install gotest.tools/gotestsum@latest\nmkdir -p tmp/test-results\n"
+              },
+              {
+                "name": "Test",
+                "run": "CGO_ENABLED=1 gotestsum --junitfile tmp/test-results/test.xml --raw-command -- go test -json -tags=sources $(go list ./... | grep -v /vendor/ | grep -v pkg/analyzer/analyzers)\n",
+                "if": "${{ success() || failure() }}"
+              },
+              {
+                "name": "Upload test results to BuildPulse for flaky test detection",
+                "if": "${{ !cancelled() }}",
+                "uses": "buildpulse/buildpulse-action@main",
+                "with": {
+                  "account": 79229934,
+                  "repository": 77726177,
+                  "path": "tmp/test-results/*.xml\n",
+                  "key": "${{ secrets.BUILDPULSE_ACCESS_KEY_ID }}",
+                  "secret": "${{ secrets.BUILDPULSE_SECRET_ACCESS_KEY }}",
+                  "tags": "integration"
+                }
+              },
+              {
+                "name": "Annotate test results",
+                "uses": "mikepenz/action-junit-report@v5",
+                "if": "success() || failure()",
+                "with": {
+                  "report_paths": "tmp/test-results/*.xml"
+                }
+              }
+            ]
+          },
+          "test-community": {
+            "if": "${{ github.event.pull_request.head.repo.fork }}",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "actions": "read",
+              "contents": "read"
+            },
+            "steps": [
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.24"
+                }
+              },
+              {
+                "name": "Test",
+                "run": "make test-community"
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

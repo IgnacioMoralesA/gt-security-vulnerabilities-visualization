@@ -1,0 +1,443 @@
+{
+  "repo_owner": "aws-actions",
+  "repo_name": "configure-aws-credentials",
+  "workflow_name": "release-please",
+  "history": {
+    "2025-01-24T22-37-49Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-please__2025-01-24T22-37-49Z__0f88004d9c27e0bdbbc254b3f7c8053cb38f04d7.yml",
+          "workflow_name": "Release Please",
+          "triggers": {},
+          "permissions": {
+            "id-token": "write",
+            "contents": "write",
+            "pull-requests": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 43,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "release-please": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "release-please": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "aws-actions/aws-secretsmanager-get-secrets@v2",
+              "aws-actions/configure-aws-credentials@v4",
+              "googleapis/release-please-action@v4"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release Please",
+        "true": {
+          "push": {
+            "branches": [
+              "main"
+            ]
+          }
+        },
+        "permissions": {
+          "id-token": "write",
+          "contents": "write",
+          "pull-requests": "write"
+        },
+        "jobs": {
+          "release-please": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout Repository",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Configure AWS Credentials",
+                "uses": "aws-actions/configure-aws-credentials@v4",
+                "with": {
+                  "aws-region": "us-west-2",
+                  "role-to-assume": "${{ secrets.SECRETS_AWS_PACKAGING_ROLE_TO_ASSUME }}",
+                  "role-duration-seconds": 900,
+                  "role-session-name": "${{ github.run_id }}"
+                }
+              },
+              {
+                "name": "Get git credentials",
+                "uses": "aws-actions/aws-secretsmanager-get-secrets@v2",
+                "with": {
+                  "parse-json-secrets": true,
+                  "secret-ids": "OSDS,arn:aws:secretsmanager:us-west-2:206735643321:secret:github-aws-sdk-osds-automation-gebs9n\n"
+                }
+              },
+              {
+                "name": "Run release-please",
+                "uses": "googleapis/release-please-action@v4",
+                "with": {
+                  "release-type": "node",
+                  "token": "${{ env.OSDS_ACCESS_TOKEN }}",
+                  "config-file": "release-please-config.json",
+                  "manifest-file": ".release-please-manifest.json"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-07-25T22-08-17Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-please__2025-07-25T22-08-17Z__fd13a40502168ccbcac047ce2aeeb87cda9f1fdb.yml",
+          "workflow_name": "Release Please",
+          "triggers": {},
+          "permissions": {
+            "id-token": "write",
+            "contents": "write",
+            "pull-requests": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 43,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "release-please": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "release-please": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "aws-actions/aws-secretsmanager-get-secrets@v2",
+              "aws-actions/configure-aws-credentials@v4",
+              "googleapis/release-please-action@v4"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release Please",
+        "true": {
+          "push": {
+            "branches": [
+              "main"
+            ]
+          }
+        },
+        "permissions": {
+          "id-token": "write",
+          "contents": "write",
+          "pull-requests": "write"
+        },
+        "jobs": {
+          "release-please": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout Repository",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Configure AWS Credentials",
+                "uses": "aws-actions/configure-aws-credentials@v4",
+                "with": {
+                  "aws-region": "us-west-2",
+                  "role-to-assume": "${{ secrets.SECRETS_AWS_PACKAGING_ROLE_TO_ASSUME }}",
+                  "role-duration-seconds": 900,
+                  "role-session-name": "${{ github.run_id }}"
+                }
+              },
+              {
+                "name": "Get git credentials",
+                "uses": "aws-actions/aws-secretsmanager-get-secrets@v2",
+                "with": {
+                  "parse-json-secrets": true,
+                  "secret-ids": "${{ secrets.OSDS_PACKAGING_ROLE }}\n"
+                }
+              },
+              {
+                "name": "Run release-please",
+                "uses": "googleapis/release-please-action@v4",
+                "with": {
+                  "release-type": "node",
+                  "token": "${{ env.OSDS_ACCESS_TOKEN }}",
+                  "config-file": "release-please-config.json",
+                  "manifest-file": ".release-please-manifest.json"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-09-04T23-53-56Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-please__2025-09-04T23-53-56Z__0994a359d5944ec322eaedab8dedf891ed62329c.yml",
+          "workflow_name": "Release Please",
+          "triggers": {},
+          "permissions": {
+            "id-token": "write",
+            "contents": "write",
+            "pull-requests": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 43,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "release-please": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "release-please": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v5",
+              "aws-actions/aws-secretsmanager-get-secrets@v2",
+              "aws-actions/configure-aws-credentials@v4",
+              "googleapis/release-please-action@v4"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release Please",
+        "true": {
+          "push": {
+            "branches": [
+              "main"
+            ]
+          }
+        },
+        "permissions": {
+          "id-token": "write",
+          "contents": "write",
+          "pull-requests": "write"
+        },
+        "jobs": {
+          "release-please": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout Repository",
+                "uses": "actions/checkout@v5",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Configure AWS Credentials",
+                "uses": "aws-actions/configure-aws-credentials@v4",
+                "with": {
+                  "aws-region": "us-west-2",
+                  "role-to-assume": "${{ secrets.SECRETS_AWS_PACKAGING_ROLE_TO_ASSUME }}",
+                  "role-duration-seconds": 900,
+                  "role-session-name": "${{ github.run_id }}"
+                }
+              },
+              {
+                "name": "Get git credentials",
+                "uses": "aws-actions/aws-secretsmanager-get-secrets@v2",
+                "with": {
+                  "parse-json-secrets": true,
+                  "secret-ids": "${{ secrets.OSDS_PACKAGING_ROLE }}\n"
+                }
+              },
+              {
+                "name": "Run release-please",
+                "uses": "googleapis/release-please-action@v4",
+                "with": {
+                  "release-type": "node",
+                  "token": "${{ env.OSDS_ACCESS_TOKEN }}",
+                  "config-file": "release-please-config.json",
+                  "manifest-file": ".release-please-manifest.json"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-09-04T23-58-13Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-please__2025-09-04T23-58-13Z__8e2d02296bcf12c081e192c60f3cb80d77f4f76a.yml",
+          "workflow_name": "Release Please",
+          "triggers": {},
+          "permissions": {
+            "id-token": "write",
+            "contents": "write",
+            "pull-requests": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 43,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "release-please": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "release-please": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v5",
+              "aws-actions/aws-secretsmanager-get-secrets@v2",
+              "aws-actions/configure-aws-credentials@v5",
+              "googleapis/release-please-action@v4"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release Please",
+        "true": {
+          "push": {
+            "branches": [
+              "main"
+            ]
+          }
+        },
+        "permissions": {
+          "id-token": "write",
+          "contents": "write",
+          "pull-requests": "write"
+        },
+        "jobs": {
+          "release-please": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout Repository",
+                "uses": "actions/checkout@v5",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Configure AWS Credentials",
+                "uses": "aws-actions/configure-aws-credentials@v5",
+                "with": {
+                  "aws-region": "us-west-2",
+                  "role-to-assume": "${{ secrets.SECRETS_AWS_PACKAGING_ROLE_TO_ASSUME }}",
+                  "role-duration-seconds": 900,
+                  "role-session-name": "${{ github.run_id }}"
+                }
+              },
+              {
+                "name": "Get git credentials",
+                "uses": "aws-actions/aws-secretsmanager-get-secrets@v2",
+                "with": {
+                  "parse-json-secrets": true,
+                  "secret-ids": "${{ secrets.OSDS_PACKAGING_ROLE }}\n"
+                }
+              },
+              {
+                "name": "Run release-please",
+                "uses": "googleapis/release-please-action@v4",
+                "with": {
+                  "release-type": "node",
+                  "token": "${{ env.OSDS_ACCESS_TOKEN }}",
+                  "config-file": "release-please-config.json",
+                  "manifest-file": ".release-please-manifest.json"
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

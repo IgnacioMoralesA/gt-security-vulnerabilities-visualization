@@ -1,0 +1,4009 @@
+{
+  "repo_owner": "anmol098",
+  "repo_name": "waka-readme-stats",
+  "workflow_name": "ci",
+  "history": {
+    "2023-02-26T14-02-54Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-89a08481-0fcd-5cd4-8907-398b25d8ab59",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ci__2023-02-26T14-02-54Z__efbdaa0ca4159d1cd607f61b6331015fcd6acaef.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 13,
+                  "startColumn": 5,
+                  "endLine": 83,
+                  "endColumn": 46
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "c7f623a5962d5843:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "ci__2023-02-26T14-02-54Z__efbdaa0ca4159d1cd607f61b6331015fcd6acaef.yml",
+          "workflow_name": "CI",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": {
+            "group": "${{ github.workflow }}-${{ github.event.pull_request.number }}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 83,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "ci": 9
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "ci": 9
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 5,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-python@v4",
+              "actions/upload-artifact@v3",
+              "int128/hide-comment-action@v1",
+              "jungwinter/comment@v1"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "CI",
+        "true": {
+          "pull_request": null,
+          "workflow_dispatch": null
+        },
+        "concurrency": {
+          "group": "${{ github.workflow }}-${{ github.event.pull_request.number }}",
+          "cancel-in-progress": true
+        },
+        "jobs": {
+          "ci": {
+            "name": "Run Test and Review PR",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout \ud83d\udece\ufe0f",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Setup Python 3.8 \ud83d\udc0d",
+                "uses": "actions/setup-python@v4",
+                "with": {
+                  "python-version": 3.8
+                }
+              },
+              {
+                "name": "Install Dependencies \ud83d\udce5",
+                "run": "pip install -r requirements.txt"
+              },
+              {
+                "name": "Create Assets Folder \ud83d\udce5",
+                "run": "mkdir assets"
+              },
+              {
+                "name": "Create Previous Comments \ud83e\udee3",
+                "uses": "int128/hide-comment-action@v1",
+                "with": {
+                  "starts-with": "README stats current output:"
+                }
+              },
+              {
+                "name": "Run Action Preview on Current Code \ud83e\uddea",
+                "id": "make-stats",
+                "env": {
+                  "INPUT_GH_TOKEN": "${{ secrets.INPUT_GITHUB_TOKEN }}",
+                  "INPUT_WAKATIME_API_KEY": "${{ secrets.WAKATIME_API_KEY }}",
+                  "INPUT_SHOW_TIMEZONE": true,
+                  "INPUT_SHOW_PROJECTS": true,
+                  "INPUT_SHOW_EDITORS": true,
+                  "INPUT_SHOW_OS": true,
+                  "INPUT_SHOW_LANGUAGE": true,
+                  "INPUT_SYMBOL_VERSION": 1,
+                  "INPUT_SHOW_LINES_OF_CODE": true,
+                  "INPUT_SHOW_LOC_CHART": true,
+                  "INPUT_SHOW_PROFILE_VIEWS": true,
+                  "INPUT_SHOW_TOTAL_CODE_TIME": true,
+                  "INPUT_SHOW_SHORT_INFO": true,
+                  "INPUT_SHOW_COMMIT": true,
+                  "INPUT_SHOW_DAYS_OF_WEEK": true,
+                  "INPUT_SHOW_LANGUAGE_PER_REPO": true,
+                  "INPUT_SHOW_UPDATED_DATE": true,
+                  "INPUT_COMMIT_BY_ME": true,
+                  "INPUT_DEBUG_LOGGING": true,
+                  "DEBUG_RUN": true
+                },
+                "run": "python3 sources/main.py"
+              },
+              {
+                "name": "Save Branch Name Without Slashes \ud83d\udcdb",
+                "if": "${{ github.ref != 'refs/heads/master' }}",
+                "env": {
+                  "BRANCH_NAME": "${{ github.head_ref || github.ref_name }}"
+                },
+                "run": "BRANCH_NAME=${{ env.BRANCH_NAME }}\nBRANCH_NAME=${BRANCH_NAME////_}\necho BRANCH_NAME=${BRANCH_NAME} >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Upload Artifact \ud83d\udce6",
+                "uses": "actions/upload-artifact@v3",
+                "if": "${{ github.ref != 'refs/heads/master' }}",
+                "with": {
+                  "name": "${{ format('github-pages-for-branch-{0}', env.BRANCH_NAME) }}",
+                  "path": "assets"
+                }
+              },
+              {
+                "name": "Create Comment \ud83d\udcac",
+                "uses": "jungwinter/comment@v1",
+                "with": {
+                  "type": "create",
+                  "body": "${{ steps.make-stats.outputs.README_CONTENT }}",
+                  "issue_number": "${{ github.event.number }}",
+                  "token": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-02-26T14-04-38Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-0288639a-ec97-580f-bc20-e74128b5fc77",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ci__2023-02-26T14-04-38Z__42e1f0e3a5c0388e1fbc53801797bd346507ee7b.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 13,
+                  "startColumn": 5,
+                  "endLine": 83,
+                  "endColumn": 46
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "c7f623a5962d5843:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "ci__2023-02-26T14-04-38Z__42e1f0e3a5c0388e1fbc53801797bd346507ee7b.yml",
+          "workflow_name": "CI",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": {
+            "group": "${{ github.workflow }}-${{ github.event.pull_request.number }}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 83,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "ci": 9
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "ci": 9
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 5,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-python@v4",
+              "actions/upload-artifact@v3",
+              "int128/hide-comment-action@v1",
+              "jungwinter/comment@v1"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "CI",
+        "true": {
+          "pull_request": null,
+          "workflow_dispatch": null
+        },
+        "concurrency": {
+          "group": "${{ github.workflow }}-${{ github.event.pull_request.number }}",
+          "cancel-in-progress": true
+        },
+        "jobs": {
+          "ci": {
+            "name": "Run Test and Review PR",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout \ud83d\udece\ufe0f",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Setup Python 3.8 \ud83d\udc0d",
+                "uses": "actions/setup-python@v4",
+                "with": {
+                  "python-version": 3.8
+                }
+              },
+              {
+                "name": "Install Dependencies \ud83d\udce5",
+                "run": "pip install -r requirements.txt"
+              },
+              {
+                "name": "Create Assets Folder \ud83d\udce5",
+                "run": "mkdir assets"
+              },
+              {
+                "name": "Create Previous Comments \ud83e\udee3",
+                "uses": "int128/hide-comment-action@v1",
+                "with": {
+                  "starts-with": "README stats current output:"
+                }
+              },
+              {
+                "name": "Run Action Preview on Current Code \ud83e\uddea",
+                "id": "make-stats",
+                "env": {
+                  "INPUT_GH_TOKEN": "${{ secrets.INPUT_GITHUB_TOKEN }}",
+                  "INPUT_WAKATIME_API_KEY": "${{ secrets.WAKATIME_API_KEY }}",
+                  "INPUT_SHOW_TIMEZONE": true,
+                  "INPUT_SHOW_PROJECTS": true,
+                  "INPUT_SHOW_EDITORS": true,
+                  "INPUT_SHOW_OS": true,
+                  "INPUT_SHOW_LANGUAGE": true,
+                  "INPUT_SYMBOL_VERSION": 1,
+                  "INPUT_SHOW_LINES_OF_CODE": true,
+                  "INPUT_SHOW_LOC_CHART": true,
+                  "INPUT_SHOW_PROFILE_VIEWS": true,
+                  "INPUT_SHOW_TOTAL_CODE_TIME": true,
+                  "INPUT_SHOW_SHORT_INFO": true,
+                  "INPUT_SHOW_COMMIT": true,
+                  "INPUT_SHOW_DAYS_OF_WEEK": true,
+                  "INPUT_SHOW_LANGUAGE_PER_REPO": true,
+                  "INPUT_SHOW_UPDATED_DATE": true,
+                  "INPUT_COMMIT_BY_ME": true,
+                  "INPUT_DEBUG_LOGGING": true,
+                  "DEBUG_RUN": true
+                },
+                "run": "python3 sources/main.py"
+              },
+              {
+                "name": "Save Branch Name Without Slashes \ud83d\udcdb",
+                "if": "${{ github.ref != 'refs/heads/master' }}",
+                "env": {
+                  "BRANCH_NAME": "${{ github.head_ref || github.ref_name }}"
+                },
+                "run": "BRANCH_NAME=${{ env.BRANCH_NAME }}\nBRANCH_NAME=${BRANCH_NAME////_}\necho BRANCH_NAME=${BRANCH_NAME} >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Upload Artifact \ud83d\udce6",
+                "uses": "actions/upload-artifact@v3",
+                "if": "${{ github.ref != 'refs/heads/master' }}",
+                "with": {
+                  "name": "${{ format('github-pages-for-branch-{0}', env.BRANCH_NAME) }}",
+                  "path": "assets"
+                }
+              },
+              {
+                "name": "Create Comment \ud83d\udcac",
+                "uses": "jungwinter/comment@v1",
+                "with": {
+                  "type": "create",
+                  "body": "${{ steps.make-stats.outputs.README_CONTENT }}",
+                  "issue_number": "${{ github.event.number }}",
+                  "token": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-03-11T20-49-38Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-049fd4c6-5f2d-5673-82ee-faa036f66505",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ci__2023-03-11T20-49-38Z__85a6d7f129f0b40681df42c104a919a877d6ed8b.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 13,
+                  "startColumn": 5,
+                  "endLine": 84,
+                  "endColumn": 46
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "c7f623a5962d5843:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "ci__2023-03-11T20-49-38Z__85a6d7f129f0b40681df42c104a919a877d6ed8b.yml",
+          "workflow_name": "CI",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": {
+            "group": "${{ github.workflow }}-${{ github.event.pull_request.number }}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 84,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "ci": 9
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "ci": 9
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 5,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-python@v4",
+              "actions/upload-artifact@v3",
+              "int128/hide-comment-action@v1",
+              "jungwinter/comment@v1"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "CI",
+        "true": {
+          "pull_request": null,
+          "workflow_dispatch": null
+        },
+        "concurrency": {
+          "group": "${{ github.workflow }}-${{ github.event.pull_request.number }}",
+          "cancel-in-progress": true
+        },
+        "jobs": {
+          "ci": {
+            "name": "Run Test and Review PR",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout \ud83d\udece\ufe0f",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Setup Python 3.8 \ud83d\udc0d",
+                "uses": "actions/setup-python@v4",
+                "with": {
+                  "python-version": 3.8,
+                  "cache": "pip"
+                }
+              },
+              {
+                "name": "Install Dependencies \ud83d\udce5",
+                "run": "pip install -r requirements.txt"
+              },
+              {
+                "name": "Create Assets Folder \ud83d\udce5",
+                "run": "mkdir assets"
+              },
+              {
+                "name": "Create Previous Comments \ud83e\udee3",
+                "uses": "int128/hide-comment-action@v1",
+                "with": {
+                  "starts-with": "README stats current output:"
+                }
+              },
+              {
+                "name": "Run Action Preview on Current Code \ud83e\uddea",
+                "id": "make-stats",
+                "env": {
+                  "INPUT_GH_TOKEN": "${{ secrets.INPUT_GITHUB_TOKEN }}",
+                  "INPUT_WAKATIME_API_KEY": "${{ secrets.WAKATIME_API_KEY }}",
+                  "INPUT_SHOW_TIMEZONE": true,
+                  "INPUT_SHOW_PROJECTS": true,
+                  "INPUT_SHOW_EDITORS": true,
+                  "INPUT_SHOW_OS": true,
+                  "INPUT_SHOW_LANGUAGE": true,
+                  "INPUT_SYMBOL_VERSION": 1,
+                  "INPUT_SHOW_LINES_OF_CODE": true,
+                  "INPUT_SHOW_LOC_CHART": true,
+                  "INPUT_SHOW_PROFILE_VIEWS": true,
+                  "INPUT_SHOW_TOTAL_CODE_TIME": true,
+                  "INPUT_SHOW_SHORT_INFO": true,
+                  "INPUT_SHOW_COMMIT": true,
+                  "INPUT_SHOW_DAYS_OF_WEEK": true,
+                  "INPUT_SHOW_LANGUAGE_PER_REPO": true,
+                  "INPUT_SHOW_UPDATED_DATE": true,
+                  "INPUT_COMMIT_BY_ME": true,
+                  "INPUT_DEBUG_LOGGING": true,
+                  "DEBUG_RUN": true
+                },
+                "run": "python3 sources/main.py"
+              },
+              {
+                "name": "Save Branch Name Without Slashes \ud83d\udcdb",
+                "if": "${{ github.ref != 'refs/heads/master' }}",
+                "env": {
+                  "BRANCH_NAME": "${{ github.head_ref || github.ref_name }}"
+                },
+                "run": "BRANCH_NAME=${{ env.BRANCH_NAME }}\nBRANCH_NAME=${BRANCH_NAME////_}\necho BRANCH_NAME=${BRANCH_NAME} >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Upload Artifact \ud83d\udce6",
+                "uses": "actions/upload-artifact@v3",
+                "if": "${{ github.ref != 'refs/heads/master' }}",
+                "with": {
+                  "name": "${{ format('github-pages-for-branch-{0}', env.BRANCH_NAME) }}",
+                  "path": "assets"
+                }
+              },
+              {
+                "name": "Create Comment \ud83d\udcac",
+                "uses": "jungwinter/comment@v1",
+                "with": {
+                  "type": "create",
+                  "body": "${{ steps.make-stats.outputs.README_CONTENT }}",
+                  "issue_number": "${{ github.event.number }}",
+                  "token": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-03-12T09-09-06Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-e404ae4f-c251-574f-ab76-0fd0e0889c18",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ci__2023-03-12T09-09-06Z__53d09b1519af7f133a01695363c7522b9f03fd35.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 13,
+                  "startColumn": 5,
+                  "endLine": 84,
+                  "endColumn": 46
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "c7f623a5962d5843:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "ci__2023-03-12T09-09-06Z__53d09b1519af7f133a01695363c7522b9f03fd35.yml",
+          "workflow_name": "CI",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": {
+            "group": "${{ github.workflow }}-${{ github.event.pull_request.number }}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 84,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "ci": 9
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "ci": 9
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 5,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-python@v4",
+              "actions/upload-artifact@v3",
+              "int128/hide-comment-action@v1",
+              "jungwinter/comment@v1"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "CI",
+        "true": {
+          "pull_request": null,
+          "workflow_dispatch": null
+        },
+        "concurrency": {
+          "group": "${{ github.workflow }}-${{ github.event.pull_request.number }}",
+          "cancel-in-progress": true
+        },
+        "jobs": {
+          "ci": {
+            "name": "Run Test and Review PR",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout \ud83d\udece\ufe0f",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Setup Python 3.11 \ud83d\udc0d",
+                "uses": "actions/setup-python@v4",
+                "with": {
+                  "python-version": 3.11,
+                  "cache": "pip"
+                }
+              },
+              {
+                "name": "Install Dependencies \ud83d\udce5",
+                "run": "pip install -r requirements.txt"
+              },
+              {
+                "name": "Create Assets Folder \ud83d\udce5",
+                "run": "mkdir assets"
+              },
+              {
+                "name": "Create Previous Comments \ud83e\udee3",
+                "uses": "int128/hide-comment-action@v1",
+                "with": {
+                  "starts-with": "README stats current output:"
+                }
+              },
+              {
+                "name": "Run Action Preview on Current Code \ud83e\uddea",
+                "id": "make-stats",
+                "env": {
+                  "INPUT_GH_TOKEN": "${{ secrets.INPUT_GITHUB_TOKEN }}",
+                  "INPUT_WAKATIME_API_KEY": "${{ secrets.WAKATIME_API_KEY }}",
+                  "INPUT_SHOW_TIMEZONE": true,
+                  "INPUT_SHOW_PROJECTS": true,
+                  "INPUT_SHOW_EDITORS": true,
+                  "INPUT_SHOW_OS": true,
+                  "INPUT_SHOW_LANGUAGE": true,
+                  "INPUT_SYMBOL_VERSION": 1,
+                  "INPUT_SHOW_LINES_OF_CODE": true,
+                  "INPUT_SHOW_LOC_CHART": true,
+                  "INPUT_SHOW_PROFILE_VIEWS": true,
+                  "INPUT_SHOW_TOTAL_CODE_TIME": true,
+                  "INPUT_SHOW_SHORT_INFO": true,
+                  "INPUT_SHOW_COMMIT": true,
+                  "INPUT_SHOW_DAYS_OF_WEEK": true,
+                  "INPUT_SHOW_LANGUAGE_PER_REPO": true,
+                  "INPUT_SHOW_UPDATED_DATE": true,
+                  "INPUT_COMMIT_BY_ME": true,
+                  "INPUT_DEBUG_LOGGING": true,
+                  "DEBUG_RUN": true
+                },
+                "run": "python3 sources/main.py"
+              },
+              {
+                "name": "Save Branch Name Without Slashes \ud83d\udcdb",
+                "if": "${{ github.ref != 'refs/heads/master' }}",
+                "env": {
+                  "BRANCH_NAME": "${{ github.head_ref || github.ref_name }}"
+                },
+                "run": "BRANCH_NAME=${{ env.BRANCH_NAME }}\nBRANCH_NAME=${BRANCH_NAME////_}\necho BRANCH_NAME=${BRANCH_NAME} >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Upload Artifact \ud83d\udce6",
+                "uses": "actions/upload-artifact@v3",
+                "if": "${{ github.ref != 'refs/heads/master' }}",
+                "with": {
+                  "name": "${{ format('github-pages-for-branch-{0}', env.BRANCH_NAME) }}",
+                  "path": "assets"
+                }
+              },
+              {
+                "name": "Create Comment \ud83d\udcac",
+                "uses": "jungwinter/comment@v1",
+                "with": {
+                  "type": "create",
+                  "body": "${{ steps.make-stats.outputs.README_CONTENT }}",
+                  "issue_number": "${{ github.event.number }}",
+                  "token": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-05-21T10-09-42Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-97106c4d-f44b-5e53-9911-7303495ef38d",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ci__2025-05-21T10-09-42Z__d36b97bb282bb74e8fe8dabcaa47bc50220efb56.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 13,
+                  "startColumn": 5,
+                  "endLine": 84,
+                  "endColumn": 46
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "c7f623a5962d5843:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "ci__2025-05-21T10-09-42Z__d36b97bb282bb74e8fe8dabcaa47bc50220efb56.yml",
+          "workflow_name": "CI",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": {
+            "group": "${{ github.workflow }}-${{ github.event.pull_request.number }}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 84,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "ci": 9
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "ci": 9
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 5,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-python@v5",
+              "actions/upload-artifact@v3",
+              "int128/hide-comment-action@v1",
+              "jungwinter/comment@v1"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "CI",
+        "true": {
+          "pull_request": null,
+          "workflow_dispatch": null
+        },
+        "concurrency": {
+          "group": "${{ github.workflow }}-${{ github.event.pull_request.number }}",
+          "cancel-in-progress": true
+        },
+        "jobs": {
+          "ci": {
+            "name": "Run Test and Review PR",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout \ud83d\udece\ufe0f",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Setup Python 3.13 \ud83d\udc0d",
+                "uses": "actions/setup-python@v5",
+                "with": {
+                  "python-version": 3.13,
+                  "cache": "pip"
+                }
+              },
+              {
+                "name": "Install Dependencies \ud83d\udce5",
+                "run": "pip install -r requirements.txt"
+              },
+              {
+                "name": "Create Assets Folder \ud83d\udce5",
+                "run": "mkdir assets"
+              },
+              {
+                "name": "Create Previous Comments \ud83e\udee3",
+                "uses": "int128/hide-comment-action@v1",
+                "with": {
+                  "starts-with": "README stats current output:"
+                }
+              },
+              {
+                "name": "Run Action Preview on Current Code \ud83e\uddea",
+                "id": "make-stats",
+                "env": {
+                  "INPUT_GH_TOKEN": "${{ secrets.INPUT_GITHUB_TOKEN }}",
+                  "INPUT_WAKATIME_API_KEY": "${{ secrets.WAKATIME_API_KEY }}",
+                  "INPUT_SHOW_TIMEZONE": true,
+                  "INPUT_SHOW_PROJECTS": true,
+                  "INPUT_SHOW_EDITORS": true,
+                  "INPUT_SHOW_OS": true,
+                  "INPUT_SHOW_LANGUAGE": true,
+                  "INPUT_SYMBOL_VERSION": 1,
+                  "INPUT_SHOW_LINES_OF_CODE": true,
+                  "INPUT_SHOW_LOC_CHART": true,
+                  "INPUT_SHOW_PROFILE_VIEWS": true,
+                  "INPUT_SHOW_TOTAL_CODE_TIME": true,
+                  "INPUT_SHOW_SHORT_INFO": true,
+                  "INPUT_SHOW_COMMIT": true,
+                  "INPUT_SHOW_DAYS_OF_WEEK": true,
+                  "INPUT_SHOW_LANGUAGE_PER_REPO": true,
+                  "INPUT_SHOW_UPDATED_DATE": true,
+                  "INPUT_COMMIT_BY_ME": true,
+                  "INPUT_DEBUG_LOGGING": true,
+                  "DEBUG_RUN": true
+                },
+                "run": "python3 sources/main.py"
+              },
+              {
+                "name": "Save Branch Name Without Slashes \ud83d\udcdb",
+                "if": "${{ github.ref != 'refs/heads/master' }}",
+                "env": {
+                  "BRANCH_NAME": "${{ github.head_ref || github.ref_name }}"
+                },
+                "run": "BRANCH_NAME=${{ env.BRANCH_NAME }}\nBRANCH_NAME=${BRANCH_NAME////_}\necho BRANCH_NAME=${BRANCH_NAME} >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Upload Artifact \ud83d\udce6",
+                "uses": "actions/upload-artifact@v3",
+                "if": "${{ github.ref != 'refs/heads/master' }}",
+                "with": {
+                  "name": "${{ format('github-pages-for-branch-{0}', env.BRANCH_NAME) }}",
+                  "path": "assets"
+                }
+              },
+              {
+                "name": "Create Comment \ud83d\udcac",
+                "uses": "jungwinter/comment@v1",
+                "with": {
+                  "type": "create",
+                  "body": "${{ steps.make-stats.outputs.README_CONTENT }}",
+                  "issue_number": "${{ github.event.number }}",
+                  "token": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-05-21T10-12-04Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-bbf6b950-d63c-5224-a3ca-d9f3ff767b44",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ci__2025-05-21T10-12-04Z__93fe399c21815e7facc3c15138059a5a1a132c9f.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 13,
+                  "startColumn": 5,
+                  "endLine": 84,
+                  "endColumn": 46
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "c7f623a59649f134:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "ci__2025-05-21T10-12-04Z__93fe399c21815e7facc3c15138059a5a1a132c9f.yml",
+          "workflow_name": "CI",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": {
+            "group": "${{ github.workflow }}-${{ github.event.pull_request.number }}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 84,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "ci": 9
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "ci": 9
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 5,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-python@v5",
+              "actions/upload-artifact@v3",
+              "int128/hide-comment-action@v1",
+              "jungwinter/comment@v1"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "CI",
+        "true": {
+          "pull_request": null,
+          "workflow_dispatch": null
+        },
+        "concurrency": {
+          "group": "${{ github.workflow }}-${{ github.event.pull_request.number }}",
+          "cancel-in-progress": true
+        },
+        "jobs": {
+          "ci": {
+            "name": "Run Test and Review PR",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout \ud83d\udece\ufe0f",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Setup Python 3.13 \ud83d\udc0d",
+                "uses": "actions/setup-python@v5",
+                "with": {
+                  "python-version": 3.13,
+                  "cache": "pip"
+                }
+              },
+              {
+                "name": "Install Dependencies \ud83d\udce5",
+                "run": "pip install -r requirements.txt"
+              },
+              {
+                "name": "Create Assets Folder \ud83d\udce5",
+                "run": "mkdir assets"
+              },
+              {
+                "name": "Create Previous Comments \ud83e\udee3",
+                "uses": "int128/hide-comment-action@v1",
+                "with": {
+                  "starts-with": "README stats current output:"
+                }
+              },
+              {
+                "name": "Run Action Preview on Current Code \ud83e\uddea",
+                "id": "make-stats",
+                "env": {
+                  "INPUT_GH_TOKEN": "${{ secrets.INPUT_GITHUB_TOKEN }}",
+                  "INPUT_WAKATIME_API_KEY": "${{ secrets.WAKATIME_API_KEY }}",
+                  "INPUT_SHOW_TIMEZONE": true,
+                  "INPUT_SHOW_PROJECTS": true,
+                  "INPUT_SHOW_EDITORS": true,
+                  "INPUT_SHOW_OS": true,
+                  "INPUT_SHOW_LANGUAGE": true,
+                  "INPUT_SYMBOL_VERSION": 1,
+                  "INPUT_SHOW_LINES_OF_CODE": true,
+                  "INPUT_SHOW_LOC_CHART": true,
+                  "INPUT_SHOW_PROFILE_VIEWS": true,
+                  "INPUT_SHOW_TOTAL_CODE_TIME": true,
+                  "INPUT_SHOW_SHORT_INFO": true,
+                  "INPUT_SHOW_COMMIT": true,
+                  "INPUT_SHOW_DAYS_OF_WEEK": true,
+                  "INPUT_SHOW_LANGUAGE_PER_REPO": true,
+                  "INPUT_SHOW_UPDATED_DATE": true,
+                  "INPUT_COMMIT_BY_ME": true,
+                  "INPUT_DEBUG_LOGGING": true,
+                  "DEBUG_RUN": true
+                },
+                "run": "python3 sources/main.py"
+              },
+              {
+                "name": "Save Branch Name Without Slashes \ud83d\udcdb",
+                "if": "${{ github.ref != 'refs/heads/master' }}",
+                "env": {
+                  "BRANCH_NAME": "${{ github.head_ref || github.ref_name }}"
+                },
+                "run": "BRANCH_NAME=${{ env.BRANCH_NAME }}\nBRANCH_NAME=${BRANCH_NAME////_}\necho BRANCH_NAME=${BRANCH_NAME} >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Upload Artifact \ud83d\udce6",
+                "uses": "actions/upload-artifact@v3",
+                "if": "${{ github.ref != 'refs/heads/master' }}",
+                "with": {
+                  "name": "${{ format('github-pages-for-branch-{0}', env.BRANCH_NAME) }}",
+                  "path": "assets"
+                }
+              },
+              {
+                "name": "Create Comment \ud83d\udcac",
+                "uses": "jungwinter/comment@v1",
+                "with": {
+                  "type": "create",
+                  "body": "${{ steps.make-stats.outputs.README_CONTENT }}",
+                  "issue_number": "${{ github.event.number }}",
+                  "token": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-05-21T10-27-49Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-048dc8e7-57d1-5354-922f-43496d9d5c66",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ci__2025-05-21T10-27-49Z__9cb8e30fd0670bb1b282907069b6a1abf1f22edd.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 13,
+                  "startColumn": 5,
+                  "endLine": 84,
+                  "endColumn": 46
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "c7f623a59649f134:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "ci__2025-05-21T10-27-49Z__9cb8e30fd0670bb1b282907069b6a1abf1f22edd.yml",
+          "workflow_name": "CI",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": {
+            "group": "${{ github.workflow }}-${{ github.event.pull_request.number }}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 84,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "ci": 9
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "ci": 9
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 5,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-python@v5",
+              "actions/upload-artifact@v4",
+              "int128/hide-comment-action@v1",
+              "jungwinter/comment@v1"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "CI",
+        "true": {
+          "pull_request": null,
+          "workflow_dispatch": null
+        },
+        "concurrency": {
+          "group": "${{ github.workflow }}-${{ github.event.pull_request.number }}",
+          "cancel-in-progress": true
+        },
+        "jobs": {
+          "ci": {
+            "name": "Run Test and Review PR",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout \ud83d\udece\ufe0f",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Setup Python 3.13 \ud83d\udc0d",
+                "uses": "actions/setup-python@v5",
+                "with": {
+                  "python-version": 3.13,
+                  "cache": "pip"
+                }
+              },
+              {
+                "name": "Install Dependencies \ud83d\udce5",
+                "run": "pip install -r requirements.txt"
+              },
+              {
+                "name": "Create Assets Folder \ud83d\udce5",
+                "run": "mkdir assets"
+              },
+              {
+                "name": "Create Previous Comments \ud83e\udee3",
+                "uses": "int128/hide-comment-action@v1",
+                "with": {
+                  "starts-with": "README stats current output:"
+                }
+              },
+              {
+                "name": "Run Action Preview on Current Code \ud83e\uddea",
+                "id": "make-stats",
+                "env": {
+                  "INPUT_GH_TOKEN": "${{ secrets.INPUT_GITHUB_TOKEN }}",
+                  "INPUT_WAKATIME_API_KEY": "${{ secrets.WAKATIME_API_KEY }}",
+                  "INPUT_SHOW_TIMEZONE": true,
+                  "INPUT_SHOW_PROJECTS": true,
+                  "INPUT_SHOW_EDITORS": true,
+                  "INPUT_SHOW_OS": true,
+                  "INPUT_SHOW_LANGUAGE": true,
+                  "INPUT_SYMBOL_VERSION": 1,
+                  "INPUT_SHOW_LINES_OF_CODE": true,
+                  "INPUT_SHOW_LOC_CHART": true,
+                  "INPUT_SHOW_PROFILE_VIEWS": true,
+                  "INPUT_SHOW_TOTAL_CODE_TIME": true,
+                  "INPUT_SHOW_SHORT_INFO": true,
+                  "INPUT_SHOW_COMMIT": true,
+                  "INPUT_SHOW_DAYS_OF_WEEK": true,
+                  "INPUT_SHOW_LANGUAGE_PER_REPO": true,
+                  "INPUT_SHOW_UPDATED_DATE": true,
+                  "INPUT_COMMIT_BY_ME": true,
+                  "INPUT_DEBUG_LOGGING": true,
+                  "DEBUG_RUN": true
+                },
+                "run": "python3 sources/main.py"
+              },
+              {
+                "name": "Save Branch Name Without Slashes \ud83d\udcdb",
+                "if": "${{ github.ref != 'refs/heads/master' }}",
+                "env": {
+                  "BRANCH_NAME": "${{ github.head_ref || github.ref_name }}"
+                },
+                "run": "BRANCH_NAME=${{ env.BRANCH_NAME }}\nBRANCH_NAME=${BRANCH_NAME////_}\necho BRANCH_NAME=${BRANCH_NAME} >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Upload Artifact \ud83d\udce6",
+                "uses": "actions/upload-artifact@v4",
+                "if": "${{ github.ref != 'refs/heads/master' }}",
+                "with": {
+                  "name": "${{ format('github-pages-for-branch-{0}', env.BRANCH_NAME) }}",
+                  "path": "assets"
+                }
+              },
+              {
+                "name": "Create Comment \ud83d\udcac",
+                "uses": "jungwinter/comment@v1",
+                "with": {
+                  "type": "create",
+                  "body": "${{ steps.make-stats.outputs.README_CONTENT }}",
+                  "issue_number": "${{ github.event.number }}",
+                  "token": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-05-21T14-00-55Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-1dc6770f-84e5-5c28-984e-b55b50474eee",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ci__2025-05-21T14-00-55Z__b2d93611268f492a000c0c221e48141fd5f26e1c.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 13,
+                  "startColumn": 5,
+                  "endLine": 84,
+                  "endColumn": 46
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "c7f623a59649f134:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "ci__2025-05-21T14-00-55Z__b2d93611268f492a000c0c221e48141fd5f26e1c.yml",
+          "workflow_name": "CI",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": {
+            "group": "${{ github.workflow }}-${{ github.event.pull_request.number }}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 84,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "ci": 9
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "ci": 9
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 5,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-python@v5",
+              "actions/upload-artifact@v4",
+              "int128/hide-comment-action@v1",
+              "jungwinter/comment@v1"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "CI",
+        "true": {
+          "pull_request": null,
+          "workflow_dispatch": null
+        },
+        "concurrency": {
+          "group": "${{ github.workflow }}-${{ github.event.pull_request.number }}",
+          "cancel-in-progress": true
+        },
+        "jobs": {
+          "ci": {
+            "name": "Run Test and Review PR",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout \ud83d\udece\ufe0f",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Setup Python 3.13 \ud83d\udc0d",
+                "uses": "actions/setup-python@v5",
+                "with": {
+                  "python-version": 3.11,
+                  "cache": "pip"
+                }
+              },
+              {
+                "name": "Install Dependencies \ud83d\udce5",
+                "run": "pip install -r requirements.txt"
+              },
+              {
+                "name": "Create Assets Folder \ud83d\udce5",
+                "run": "mkdir assets"
+              },
+              {
+                "name": "Create Previous Comments \ud83e\udee3",
+                "uses": "int128/hide-comment-action@v1",
+                "with": {
+                  "starts-with": "README stats current output:"
+                }
+              },
+              {
+                "name": "Run Action Preview on Current Code \ud83e\uddea",
+                "id": "make-stats",
+                "env": {
+                  "INPUT_GH_TOKEN": "${{ secrets.INPUT_GITHUB_TOKEN }}",
+                  "INPUT_WAKATIME_API_KEY": "${{ secrets.WAKATIME_API_KEY }}",
+                  "INPUT_SHOW_TIMEZONE": true,
+                  "INPUT_SHOW_PROJECTS": true,
+                  "INPUT_SHOW_EDITORS": true,
+                  "INPUT_SHOW_OS": true,
+                  "INPUT_SHOW_LANGUAGE": true,
+                  "INPUT_SYMBOL_VERSION": 1,
+                  "INPUT_SHOW_LINES_OF_CODE": true,
+                  "INPUT_SHOW_LOC_CHART": true,
+                  "INPUT_SHOW_PROFILE_VIEWS": true,
+                  "INPUT_SHOW_TOTAL_CODE_TIME": true,
+                  "INPUT_SHOW_SHORT_INFO": true,
+                  "INPUT_SHOW_COMMIT": true,
+                  "INPUT_SHOW_DAYS_OF_WEEK": true,
+                  "INPUT_SHOW_LANGUAGE_PER_REPO": true,
+                  "INPUT_SHOW_UPDATED_DATE": true,
+                  "INPUT_COMMIT_BY_ME": true,
+                  "INPUT_DEBUG_LOGGING": true,
+                  "DEBUG_RUN": true
+                },
+                "run": "python3 sources/main.py"
+              },
+              {
+                "name": "Save Branch Name Without Slashes \ud83d\udcdb",
+                "if": "${{ github.ref != 'refs/heads/master' }}",
+                "env": {
+                  "BRANCH_NAME": "${{ github.head_ref || github.ref_name }}"
+                },
+                "run": "BRANCH_NAME=${{ env.BRANCH_NAME }}\nBRANCH_NAME=${BRANCH_NAME////_}\necho BRANCH_NAME=${BRANCH_NAME} >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Upload Artifact \ud83d\udce6",
+                "uses": "actions/upload-artifact@v4",
+                "if": "${{ github.ref != 'refs/heads/master' }}",
+                "with": {
+                  "name": "${{ format('github-pages-for-branch-{0}', env.BRANCH_NAME) }}",
+                  "path": "assets"
+                }
+              },
+              {
+                "name": "Create Comment \ud83d\udcac",
+                "uses": "jungwinter/comment@v1",
+                "with": {
+                  "type": "create",
+                  "body": "${{ steps.make-stats.outputs.README_CONTENT }}",
+                  "issue_number": "${{ github.event.number }}",
+                  "token": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-05-21T13-51-23Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-c8880def-b6b4-5a21-8b50-010125da4989",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ci__2025-05-21T13-51-23Z__c898de0fda5e47e5693347bf126058fd42af3e4b.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 13,
+                  "startColumn": 5,
+                  "endLine": 84,
+                  "endColumn": 46
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "c7f623a59649f134:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "ci__2025-05-21T13-51-23Z__c898de0fda5e47e5693347bf126058fd42af3e4b.yml",
+          "workflow_name": "CI",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": {
+            "group": "${{ github.workflow }}-${{ github.event.pull_request.number }}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 84,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "ci": 9
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "ci": 9
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 5,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-python@v5",
+              "actions/upload-artifact@v4",
+              "int128/hide-comment-action@v1",
+              "jungwinter/comment@v1"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "CI",
+        "true": {
+          "pull_request": null,
+          "workflow_dispatch": null
+        },
+        "concurrency": {
+          "group": "${{ github.workflow }}-${{ github.event.pull_request.number }}",
+          "cancel-in-progress": true
+        },
+        "jobs": {
+          "ci": {
+            "name": "Run Test and Review PR",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout \ud83d\udece\ufe0f",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Setup Python 3.13 \ud83d\udc0d",
+                "uses": "actions/setup-python@v5",
+                "with": {
+                  "python-version": 3.12,
+                  "cache": "pip"
+                }
+              },
+              {
+                "name": "Install Dependencies \ud83d\udce5",
+                "run": "pip install -r requirements.txt"
+              },
+              {
+                "name": "Create Assets Folder \ud83d\udce5",
+                "run": "mkdir assets"
+              },
+              {
+                "name": "Create Previous Comments \ud83e\udee3",
+                "uses": "int128/hide-comment-action@v1",
+                "with": {
+                  "starts-with": "README stats current output:"
+                }
+              },
+              {
+                "name": "Run Action Preview on Current Code \ud83e\uddea",
+                "id": "make-stats",
+                "env": {
+                  "INPUT_GH_TOKEN": "${{ secrets.INPUT_GITHUB_TOKEN }}",
+                  "INPUT_WAKATIME_API_KEY": "${{ secrets.WAKATIME_API_KEY }}",
+                  "INPUT_SHOW_TIMEZONE": true,
+                  "INPUT_SHOW_PROJECTS": true,
+                  "INPUT_SHOW_EDITORS": true,
+                  "INPUT_SHOW_OS": true,
+                  "INPUT_SHOW_LANGUAGE": true,
+                  "INPUT_SYMBOL_VERSION": 1,
+                  "INPUT_SHOW_LINES_OF_CODE": true,
+                  "INPUT_SHOW_LOC_CHART": true,
+                  "INPUT_SHOW_PROFILE_VIEWS": true,
+                  "INPUT_SHOW_TOTAL_CODE_TIME": true,
+                  "INPUT_SHOW_SHORT_INFO": true,
+                  "INPUT_SHOW_COMMIT": true,
+                  "INPUT_SHOW_DAYS_OF_WEEK": true,
+                  "INPUT_SHOW_LANGUAGE_PER_REPO": true,
+                  "INPUT_SHOW_UPDATED_DATE": true,
+                  "INPUT_COMMIT_BY_ME": true,
+                  "INPUT_DEBUG_LOGGING": true,
+                  "DEBUG_RUN": true
+                },
+                "run": "python3 sources/main.py"
+              },
+              {
+                "name": "Save Branch Name Without Slashes \ud83d\udcdb",
+                "if": "${{ github.ref != 'refs/heads/master' }}",
+                "env": {
+                  "BRANCH_NAME": "${{ github.head_ref || github.ref_name }}"
+                },
+                "run": "BRANCH_NAME=${{ env.BRANCH_NAME }}\nBRANCH_NAME=${BRANCH_NAME////_}\necho BRANCH_NAME=${BRANCH_NAME} >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Upload Artifact \ud83d\udce6",
+                "uses": "actions/upload-artifact@v4",
+                "if": "${{ github.ref != 'refs/heads/master' }}",
+                "with": {
+                  "name": "${{ format('github-pages-for-branch-{0}', env.BRANCH_NAME) }}",
+                  "path": "assets"
+                }
+              },
+              {
+                "name": "Create Comment \ud83d\udcac",
+                "uses": "jungwinter/comment@v1",
+                "with": {
+                  "type": "create",
+                  "body": "${{ steps.make-stats.outputs.README_CONTENT }}",
+                  "issue_number": "${{ github.event.number }}",
+                  "token": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-05-21T14-02-23Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-11273f4f-bc92-53c5-b58a-cbe6673a4244",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ci__2025-05-21T14-02-23Z__95cf5b774082401ee709bda2b9a179d170cbaf69.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 13,
+                  "startColumn": 5,
+                  "endLine": 84,
+                  "endColumn": 46
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "c7f623a59649f134:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "ci__2025-05-21T14-02-23Z__95cf5b774082401ee709bda2b9a179d170cbaf69.yml",
+          "workflow_name": "CI",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": {
+            "group": "${{ github.workflow }}-${{ github.event.pull_request.number }}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 84,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "ci": 9
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "ci": 9
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 5,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-python@v5",
+              "actions/upload-artifact@v4",
+              "int128/hide-comment-action@v1",
+              "jungwinter/comment@v1"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "CI",
+        "true": {
+          "pull_request": null,
+          "workflow_dispatch": null
+        },
+        "concurrency": {
+          "group": "${{ github.workflow }}-${{ github.event.pull_request.number }}",
+          "cancel-in-progress": true
+        },
+        "jobs": {
+          "ci": {
+            "name": "Run Test and Review PR",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout \ud83d\udece\ufe0f",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Setup Python 3.13 \ud83d\udc0d",
+                "uses": "actions/setup-python@v5",
+                "with": {
+                  "python-version": 3.13,
+                  "cache": "pip"
+                }
+              },
+              {
+                "name": "Install Dependencies \ud83d\udce5",
+                "run": "pip install -r requirements.txt"
+              },
+              {
+                "name": "Create Assets Folder \ud83d\udce5",
+                "run": "mkdir assets"
+              },
+              {
+                "name": "Create Previous Comments \ud83e\udee3",
+                "uses": "int128/hide-comment-action@v1",
+                "with": {
+                  "starts-with": "README stats current output:"
+                }
+              },
+              {
+                "name": "Run Action Preview on Current Code \ud83e\uddea",
+                "id": "make-stats",
+                "env": {
+                  "INPUT_GH_TOKEN": "${{ secrets.INPUT_GITHUB_TOKEN }}",
+                  "INPUT_WAKATIME_API_KEY": "${{ secrets.WAKATIME_API_KEY }}",
+                  "INPUT_SHOW_TIMEZONE": true,
+                  "INPUT_SHOW_PROJECTS": true,
+                  "INPUT_SHOW_EDITORS": true,
+                  "INPUT_SHOW_OS": true,
+                  "INPUT_SHOW_LANGUAGE": true,
+                  "INPUT_SYMBOL_VERSION": 1,
+                  "INPUT_SHOW_LINES_OF_CODE": true,
+                  "INPUT_SHOW_LOC_CHART": true,
+                  "INPUT_SHOW_PROFILE_VIEWS": true,
+                  "INPUT_SHOW_TOTAL_CODE_TIME": true,
+                  "INPUT_SHOW_SHORT_INFO": true,
+                  "INPUT_SHOW_COMMIT": true,
+                  "INPUT_SHOW_DAYS_OF_WEEK": true,
+                  "INPUT_SHOW_LANGUAGE_PER_REPO": true,
+                  "INPUT_SHOW_UPDATED_DATE": true,
+                  "INPUT_COMMIT_BY_ME": true,
+                  "INPUT_DEBUG_LOGGING": true,
+                  "DEBUG_RUN": true
+                },
+                "run": "python3 sources/main.py"
+              },
+              {
+                "name": "Save Branch Name Without Slashes \ud83d\udcdb",
+                "if": "${{ github.ref != 'refs/heads/master' }}",
+                "env": {
+                  "BRANCH_NAME": "${{ github.head_ref || github.ref_name }}"
+                },
+                "run": "BRANCH_NAME=${{ env.BRANCH_NAME }}\nBRANCH_NAME=${BRANCH_NAME////_}\necho BRANCH_NAME=${BRANCH_NAME} >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Upload Artifact \ud83d\udce6",
+                "uses": "actions/upload-artifact@v4",
+                "if": "${{ github.ref != 'refs/heads/master' }}",
+                "with": {
+                  "name": "${{ format('github-pages-for-branch-{0}', env.BRANCH_NAME) }}",
+                  "path": "assets"
+                }
+              },
+              {
+                "name": "Create Comment \ud83d\udcac",
+                "uses": "jungwinter/comment@v1",
+                "with": {
+                  "type": "create",
+                  "body": "${{ steps.make-stats.outputs.README_CONTENT }}",
+                  "issue_number": "${{ github.event.number }}",
+                  "token": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-05-25T10-38-41Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-2ae7d2e9-0367-576a-a7dd-8af47af302ae",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ci__2025-05-25T10-38-41Z__a2b26c58078c7f445484a71a0e6e41f16791c247.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 13,
+                  "startColumn": 5,
+                  "endLine": 84,
+                  "endColumn": 46
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "c7f623a59649f134:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/code-injection/critical",
+          "ruleIndex": 10,
+          "kind": "fail",
+          "level": "error",
+          "correlationGuid": "workflow-b6c0e612-1f74-5369-a875-33f6c52dbdfc",
+          "message": {
+            "text": "Potential code injection in [${{ env.BRANCH_NAME }}](1), which may be controlled by an external user ([pull_request_target](2))."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ci__2025-05-25T10-38-41Z__a2b26c58078c7f445484a71a0e6e41f16791c247.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 67,
+                  "startColumn": 24,
+                  "endLine": null,
+                  "endColumn": 46
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "84d747d140964248:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-094",
+            "precision": "very-high",
+            "security_severity": "9",
+            "triage": "high"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "ci__2025-05-25T10-38-41Z__a2b26c58078c7f445484a71a0e6e41f16791c247.yml",
+          "workflow_name": "CI",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": {
+            "group": "${{ github.workflow }}-${{ github.event.pull_request.number }}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 84,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "ci": 9
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "ci": 9
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 5,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-python@v5",
+              "actions/upload-artifact@v4",
+              "int128/hide-comment-action@v1",
+              "jungwinter/comment@v1"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "CI",
+        "true": {
+          "pull_request_target": null,
+          "workflow_dispatch": null
+        },
+        "concurrency": {
+          "group": "${{ github.workflow }}-${{ github.event.pull_request.number }}",
+          "cancel-in-progress": true
+        },
+        "jobs": {
+          "ci": {
+            "name": "Run Test and Review PR",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout \ud83d\udece\ufe0f",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Setup Python 3.13 \ud83d\udc0d",
+                "uses": "actions/setup-python@v5",
+                "with": {
+                  "python-version": 3.13,
+                  "cache": "pip"
+                }
+              },
+              {
+                "name": "Install Dependencies \ud83d\udce5",
+                "run": "pip install -r requirements.txt"
+              },
+              {
+                "name": "Create Assets Folder \ud83d\udce5",
+                "run": "mkdir assets"
+              },
+              {
+                "name": "Create Previous Comments \ud83e\udee3",
+                "uses": "int128/hide-comment-action@v1",
+                "with": {
+                  "starts-with": "README stats current output:"
+                }
+              },
+              {
+                "name": "Run Action Preview on Current Code \ud83e\uddea",
+                "id": "make-stats",
+                "env": {
+                  "INPUT_GH_TOKEN": "${{ secrets.INPUT_GITHUB_TOKEN }}",
+                  "INPUT_WAKATIME_API_KEY": "${{ secrets.WAKATIME_API_KEY }}",
+                  "INPUT_SHOW_TIMEZONE": true,
+                  "INPUT_SHOW_PROJECTS": true,
+                  "INPUT_SHOW_EDITORS": true,
+                  "INPUT_SHOW_OS": true,
+                  "INPUT_SHOW_LANGUAGE": true,
+                  "INPUT_SYMBOL_VERSION": 1,
+                  "INPUT_SHOW_LINES_OF_CODE": true,
+                  "INPUT_SHOW_LOC_CHART": true,
+                  "INPUT_SHOW_PROFILE_VIEWS": true,
+                  "INPUT_SHOW_TOTAL_CODE_TIME": true,
+                  "INPUT_SHOW_SHORT_INFO": true,
+                  "INPUT_SHOW_COMMIT": true,
+                  "INPUT_SHOW_DAYS_OF_WEEK": true,
+                  "INPUT_SHOW_LANGUAGE_PER_REPO": true,
+                  "INPUT_SHOW_UPDATED_DATE": true,
+                  "INPUT_COMMIT_BY_ME": true,
+                  "INPUT_DEBUG_LOGGING": true,
+                  "DEBUG_RUN": true
+                },
+                "run": "python3 sources/main.py"
+              },
+              {
+                "name": "Save Branch Name Without Slashes \ud83d\udcdb",
+                "if": "${{ github.ref != 'refs/heads/master' }}",
+                "env": {
+                  "BRANCH_NAME": "${{ github.head_ref || github.ref_name }}"
+                },
+                "run": "BRANCH_NAME=${{ env.BRANCH_NAME }}\nBRANCH_NAME=${BRANCH_NAME////_}\necho BRANCH_NAME=${BRANCH_NAME} >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Upload Artifact \ud83d\udce6",
+                "uses": "actions/upload-artifact@v4",
+                "if": "${{ github.ref != 'refs/heads/master' }}",
+                "with": {
+                  "name": "${{ format('github-pages-for-branch-{0}', env.BRANCH_NAME) }}",
+                  "path": "assets"
+                }
+              },
+              {
+                "name": "Create Comment \ud83d\udcac",
+                "uses": "jungwinter/comment@v1",
+                "with": {
+                  "type": "create",
+                  "body": "${{ steps.make-stats.outputs.README_CONTENT }}",
+                  "issue_number": "${{ github.event.number }}",
+                  "token": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-05-25T10-45-01Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-cb1055d5-5d2c-5d17-a175-c731cf952ab1",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ci__2025-05-25T10-45-01Z__7398d902bda975b94acffc177a88a7a7797f8bf7.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 11,
+                  "startColumn": 5,
+                  "endLine": 82,
+                  "endColumn": 46
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "c7f623a59649f134:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/code-injection/critical",
+          "ruleIndex": 10,
+          "kind": "fail",
+          "level": "error",
+          "correlationGuid": "workflow-513adf48-5d12-5dec-81be-08db077fa92c",
+          "message": {
+            "text": "Potential code injection in [${{ env.BRANCH_NAME }}](1), which may be controlled by an external user ([pull_request_target](2))."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ci__2025-05-25T10-45-01Z__7398d902bda975b94acffc177a88a7a7797f8bf7.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 65,
+                  "startColumn": 24,
+                  "endLine": null,
+                  "endColumn": 46
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "84d747d140964248:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-094",
+            "precision": "very-high",
+            "security_severity": "9",
+            "triage": "high"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "ci__2025-05-25T10-45-01Z__7398d902bda975b94acffc177a88a7a7797f8bf7.yml",
+          "workflow_name": "CI",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": {
+            "group": "${{ github.workflow }}-${{ github.event.pull_request.number }}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 82,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "ci": 9
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "ci": 9
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 5,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-python@v5",
+              "actions/upload-artifact@v4",
+              "int128/hide-comment-action@v1",
+              "jungwinter/comment@v1"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "CI",
+        "true": [
+          "pull_request_target",
+          "workflow_dispatch"
+        ],
+        "concurrency": {
+          "group": "${{ github.workflow }}-${{ github.event.pull_request.number }}",
+          "cancel-in-progress": true
+        },
+        "jobs": {
+          "ci": {
+            "name": "Run Test and Review PR",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout \ud83d\udece\ufe0f",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Setup Python 3.13 \ud83d\udc0d",
+                "uses": "actions/setup-python@v5",
+                "with": {
+                  "python-version": 3.13,
+                  "cache": "pip"
+                }
+              },
+              {
+                "name": "Install Dependencies \ud83d\udce5",
+                "run": "pip install -r requirements.txt"
+              },
+              {
+                "name": "Create Assets Folder \ud83d\udce5",
+                "run": "mkdir assets"
+              },
+              {
+                "name": "Create Previous Comments \ud83e\udee3",
+                "uses": "int128/hide-comment-action@v1",
+                "with": {
+                  "starts-with": "README stats current output:"
+                }
+              },
+              {
+                "name": "Run Action Preview on Current Code \ud83e\uddea",
+                "id": "make-stats",
+                "env": {
+                  "INPUT_GH_TOKEN": "${{ secrets.INPUT_GITHUB_TOKEN }}",
+                  "INPUT_WAKATIME_API_KEY": "${{ secrets.WAKATIME_API_KEY }}",
+                  "INPUT_SHOW_TIMEZONE": true,
+                  "INPUT_SHOW_PROJECTS": true,
+                  "INPUT_SHOW_EDITORS": true,
+                  "INPUT_SHOW_OS": true,
+                  "INPUT_SHOW_LANGUAGE": true,
+                  "INPUT_SYMBOL_VERSION": 1,
+                  "INPUT_SHOW_LINES_OF_CODE": true,
+                  "INPUT_SHOW_LOC_CHART": true,
+                  "INPUT_SHOW_PROFILE_VIEWS": true,
+                  "INPUT_SHOW_TOTAL_CODE_TIME": true,
+                  "INPUT_SHOW_SHORT_INFO": true,
+                  "INPUT_SHOW_COMMIT": true,
+                  "INPUT_SHOW_DAYS_OF_WEEK": true,
+                  "INPUT_SHOW_LANGUAGE_PER_REPO": true,
+                  "INPUT_SHOW_UPDATED_DATE": true,
+                  "INPUT_COMMIT_BY_ME": true,
+                  "INPUT_DEBUG_LOGGING": true,
+                  "DEBUG_RUN": true
+                },
+                "run": "python3 sources/main.py"
+              },
+              {
+                "name": "Save Branch Name Without Slashes \ud83d\udcdb",
+                "if": "${{ github.ref != 'refs/heads/master' }}",
+                "env": {
+                  "BRANCH_NAME": "${{ github.head_ref || github.ref_name }}"
+                },
+                "run": "BRANCH_NAME=${{ env.BRANCH_NAME }}\nBRANCH_NAME=${BRANCH_NAME////_}\necho BRANCH_NAME=${BRANCH_NAME} >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Upload Artifact \ud83d\udce6",
+                "uses": "actions/upload-artifact@v4",
+                "if": "${{ github.ref != 'refs/heads/master' }}",
+                "with": {
+                  "name": "${{ format('github-pages-for-branch-{0}', env.BRANCH_NAME) }}",
+                  "path": "assets"
+                }
+              },
+              {
+                "name": "Create Comment \ud83d\udcac",
+                "uses": "jungwinter/comment@v1",
+                "with": {
+                  "type": "create",
+                  "body": "${{ steps.make-stats.outputs.README_CONTENT }}",
+                  "issue_number": "${{ github.event.number }}",
+                  "token": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-05-25T10-42-06Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-df8ed0d8-b5ee-5f32-905b-4a97830133b5",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ci__2025-05-25T10-42-06Z__8aff3b6d44ea6822b36ca2908b2faea5b40551e4.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 13,
+                  "startColumn": 5,
+                  "endLine": 84,
+                  "endColumn": 46
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "c7f623a59649f134:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "ci__2025-05-25T10-42-06Z__8aff3b6d44ea6822b36ca2908b2faea5b40551e4.yml",
+          "workflow_name": "CI",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": {
+            "group": "${{ github.workflow }}-${{ github.event.pull_request.number }}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 84,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "ci": 9
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "ci": 9
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 5,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-python@v5",
+              "actions/upload-artifact@v4",
+              "int128/hide-comment-action@v1",
+              "jungwinter/comment@v1"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "CI",
+        "true": {
+          "pull_request": null,
+          "workflow_dispatch": null
+        },
+        "concurrency": {
+          "group": "${{ github.workflow }}-${{ github.event.pull_request.number }}",
+          "cancel-in-progress": true
+        },
+        "jobs": {
+          "ci": {
+            "name": "Run Test and Review PR",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout \ud83d\udece\ufe0f",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Setup Python 3.13 \ud83d\udc0d",
+                "uses": "actions/setup-python@v5",
+                "with": {
+                  "python-version": 3.13,
+                  "cache": "pip"
+                }
+              },
+              {
+                "name": "Install Dependencies \ud83d\udce5",
+                "run": "pip install -r requirements.txt"
+              },
+              {
+                "name": "Create Assets Folder \ud83d\udce5",
+                "run": "mkdir assets"
+              },
+              {
+                "name": "Create Previous Comments \ud83e\udee3",
+                "uses": "int128/hide-comment-action@v1",
+                "with": {
+                  "starts-with": "README stats current output:"
+                }
+              },
+              {
+                "name": "Run Action Preview on Current Code \ud83e\uddea",
+                "id": "make-stats",
+                "env": {
+                  "INPUT_GH_TOKEN": "${{ secrets.INPUT_GITHUB_TOKEN }}",
+                  "INPUT_WAKATIME_API_KEY": "${{ secrets.WAKATIME_API_KEY }}",
+                  "INPUT_SHOW_TIMEZONE": true,
+                  "INPUT_SHOW_PROJECTS": true,
+                  "INPUT_SHOW_EDITORS": true,
+                  "INPUT_SHOW_OS": true,
+                  "INPUT_SHOW_LANGUAGE": true,
+                  "INPUT_SYMBOL_VERSION": 1,
+                  "INPUT_SHOW_LINES_OF_CODE": true,
+                  "INPUT_SHOW_LOC_CHART": true,
+                  "INPUT_SHOW_PROFILE_VIEWS": true,
+                  "INPUT_SHOW_TOTAL_CODE_TIME": true,
+                  "INPUT_SHOW_SHORT_INFO": true,
+                  "INPUT_SHOW_COMMIT": true,
+                  "INPUT_SHOW_DAYS_OF_WEEK": true,
+                  "INPUT_SHOW_LANGUAGE_PER_REPO": true,
+                  "INPUT_SHOW_UPDATED_DATE": true,
+                  "INPUT_COMMIT_BY_ME": true,
+                  "INPUT_DEBUG_LOGGING": true,
+                  "DEBUG_RUN": true
+                },
+                "run": "python3 sources/main.py"
+              },
+              {
+                "name": "Save Branch Name Without Slashes \ud83d\udcdb",
+                "if": "${{ github.ref != 'refs/heads/master' }}",
+                "env": {
+                  "BRANCH_NAME": "${{ github.head_ref || github.ref_name }}"
+                },
+                "run": "BRANCH_NAME=${{ env.BRANCH_NAME }}\nBRANCH_NAME=${BRANCH_NAME////_}\necho BRANCH_NAME=${BRANCH_NAME} >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Upload Artifact \ud83d\udce6",
+                "uses": "actions/upload-artifact@v4",
+                "if": "${{ github.ref != 'refs/heads/master' }}",
+                "with": {
+                  "name": "${{ format('github-pages-for-branch-{0}', env.BRANCH_NAME) }}",
+                  "path": "assets"
+                }
+              },
+              {
+                "name": "Create Comment \ud83d\udcac",
+                "uses": "jungwinter/comment@v1",
+                "with": {
+                  "type": "create",
+                  "body": "${{ steps.make-stats.outputs.README_CONTENT }}",
+                  "issue_number": "${{ github.event.number }}",
+                  "token": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-05-25T10-45-59Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-9dbe4c83-9985-5665-974c-d1c54fdbfdd8",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ci__2025-05-25T10-45-59Z__a5a38ee4ceb08bf9208bf717aa291b2c7b40e75e.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 14,
+                  "startColumn": 5,
+                  "endLine": 85,
+                  "endColumn": 46
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "c7f623a59649f134:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/code-injection/critical",
+          "ruleIndex": 10,
+          "kind": "fail",
+          "level": "error",
+          "correlationGuid": "workflow-46a49197-99f8-58e3-9d59-e9a895e6f8e2",
+          "message": {
+            "text": "Potential code injection in [${{ env.BRANCH_NAME }}](1), which may be controlled by an external user ([pull_request_target](2))."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ci__2025-05-25T10-45-59Z__a5a38ee4ceb08bf9208bf717aa291b2c7b40e75e.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 68,
+                  "startColumn": 24,
+                  "endLine": null,
+                  "endColumn": 46
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "84d747d140964248:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-094",
+            "precision": "very-high",
+            "security_severity": "9",
+            "triage": "high"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "ci__2025-05-25T10-45-59Z__a5a38ee4ceb08bf9208bf717aa291b2c7b40e75e.yml",
+          "workflow_name": "CI",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": {
+            "group": "${{ github.workflow }}-${{ github.event.pull_request.number }}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 85,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "ci": 9
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "ci": 9
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 5,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-python@v5",
+              "actions/upload-artifact@v4",
+              "int128/hide-comment-action@v1",
+              "jungwinter/comment@v1"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "CI",
+        "true": {
+          "pull_request": null,
+          "pull_request_target": null,
+          "workflow_dispatch": null
+        },
+        "concurrency": {
+          "group": "${{ github.workflow }}-${{ github.event.pull_request.number }}",
+          "cancel-in-progress": true
+        },
+        "jobs": {
+          "ci": {
+            "name": "Run Test and Review PR",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout \ud83d\udece\ufe0f",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Setup Python 3.13 \ud83d\udc0d",
+                "uses": "actions/setup-python@v5",
+                "with": {
+                  "python-version": 3.13,
+                  "cache": "pip"
+                }
+              },
+              {
+                "name": "Install Dependencies \ud83d\udce5",
+                "run": "pip install -r requirements.txt"
+              },
+              {
+                "name": "Create Assets Folder \ud83d\udce5",
+                "run": "mkdir assets"
+              },
+              {
+                "name": "Create Previous Comments \ud83e\udee3",
+                "uses": "int128/hide-comment-action@v1",
+                "with": {
+                  "starts-with": "README stats current output:"
+                }
+              },
+              {
+                "name": "Run Action Preview on Current Code \ud83e\uddea",
+                "id": "make-stats",
+                "env": {
+                  "INPUT_GH_TOKEN": "${{ secrets.INPUT_GITHUB_TOKEN }}",
+                  "INPUT_WAKATIME_API_KEY": "${{ secrets.WAKATIME_API_KEY }}",
+                  "INPUT_SHOW_TIMEZONE": true,
+                  "INPUT_SHOW_PROJECTS": true,
+                  "INPUT_SHOW_EDITORS": true,
+                  "INPUT_SHOW_OS": true,
+                  "INPUT_SHOW_LANGUAGE": true,
+                  "INPUT_SYMBOL_VERSION": 1,
+                  "INPUT_SHOW_LINES_OF_CODE": true,
+                  "INPUT_SHOW_LOC_CHART": true,
+                  "INPUT_SHOW_PROFILE_VIEWS": true,
+                  "INPUT_SHOW_TOTAL_CODE_TIME": true,
+                  "INPUT_SHOW_SHORT_INFO": true,
+                  "INPUT_SHOW_COMMIT": true,
+                  "INPUT_SHOW_DAYS_OF_WEEK": true,
+                  "INPUT_SHOW_LANGUAGE_PER_REPO": true,
+                  "INPUT_SHOW_UPDATED_DATE": true,
+                  "INPUT_COMMIT_BY_ME": true,
+                  "INPUT_DEBUG_LOGGING": true,
+                  "DEBUG_RUN": true
+                },
+                "run": "python3 sources/main.py"
+              },
+              {
+                "name": "Save Branch Name Without Slashes \ud83d\udcdb",
+                "if": "${{ github.ref != 'refs/heads/master' }}",
+                "env": {
+                  "BRANCH_NAME": "${{ github.head_ref || github.ref_name }}"
+                },
+                "run": "BRANCH_NAME=${{ env.BRANCH_NAME }}\nBRANCH_NAME=${BRANCH_NAME////_}\necho BRANCH_NAME=${BRANCH_NAME} >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Upload Artifact \ud83d\udce6",
+                "uses": "actions/upload-artifact@v4",
+                "if": "${{ github.ref != 'refs/heads/master' }}",
+                "with": {
+                  "name": "${{ format('github-pages-for-branch-{0}', env.BRANCH_NAME) }}",
+                  "path": "assets"
+                }
+              },
+              {
+                "name": "Create Comment \ud83d\udcac",
+                "uses": "jungwinter/comment@v1",
+                "with": {
+                  "type": "create",
+                  "body": "${{ steps.make-stats.outputs.README_CONTENT }}",
+                  "issue_number": "${{ github.event.number }}",
+                  "token": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-05-25T10-49-51Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-cf0217a9-2a57-5666-ad40-c926fbc07ff5",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ci__2025-05-25T10-49-51Z__bbdb53e8657920af62c4b994a5b1af58c6b4be01.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 13,
+                  "startColumn": 5,
+                  "endLine": 84,
+                  "endColumn": 46
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "c7f623a59649f134:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/code-injection/critical",
+          "ruleIndex": 10,
+          "kind": "fail",
+          "level": "error",
+          "correlationGuid": "workflow-5f420878-07bc-50d8-bb63-2e5fa88a9fc9",
+          "message": {
+            "text": "Potential code injection in [${{ env.BRANCH_NAME }}](1), which may be controlled by an external user ([pull_request_target](2))."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ci__2025-05-25T10-49-51Z__bbdb53e8657920af62c4b994a5b1af58c6b4be01.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 67,
+                  "startColumn": 24,
+                  "endLine": null,
+                  "endColumn": 46
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "84d747d140964248:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-094",
+            "precision": "very-high",
+            "security_severity": "9",
+            "triage": "high"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "ci__2025-05-25T10-49-51Z__bbdb53e8657920af62c4b994a5b1af58c6b4be01.yml",
+          "workflow_name": "CI",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": {
+            "group": "${{ github.workflow }}-${{ github.event.pull_request.number }}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 84,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "ci": 9
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "ci": 9
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 5,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-python@v5",
+              "actions/upload-artifact@v4",
+              "int128/hide-comment-action@v1",
+              "jungwinter/comment@v1"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "CI",
+        "true": {
+          "pull_request_target": null,
+          "workflow_dispatch": null
+        },
+        "concurrency": {
+          "group": "${{ github.workflow }}-${{ github.event.pull_request.number }}",
+          "cancel-in-progress": true
+        },
+        "jobs": {
+          "ci": {
+            "name": "Run Test and Review PR",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout \ud83d\udece\ufe0f",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Setup Python 3.13 \ud83d\udc0d",
+                "uses": "actions/setup-python@v5",
+                "with": {
+                  "python-version": 3.13,
+                  "cache": "pip"
+                }
+              },
+              {
+                "name": "Install Dependencies \ud83d\udce5",
+                "run": "pip install -r requirements.txt"
+              },
+              {
+                "name": "Create Assets Folder \ud83d\udce5",
+                "run": "mkdir assets"
+              },
+              {
+                "name": "Create Previous Comments \ud83e\udee3",
+                "uses": "int128/hide-comment-action@v1",
+                "with": {
+                  "starts-with": "README stats current output:"
+                }
+              },
+              {
+                "name": "Run Action Preview on Current Code \ud83e\uddea",
+                "id": "make-stats",
+                "env": {
+                  "INPUT_GH_TOKEN": "${{ secrets.INPUT_GITHUB_TOKEN }}",
+                  "INPUT_WAKATIME_API_KEY": "${{ secrets.WAKATIME_API_KEY }}",
+                  "INPUT_SHOW_TIMEZONE": true,
+                  "INPUT_SHOW_PROJECTS": true,
+                  "INPUT_SHOW_EDITORS": true,
+                  "INPUT_SHOW_OS": true,
+                  "INPUT_SHOW_LANGUAGE": true,
+                  "INPUT_SYMBOL_VERSION": 1,
+                  "INPUT_SHOW_LINES_OF_CODE": true,
+                  "INPUT_SHOW_LOC_CHART": true,
+                  "INPUT_SHOW_PROFILE_VIEWS": true,
+                  "INPUT_SHOW_TOTAL_CODE_TIME": true,
+                  "INPUT_SHOW_SHORT_INFO": true,
+                  "INPUT_SHOW_COMMIT": true,
+                  "INPUT_SHOW_DAYS_OF_WEEK": true,
+                  "INPUT_SHOW_LANGUAGE_PER_REPO": true,
+                  "INPUT_SHOW_UPDATED_DATE": true,
+                  "INPUT_COMMIT_BY_ME": true,
+                  "INPUT_DEBUG_LOGGING": true,
+                  "DEBUG_RUN": true
+                },
+                "run": "python3 sources/main.py"
+              },
+              {
+                "name": "Save Branch Name Without Slashes \ud83d\udcdb",
+                "if": "${{ github.ref != 'refs/heads/master' }}",
+                "env": {
+                  "BRANCH_NAME": "${{ github.head_ref || github.ref_name }}"
+                },
+                "run": "BRANCH_NAME=${{ env.BRANCH_NAME }}\nBRANCH_NAME=${BRANCH_NAME////_}\necho BRANCH_NAME=${BRANCH_NAME} >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Upload Artifact \ud83d\udce6",
+                "uses": "actions/upload-artifact@v4",
+                "if": "${{ github.ref != 'refs/heads/master' }}",
+                "with": {
+                  "name": "${{ format('github-pages-for-branch-{0}', env.BRANCH_NAME) }}",
+                  "path": "assets"
+                }
+              },
+              {
+                "name": "Create Comment \ud83d\udcac",
+                "uses": "jungwinter/comment@v1",
+                "with": {
+                  "type": "create",
+                  "body": "${{ steps.make-stats.outputs.README_CONTENT }}",
+                  "issue_number": "${{ github.event.number }}",
+                  "token": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-05-25T10-58-28Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-1695ae9a-2b5a-516e-bac8-168d96a73f10",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ci__2025-05-25T10-58-28Z__b0a3494587aa94a1df87d568bdee13b3bb676d6e.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 13,
+                  "startColumn": 5,
+                  "endLine": 84,
+                  "endColumn": 46
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "c7f623a59649f134:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "ci__2025-05-25T10-58-28Z__b0a3494587aa94a1df87d568bdee13b3bb676d6e.yml",
+          "workflow_name": "CI",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": {
+            "group": "${{ github.workflow }}-${{ github.event.pull_request.number }}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 84,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "ci": 9
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "ci": 9
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 5,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-python@v5",
+              "actions/upload-artifact@v4",
+              "int128/hide-comment-action@v1",
+              "jungwinter/comment@v1"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "CI",
+        "true": {
+          "pull_request": null,
+          "workflow_dispatch": null
+        },
+        "concurrency": {
+          "group": "${{ github.workflow }}-${{ github.event.pull_request.number }}",
+          "cancel-in-progress": true
+        },
+        "jobs": {
+          "ci": {
+            "name": "Run Test and Review PR",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout \ud83d\udece\ufe0f",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Setup Python 3.13 \ud83d\udc0d",
+                "uses": "actions/setup-python@v5",
+                "with": {
+                  "python-version": 3.13,
+                  "cache": "pip"
+                }
+              },
+              {
+                "name": "Install Dependencies \ud83d\udce5",
+                "run": "pip install -r requirements.txt"
+              },
+              {
+                "name": "Create Assets Folder \ud83d\udce5",
+                "run": "mkdir assets"
+              },
+              {
+                "name": "Create Previous Comments \ud83e\udee3",
+                "uses": "int128/hide-comment-action@v1",
+                "with": {
+                  "starts-with": "README stats current output:"
+                }
+              },
+              {
+                "name": "Run Action Preview on Current Code \ud83e\uddea",
+                "id": "make-stats",
+                "env": {
+                  "INPUT_GH_TOKEN": "${{ secrets.INPUT_GITHUB_TOKEN }}",
+                  "INPUT_WAKATIME_API_KEY": "${{ secrets.WAKATIME_API_KEY }}",
+                  "INPUT_SHOW_TIMEZONE": true,
+                  "INPUT_SHOW_PROJECTS": true,
+                  "INPUT_SHOW_EDITORS": true,
+                  "INPUT_SHOW_OS": true,
+                  "INPUT_SHOW_LANGUAGE": true,
+                  "INPUT_SYMBOL_VERSION": 1,
+                  "INPUT_SHOW_LINES_OF_CODE": true,
+                  "INPUT_SHOW_LOC_CHART": true,
+                  "INPUT_SHOW_PROFILE_VIEWS": true,
+                  "INPUT_SHOW_TOTAL_CODE_TIME": true,
+                  "INPUT_SHOW_SHORT_INFO": true,
+                  "INPUT_SHOW_COMMIT": true,
+                  "INPUT_SHOW_DAYS_OF_WEEK": true,
+                  "INPUT_SHOW_LANGUAGE_PER_REPO": true,
+                  "INPUT_SHOW_UPDATED_DATE": true,
+                  "INPUT_COMMIT_BY_ME": true,
+                  "INPUT_DEBUG_LOGGING": true,
+                  "DEBUG_RUN": true
+                },
+                "run": "python3 sources/main.py"
+              },
+              {
+                "name": "Save Branch Name Without Slashes \ud83d\udcdb",
+                "if": "${{ github.ref != 'refs/heads/master' }}",
+                "env": {
+                  "BRANCH_NAME": "${{ github.head_ref || github.ref_name }}"
+                },
+                "run": "BRANCH_NAME=${{ env.BRANCH_NAME }}\nBRANCH_NAME=${BRANCH_NAME////_}\necho BRANCH_NAME=${BRANCH_NAME} >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Upload Artifact \ud83d\udce6",
+                "uses": "actions/upload-artifact@v4",
+                "if": "${{ github.ref != 'refs/heads/master' }}",
+                "with": {
+                  "name": "${{ format('github-pages-for-branch-{0}', env.BRANCH_NAME) }}",
+                  "path": "assets"
+                }
+              },
+              {
+                "name": "Create Comment \ud83d\udcac",
+                "uses": "jungwinter/comment@v1",
+                "with": {
+                  "type": "create",
+                  "body": "${{ steps.make-stats.outputs.README_CONTENT }}",
+                  "issue_number": "${{ github.event.number }}",
+                  "token": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-05-25T10-59-09Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-747c06c5-5d22-507e-8373-53ec21c5aa3f",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ci__2025-05-25T10-59-09Z__297c8f045015eac6fc9da4ae6cfe1d3f4fe1d508.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 14,
+                  "startColumn": 5,
+                  "endLine": 85,
+                  "endColumn": 46
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "c7f623a59649f134:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/code-injection/critical",
+          "ruleIndex": 10,
+          "kind": "fail",
+          "level": "error",
+          "correlationGuid": "workflow-3f2dbc59-efb3-5961-beab-5a0183724073",
+          "message": {
+            "text": "Potential code injection in [${{ env.BRANCH_NAME }}](1), which may be controlled by an external user ([pull_request_target](2))."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ci__2025-05-25T10-59-09Z__297c8f045015eac6fc9da4ae6cfe1d3f4fe1d508.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 68,
+                  "startColumn": 24,
+                  "endLine": null,
+                  "endColumn": 46
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "84d747d140964248:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-094",
+            "precision": "very-high",
+            "security_severity": "9",
+            "triage": "high"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "ci__2025-05-25T10-59-09Z__297c8f045015eac6fc9da4ae6cfe1d3f4fe1d508.yml",
+          "workflow_name": "CI",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": {
+            "group": "${{ github.workflow }}-${{ github.event.pull_request.number }}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 85,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "ci": 9
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "ci": 9
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 5,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-python@v5",
+              "actions/upload-artifact@v4",
+              "int128/hide-comment-action@v1",
+              "jungwinter/comment@v1"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "CI",
+        "true": {
+          "pull_request_target": {
+            "types": [
+              "assigned",
+              "opened",
+              "synchronize",
+              "reopened"
+            ]
+          },
+          "workflow_dispatch": null
+        },
+        "concurrency": {
+          "group": "${{ github.workflow }}-${{ github.event.pull_request.number }}",
+          "cancel-in-progress": true
+        },
+        "jobs": {
+          "ci": {
+            "name": "Run Test and Review PR",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout \ud83d\udece\ufe0f",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Setup Python 3.13 \ud83d\udc0d",
+                "uses": "actions/setup-python@v5",
+                "with": {
+                  "python-version": 3.13,
+                  "cache": "pip"
+                }
+              },
+              {
+                "name": "Install Dependencies \ud83d\udce5",
+                "run": "pip install -r requirements.txt"
+              },
+              {
+                "name": "Create Assets Folder \ud83d\udce5",
+                "run": "mkdir assets"
+              },
+              {
+                "name": "Create Previous Comments \ud83e\udee3",
+                "uses": "int128/hide-comment-action@v1",
+                "with": {
+                  "starts-with": "README stats current output:"
+                }
+              },
+              {
+                "name": "Run Action Preview on Current Code \ud83e\uddea",
+                "id": "make-stats",
+                "env": {
+                  "INPUT_GH_TOKEN": "${{ secrets.INPUT_GITHUB_TOKEN }}",
+                  "INPUT_WAKATIME_API_KEY": "${{ secrets.WAKATIME_API_KEY }}",
+                  "INPUT_SHOW_TIMEZONE": true,
+                  "INPUT_SHOW_PROJECTS": true,
+                  "INPUT_SHOW_EDITORS": true,
+                  "INPUT_SHOW_OS": true,
+                  "INPUT_SHOW_LANGUAGE": true,
+                  "INPUT_SYMBOL_VERSION": 1,
+                  "INPUT_SHOW_LINES_OF_CODE": true,
+                  "INPUT_SHOW_LOC_CHART": true,
+                  "INPUT_SHOW_PROFILE_VIEWS": true,
+                  "INPUT_SHOW_TOTAL_CODE_TIME": true,
+                  "INPUT_SHOW_SHORT_INFO": true,
+                  "INPUT_SHOW_COMMIT": true,
+                  "INPUT_SHOW_DAYS_OF_WEEK": true,
+                  "INPUT_SHOW_LANGUAGE_PER_REPO": true,
+                  "INPUT_SHOW_UPDATED_DATE": true,
+                  "INPUT_COMMIT_BY_ME": true,
+                  "INPUT_DEBUG_LOGGING": true,
+                  "DEBUG_RUN": true
+                },
+                "run": "python3 sources/main.py"
+              },
+              {
+                "name": "Save Branch Name Without Slashes \ud83d\udcdb",
+                "if": "${{ github.ref != 'refs/heads/master' }}",
+                "env": {
+                  "BRANCH_NAME": "${{ github.head_ref || github.ref_name }}"
+                },
+                "run": "BRANCH_NAME=${{ env.BRANCH_NAME }}\nBRANCH_NAME=${BRANCH_NAME////_}\necho BRANCH_NAME=${BRANCH_NAME} >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Upload Artifact \ud83d\udce6",
+                "uses": "actions/upload-artifact@v4",
+                "if": "${{ github.ref != 'refs/heads/master' }}",
+                "with": {
+                  "name": "${{ format('github-pages-for-branch-{0}', env.BRANCH_NAME) }}",
+                  "path": "assets"
+                }
+              },
+              {
+                "name": "Create Comment \ud83d\udcac",
+                "uses": "jungwinter/comment@v1",
+                "with": {
+                  "type": "create",
+                  "body": "${{ steps.make-stats.outputs.README_CONTENT }}",
+                  "issue_number": "${{ github.event.number }}",
+                  "token": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-05-25T11-00-09Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-57d3c987-8b7a-541b-bb5e-cfd2d5f48adb",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ci__2025-05-25T11-00-09Z__00cd7fe2575ad7250f120f9b2ccfbff34f5280ab.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 13,
+                  "startColumn": 5,
+                  "endLine": 84,
+                  "endColumn": 46
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "c7f623a59649f134:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "ci__2025-05-25T11-00-09Z__00cd7fe2575ad7250f120f9b2ccfbff34f5280ab.yml",
+          "workflow_name": "CI",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": {
+            "group": "${{ github.workflow }}-${{ github.event.pull_request.number }}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 84,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "ci": 9
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "ci": 9
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 5,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-python@v5",
+              "actions/upload-artifact@v4",
+              "int128/hide-comment-action@v1",
+              "jungwinter/comment@v1"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "CI",
+        "true": {
+          "pull_request": null,
+          "workflow_dispatch": null
+        },
+        "concurrency": {
+          "group": "${{ github.workflow }}-${{ github.event.pull_request.number }}",
+          "cancel-in-progress": true
+        },
+        "jobs": {
+          "ci": {
+            "name": "Run Test and Review PR",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout \ud83d\udece\ufe0f",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Setup Python 3.13 \ud83d\udc0d",
+                "uses": "actions/setup-python@v5",
+                "with": {
+                  "python-version": 3.13,
+                  "cache": "pip"
+                }
+              },
+              {
+                "name": "Install Dependencies \ud83d\udce5",
+                "run": "pip install -r requirements.txt"
+              },
+              {
+                "name": "Create Assets Folder \ud83d\udce5",
+                "run": "mkdir assets"
+              },
+              {
+                "name": "Create Previous Comments \ud83e\udee3",
+                "uses": "int128/hide-comment-action@v1",
+                "with": {
+                  "starts-with": "README stats current output:"
+                }
+              },
+              {
+                "name": "Run Action Preview on Current Code \ud83e\uddea",
+                "id": "make-stats",
+                "env": {
+                  "INPUT_GH_TOKEN": "${{ secrets.INPUT_GITHUB_TOKEN }}",
+                  "INPUT_WAKATIME_API_KEY": "${{ secrets.WAKATIME_API_KEY }}",
+                  "INPUT_SHOW_TIMEZONE": true,
+                  "INPUT_SHOW_PROJECTS": true,
+                  "INPUT_SHOW_EDITORS": true,
+                  "INPUT_SHOW_OS": true,
+                  "INPUT_SHOW_LANGUAGE": true,
+                  "INPUT_SYMBOL_VERSION": 1,
+                  "INPUT_SHOW_LINES_OF_CODE": true,
+                  "INPUT_SHOW_LOC_CHART": true,
+                  "INPUT_SHOW_PROFILE_VIEWS": true,
+                  "INPUT_SHOW_TOTAL_CODE_TIME": true,
+                  "INPUT_SHOW_SHORT_INFO": true,
+                  "INPUT_SHOW_COMMIT": true,
+                  "INPUT_SHOW_DAYS_OF_WEEK": true,
+                  "INPUT_SHOW_LANGUAGE_PER_REPO": true,
+                  "INPUT_SHOW_UPDATED_DATE": true,
+                  "INPUT_COMMIT_BY_ME": true,
+                  "INPUT_DEBUG_LOGGING": true,
+                  "DEBUG_RUN": true
+                },
+                "run": "python3 sources/main.py"
+              },
+              {
+                "name": "Save Branch Name Without Slashes \ud83d\udcdb",
+                "if": "${{ github.ref != 'refs/heads/master' }}",
+                "env": {
+                  "BRANCH_NAME": "${{ github.head_ref || github.ref_name }}"
+                },
+                "run": "BRANCH_NAME=${{ env.BRANCH_NAME }}\nBRANCH_NAME=${BRANCH_NAME////_}\necho BRANCH_NAME=${BRANCH_NAME} >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Upload Artifact \ud83d\udce6",
+                "uses": "actions/upload-artifact@v4",
+                "if": "${{ github.ref != 'refs/heads/master' }}",
+                "with": {
+                  "name": "${{ format('github-pages-for-branch-{0}', env.BRANCH_NAME) }}",
+                  "path": "assets"
+                }
+              },
+              {
+                "name": "Create Comment \ud83d\udcac",
+                "uses": "jungwinter/comment@v1",
+                "with": {
+                  "type": "create",
+                  "body": "${{ steps.make-stats.outputs.README_CONTENT }}",
+                  "issue_number": "${{ github.event.number }}",
+                  "token": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-05-26T10-18-44Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-814bebd3-55e6-5b1c-89ec-4198c5ad7e86",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ci__2025-05-26T10-18-44Z__984399484754c41f271ddbd8b3799b98ad472497.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 13,
+                  "startColumn": 5,
+                  "endLine": 84,
+                  "endColumn": 46
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "c7f623a59649f134:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "ci__2025-05-26T10-18-44Z__984399484754c41f271ddbd8b3799b98ad472497.yml",
+          "workflow_name": "CI",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": {
+            "group": "${{ github.workflow }}-${{ github.event.pull_request.number }}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 84,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "ci": 9
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "ci": 9
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 5,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-python@v5",
+              "actions/upload-artifact@v4",
+              "int128/hide-comment-action@v1",
+              "jungwinter/comment@v1"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "CI",
+        "true": [
+          "pull_request",
+          "workflow_dispatch"
+        ],
+        "concurrency": {
+          "group": "${{ github.workflow }}-${{ github.event.pull_request.number }}",
+          "cancel-in-progress": true
+        },
+        "jobs": {
+          "ci": {
+            "name": "Run Test and Review PR",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout \ud83d\udece\ufe0f",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Setup Python 3.13 \ud83d\udc0d",
+                "uses": "actions/setup-python@v5",
+                "with": {
+                  "python-version": 3.13,
+                  "cache": "pip"
+                }
+              },
+              {
+                "name": "Install Dependencies \ud83d\udce5",
+                "run": "pip install -r requirements.txt"
+              },
+              {
+                "name": "Create Assets Folder \ud83d\udce5",
+                "run": "mkdir assets"
+              },
+              {
+                "name": "Create Previous Comments \ud83e\udee3",
+                "uses": "int128/hide-comment-action@v1",
+                "with": {
+                  "starts-with": "README stats current output:"
+                }
+              },
+              {
+                "name": "Run Action Preview on Current Code \ud83e\uddea",
+                "id": "make-stats",
+                "env": {
+                  "INPUT_GH_TOKEN": "${{ secrets.INPUT_GITHUB_TOKEN }}",
+                  "INPUT_WAKATIME_API_KEY": "${{ secrets.WAKATIME_API_KEY }}",
+                  "INPUT_SHOW_TIMEZONE": true,
+                  "INPUT_SHOW_PROJECTS": true,
+                  "INPUT_SHOW_EDITORS": true,
+                  "INPUT_SHOW_OS": true,
+                  "INPUT_SHOW_LANGUAGE": true,
+                  "INPUT_SYMBOL_VERSION": 1,
+                  "INPUT_SHOW_LINES_OF_CODE": true,
+                  "INPUT_SHOW_LOC_CHART": true,
+                  "INPUT_SHOW_PROFILE_VIEWS": true,
+                  "INPUT_SHOW_TOTAL_CODE_TIME": true,
+                  "INPUT_SHOW_SHORT_INFO": true,
+                  "INPUT_SHOW_COMMIT": true,
+                  "INPUT_SHOW_DAYS_OF_WEEK": true,
+                  "INPUT_SHOW_LANGUAGE_PER_REPO": true,
+                  "INPUT_SHOW_UPDATED_DATE": true,
+                  "INPUT_COMMIT_BY_ME": true,
+                  "INPUT_DEBUG_LOGGING": true,
+                  "DEBUG_RUN": true
+                },
+                "run": "python3 sources/main.py"
+              },
+              {
+                "name": "Save Branch Name Without Slashes \ud83d\udcdb",
+                "if": "${{ github.ref != 'refs/heads/master' }}",
+                "env": {
+                  "BRANCH_NAME": "${{ github.head_ref || github.ref_name }}"
+                },
+                "run": "BRANCH_NAME=${{ env.BRANCH_NAME }}\nBRANCH_NAME=${BRANCH_NAME////_}\necho BRANCH_NAME=${BRANCH_NAME} >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Upload Artifact \ud83d\udce6",
+                "uses": "actions/upload-artifact@v4",
+                "if": "${{ github.ref != 'refs/heads/master' }}",
+                "with": {
+                  "name": "${{ format('github-pages-for-branch-{0}', env.BRANCH_NAME) }}",
+                  "path": "assets"
+                }
+              },
+              {
+                "name": "Create Comment \ud83d\udcac",
+                "uses": "jungwinter/comment@v1",
+                "with": {
+                  "type": "create",
+                  "body": "${{ steps.make-stats.outputs.README_CONTENT }}",
+                  "issue_number": "${{ github.event.number }}",
+                  "token": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-06-02T11-00-58Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-756c9732-6a30-52c5-a10b-e0c37ed1494a",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ci__2025-06-02T11-00-58Z__84d7c7a128db74d19c1170d270dd0446573a0db7.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 13,
+                  "startColumn": 5,
+                  "endLine": 84,
+                  "endColumn": 46
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "c7f623a59649f134:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/code-injection/critical",
+          "ruleIndex": 10,
+          "kind": "fail",
+          "level": "error",
+          "correlationGuid": "workflow-b33d5663-50ce-5e98-bca1-d474091a5211",
+          "message": {
+            "text": "Potential code injection in [${{ env.BRANCH_NAME }}](1), which may be controlled by an external user ([pull_request_target](2))."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ci__2025-06-02T11-00-58Z__84d7c7a128db74d19c1170d270dd0446573a0db7.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 67,
+                  "startColumn": 24,
+                  "endLine": null,
+                  "endColumn": 46
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "84d747d140964248:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-094",
+            "precision": "very-high",
+            "security_severity": "9",
+            "triage": "high"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "ci__2025-06-02T11-00-58Z__84d7c7a128db74d19c1170d270dd0446573a0db7.yml",
+          "workflow_name": "CI",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": {
+            "group": "${{ github.workflow }}-${{ github.event.pull_request.number }}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 84,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "ci": 9
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "ci": 9
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 5,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-python@v5",
+              "actions/upload-artifact@v4",
+              "int128/hide-comment-action@v1",
+              "jungwinter/comment@v1"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "CI",
+        "true": [
+          "pull_request_target",
+          "workflow_dispatch"
+        ],
+        "concurrency": {
+          "group": "${{ github.workflow }}-${{ github.event.pull_request.number }}",
+          "cancel-in-progress": true
+        },
+        "jobs": {
+          "ci": {
+            "name": "Run Test and Review PR",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout \ud83d\udece\ufe0f",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Setup Python 3.13 \ud83d\udc0d",
+                "uses": "actions/setup-python@v5",
+                "with": {
+                  "python-version": 3.13,
+                  "cache": "pip"
+                }
+              },
+              {
+                "name": "Install Dependencies \ud83d\udce5",
+                "run": "pip install -r requirements.txt"
+              },
+              {
+                "name": "Create Assets Folder \ud83d\udce5",
+                "run": "mkdir assets"
+              },
+              {
+                "name": "Create Previous Comments \ud83e\udee3",
+                "uses": "int128/hide-comment-action@v1",
+                "with": {
+                  "starts-with": "README stats current output:"
+                }
+              },
+              {
+                "name": "Run Action Preview on Current Code \ud83e\uddea",
+                "id": "make-stats",
+                "env": {
+                  "INPUT_GH_TOKEN": "${{ secrets.INPUT_GITHUB_TOKEN }}",
+                  "INPUT_WAKATIME_API_KEY": "${{ secrets.WAKATIME_API_KEY }}",
+                  "INPUT_SHOW_TIMEZONE": true,
+                  "INPUT_SHOW_PROJECTS": true,
+                  "INPUT_SHOW_EDITORS": true,
+                  "INPUT_SHOW_OS": true,
+                  "INPUT_SHOW_LANGUAGE": true,
+                  "INPUT_SYMBOL_VERSION": 1,
+                  "INPUT_SHOW_LINES_OF_CODE": true,
+                  "INPUT_SHOW_LOC_CHART": true,
+                  "INPUT_SHOW_PROFILE_VIEWS": true,
+                  "INPUT_SHOW_TOTAL_CODE_TIME": true,
+                  "INPUT_SHOW_SHORT_INFO": true,
+                  "INPUT_SHOW_COMMIT": true,
+                  "INPUT_SHOW_DAYS_OF_WEEK": true,
+                  "INPUT_SHOW_LANGUAGE_PER_REPO": true,
+                  "INPUT_SHOW_UPDATED_DATE": true,
+                  "INPUT_COMMIT_BY_ME": true,
+                  "INPUT_DEBUG_LOGGING": true,
+                  "DEBUG_RUN": true
+                },
+                "run": "python3 sources/main.py"
+              },
+              {
+                "name": "Save Branch Name Without Slashes \ud83d\udcdb",
+                "if": "${{ github.ref != 'refs/heads/master' }}",
+                "env": {
+                  "BRANCH_NAME": "${{ github.head_ref || github.ref_name }}"
+                },
+                "run": "BRANCH_NAME=${{ env.BRANCH_NAME }}\nBRANCH_NAME=${BRANCH_NAME////_}\necho BRANCH_NAME=${BRANCH_NAME} >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Upload Artifact \ud83d\udce6",
+                "uses": "actions/upload-artifact@v4",
+                "if": "${{ github.ref != 'refs/heads/master' }}",
+                "with": {
+                  "name": "${{ format('github-pages-for-branch-{0}', env.BRANCH_NAME) }}",
+                  "path": "assets"
+                }
+              },
+              {
+                "name": "Create Comment \ud83d\udcac",
+                "uses": "jungwinter/comment@v1",
+                "with": {
+                  "type": "create",
+                  "body": "${{ steps.make-stats.outputs.README_CONTENT }}",
+                  "issue_number": "${{ github.event.number }}",
+                  "token": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

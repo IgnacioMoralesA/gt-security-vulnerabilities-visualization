@@ -1,0 +1,225 @@
+{
+  "repo_owner": "benchmark-action",
+  "repo_name": "github-action-benchmark",
+  "workflow_name": "catch2_v2",
+  "history": {
+    "2024-05-19T11-21-20Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "catch2_v2__2024-05-19T11-21-20Z__2b82b9a3b5e1e4c363fc6c378818e2e30f635945.yml",
+          "workflow_name": "Catch2 C++ Example",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "deployments": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 52,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "benchmark": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "benchmark": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "benchmark-action/github-action-benchmark@v1"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Catch2 C++ Example",
+        "true": {
+          "push": {
+            "branches": [
+              "master"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "deployments": "write"
+        },
+        "jobs": {
+          "benchmark": {
+            "name": "Run Catch2 C++ Benchmark Framework example (v2.x)",
+            "runs-on": "ubuntu-20.04",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Build and run benchmarks with Catch2",
+                "run": "cd examples/catch2_v2\nmkdir build && cd build\ncmake -DCMAKE_BUILD_TYPE=Release ..\ncmake --build . --config Release\n./Catch2_bench | tee ../benchmark_result.txt\n"
+              },
+              {
+                "name": "Store benchmark result",
+                "uses": "benchmark-action/github-action-benchmark@v1",
+                "with": {
+                  "name": "Catch2 Benchmark",
+                  "tool": "catch2",
+                  "output-file-path": "examples/catch2_v2/benchmark_result.txt",
+                  "github-token": "${{ secrets.GITHUB_TOKEN }}",
+                  "auto-push": true,
+                  "alert-threshold": "200%",
+                  "comment-on-alert": true,
+                  "fail-on-alert": true,
+                  "alert-comment-cc-users": "@ktrz"
+                }
+              },
+              {
+                "name": "Store benchmark result - separate results repo",
+                "uses": "benchmark-action/github-action-benchmark@v1",
+                "with": {
+                  "name": "Catch2 Benchmark",
+                  "tool": "catch2",
+                  "output-file-path": "examples/catch2_v2/benchmark_result.txt",
+                  "github-token": "${{ secrets.BENCHMARK_ACTION_BOT_TOKEN }}",
+                  "auto-push": true,
+                  "alert-threshold": "200%",
+                  "comment-on-alert": true,
+                  "fail-on-alert": true,
+                  "alert-comment-cc-users": "@ktrz",
+                  "gh-repository": "github.com/benchmark-action/github-action-benchmark-results"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-05-19T11-33-52Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "catch2_v2__2025-05-19T11-33-52Z__fd128cf83bac95a64b574137ae5165b341b1f58d.yml",
+          "workflow_name": "Catch2 C++ Example",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "deployments": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 52,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "benchmark": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "benchmark": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "benchmark-action/github-action-benchmark@v1"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Catch2 C++ Example",
+        "true": {
+          "push": {
+            "branches": [
+              "master"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "deployments": "write"
+        },
+        "jobs": {
+          "benchmark": {
+            "name": "Run Catch2 C++ Benchmark Framework example (v2.x)",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Build and run benchmarks with Catch2",
+                "run": "cd examples/catch2_v2\nmkdir build && cd build\ncmake -DCMAKE_BUILD_TYPE=Release ..\ncmake --build . --config Release\n./Catch2_bench | tee ../benchmark_result.txt\n"
+              },
+              {
+                "name": "Store benchmark result",
+                "uses": "benchmark-action/github-action-benchmark@v1",
+                "with": {
+                  "name": "Catch2 Benchmark",
+                  "tool": "catch2",
+                  "output-file-path": "examples/catch2_v2/benchmark_result.txt",
+                  "github-token": "${{ secrets.GITHUB_TOKEN }}",
+                  "auto-push": true,
+                  "alert-threshold": "200%",
+                  "comment-on-alert": true,
+                  "fail-on-alert": true,
+                  "alert-comment-cc-users": "@ktrz"
+                }
+              },
+              {
+                "name": "Store benchmark result - separate results repo",
+                "uses": "benchmark-action/github-action-benchmark@v1",
+                "with": {
+                  "name": "Catch2 Benchmark",
+                  "tool": "catch2",
+                  "output-file-path": "examples/catch2_v2/benchmark_result.txt",
+                  "github-token": "${{ secrets.BENCHMARK_ACTION_BOT_TOKEN }}",
+                  "auto-push": true,
+                  "alert-threshold": "200%",
+                  "comment-on-alert": true,
+                  "fail-on-alert": true,
+                  "alert-comment-cc-users": "@ktrz",
+                  "gh-repository": "github.com/benchmark-action/github-action-benchmark-results"
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,432 @@
+{
+  "repo_owner": "Swatinem",
+  "repo_name": "rust-cache",
+  "workflow_name": "dependabot",
+  "history": {
+    "2025-07-26T18-53-41Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "dependabot__2025-07-26T18-53-41Z__a8b36e3f740d2ae4fa6e44a424a7b296af51cbef.yml",
+          "workflow_name": "Dependabot Automation",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "pull-requests": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 25,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "automerge": 2
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "automerge": 2
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 1,
+            "actions_used": [
+              "dependabot/fetch-metadata@v2"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Dependabot Automation",
+        "true": "pull_request",
+        "permissions": {
+          "contents": "write",
+          "pull-requests": "write"
+        },
+        "jobs": {
+          "automerge": {
+            "runs-on": "ubuntu-latest",
+            "if": "github.event.pull_request.user.login == 'dependabot[bot]' && github.repository == 'Swatinem/rust-cache'",
+            "steps": [
+              {
+                "name": "Fetch metadata",
+                "id": "metadata",
+                "uses": "dependabot/fetch-metadata@v2",
+                "with": {
+                  "github-token": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Auto-merge Patch PRs",
+                "if": "steps.metadata.outputs.update-type == 'version-update:semver-patch'",
+                "run": "gh pr merge --auto --merge \"$PR_URL\"",
+                "env": {
+                  "PR_URL": "${{github.event.pull_request.html_url}}",
+                  "GH_TOKEN": "${{secrets.GITHUB_TOKEN}}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-08-15T11-56-20Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "dependabot__2025-08-15T11-56-20Z__d8c50633615b3d561c0cf8a54dcbbfe4ef1fc47d.yml",
+          "workflow_name": "Dependabot Automation",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "pull-requests": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 63,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "automerge": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "automerge": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v5",
+              "actions/setup-node@v4",
+              "dependabot/fetch-metadata@v2"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 5,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Dependabot Automation",
+        "true": "pull_request",
+        "permissions": {
+          "contents": "write",
+          "pull-requests": "write"
+        },
+        "jobs": {
+          "automerge": {
+            "runs-on": "ubuntu-latest",
+            "if": "github.event.pull_request.user.login == 'dependabot[bot]' && github.repository == 'Swatinem/rust-cache'",
+            "steps": [
+              {
+                "name": "Fetch metadata",
+                "id": "metadata",
+                "uses": "dependabot/fetch-metadata@v2",
+                "with": {
+                  "github-token": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "uses": "actions/checkout@v5",
+                "with": {
+                  "fetch-depth": 2
+                },
+                "if": "steps.metadata.outputs.update-type == 'version-update:semver-patch'"
+              },
+              {
+                "name": "Check if package-lock.json has been changed",
+                "if": "steps.metadata.outputs.update-type == 'version-update:semver-patch'",
+                "id": "npm",
+                "env": {
+                  "PR_URL": "${{github.event.pull_request.html_url}}",
+                  "GH_TOKEN": "${{secrets.GITHUB_TOKEN}}"
+                },
+                "run": "if ! git diff --quiet HEAD~1.. -- package-lock.json; then\n  echo \"changed=true\" >> $GITHUB_OUTPUT\n  echo \"changed=true, checking out $PR_URL to allow amend\"\n  gh pr checkout \"$PR_URL\"\nfi\n"
+              },
+              {
+                "name": "Setup node if necessary",
+                "if": "steps.npm.outputs.changed != ''",
+                "uses": "actions/setup-node@v4",
+                "with": {
+                  "node-version": "20.x",
+                  "cache": "npm"
+                }
+              },
+              {
+                "name": "Re-generate and commit dist/ if changed",
+                "id": "amend",
+                "if": "steps.npm.outputs.changed != ''",
+                "run": "npm ci\nnpm run prepare\nif ! git diff --quiet dist/*/index.js; then\n  echo \"dist/ changed, amending last commit\"\n  export $(git log -1 --pretty=format:'GIT_COMMITTER_NAME=%cn GIT_COMMITTER_EMAIL=%ce GIT_AUTHOR_NAME=%an GIT_AUTHOR_EMAIL=%ae')\n  git fetch --unshallow\n  echo \"Before amend:\" && git show --name-only --pretty=\n  git commit --amend --no-edit --no-reset-author -- dist/*/index.js\n  echo \"After amend:\" && git show --name-only --pretty=\n  git push --force-with-lease origin HEAD\n  echo \"changed=true\" >> $GITHUB_OUTPUT\nfi\n"
+              },
+              {
+                "name": "Auto-merge Patch PRs",
+                "if": "steps.metadata.outputs.update-type == 'version-update:semver-patch'",
+                "run": "gh pr merge --auto --merge \"$PR_URL\"",
+                "env": {
+                  "PR_URL": "${{github.event.pull_request.html_url}}",
+                  "GH_TOKEN": "${{secrets.GITHUB_TOKEN}}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-09-09T17-38-10Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "dependabot__2025-09-09T17-38-10Z__94b28bf00e42c2b783e7dd289d30da129b46838b.yml",
+          "workflow_name": "Dependabot Automation",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "pull-requests": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 63,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "automerge": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "automerge": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v5",
+              "actions/setup-node@v5",
+              "dependabot/fetch-metadata@v2"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 5,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Dependabot Automation",
+        "true": "pull_request",
+        "permissions": {
+          "contents": "write",
+          "pull-requests": "write"
+        },
+        "jobs": {
+          "automerge": {
+            "runs-on": "ubuntu-latest",
+            "if": "github.event.pull_request.user.login == 'dependabot[bot]' && github.repository == 'Swatinem/rust-cache'",
+            "steps": [
+              {
+                "name": "Fetch metadata",
+                "id": "metadata",
+                "uses": "dependabot/fetch-metadata@v2",
+                "with": {
+                  "github-token": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "uses": "actions/checkout@v5",
+                "with": {
+                  "fetch-depth": 2
+                },
+                "if": "steps.metadata.outputs.update-type == 'version-update:semver-patch'"
+              },
+              {
+                "name": "Check if package-lock.json has been changed",
+                "if": "steps.metadata.outputs.update-type == 'version-update:semver-patch'",
+                "id": "npm",
+                "env": {
+                  "PR_URL": "${{github.event.pull_request.html_url}}",
+                  "GH_TOKEN": "${{secrets.GITHUB_TOKEN}}"
+                },
+                "run": "if ! git diff --quiet HEAD~1.. -- package-lock.json; then\n  echo \"changed=true\" >> $GITHUB_OUTPUT\n  echo \"changed=true, checking out $PR_URL to allow amend\"\n  gh pr checkout \"$PR_URL\"\nfi\n"
+              },
+              {
+                "name": "Setup node if necessary",
+                "if": "steps.npm.outputs.changed != ''",
+                "uses": "actions/setup-node@v5",
+                "with": {
+                  "node-version": "20.x",
+                  "cache": "npm"
+                }
+              },
+              {
+                "name": "Re-generate and commit dist/ if changed",
+                "id": "amend",
+                "if": "steps.npm.outputs.changed != ''",
+                "run": "npm ci\nnpm run prepare\nif ! git diff --quiet dist/*/index.js; then\n  echo \"dist/ changed, amending last commit\"\n  export $(git log -1 --pretty=format:'GIT_COMMITTER_NAME=%cn GIT_COMMITTER_EMAIL=%ce GIT_AUTHOR_NAME=%an GIT_AUTHOR_EMAIL=%ae')\n  git fetch --unshallow\n  echo \"Before amend:\" && git show --name-only --pretty=\n  git commit --amend --no-edit --no-reset-author -- dist/*/index.js\n  echo \"After amend:\" && git show --name-only --pretty=\n  git push --force-with-lease origin HEAD\n  echo \"changed=true\" >> $GITHUB_OUTPUT\nfi\n"
+              },
+              {
+                "name": "Auto-merge Patch PRs",
+                "if": "steps.metadata.outputs.update-type == 'version-update:semver-patch'",
+                "run": "gh pr merge --auto --merge \"$PR_URL\"",
+                "env": {
+                  "PR_URL": "${{github.event.pull_request.html_url}}",
+                  "GH_TOKEN": "${{secrets.GITHUB_TOKEN}}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-09-23T07-11-49Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "dependabot__2025-09-23T07-11-49Z__7bd5339b5bb72c5e611e84cd9dc9889d368d97d1.yml",
+          "workflow_name": "Dependabot Automation",
+          "triggers": {},
+          "permissions": {},
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 65,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "automerge": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "automerge": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8",
+              "actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444",
+              "dependabot/fetch-metadata@08eff52bf64351f401fb50d4972fa95b9f2c2d1b"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 5,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Dependabot Automation",
+        "true": "pull_request",
+        "permissions": {},
+        "jobs": {
+          "automerge": {
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "contents": "write",
+              "pull-requests": "write"
+            },
+            "if": "github.event.pull_request.user.login == 'dependabot[bot]' && github.repository == 'Swatinem/rust-cache'",
+            "steps": [
+              {
+                "name": "Fetch metadata",
+                "id": "metadata",
+                "uses": "dependabot/fetch-metadata@08eff52bf64351f401fb50d4972fa95b9f2c2d1b",
+                "with": {
+                  "github-token": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "uses": "actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8",
+                "with": {
+                  "fetch-depth": 2,
+                  "persist-credentials": false
+                },
+                "if": "steps.metadata.outputs.update-type == 'version-update:semver-patch'"
+              },
+              {
+                "name": "Check if package-lock.json has been changed",
+                "if": "steps.metadata.outputs.update-type == 'version-update:semver-patch'",
+                "id": "npm",
+                "env": {
+                  "PR_URL": "${{github.event.pull_request.html_url}}",
+                  "GH_TOKEN": "${{secrets.GITHUB_TOKEN}}"
+                },
+                "run": "if ! git diff --quiet HEAD~1.. -- package-lock.json; then\n  echo \"changed=true\" >> $GITHUB_OUTPUT\n  echo \"changed=true, checking out $PR_URL to allow amend\"\n  gh pr checkout \"$PR_URL\"\nfi\n"
+              },
+              {
+                "name": "Setup node if necessary",
+                "if": "steps.npm.outputs.changed != ''",
+                "uses": "actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444",
+                "with": {
+                  "node-version": "20.x",
+                  "cache": "npm"
+                }
+              },
+              {
+                "name": "Re-generate and commit dist/ if changed",
+                "id": "amend",
+                "if": "steps.npm.outputs.changed != ''",
+                "run": "npm ci\nnpm run prepare\nif ! git diff --quiet dist/*/index.js; then\n  echo \"dist/ changed, amending last commit\"\n  export $(git log -1 --pretty=format:'GIT_COMMITTER_NAME=%cn GIT_COMMITTER_EMAIL=%ce GIT_AUTHOR_NAME=%an GIT_AUTHOR_EMAIL=%ae')\n  git fetch --unshallow\n  echo \"Before amend:\" && git show --name-only --pretty=\n  git commit --amend --no-edit --no-reset-author -- dist/*/index.js\n  echo \"After amend:\" && git show --name-only --pretty=\n  git push --force-with-lease origin HEAD\n  echo \"changed=true\" >> $GITHUB_OUTPUT\nfi\n"
+              },
+              {
+                "name": "Auto-merge Patch PRs",
+                "if": "steps.metadata.outputs.update-type == 'version-update:semver-patch'",
+                "run": "gh pr merge --auto --merge \"$PR_URL\"",
+                "env": {
+                  "PR_URL": "${{github.event.pull_request.html_url}}",
+                  "GH_TOKEN": "${{secrets.GITHUB_TOKEN}}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

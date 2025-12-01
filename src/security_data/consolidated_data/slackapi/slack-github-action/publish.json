@@ -1,0 +1,694 @@
+{
+  "repo_owner": "slackapi",
+  "repo_name": "slack-github-action",
+  "workflow_name": "publish",
+  "history": {
+    "2024-11-14T20-48-36Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-63e3aef0-4675-580f-a824-12d5ecbe9e6d",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/publish__2024-11-14T20-48-36Z__e9b3a6beef047e819b8fb417da538f97a93a2ec8.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 9,
+                  "startColumn": 5,
+                  "endLine": 35,
+                  "endColumn": 45
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "15249d49beb3a647:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "publish__2024-11-14T20-48-36Z__e9b3a6beef047e819b8fb417da538f97a93a2ec8.yml",
+          "workflow_name": "Publish",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 35,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-node@v4",
+              "teunmooij/github-versioned-release@v1.2.1"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Publish",
+        "true": {
+          "release": {
+            "types": [
+              "published",
+              "edited"
+            ]
+          }
+        },
+        "jobs": {
+          "build": {
+            "name": "Build and tag a new version",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout the current code",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "ref": "${{ github.event.release.tag_name }}"
+                }
+              },
+              {
+                "name": "Configure the runtime node",
+                "uses": "actions/setup-node@v4",
+                "with": {
+                  "cache": "npm",
+                  "cache-dependency-path": "package-lock.json",
+                  "node-version-file": ".nvmrc"
+                }
+              },
+              {
+                "name": "Install project dependencies",
+                "run": "npm ci"
+              },
+              {
+                "name": "Build a production release",
+                "run": "npm run build"
+              },
+              {
+                "name": "Distribute the latest tagged release",
+                "uses": "teunmooij/github-versioned-release@v1.2.1",
+                "with": {
+                  "template": "javascript-action"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ github.token }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-12-13T21-55-51Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "publish__2024-12-13T21-55-51Z__6a5a811bd01cc60076b5e3a94f1b3a0d1352084e.yml",
+          "workflow_name": "Publish",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 38,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-node@v4",
+              "teunmooij/github-versioned-release@v1.2.1"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Publish",
+        "true": {
+          "release": {
+            "types": [
+              "published",
+              "edited"
+            ]
+          }
+        },
+        "jobs": {
+          "build": {
+            "name": "Build and tag a new version",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "contents": "write"
+            },
+            "steps": [
+              {
+                "name": "Checkout the current code",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "persist-credentials": false,
+                  "ref": "${{ github.event.release.tag_name }}"
+                }
+              },
+              {
+                "name": "Configure the runtime node",
+                "uses": "actions/setup-node@v4",
+                "with": {
+                  "cache": "npm",
+                  "cache-dependency-path": "package-lock.json",
+                  "node-version-file": ".nvmrc"
+                }
+              },
+              {
+                "name": "Install project dependencies",
+                "run": "npm ci"
+              },
+              {
+                "name": "Build a production release",
+                "run": "npm run build"
+              },
+              {
+                "name": "Distribute the latest tagged release",
+                "uses": "teunmooij/github-versioned-release@v1.2.1",
+                "with": {
+                  "template": "javascript-action"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ github.token }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-05-17T00-01-56Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "publish__2025-05-17T00-01-56Z__ab28db9b5bded4962358ca51a278e180db3559ad.yml",
+          "workflow_name": "Publish",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 38,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+              "actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+              "teunmooij/github-versioned-release@3edf649c6e5e5e976d43f2584b15bdc8b4c8f0df"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Publish",
+        "true": {
+          "release": {
+            "types": [
+              "published",
+              "edited"
+            ]
+          }
+        },
+        "jobs": {
+          "build": {
+            "name": "Build and tag a new version",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "contents": "write"
+            },
+            "steps": [
+              {
+                "name": "Checkout the current code",
+                "uses": "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+                "with": {
+                  "persist-credentials": false,
+                  "ref": "${{ github.event.release.tag_name }}"
+                }
+              },
+              {
+                "name": "Configure the runtime node",
+                "uses": "actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+                "with": {
+                  "cache": "npm",
+                  "cache-dependency-path": "package-lock.json",
+                  "node-version-file": ".nvmrc"
+                }
+              },
+              {
+                "name": "Install project dependencies",
+                "run": "npm ci"
+              },
+              {
+                "name": "Build a production release",
+                "run": "npm run build"
+              },
+              {
+                "name": "Distribute the latest tagged release",
+                "uses": "teunmooij/github-versioned-release@3edf649c6e5e5e976d43f2584b15bdc8b4c8f0df",
+                "with": {
+                  "template": "javascript-action"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ github.token }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-06-13T00-46-56Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "publish__2025-06-13T00-46-56Z__82b86fb801d82e1c54e880483b8e8f81fa102e74.yml",
+          "workflow_name": "Publish",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 51,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+              "actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+              "teunmooij/github-versioned-release@3edf649c6e5e5e976d43f2584b15bdc8b4c8f0df"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Publish",
+        "true": {
+          "release": {
+            "types": [
+              "published",
+              "edited"
+            ]
+          }
+        },
+        "jobs": {
+          "build": {
+            "name": "Build and tag a new version",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "contents": "write"
+            },
+            "steps": [
+              {
+                "name": "Checkout the current code",
+                "uses": "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+                "with": {
+                  "fetch-depth": 0,
+                  "persist-credentials": true,
+                  "ref": "${{ github.event.release.tag_name }}"
+                }
+              },
+              {
+                "name": "Configure the runtime node",
+                "uses": "actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+                "with": {
+                  "cache": "npm",
+                  "cache-dependency-path": "package-lock.json",
+                  "node-version-file": ".nvmrc"
+                }
+              },
+              {
+                "name": "Install project dependencies",
+                "run": "npm ci"
+              },
+              {
+                "name": "Build a production release",
+                "run": "npm run build"
+              },
+              {
+                "name": "Distribute the latest tagged release",
+                "id": "tag",
+                "uses": "teunmooij/github-versioned-release@3edf649c6e5e5e976d43f2584b15bdc8b4c8f0df",
+                "with": {
+                  "template": "javascript-action"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ github.token }}"
+                }
+              },
+              {
+                "name": "Create a branch for tagged release",
+                "run": "git fetch origin \"$SHA\"\ngit checkout -b \"release/$TAG\" \"$SHA\"\ngit push origin \"release/$TAG\"\n",
+                "env": {
+                  "TAG": "${{ github.event.release.tag_name }}",
+                  "SHA": "${{ steps.tag.outputs.sha }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-10-01T13-44-07Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "publish__2025-10-01T13-44-07Z__daf3fa45409cc1bf9be43d1e332513d37f86f167.yml",
+          "workflow_name": "Publish",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 51,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+              "actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444",
+              "teunmooij/github-versioned-release@3edf649c6e5e5e976d43f2584b15bdc8b4c8f0df"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Publish",
+        "true": {
+          "release": {
+            "types": [
+              "published",
+              "edited"
+            ]
+          }
+        },
+        "jobs": {
+          "build": {
+            "name": "Build and tag a new version",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "contents": "write"
+            },
+            "steps": [
+              {
+                "name": "Checkout the current code",
+                "uses": "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+                "with": {
+                  "fetch-depth": 0,
+                  "persist-credentials": true,
+                  "ref": "${{ github.event.release.tag_name }}"
+                }
+              },
+              {
+                "name": "Configure the runtime node",
+                "uses": "actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444",
+                "with": {
+                  "cache": "npm",
+                  "cache-dependency-path": "package-lock.json",
+                  "node-version-file": ".nvmrc"
+                }
+              },
+              {
+                "name": "Install project dependencies",
+                "run": "npm ci"
+              },
+              {
+                "name": "Build a production release",
+                "run": "npm run build"
+              },
+              {
+                "name": "Distribute the latest tagged release",
+                "id": "tag",
+                "uses": "teunmooij/github-versioned-release@3edf649c6e5e5e976d43f2584b15bdc8b4c8f0df",
+                "with": {
+                  "template": "javascript-action"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ github.token }}"
+                }
+              },
+              {
+                "name": "Create a branch for tagged release",
+                "run": "git fetch origin \"$SHA\"\ngit checkout -b \"release/$TAG\" \"$SHA\"\ngit push origin \"release/$TAG\"\n",
+                "env": {
+                  "TAG": "${{ github.event.release.tag_name }}",
+                  "SHA": "${{ steps.tag.outputs.sha }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-10-01T13-44-35Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "publish__2025-10-01T13-44-35Z__e2e9063c789fda51836da4c45401204e5d80e6ee.yml",
+          "workflow_name": "Publish",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 51,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8",
+              "actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444",
+              "teunmooij/github-versioned-release@3edf649c6e5e5e976d43f2584b15bdc8b4c8f0df"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Publish",
+        "true": {
+          "release": {
+            "types": [
+              "published",
+              "edited"
+            ]
+          }
+        },
+        "jobs": {
+          "build": {
+            "name": "Build and tag a new version",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "contents": "write"
+            },
+            "steps": [
+              {
+                "name": "Checkout the current code",
+                "uses": "actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8",
+                "with": {
+                  "fetch-depth": 0,
+                  "persist-credentials": true,
+                  "ref": "${{ github.event.release.tag_name }}"
+                }
+              },
+              {
+                "name": "Configure the runtime node",
+                "uses": "actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444",
+                "with": {
+                  "cache": "npm",
+                  "cache-dependency-path": "package-lock.json",
+                  "node-version-file": ".nvmrc"
+                }
+              },
+              {
+                "name": "Install project dependencies",
+                "run": "npm ci"
+              },
+              {
+                "name": "Build a production release",
+                "run": "npm run build"
+              },
+              {
+                "name": "Distribute the latest tagged release",
+                "id": "tag",
+                "uses": "teunmooij/github-versioned-release@3edf649c6e5e5e976d43f2584b15bdc8b4c8f0df",
+                "with": {
+                  "template": "javascript-action"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ github.token }}"
+                }
+              },
+              {
+                "name": "Create a branch for tagged release",
+                "run": "git fetch origin \"$SHA\"\ngit checkout -b \"release/$TAG\" \"$SHA\"\ngit push origin \"release/$TAG\"\n",
+                "env": {
+                  "TAG": "${{ github.event.release.tag_name }}",
+                  "SHA": "${{ steps.tag.outputs.sha }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

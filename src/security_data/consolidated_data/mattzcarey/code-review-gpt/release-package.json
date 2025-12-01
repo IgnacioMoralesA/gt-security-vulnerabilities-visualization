@@ -1,0 +1,1434 @@
+{
+  "repo_owner": "mattzcarey",
+  "repo_name": "code-review-gpt",
+  "workflow_name": "release-package",
+  "history": {
+    "2023-08-07T14-05-10Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-package__2023-08-07T14-05-10Z__c0a5c4b76d35ca1f15f044f1effa6120abbe3d76.yml",
+          "workflow_name": "Release Package",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "pull-requests": "write"
+          },
+          "concurrency": null,
+          "defaults": {
+            "run": {
+              "shell": "bash"
+            }
+          },
+          "line_count": 45,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "release-please": 1,
+            "publish-package": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 1,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "release-please": 1,
+              "publish-package": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-node@v3",
+              "google-github-actions/release-please-action@v3"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release Package",
+        "defaults": {
+          "run": {
+            "shell": "bash"
+          }
+        },
+        "true": {
+          "push": {
+            "branches": [
+              "main"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "pull-requests": "write"
+        },
+        "jobs": {
+          "release-please": {
+            "runs-on": "ubuntu-latest",
+            "outputs": {
+              "releases_created": "${{ steps.release-please.outputs.releases_created }}"
+            },
+            "steps": [
+              {
+                "uses": "google-github-actions/release-please-action@v3",
+                "id": "release-please",
+                "with": {
+                  "release-type": "node",
+                  "package-name": "code-review-gpt"
+                }
+              }
+            ]
+          },
+          "publish-package": {
+            "runs-on": "ubuntu-latest",
+            "needs": "release-please",
+            "if": "${{ needs.release-please.outputs.releases_created  }}",
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "uses": "actions/setup-node@v3",
+                "with": {
+                  "node-version": "18",
+                  "cache": "npm",
+                  "registry-url": "https://registry.npmjs.org"
+                }
+              },
+              {
+                "name": "\ud83d\udcab Install dependencies",
+                "run": "npm ci"
+              },
+              {
+                "name": "\ud83c\udfe1 Build",
+                "run": "npm run build"
+              },
+              {
+                "name": "\ud83d\ude80 Publish code-review-gpt",
+                "run": "npm publish --access=public",
+                "env": {
+                  "NODE_AUTH_TOKEN": "${{ secrets.NPM_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-08-16T15-09-13Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-package__2023-08-16T15-09-13Z__40c321fe439a541b57ca168178046e902113ea2e.yml",
+          "workflow_name": "Release Package",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "pull-requests": "write"
+          },
+          "concurrency": null,
+          "defaults": {
+            "run": {
+              "shell": "bash"
+            }
+          },
+          "line_count": 46,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "release-please": 1,
+            "publish-package": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 1,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "release-please": 1,
+              "publish-package": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-node@v3",
+              "google-github-actions/release-please-action@v3"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release Package",
+        "defaults": {
+          "run": {
+            "shell": "bash"
+          }
+        },
+        "true": {
+          "push": {
+            "branches": [
+              "main"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "pull-requests": "write"
+        },
+        "jobs": {
+          "release-please": {
+            "runs-on": "ubuntu-latest",
+            "outputs": {
+              "releases_created": "${{ steps.release-please.outputs.releases_created }}"
+            },
+            "steps": [
+              {
+                "uses": "google-github-actions/release-please-action@v3",
+                "id": "release-please",
+                "with": {
+                  "release-type": "node",
+                  "package-name": "code-review-gpt",
+                  "path": "src"
+                }
+              }
+            ]
+          },
+          "publish-package": {
+            "runs-on": "ubuntu-latest",
+            "needs": "release-please",
+            "if": "${{ needs.release-please.outputs.releases_created  }}",
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "uses": "actions/setup-node@v3",
+                "with": {
+                  "node-version": "18",
+                  "cache": "npm",
+                  "registry-url": "https://registry.npmjs.org"
+                }
+              },
+              {
+                "name": "\ud83d\udcab Install dependencies",
+                "run": "npm ci"
+              },
+              {
+                "name": "\ud83c\udfe1 Build",
+                "run": "npm run build"
+              },
+              {
+                "name": "\ud83d\ude80 Publish code-review-gpt",
+                "run": "npm publish --access=public",
+                "env": {
+                  "NODE_AUTH_TOKEN": "${{ secrets.NPM_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-09-08T11-19-34Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-package__2023-09-08T11-19-34Z__254bd29e2adaa047f47049952b960f52943cef32.yml",
+          "workflow_name": "Release Package",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "pull-requests": "write"
+          },
+          "concurrency": null,
+          "defaults": {
+            "run": {
+              "shell": "bash",
+              "working-directory": "code-review-gpt"
+            }
+          },
+          "line_count": 46,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "release-please": 1,
+            "publish-package": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 1,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "release-please": 1,
+              "publish-package": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-node@v3",
+              "google-github-actions/release-please-action@v3"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release Package",
+        "defaults": {
+          "run": {
+            "shell": "bash",
+            "working-directory": "code-review-gpt"
+          }
+        },
+        "true": {
+          "push": {
+            "branches": [
+              "main"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "pull-requests": "write"
+        },
+        "jobs": {
+          "release-please": {
+            "runs-on": "ubuntu-latest",
+            "outputs": {
+              "releases_created": "${{ steps.release-please.outputs.releases_created }}"
+            },
+            "steps": [
+              {
+                "uses": "google-github-actions/release-please-action@v3",
+                "id": "release-please",
+                "with": {
+                  "release-type": "node",
+                  "package-name": "code-review-gpt"
+                }
+              }
+            ]
+          },
+          "publish-package": {
+            "runs-on": "ubuntu-latest",
+            "needs": "release-please",
+            "if": "${{ needs.release-please.outputs.releases_created  }}",
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "uses": "actions/setup-node@v3",
+                "with": {
+                  "node-version": "18",
+                  "cache": "npm",
+                  "registry-url": "https://registry.npmjs.org"
+                }
+              },
+              {
+                "name": "\ud83d\udcab Install dependencies",
+                "run": "npm ci"
+              },
+              {
+                "name": "\ud83c\udfe1 Build",
+                "run": "npm run build"
+              },
+              {
+                "name": "\ud83d\ude80 Publish code-review-gpt",
+                "run": "npm publish --access=public",
+                "env": {
+                  "NODE_AUTH_TOKEN": "${{ secrets.NPM_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-09-08T11-27-14Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-package__2023-09-08T11-27-14Z__fa7ede758c4232471e63c217bf8b8031d600463a.yml",
+          "workflow_name": "Release Package",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "pull-requests": "write"
+          },
+          "concurrency": null,
+          "defaults": {
+            "run": {
+              "shell": "bash",
+              "working-directory": "code-review-gpt"
+            }
+          },
+          "line_count": 47,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "release-please": 1,
+            "publish-package": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 1,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "release-please": 1,
+              "publish-package": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-node@v3",
+              "google-github-actions/release-please-action@v3"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release Package",
+        "defaults": {
+          "run": {
+            "shell": "bash",
+            "working-directory": "code-review-gpt"
+          }
+        },
+        "true": {
+          "push": {
+            "branches": [
+              "main"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "pull-requests": "write"
+        },
+        "jobs": {
+          "release-please": {
+            "runs-on": "ubuntu-latest",
+            "outputs": {
+              "releases_created": "${{ steps.release-please.outputs.releases_created }}"
+            },
+            "steps": [
+              {
+                "uses": "google-github-actions/release-please-action@v3",
+                "id": "release-please",
+                "with": {
+                  "release-type": "node",
+                  "package-name": "code-review-gpt",
+                  "path": "code-review-gpt"
+                }
+              }
+            ]
+          },
+          "publish-package": {
+            "runs-on": "ubuntu-latest",
+            "needs": "release-please",
+            "if": "${{ needs.release-please.outputs.releases_created  }}",
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "uses": "actions/setup-node@v3",
+                "with": {
+                  "node-version": "18",
+                  "cache": "npm",
+                  "registry-url": "https://registry.npmjs.org"
+                }
+              },
+              {
+                "name": "\ud83d\udcab Install dependencies",
+                "run": "npm ci"
+              },
+              {
+                "name": "\ud83c\udfe1 Build",
+                "run": "npm run build"
+              },
+              {
+                "name": "\ud83d\ude80 Publish code-review-gpt",
+                "run": "npm publish --access=public",
+                "env": {
+                  "NODE_AUTH_TOKEN": "${{ secrets.NPM_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-12-12T11-22-51Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-package__2023-12-12T11-22-51Z__d05aa8499d31d5cfda5fb8b49f05a8b30e9dd778.yml",
+          "workflow_name": "Release Package",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "pull-requests": "write"
+          },
+          "concurrency": null,
+          "defaults": {
+            "run": {
+              "shell": "bash",
+              "working-directory": "packages/code-review-gpt"
+            }
+          },
+          "line_count": 47,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "release-please": 1,
+            "publish-package": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 1,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "release-please": 1,
+              "publish-package": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-node@v3",
+              "google-github-actions/release-please-action@v3"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release Package",
+        "defaults": {
+          "run": {
+            "shell": "bash",
+            "working-directory": "packages/code-review-gpt"
+          }
+        },
+        "true": {
+          "push": {
+            "branches": [
+              "main"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "pull-requests": "write"
+        },
+        "jobs": {
+          "release-please": {
+            "runs-on": "ubuntu-latest",
+            "outputs": {
+              "releases_created": "${{ steps.release-please.outputs.releases_created }}"
+            },
+            "steps": [
+              {
+                "uses": "google-github-actions/release-please-action@v3",
+                "id": "release-please",
+                "with": {
+                  "release-type": "node",
+                  "package-name": "code-review-gpt",
+                  "path": "code-review-gpt"
+                }
+              }
+            ]
+          },
+          "publish-package": {
+            "runs-on": "ubuntu-latest",
+            "needs": "release-please",
+            "if": "${{ needs.release-please.outputs.releases_created  }}",
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "uses": "actions/setup-node@v3",
+                "with": {
+                  "node-version": "18",
+                  "cache": "npm",
+                  "registry-url": "https://registry.npmjs.org"
+                }
+              },
+              {
+                "name": "\ud83d\udcab Install dependencies",
+                "run": "npm ci"
+              },
+              {
+                "name": "\ud83c\udfe1 Build",
+                "run": "npm run build"
+              },
+              {
+                "name": "\ud83d\ude80 Publish code-review-gpt",
+                "run": "npm publish --access=public",
+                "env": {
+                  "NODE_AUTH_TOKEN": "${{ secrets.NPM_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-01-12T15-48-34Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-package__2025-01-12T15-48-34Z__c0424952574493f2b35dc386e4d70f6425355407.yml",
+          "workflow_name": "Release Package",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "pull-requests": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 30,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "release-please": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "release-please": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "googleapis/release-please-action@v4",
+              "oven-sh/setup-bun@v2"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 4,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release Package",
+        "true": {
+          "push": {
+            "branches": [
+              "main"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "pull-requests": "write"
+        },
+        "jobs": {
+          "release-please": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "googleapis/release-please-action@v4",
+                "id": "release",
+                "with": {
+                  "release-type": "node"
+                }
+              },
+              {
+                "uses": "actions/checkout@v4",
+                "if": "${{ steps.release.outputs.release_created }}"
+              },
+              {
+                "uses": "oven-sh/setup-bun@v2",
+                "with": {
+                  "bun-version": "latest"
+                },
+                "if": "${{ steps.release.outputs.release_created }}"
+              },
+              {
+                "run": "bun ci",
+                "if": "${{ steps.release.outputs.release_created }}"
+              },
+              {
+                "run": "bun publish:build",
+                "env": {
+                  "NODE_AUTH_TOKEN": "${{ secrets.NPM_TOKEN }}"
+                },
+                "if": "${{ steps.release.outputs.release_created }}"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-01-12T16-02-20Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-package__2025-01-12T16-02-20Z__286aa0d7fe9fb0f7c91b34cde29500ccf29be2c8.yml",
+          "workflow_name": "Release Package",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "pull-requests": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 40,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "release-please": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "release-please": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "googleapis/release-please-action@v4",
+              "oven-sh/setup-bun@v2"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 5,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release Package",
+        "true": {
+          "push": {
+            "branches": [
+              "main"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "pull-requests": "write"
+        },
+        "jobs": {
+          "release-please": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "googleapis/release-please-action@v4",
+                "id": "release",
+                "with": {
+                  "release-type": "node"
+                }
+              },
+              {
+                "uses": "actions/checkout@v4",
+                "if": "${{ steps.release.outputs.release_created }}"
+              },
+              {
+                "uses": "oven-sh/setup-bun@v2",
+                "with": {
+                  "bun-version": "latest"
+                },
+                "if": "${{ steps.release.outputs.release_created }}"
+              },
+              {
+                "run": "bun ci",
+                "if": "${{ steps.release.outputs.release_created }}"
+              },
+              {
+                "run": "bun publish:build",
+                "env": {
+                  "NODE_AUTH_TOKEN": "${{ secrets.NPM_TOKEN }}"
+                },
+                "if": "${{ steps.release.outputs.release_created }}"
+              },
+              {
+                "name": "Tag major and minor versions",
+                "if": "${{ steps.release.outputs.release_created }}",
+                "run": "git tag -d v${{ steps.release.outputs.major }} || true\ngit tag -d v${{ steps.release.outputs.major }}.${{ steps.release.outputs.minor }} || true\ngit tag -a v${{ steps.release.outputs.major }} -m \"Release v${{ steps.release.outputs.major }}\"\ngit tag -a v${{ steps.release.outputs.major }}.${{ steps.release.outputs.minor }} -m \"Release v${{ steps.release.outputs.major }}.${{ steps.release.outputs.minor }}\"\ngit push origin v${{ steps.release.outputs.major }} -f\ngit push origin v${{ steps.release.outputs.major }}.${{ steps.release.outputs.minor }} -f\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-01-12T16-05-01Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-package__2025-01-12T16-05-01Z__ed807561f671c978b41701c65c74076d224f1b49.yml",
+          "workflow_name": "Release Package",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "pull-requests": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 40,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "release-please": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "release-please": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "googleapis/release-please-action@v4",
+              "oven-sh/setup-bun@v2"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 5,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release Package",
+        "true": {
+          "push": {
+            "branches": [
+              "main"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "pull-requests": "write"
+        },
+        "jobs": {
+          "release-please": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "googleapis/release-please-action@v4",
+                "id": "release",
+                "with": {
+                  "release-type": "node"
+                }
+              },
+              {
+                "uses": "actions/checkout@v4",
+                "if": "${{ steps.release.outputs.release_created }}"
+              },
+              {
+                "uses": "oven-sh/setup-bun@v2",
+                "with": {
+                  "bun-version": "latest"
+                },
+                "if": "${{ steps.release.outputs.release_created }}"
+              },
+              {
+                "run": "bun i",
+                "if": "${{ steps.release.outputs.release_created }}"
+              },
+              {
+                "run": "bun publish:build",
+                "env": {
+                  "NODE_AUTH_TOKEN": "${{ secrets.NPM_TOKEN }}"
+                },
+                "if": "${{ steps.release.outputs.release_created }}"
+              },
+              {
+                "name": "Tag major and minor versions",
+                "if": "${{ steps.release.outputs.release_created }}",
+                "run": "git tag -d v${{ steps.release.outputs.major }} || true\ngit tag -d v${{ steps.release.outputs.major }}.${{ steps.release.outputs.minor }} || true\ngit tag -a v${{ steps.release.outputs.major }} -m \"Release v${{ steps.release.outputs.major }}\"\ngit tag -a v${{ steps.release.outputs.major }}.${{ steps.release.outputs.minor }} -m \"Release v${{ steps.release.outputs.major }}.${{ steps.release.outputs.minor }}\"\ngit push origin v${{ steps.release.outputs.major }} -f\ngit push origin v${{ steps.release.outputs.major }}.${{ steps.release.outputs.minor }} -f\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-01-12T16-54-45Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-package__2025-01-12T16-54-45Z__bef6062909e938ade607335b5f6954bb0b926160.yml",
+          "workflow_name": "Release Package",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "pull-requests": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 32,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "release-please": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "release-please": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "googleapis/release-please-action@v4",
+              "oven-sh/setup-bun@v2"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 4,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release Package",
+        "true": {
+          "push": {
+            "branches": [
+              "main"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "pull-requests": "write"
+        },
+        "jobs": {
+          "release-please": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "googleapis/release-please-action@v4",
+                "id": "release",
+                "with": {
+                  "release-type": "node"
+                }
+              },
+              {
+                "uses": "actions/checkout@v4",
+                "if": "${{ steps.release.outputs.release_created }}"
+              },
+              {
+                "uses": "oven-sh/setup-bun@v2",
+                "with": {
+                  "bun-version": "latest"
+                },
+                "if": "${{ steps.release.outputs.release_created }}"
+              },
+              {
+                "run": "bun i",
+                "if": "${{ steps.release.outputs.release_created }}"
+              },
+              {
+                "run": "echo \"//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}\" > ~/.npmrc\nbun publish:build\n",
+                "env": {
+                  "NODE_AUTH_TOKEN": "${{ secrets.NPM_TOKEN }}"
+                },
+                "if": "${{ steps.release.outputs.release_created }}"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-01-14T13-56-14Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-package__2025-01-14T13-56-14Z__e7cb470b72f7023593759a925a652bf50ed165c6.yml",
+          "workflow_name": "Release Package",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "pull-requests": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 50,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "release-please": 1,
+            "publish-package": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 1,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "release-please": 1,
+              "publish-package": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-node@v4",
+              "googleapis/release-please-action@v4",
+              "oven-sh/setup-bun@v2"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release Package",
+        "true": {
+          "push": {
+            "branches": [
+              "main"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "pull-requests": "write"
+        },
+        "jobs": {
+          "release-please": {
+            "runs-on": "ubuntu-latest",
+            "outputs": {
+              "release_created": "${{ steps.release-please.outputs.release_created }}"
+            },
+            "steps": [
+              {
+                "uses": "googleapis/release-please-action@v4",
+                "id": "release-please",
+                "with": {
+                  "release-type": "node"
+                }
+              }
+            ]
+          },
+          "publish-package": {
+            "runs-on": "ubuntu-latest",
+            "needs": "release-please",
+            "if": "${{ needs.release-please.outputs.release_created  }}",
+            "env": {
+              "NODE_AUTH_TOKEN": "${{ secrets.NPM_TOKEN }}"
+            },
+            "steps": [
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Setup Bun",
+                "uses": "oven-sh/setup-bun@v2",
+                "with": {
+                  "bun-version": "latest"
+                }
+              },
+              {
+                "name": "Setup Node.js for npm",
+                "uses": "actions/setup-node@v4",
+                "with": {
+                  "node-version": "latest",
+                  "registry-url": "https://registry.npmjs.org"
+                }
+              },
+              {
+                "name": "\ud83d\udcab Install dependencies",
+                "run": "bun i"
+              },
+              {
+                "name": "\ud83c\udfe1 Build package",
+                "run": "bun run build"
+              },
+              {
+                "name": "\ud83d\ude80 Publish code-review-gpt",
+                "run": "npm publish --access public"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-04-28T18-01-19Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-package__2025-04-28T18-01-19Z__5abf3f234319fdb7edfabacd1166bd8bd1ae2b09.yml",
+          "workflow_name": "Release Package",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "pull-requests": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 50,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "release-please": 1,
+            "publish-package": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 1,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "release-please": 1,
+              "publish-package": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-node@v4",
+              "googleapis/release-please-action@v4",
+              "oven-sh/setup-bun@v2"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release Package",
+        "true": {
+          "push": {
+            "branches": [
+              "main"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "pull-requests": "write"
+        },
+        "jobs": {
+          "release-please": {
+            "runs-on": "ubuntu-latest",
+            "outputs": {
+              "release_created": "${{ steps.release-please.outputs.release_created }}"
+            },
+            "steps": [
+              {
+                "uses": "googleapis/release-please-action@v4",
+                "id": "release-please",
+                "with": {
+                  "release-type": "node"
+                }
+              }
+            ]
+          },
+          "publish-package": {
+            "runs-on": "ubuntu-latest",
+            "needs": "release-please",
+            "if": "${{ needs.release-please.outputs.release_created  }}",
+            "env": {
+              "NODE_AUTH_TOKEN": "${{ secrets.NPM_TOKEN }}"
+            },
+            "steps": [
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Setup Bun",
+                "uses": "oven-sh/setup-bun@v2",
+                "with": {
+                  "bun-version": "latest"
+                }
+              },
+              {
+                "name": "Setup Node.js for npm",
+                "uses": "actions/setup-node@v4",
+                "with": {
+                  "node-version": "latest",
+                  "registry-url": "https://registry.npmjs.org"
+                }
+              },
+              {
+                "name": "\ud83d\udcab Install dependencies",
+                "run": "bun i"
+              },
+              {
+                "name": "\ud83c\udfe1 Build package",
+                "run": "bun run build"
+              },
+              {
+                "name": "\ud83d\ude80 Publish shippie",
+                "run": "npm publish --access public"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-05-12T10-14-14Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-package__2025-05-12T10-14-14Z__a72f00d9dd630b541d511f20682cbdfe6f4f514b.yml",
+          "workflow_name": "Release Package",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "pull-requests": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 52,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "release-please": 1,
+            "publish-package": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 1,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "release-please": 1,
+              "publish-package": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-node@v4",
+              "googleapis/release-please-action@v4",
+              "oven-sh/setup-bun@v2"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release Package",
+        "true": {
+          "push": {
+            "branches": [
+              "main"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "pull-requests": "write"
+        },
+        "jobs": {
+          "release-please": {
+            "runs-on": "ubuntu-latest",
+            "outputs": {
+              "release_created": "${{ steps.release-please.outputs.release_created }}"
+            },
+            "steps": [
+              {
+                "uses": "googleapis/release-please-action@v4",
+                "id": "release-please",
+                "with": {
+                  "release-type": "node"
+                }
+              }
+            ]
+          },
+          "publish-package": {
+            "runs-on": "ubuntu-latest",
+            "needs": "release-please",
+            "if": "${{ needs.release-please.outputs.release_created  }}",
+            "env": {
+              "NODE_AUTH_TOKEN": "${{ secrets.NPM_TOKEN }}"
+            },
+            "steps": [
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Setup Bun",
+                "uses": "oven-sh/setup-bun@v2",
+                "with": {
+                  "bun-version": "latest"
+                }
+              },
+              {
+                "name": "Setup Node.js for npm",
+                "uses": "actions/setup-node@v4",
+                "env": {
+                  "NODE_AUTH_TOKEN": "${{ secrets.NPM_TOKEN }}"
+                },
+                "with": {
+                  "node-version": "latest",
+                  "registry-url": "https://registry.npmjs.org"
+                }
+              },
+              {
+                "name": "\ud83d\udcab Install dependencies",
+                "run": "bun i"
+              },
+              {
+                "name": "\ud83c\udfe1 Build package",
+                "run": "bun run build"
+              },
+              {
+                "name": "\ud83d\ude80 Publish shippie",
+                "run": "npm publish --access public"
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

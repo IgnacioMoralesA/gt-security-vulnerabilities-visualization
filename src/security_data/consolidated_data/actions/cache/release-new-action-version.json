@@ -1,0 +1,98 @@
+{
+  "repo_owner": "actions",
+  "repo_name": "cache",
+  "workflow_name": "release-new-action-version",
+  "history": {
+    "2024-02-29T14-43-02Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release-new-action-version__2024-02-29T14-43-02Z__a18323f50430a57f9094db3ce508dc1e3a25d4a2.yml",
+          "workflow_name": "Release new action version",
+          "triggers": {},
+          "permissions": {
+            "contents": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 28,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "update_tag": 1
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "update_tag": 1
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 1,
+            "actions_used": [
+              "actions/publish-action@v0.3.0"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release new action version",
+        "true": {
+          "release": {
+            "types": [
+              "released"
+            ]
+          },
+          "workflow_dispatch": {
+            "inputs": {
+              "TAG_NAME": {
+                "description": "Tag name that the major tag will point to",
+                "required": true
+              }
+            }
+          }
+        },
+        "env": {
+          "TAG_NAME": "${{ github.event.inputs.TAG_NAME || github.event.release.tag_name }}"
+        },
+        "permissions": {
+          "contents": "write"
+        },
+        "jobs": {
+          "update_tag": {
+            "name": "Update the major tag to include the ${{ github.event.inputs.TAG_NAME || github.event.release.tag_name }} changes",
+            "environment": {
+              "name": "releaseNewActionVersion"
+            },
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Update the ${{ env.TAG_NAME }} tag",
+                "id": "update-major-tag",
+                "uses": "actions/publish-action@v0.3.0",
+                "with": {
+                  "source-tag": "${{ env.TAG_NAME }}",
+                  "slack-webhook": "${{ secrets.SLACK_WEBHOOK }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

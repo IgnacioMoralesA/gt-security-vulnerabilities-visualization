@@ -1,0 +1,4596 @@
+{
+  "repo_owner": "shivammathur",
+  "repo_name": "setup-php",
+  "workflow_name": "php",
+  "history": {
+    "2022-01-29T01-59-03Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-32eee761-f2ab-5e61-9426-18f91163d6e8",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/php__2022-01-29T01-59-03Z__44ff4ed92dcea4b41e66920a695ca064d99bade9.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 22,
+                  "startColumn": 5,
+                  "endLine": 78,
+                  "endColumn": 114
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "d19774fb5631fc2b:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "php__2022-01-29T01-59-03Z__44ff4ed92dcea4b41e66920a695ca064d99bade9.yml",
+          "workflow_name": "Main workflow",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 78,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "run": 8
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "run": 8
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/cache@v2",
+              "actions/checkout@v2",
+              "shivammathur/cache-extensions@develop"
+            ],
+            "num_run_commands": 5,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Main workflow",
+        "true": {
+          "workflow_dispatch": null,
+          "pull_request": {
+            "branches": [
+              "master",
+              "develop",
+              "verbose"
+            ],
+            "paths-ignore": [
+              "**.md",
+              "examples/**"
+            ]
+          },
+          "push": {
+            "branches": [
+              "master",
+              "develop",
+              "verbose"
+            ],
+            "paths-ignore": [
+              "**.md",
+              "examples/**"
+            ]
+          }
+        },
+        "jobs": {
+          "run": {
+            "name": "Run",
+            "runs-on": "${{ matrix.operating-system }}",
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "operating-system": [
+                  "ubuntu-20.04",
+                  "ubuntu-18.04",
+                  "windows-2019",
+                  "macos-latest"
+                ],
+                "php-versions": [
+                  "5.3",
+                  "5.4",
+                  "5.5",
+                  "5.6",
+                  "7.0",
+                  "7.1",
+                  "7.2",
+                  "7.3",
+                  "7.4",
+                  "8.0",
+                  "8.1",
+                  "8.2"
+                ]
+              }
+            },
+            "env": {
+              "extensions": "xml, opcache, xdebug, pcov",
+              "key": "cache-v5"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "name": "Setup cache environment",
+                "id": "cache-env",
+                "uses": "shivammathur/cache-extensions@develop",
+                "with": {
+                  "php-version": "${{ matrix.php-versions }}",
+                  "extensions": "${{ env.extensions }}",
+                  "key": "${{ env.key }}"
+                }
+              },
+              {
+                "name": "Cache extensions",
+                "uses": "actions/cache@v2",
+                "with": {
+                  "path": "${{ steps.cache-env.outputs.dir }}",
+                  "key": "${{ steps.cache-env.outputs.key }}",
+                  "restore-keys": "${{ steps.cache-env.outputs.key }}"
+                }
+              },
+              {
+                "name": "Setup PHP with extensions and custom config",
+                "run": "node dist/index.js",
+                "env": {
+                  "php-version": "${{ matrix.php-versions }}",
+                  "extensions": "${{ env.extensions }}",
+                  "ini-values": "post_max_size=256M, short_open_tag=On, date.timezone=Asia/Kolkata"
+                }
+              },
+              {
+                "name": "Testing PHP version",
+                "run": "php -v\nphp -r \"if(strpos(phpversion(), '${{ matrix.php-versions }}') === false) {throw new Exception('Wrong PHP version Installed');}\"\n"
+              },
+              {
+                "name": "Testing Composer version",
+                "run": "composer -V\nphp -r \"if(strpos(@exec('composer -V'), 'Composer version') === false) {throw new Exception('Composer not found');}\"\n"
+              },
+              {
+                "name": "Testing Extensions",
+                "run": "php -m\nphp -r \"if(! extension_loaded('xml')) {throw new Exception('xml not found');}\"\nphp -r \"if(! extension_loaded('Xdebug')) {throw new Exception('Xdebug not found');}\"\nphp -r \"if(phpversion()>=7.1 && ! extension_loaded('pcov')) {throw new Exception('PCOV not found');}\"\n"
+              },
+              {
+                "name": "Testing ini values",
+                "run": "php -r \"if(ini_get('memory_limit')!='-1') {throw new Exception('memory_limit not disabled');}\"\nphp -r \"if(ini_get('post_max_size')!='256M') {throw new Exception('post_max_size not added');}\"\nphp -r \"if(ini_get('short_open_tag')!=1) {throw new Exception('short_open_tag not added');}\"\nphp -r \"if(ini_get('date.timezone')!='Asia/Kolkata') {throw new Exception('date.timezone not added');}\""
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-03-02T00-30-52Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-c6d0b942-04a5-5799-bb18-d359c5b742c0",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/php__2022-03-02T00-30-52Z__4678e809c3842bc5e8d6d190dd53c50e039d7c9b.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 22,
+                  "startColumn": 5,
+                  "endLine": 78,
+                  "endColumn": 114
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "d19774fb5631fc2b:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "php__2022-03-02T00-30-52Z__4678e809c3842bc5e8d6d190dd53c50e039d7c9b.yml",
+          "workflow_name": "Main workflow",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 78,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "run": 8
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "run": 8
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/cache@v2",
+              "actions/checkout@v3",
+              "shivammathur/cache-extensions@develop"
+            ],
+            "num_run_commands": 5,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Main workflow",
+        "true": {
+          "workflow_dispatch": null,
+          "pull_request": {
+            "branches": [
+              "master",
+              "develop",
+              "verbose"
+            ],
+            "paths-ignore": [
+              "**.md",
+              "examples/**"
+            ]
+          },
+          "push": {
+            "branches": [
+              "master",
+              "develop",
+              "verbose"
+            ],
+            "paths-ignore": [
+              "**.md",
+              "examples/**"
+            ]
+          }
+        },
+        "jobs": {
+          "run": {
+            "name": "Run",
+            "runs-on": "${{ matrix.operating-system }}",
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "operating-system": [
+                  "ubuntu-20.04",
+                  "ubuntu-18.04",
+                  "windows-2019",
+                  "macos-latest"
+                ],
+                "php-versions": [
+                  "5.3",
+                  "5.4",
+                  "5.5",
+                  "5.6",
+                  "7.0",
+                  "7.1",
+                  "7.2",
+                  "7.3",
+                  "7.4",
+                  "8.0",
+                  "8.1",
+                  "8.2"
+                ]
+              }
+            },
+            "env": {
+              "extensions": "xml, opcache, xdebug, pcov",
+              "key": "cache-v5"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Setup cache environment",
+                "id": "cache-env",
+                "uses": "shivammathur/cache-extensions@develop",
+                "with": {
+                  "php-version": "${{ matrix.php-versions }}",
+                  "extensions": "${{ env.extensions }}",
+                  "key": "${{ env.key }}"
+                }
+              },
+              {
+                "name": "Cache extensions",
+                "uses": "actions/cache@v2",
+                "with": {
+                  "path": "${{ steps.cache-env.outputs.dir }}",
+                  "key": "${{ steps.cache-env.outputs.key }}",
+                  "restore-keys": "${{ steps.cache-env.outputs.key }}"
+                }
+              },
+              {
+                "name": "Setup PHP with extensions and custom config",
+                "run": "node dist/index.js",
+                "env": {
+                  "php-version": "${{ matrix.php-versions }}",
+                  "extensions": "${{ env.extensions }}",
+                  "ini-values": "post_max_size=256M, short_open_tag=On, date.timezone=Asia/Kolkata"
+                }
+              },
+              {
+                "name": "Testing PHP version",
+                "run": "php -v\nphp -r \"if(strpos(phpversion(), '${{ matrix.php-versions }}') === false) {throw new Exception('Wrong PHP version Installed');}\"\n"
+              },
+              {
+                "name": "Testing Composer version",
+                "run": "composer -V\nphp -r \"if(strpos(@exec('composer -V'), 'Composer version') === false) {throw new Exception('Composer not found');}\"\n"
+              },
+              {
+                "name": "Testing Extensions",
+                "run": "php -m\nphp -r \"if(! extension_loaded('xml')) {throw new Exception('xml not found');}\"\nphp -r \"if(! extension_loaded('Xdebug')) {throw new Exception('Xdebug not found');}\"\nphp -r \"if(phpversion()>=7.1 && ! extension_loaded('pcov')) {throw new Exception('PCOV not found');}\"\n"
+              },
+              {
+                "name": "Testing ini values",
+                "run": "php -r \"if(ini_get('memory_limit')!='-1') {throw new Exception('memory_limit not disabled');}\"\nphp -r \"if(ini_get('post_max_size')!='256M') {throw new Exception('post_max_size not added');}\"\nphp -r \"if(ini_get('short_open_tag')!=1) {throw new Exception('short_open_tag not added');}\"\nphp -r \"if(ini_get('date.timezone')!='Asia/Kolkata') {throw new Exception('date.timezone not added');}\""
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-03-21T14-39-20Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-a7a8f011-0997-5075-ba31-13d91ca385c2",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/php__2022-03-21T14-39-20Z__33ad931dbba79ff15b7f9139e0eec93ba64c46c7.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 22,
+                  "startColumn": 5,
+                  "endLine": 78,
+                  "endColumn": 114
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "d19774fb5631fc2b:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "php__2022-03-21T14-39-20Z__33ad931dbba79ff15b7f9139e0eec93ba64c46c7.yml",
+          "workflow_name": "Main workflow",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 78,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "run": 8
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "run": 8
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/cache@v3",
+              "actions/checkout@v3",
+              "shivammathur/cache-extensions@develop"
+            ],
+            "num_run_commands": 5,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Main workflow",
+        "true": {
+          "workflow_dispatch": null,
+          "pull_request": {
+            "branches": [
+              "master",
+              "develop",
+              "verbose"
+            ],
+            "paths-ignore": [
+              "**.md",
+              "examples/**"
+            ]
+          },
+          "push": {
+            "branches": [
+              "master",
+              "develop",
+              "verbose"
+            ],
+            "paths-ignore": [
+              "**.md",
+              "examples/**"
+            ]
+          }
+        },
+        "jobs": {
+          "run": {
+            "name": "Run",
+            "runs-on": "${{ matrix.operating-system }}",
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "operating-system": [
+                  "ubuntu-20.04",
+                  "ubuntu-18.04",
+                  "windows-2019",
+                  "macos-latest"
+                ],
+                "php-versions": [
+                  "5.3",
+                  "5.4",
+                  "5.5",
+                  "5.6",
+                  "7.0",
+                  "7.1",
+                  "7.2",
+                  "7.3",
+                  "7.4",
+                  "8.0",
+                  "8.1",
+                  "8.2"
+                ]
+              }
+            },
+            "env": {
+              "extensions": "xml, opcache, xdebug, pcov",
+              "key": "cache-v5"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Setup cache environment",
+                "id": "cache-env",
+                "uses": "shivammathur/cache-extensions@develop",
+                "with": {
+                  "php-version": "${{ matrix.php-versions }}",
+                  "extensions": "${{ env.extensions }}",
+                  "key": "${{ env.key }}"
+                }
+              },
+              {
+                "name": "Cache extensions",
+                "uses": "actions/cache@v3",
+                "with": {
+                  "path": "${{ steps.cache-env.outputs.dir }}",
+                  "key": "${{ steps.cache-env.outputs.key }}",
+                  "restore-keys": "${{ steps.cache-env.outputs.key }}"
+                }
+              },
+              {
+                "name": "Setup PHP with extensions and custom config",
+                "run": "node dist/index.js",
+                "env": {
+                  "php-version": "${{ matrix.php-versions }}",
+                  "extensions": "${{ env.extensions }}",
+                  "ini-values": "post_max_size=256M, short_open_tag=On, date.timezone=Asia/Kolkata"
+                }
+              },
+              {
+                "name": "Testing PHP version",
+                "run": "php -v\nphp -r \"if(strpos(phpversion(), '${{ matrix.php-versions }}') === false) {throw new Exception('Wrong PHP version Installed');}\"\n"
+              },
+              {
+                "name": "Testing Composer version",
+                "run": "composer -V\nphp -r \"if(strpos(@exec('composer -V'), 'Composer version') === false) {throw new Exception('Composer not found');}\"\n"
+              },
+              {
+                "name": "Testing Extensions",
+                "run": "php -m\nphp -r \"if(! extension_loaded('xml')) {throw new Exception('xml not found');}\"\nphp -r \"if(! extension_loaded('Xdebug')) {throw new Exception('Xdebug not found');}\"\nphp -r \"if(phpversion()>=7.1 && ! extension_loaded('pcov')) {throw new Exception('PCOV not found');}\"\n"
+              },
+              {
+                "name": "Testing ini values",
+                "run": "php -r \"if(ini_get('memory_limit')!='-1') {throw new Exception('memory_limit not disabled');}\"\nphp -r \"if(ini_get('post_max_size')!='256M') {throw new Exception('post_max_size not added');}\"\nphp -r \"if(ini_get('short_open_tag')!=1) {throw new Exception('short_open_tag not added');}\"\nphp -r \"if(ini_get('date.timezone')!='Asia/Kolkata') {throw new Exception('date.timezone not added');}\""
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-05-06T00-13-20Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-30a9643c-560f-5a3d-bf2b-5c8ce98a128e",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/php__2022-05-06T00-13-20Z__6cba851606e69e00775ebccba68bc1d418b6fa44.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 22,
+                  "startColumn": 5,
+                  "endLine": 78,
+                  "endColumn": 114
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "d19774fb5631fc2b:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "php__2022-05-06T00-13-20Z__6cba851606e69e00775ebccba68bc1d418b6fa44.yml",
+          "workflow_name": "Main workflow",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 78,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "run": 8
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "run": 8
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/cache@v3",
+              "actions/checkout@v3",
+              "shivammathur/cache-extensions@develop"
+            ],
+            "num_run_commands": 5,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Main workflow",
+        "true": {
+          "workflow_dispatch": null,
+          "pull_request": {
+            "branches": [
+              "master",
+              "develop",
+              "verbose"
+            ],
+            "paths-ignore": [
+              "**.md",
+              "examples/**"
+            ]
+          },
+          "push": {
+            "branches": [
+              "master",
+              "develop",
+              "verbose"
+            ],
+            "paths-ignore": [
+              "**.md",
+              "examples/**"
+            ]
+          }
+        },
+        "jobs": {
+          "run": {
+            "name": "Run",
+            "runs-on": "${{ matrix.operating-system }}",
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "operating-system": [
+                  "ubuntu-22.04",
+                  "ubuntu-20.04",
+                  "ubuntu-18.04",
+                  "windows-2019",
+                  "macos-latest"
+                ],
+                "php-versions": [
+                  "5.3",
+                  "5.4",
+                  "5.5",
+                  "5.6",
+                  "7.0",
+                  "7.1",
+                  "7.2",
+                  "7.3",
+                  "7.4",
+                  "8.0",
+                  "8.1",
+                  "8.2"
+                ]
+              }
+            },
+            "env": {
+              "extensions": "xml, opcache, xdebug, pcov",
+              "key": "cache-v5"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Setup cache environment",
+                "id": "cache-env",
+                "uses": "shivammathur/cache-extensions@develop",
+                "with": {
+                  "php-version": "${{ matrix.php-versions }}",
+                  "extensions": "${{ env.extensions }}",
+                  "key": "${{ env.key }}"
+                }
+              },
+              {
+                "name": "Cache extensions",
+                "uses": "actions/cache@v3",
+                "with": {
+                  "path": "${{ steps.cache-env.outputs.dir }}",
+                  "key": "${{ steps.cache-env.outputs.key }}",
+                  "restore-keys": "${{ steps.cache-env.outputs.key }}"
+                }
+              },
+              {
+                "name": "Setup PHP with extensions and custom config",
+                "run": "node dist/index.js",
+                "env": {
+                  "php-version": "${{ matrix.php-versions }}",
+                  "extensions": "${{ env.extensions }}",
+                  "ini-values": "post_max_size=256M, short_open_tag=On, date.timezone=Asia/Kolkata"
+                }
+              },
+              {
+                "name": "Testing PHP version",
+                "run": "php -v\nphp -r \"if(strpos(phpversion(), '${{ matrix.php-versions }}') === false) {throw new Exception('Wrong PHP version Installed');}\"\n"
+              },
+              {
+                "name": "Testing Composer version",
+                "run": "composer -V\nphp -r \"if(strpos(@exec('composer -V'), 'Composer version') === false) {throw new Exception('Composer not found');}\"\n"
+              },
+              {
+                "name": "Testing Extensions",
+                "run": "php -m\nphp -r \"if(! extension_loaded('xml')) {throw new Exception('xml not found');}\"\nphp -r \"if(! extension_loaded('Xdebug')) {throw new Exception('Xdebug not found');}\"\nphp -r \"if(phpversion()>=7.1 && ! extension_loaded('pcov')) {throw new Exception('PCOV not found');}\"\n"
+              },
+              {
+                "name": "Testing ini values",
+                "run": "php -r \"if(ini_get('memory_limit')!='-1') {throw new Exception('memory_limit not disabled');}\"\nphp -r \"if(ini_get('post_max_size')!='256M') {throw new Exception('post_max_size not added');}\"\nphp -r \"if(ini_get('short_open_tag')!=1) {throw new Exception('short_open_tag not added');}\"\nphp -r \"if(ini_get('date.timezone')!='Asia/Kolkata') {throw new Exception('date.timezone not added');}\""
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-05-26T00-50-23Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "php__2022-05-26T00-50-23Z__787285e08a93574525ba088913dcd57392be0f1c.yml",
+          "workflow_name": "Main workflow",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 81,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "run": 8
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "run": 8
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/cache@v3",
+              "actions/checkout@v3",
+              "shivammathur/cache-extensions@develop"
+            ],
+            "num_run_commands": 5,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Main workflow",
+        "true": {
+          "workflow_dispatch": null,
+          "pull_request": {
+            "branches": [
+              "master",
+              "develop",
+              "verbose"
+            ],
+            "paths-ignore": [
+              "**.md",
+              "examples/**"
+            ]
+          },
+          "push": {
+            "branches": [
+              "master",
+              "develop",
+              "verbose"
+            ],
+            "paths-ignore": [
+              "**.md",
+              "examples/**"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "read"
+        },
+        "jobs": {
+          "run": {
+            "name": "Run",
+            "runs-on": "${{ matrix.operating-system }}",
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "operating-system": [
+                  "ubuntu-22.04",
+                  "ubuntu-20.04",
+                  "ubuntu-18.04",
+                  "windows-2019",
+                  "macos-latest"
+                ],
+                "php-versions": [
+                  "5.3",
+                  "5.4",
+                  "5.5",
+                  "5.6",
+                  "7.0",
+                  "7.1",
+                  "7.2",
+                  "7.3",
+                  "7.4",
+                  "8.0",
+                  "8.1",
+                  "8.2"
+                ]
+              }
+            },
+            "env": {
+              "extensions": "xml, opcache, xdebug, pcov",
+              "key": "cache-v5"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Setup cache environment",
+                "id": "cache-env",
+                "uses": "shivammathur/cache-extensions@develop",
+                "with": {
+                  "php-version": "${{ matrix.php-versions }}",
+                  "extensions": "${{ env.extensions }}",
+                  "key": "${{ env.key }}"
+                }
+              },
+              {
+                "name": "Cache extensions",
+                "uses": "actions/cache@v3",
+                "with": {
+                  "path": "${{ steps.cache-env.outputs.dir }}",
+                  "key": "${{ steps.cache-env.outputs.key }}",
+                  "restore-keys": "${{ steps.cache-env.outputs.key }}"
+                }
+              },
+              {
+                "name": "Setup PHP with extensions and custom config",
+                "run": "node dist/index.js",
+                "env": {
+                  "php-version": "${{ matrix.php-versions }}",
+                  "extensions": "${{ env.extensions }}",
+                  "ini-values": "post_max_size=256M, short_open_tag=On, date.timezone=Asia/Kolkata"
+                }
+              },
+              {
+                "name": "Testing PHP version",
+                "run": "php -v\nphp -r \"if(strpos(phpversion(), '${{ matrix.php-versions }}') === false) {throw new Exception('Wrong PHP version Installed');}\"\n"
+              },
+              {
+                "name": "Testing Composer version",
+                "run": "composer -V\nphp -r \"if(strpos(@exec('composer -V'), 'Composer version') === false) {throw new Exception('Composer not found');}\"\n"
+              },
+              {
+                "name": "Testing Extensions",
+                "run": "php -m\nphp -r \"if(! extension_loaded('xml')) {throw new Exception('xml not found');}\"\nphp -r \"if(! extension_loaded('Xdebug')) {throw new Exception('Xdebug not found');}\"\nphp -r \"if(phpversion()>=7.1 && ! extension_loaded('pcov')) {throw new Exception('PCOV not found');}\"\n"
+              },
+              {
+                "name": "Testing ini values",
+                "run": "php -r \"if(ini_get('memory_limit')!='-1') {throw new Exception('memory_limit not disabled');}\"\nphp -r \"if(ini_get('post_max_size')!='256M') {throw new Exception('post_max_size not added');}\"\nphp -r \"if(ini_get('short_open_tag')!=1) {throw new Exception('short_open_tag not added');}\"\nphp -r \"if(ini_get('date.timezone')!='Asia/Kolkata') {throw new Exception('date.timezone not added');}\""
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-07-13T13-07-46Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "php__2022-07-13T13-07-46Z__109db648f13c5f88fcded61ce6252a822a706860.yml",
+          "workflow_name": "Main workflow",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 81,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "run": 8
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "run": 8
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/cache@v3",
+              "actions/checkout@v3",
+              "shivammathur/cache-extensions@develop"
+            ],
+            "num_run_commands": 5,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Main workflow",
+        "true": {
+          "workflow_dispatch": null,
+          "pull_request": {
+            "branches": [
+              "master",
+              "develop",
+              "verbose"
+            ],
+            "paths-ignore": [
+              "**.md",
+              "examples/**"
+            ]
+          },
+          "push": {
+            "branches": [
+              "master",
+              "develop",
+              "verbose"
+            ],
+            "paths-ignore": [
+              "**.md",
+              "examples/**"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "read"
+        },
+        "jobs": {
+          "run": {
+            "name": "Run",
+            "runs-on": "${{ matrix.operating-system }}",
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "operating-system": [
+                  "ubuntu-22.04",
+                  "ubuntu-20.04",
+                  "ubuntu-18.04",
+                  "windows-2019",
+                  "macos-latest"
+                ],
+                "php-versions": [
+                  "5.3",
+                  "5.4",
+                  "5.5",
+                  "5.6",
+                  "7.0",
+                  "7.1",
+                  "7.2",
+                  "7.3",
+                  "7.4",
+                  "8.0",
+                  "8.1",
+                  "8.2"
+                ]
+              }
+            },
+            "env": {
+              "extensions": "xml, opcache, xdebug, pcov, gd",
+              "key": "cache-v5"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Setup cache environment",
+                "id": "cache-env",
+                "uses": "shivammathur/cache-extensions@develop",
+                "with": {
+                  "php-version": "${{ matrix.php-versions }}",
+                  "extensions": "${{ env.extensions }}",
+                  "key": "${{ env.key }}"
+                }
+              },
+              {
+                "name": "Cache extensions",
+                "uses": "actions/cache@v3",
+                "with": {
+                  "path": "${{ steps.cache-env.outputs.dir }}",
+                  "key": "${{ steps.cache-env.outputs.key }}",
+                  "restore-keys": "${{ steps.cache-env.outputs.key }}"
+                }
+              },
+              {
+                "name": "Setup PHP with extensions and custom config",
+                "run": "node dist/index.js",
+                "env": {
+                  "php-version": "${{ matrix.php-versions }}",
+                  "extensions": "${{ env.extensions }}",
+                  "ini-values": "post_max_size=256M, short_open_tag=On, date.timezone=Asia/Kolkata"
+                }
+              },
+              {
+                "name": "Testing PHP version",
+                "run": "php -v\nphp -r \"if(strpos(phpversion(), '${{ matrix.php-versions }}') === false) {throw new Exception('Wrong PHP version Installed');}\"\n"
+              },
+              {
+                "name": "Testing Composer version",
+                "run": "composer -V\nphp -r \"if(strpos(@exec('composer -V'), 'Composer version') === false) {throw new Exception('Composer not found');}\"\n"
+              },
+              {
+                "name": "Testing Extensions",
+                "run": "php -m\nphp -r \"if(! extension_loaded('xml')) {throw new Exception('xml not found');}\"\nphp -r \"if(! extension_loaded('Xdebug')) {throw new Exception('Xdebug not found');}\"\nphp -r \"if(phpversion()>=7.1 && ! extension_loaded('pcov')) {throw new Exception('PCOV not found');}\"\n"
+              },
+              {
+                "name": "Testing ini values",
+                "run": "php -r \"if(ini_get('memory_limit')!='-1') {throw new Exception('memory_limit not disabled');}\"\nphp -r \"if(ini_get('post_max_size')!='256M') {throw new Exception('post_max_size not added');}\"\nphp -r \"if(ini_get('short_open_tag')!=1) {throw new Exception('short_open_tag not added');}\"\nphp -r \"if(ini_get('date.timezone')!='Asia/Kolkata') {throw new Exception('date.timezone not added');}\""
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-07-15T17-52-56Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "php__2022-07-15T17-52-56Z__3ede7656cb9c97f4f91f230ffcefc187d033e6d3.yml",
+          "workflow_name": "Main workflow",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 82,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "run": 8
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "run": 8
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/cache@v3",
+              "actions/checkout@v3",
+              "shivammathur/cache-extensions@develop"
+            ],
+            "num_run_commands": 5,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Main workflow",
+        "true": {
+          "workflow_dispatch": null,
+          "pull_request": {
+            "branches": [
+              "master",
+              "develop",
+              "verbose"
+            ],
+            "paths-ignore": [
+              "**.md",
+              "examples/**"
+            ]
+          },
+          "push": {
+            "branches": [
+              "master",
+              "develop",
+              "verbose"
+            ],
+            "paths-ignore": [
+              "**.md",
+              "examples/**"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "read"
+        },
+        "jobs": {
+          "run": {
+            "name": "Run",
+            "runs-on": "${{ matrix.operating-system }}",
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "operating-system": [
+                  "ubuntu-22.04",
+                  "ubuntu-20.04",
+                  "ubuntu-18.04",
+                  "windows-2019",
+                  "macos-latest"
+                ],
+                "php-versions": [
+                  "5.3",
+                  "5.4",
+                  "5.5",
+                  "5.6",
+                  "7.0",
+                  "7.1",
+                  "7.2",
+                  "7.3",
+                  "7.4",
+                  "8.0",
+                  "8.1",
+                  "8.2"
+                ]
+              }
+            },
+            "env": {
+              "extensions": "xml, opcache, xdebug, pcov, gd",
+              "key": "cache-v5"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Setup cache environment",
+                "id": "cache-env",
+                "uses": "shivammathur/cache-extensions@develop",
+                "with": {
+                  "php-version": "${{ matrix.php-versions }}",
+                  "extensions": "${{ env.extensions }}",
+                  "key": "${{ env.key }}"
+                }
+              },
+              {
+                "name": "Cache extensions",
+                "uses": "actions/cache@v3",
+                "with": {
+                  "path": "${{ steps.cache-env.outputs.dir }}",
+                  "key": "${{ steps.cache-env.outputs.key }}",
+                  "restore-keys": "${{ steps.cache-env.outputs.key }}"
+                }
+              },
+              {
+                "name": "Setup PHP with extensions and custom config",
+                "run": "node dist/index.js",
+                "env": {
+                  "php-version": "${{ matrix.php-versions }}",
+                  "extensions": "${{ env.extensions }}",
+                  "ini-values": "post_max_size=256M, short_open_tag=On, date.timezone=Asia/Kolkata"
+                }
+              },
+              {
+                "name": "Testing PHP version",
+                "run": "php -v\nphp -r \"if(strpos(phpversion(), '${{ matrix.php-versions }}') === false) {throw new Exception('Wrong PHP version Installed');}\"\n"
+              },
+              {
+                "name": "Testing Composer version",
+                "run": "composer -V\nphp -r \"if(strpos(@exec('composer -V'), 'Composer version') === false) {throw new Exception('Composer not found');}\"\n"
+              },
+              {
+                "name": "Testing Extensions",
+                "run": "php -m\nphp -r \"if(! extension_loaded('gd')) {throw new Exception('gd not found');}\"\nphp -r \"if(! extension_loaded('xml')) {throw new Exception('xml not found');}\"\nphp -r \"if(! extension_loaded('Xdebug')) {throw new Exception('Xdebug not found');}\"\nphp -r \"if(phpversion()>=7.1 && ! extension_loaded('pcov')) {throw new Exception('PCOV not found');}\"\n"
+              },
+              {
+                "name": "Testing ini values",
+                "run": "php -r \"if(ini_get('memory_limit')!='-1') {throw new Exception('memory_limit not disabled');}\"\nphp -r \"if(ini_get('post_max_size')!='256M') {throw new Exception('post_max_size not added');}\"\nphp -r \"if(ini_get('short_open_tag')!=1) {throw new Exception('short_open_tag not added');}\"\nphp -r \"if(ini_get('date.timezone')!='Asia/Kolkata') {throw new Exception('date.timezone not added');}\""
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-12-08T14-07-49Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "php__2022-12-08T14-07-49Z__53adb47562a0f575d5cfad6627c0abdb1b23ccc7.yml",
+          "workflow_name": "Main workflow",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 82,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "run": 8
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "run": 8
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/cache@v3",
+              "actions/checkout@v3",
+              "shivammathur/cache-extensions@develop"
+            ],
+            "num_run_commands": 5,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Main workflow",
+        "true": {
+          "workflow_dispatch": null,
+          "pull_request": {
+            "branches": [
+              "master",
+              "develop",
+              "verbose"
+            ],
+            "paths-ignore": [
+              "**.md",
+              "examples/**"
+            ]
+          },
+          "push": {
+            "branches": [
+              "master",
+              "develop",
+              "verbose"
+            ],
+            "paths-ignore": [
+              "**.md",
+              "examples/**"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "read"
+        },
+        "jobs": {
+          "run": {
+            "name": "Run",
+            "runs-on": "${{ matrix.operating-system }}",
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "operating-system": [
+                  "ubuntu-22.04",
+                  "ubuntu-20.04",
+                  "ubuntu-18.04",
+                  "windows-2019",
+                  "macos-latest"
+                ],
+                "php-versions": [
+                  "5.3",
+                  "5.4",
+                  "5.5",
+                  "5.6",
+                  "7.0",
+                  "7.1",
+                  "7.2",
+                  "7.3",
+                  "7.4",
+                  "8.0",
+                  "8.1",
+                  "8.2",
+                  "8.3"
+                ]
+              }
+            },
+            "env": {
+              "extensions": "xml, opcache, xdebug, pcov, gd",
+              "key": "cache-v5"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Setup cache environment",
+                "id": "cache-env",
+                "uses": "shivammathur/cache-extensions@develop",
+                "with": {
+                  "php-version": "${{ matrix.php-versions }}",
+                  "extensions": "${{ env.extensions }}",
+                  "key": "${{ env.key }}"
+                }
+              },
+              {
+                "name": "Cache extensions",
+                "uses": "actions/cache@v3",
+                "with": {
+                  "path": "${{ steps.cache-env.outputs.dir }}",
+                  "key": "${{ steps.cache-env.outputs.key }}",
+                  "restore-keys": "${{ steps.cache-env.outputs.key }}"
+                }
+              },
+              {
+                "name": "Setup PHP with extensions and custom config",
+                "run": "node dist/index.js",
+                "env": {
+                  "php-version": "${{ matrix.php-versions }}",
+                  "extensions": "${{ env.extensions }}",
+                  "ini-values": "post_max_size=256M, short_open_tag=On, date.timezone=Asia/Kolkata"
+                }
+              },
+              {
+                "name": "Testing PHP version",
+                "run": "php -v\nphp -r \"if(strpos(phpversion(), '${{ matrix.php-versions }}') === false) {throw new Exception('Wrong PHP version Installed');}\"\n"
+              },
+              {
+                "name": "Testing Composer version",
+                "run": "composer -V\nphp -r \"if(strpos(@exec('composer -V'), 'Composer version') === false) {throw new Exception('Composer not found');}\"\n"
+              },
+              {
+                "name": "Testing Extensions",
+                "run": "php -m\nphp -r \"if(! extension_loaded('gd')) {throw new Exception('gd not found');}\"\nphp -r \"if(! extension_loaded('xml')) {throw new Exception('xml not found');}\"\nphp -r \"if(! extension_loaded('Xdebug')) {throw new Exception('Xdebug not found');}\"\nphp -r \"if(phpversion()>=7.1 && ! extension_loaded('pcov')) {throw new Exception('PCOV not found');}\"\n"
+              },
+              {
+                "name": "Testing ini values",
+                "run": "php -r \"if(ini_get('memory_limit')!='-1') {throw new Exception('memory_limit not disabled');}\"\nphp -r \"if(ini_get('post_max_size')!='256M') {throw new Exception('post_max_size not added');}\"\nphp -r \"if(ini_get('short_open_tag')!=1) {throw new Exception('short_open_tag not added');}\"\nphp -r \"if(ini_get('date.timezone')!='Asia/Kolkata') {throw new Exception('date.timezone not added');}\""
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-01-29T16-11-09Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "php__2023-01-29T16-11-09Z__a36edd3ca4920e1f3e68606cce3544eadc372f30.yml",
+          "workflow_name": "Main workflow",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 92,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "run": 9
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "run": 9
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/cache@v3",
+              "actions/checkout@v3",
+              "shivammathur/cache-extensions@develop"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Main workflow",
+        "true": {
+          "workflow_dispatch": null,
+          "pull_request": {
+            "branches": [
+              "master",
+              "develop",
+              "verbose"
+            ],
+            "paths-ignore": [
+              "**.md",
+              "examples/**"
+            ]
+          },
+          "push": {
+            "branches": [
+              "master",
+              "develop",
+              "verbose"
+            ],
+            "paths-ignore": [
+              "**.md",
+              "examples/**"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "read"
+        },
+        "jobs": {
+          "run": {
+            "name": "Run",
+            "runs-on": "${{ matrix.operating-system }}",
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "operating-system": [
+                  "ubuntu-22.04",
+                  "ubuntu-20.04",
+                  "ubuntu-18.04",
+                  "windows-2019",
+                  "macos-latest"
+                ],
+                "php-versions": [
+                  "5.3",
+                  "5.4",
+                  "5.5",
+                  "5.6",
+                  "7.0",
+                  "7.1",
+                  "7.2",
+                  "7.3",
+                  "7.4",
+                  "8.0",
+                  "8.1",
+                  "8.2",
+                  "8.3"
+                ],
+                "include": [
+                  {
+                    "operating-system": "ubuntu-22.04",
+                    "php-versions": "",
+                    "php-version-file": "php-version-file"
+                  }
+                ]
+              }
+            },
+            "env": {
+              "extensions": "xml, opcache, xdebug, pcov, gd",
+              "key": "cache-v5"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Setup cache environment",
+                "id": "cache-env",
+                "uses": "shivammathur/cache-extensions@develop",
+                "with": {
+                  "php-version": "${{ matrix.php-versions || 8.2 }}",
+                  "extensions": "${{ env.extensions }}",
+                  "key": "${{ env.key }}"
+                }
+              },
+              {
+                "name": "Cache extensions",
+                "uses": "actions/cache@v3",
+                "with": {
+                  "path": "${{ steps.cache-env.outputs.dir }}",
+                  "key": "${{ steps.cache-env.outputs.key }}",
+                  "restore-keys": "${{ steps.cache-env.outputs.key }}"
+                }
+              },
+              {
+                "name": "Stage php-version-file",
+                "if": "${{ matrix.php-version-file == 'php-version-file' }}",
+                "run": "echo 8.2 > php-version-file\n"
+              },
+              {
+                "name": "Setup PHP with extensions and custom config",
+                "run": "node dist/index.js",
+                "env": {
+                  "php-version": "${{ matrix.php-versions }}",
+                  "php-version-file": "${{ matrix.php-version-file }}",
+                  "extensions": "${{ env.extensions }}",
+                  "ini-values": "post_max_size=256M, short_open_tag=On, date.timezone=Asia/Kolkata"
+                }
+              },
+              {
+                "name": "Testing PHP version",
+                "run": "php -v\nphp -r \"if(strpos(phpversion(), '${{ matrix.php-versions || 8.2 }}') === false) {throw new Exception('Wrong PHP version Installed');}\"\n"
+              },
+              {
+                "name": "Testing Composer version",
+                "run": "composer -V\nphp -r \"if(strpos(@exec('composer -V'), 'Composer version') === false) {throw new Exception('Composer not found');}\"\n"
+              },
+              {
+                "name": "Testing Extensions",
+                "run": "php -m\nphp -r \"if(! extension_loaded('gd')) {throw new Exception('gd not found');}\"\nphp -r \"if(! extension_loaded('xml')) {throw new Exception('xml not found');}\"\nphp -r \"if(! extension_loaded('Xdebug')) {throw new Exception('Xdebug not found');}\"\nphp -r \"if(phpversion()>=7.1 && ! extension_loaded('pcov')) {throw new Exception('PCOV not found');}\"\n"
+              },
+              {
+                "name": "Testing ini values",
+                "run": "php -r \"if(ini_get('memory_limit')!='-1') {throw new Exception('memory_limit not disabled');}\"\nphp -r \"if(ini_get('post_max_size')!='256M') {throw new Exception('post_max_size not added');}\"\nphp -r \"if(ini_get('short_open_tag')!=1) {throw new Exception('short_open_tag not added');}\"\nphp -r \"if(ini_get('date.timezone')!='Asia/Kolkata') {throw new Exception('date.timezone not added');}\""
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-01-29T16-23-17Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "php__2023-01-29T16-23-17Z__755bbb1cc0906cf508365858f7b682a50e351e28.yml",
+          "workflow_name": "Main workflow",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 93,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "run": 9
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "run": 9
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/cache@v3",
+              "actions/checkout@v3",
+              "shivammathur/cache-extensions@develop"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Main workflow",
+        "true": {
+          "workflow_dispatch": null,
+          "pull_request": {
+            "branches": [
+              "master",
+              "develop",
+              "verbose"
+            ],
+            "paths-ignore": [
+              "**.md",
+              "examples/**"
+            ]
+          },
+          "push": {
+            "branches": [
+              "master",
+              "develop",
+              "verbose"
+            ],
+            "paths-ignore": [
+              "**.md",
+              "examples/**"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "read"
+        },
+        "env": {
+          "default-php-version": "8.2"
+        },
+        "jobs": {
+          "run": {
+            "name": "Run",
+            "runs-on": "${{ matrix.operating-system }}",
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "operating-system": [
+                  "ubuntu-22.04",
+                  "ubuntu-20.04",
+                  "ubuntu-18.04",
+                  "windows-2019",
+                  "macos-latest"
+                ],
+                "php-versions": [
+                  "5.3",
+                  "5.4",
+                  "5.5",
+                  "5.6",
+                  "7.0",
+                  "7.1",
+                  "7.2",
+                  "7.3",
+                  "7.4",
+                  "8.0",
+                  "8.1",
+                  "8.2",
+                  "8.3"
+                ],
+                "include": [
+                  {
+                    "operating-system": "ubuntu-22.04",
+                    "php-versions": "",
+                    "php-version-file": "php-version-file"
+                  }
+                ]
+              }
+            },
+            "env": {
+              "extensions": "xml, opcache, xdebug, pcov, gd",
+              "key": "cache-v5"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Setup cache environment",
+                "id": "cache-env",
+                "uses": "shivammathur/cache-extensions@develop",
+                "with": {
+                  "php-version": "${{ matrix.php-versions || env.default-php-version }}",
+                  "extensions": "${{ env.extensions }}",
+                  "key": "${{ env.key }}"
+                }
+              },
+              {
+                "name": "Cache extensions",
+                "uses": "actions/cache@v3",
+                "with": {
+                  "path": "${{ steps.cache-env.outputs.dir }}",
+                  "key": "${{ steps.cache-env.outputs.key }}",
+                  "restore-keys": "${{ steps.cache-env.outputs.key }}"
+                }
+              },
+              {
+                "name": "Stage php-version-file",
+                "if": "${{ matrix.php-version-file == 'php-version-file' }}",
+                "run": "echo ${{ env.default-php-version }} > php-version-file\n"
+              },
+              {
+                "name": "Setup PHP with extensions and custom config",
+                "run": "node dist/index.js",
+                "env": {
+                  "php-version": "${{ matrix.php-versions }}",
+                  "php-version-file": "${{ matrix.php-version-file }}",
+                  "extensions": "${{ env.extensions }}",
+                  "ini-values": "post_max_size=256M, short_open_tag=On, date.timezone=Asia/Kolkata"
+                }
+              },
+              {
+                "name": "Testing PHP version",
+                "run": "php -v\nphp -r \"if(strpos(phpversion(), '${{ matrix.php-versions || env.default-php-version }}') === false) {throw new Exception('Wrong PHP version Installed');}\"\n"
+              },
+              {
+                "name": "Testing Composer version",
+                "run": "composer -V\nphp -r \"if(strpos(@exec('composer -V'), 'Composer version') === false) {throw new Exception('Composer not found');}\"\n"
+              },
+              {
+                "name": "Testing Extensions",
+                "run": "php -m\nphp -r \"if(! extension_loaded('gd')) {throw new Exception('gd not found');}\"\nphp -r \"if(! extension_loaded('xml')) {throw new Exception('xml not found');}\"\nphp -r \"if(! extension_loaded('Xdebug')) {throw new Exception('Xdebug not found');}\"\nphp -r \"if(phpversion()>=7.1 && ! extension_loaded('pcov')) {throw new Exception('PCOV not found');}\"\n"
+              },
+              {
+                "name": "Testing ini values",
+                "run": "php -r \"if(ini_get('memory_limit')!='-1') {throw new Exception('memory_limit not disabled');}\"\nphp -r \"if(ini_get('post_max_size')!='256M') {throw new Exception('post_max_size not added');}\"\nphp -r \"if(ini_get('short_open_tag')!=1) {throw new Exception('short_open_tag not added');}\"\nphp -r \"if(ini_get('date.timezone')!='Asia/Kolkata') {throw new Exception('date.timezone not added');}\""
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-03-30T18-59-23Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "php__2023-03-30T18-59-23Z__7f8b1e57734d807768f47db6aef41902499fc05f.yml",
+          "workflow_name": "Main workflow",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 96,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "run": 9
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "run": 9
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/cache@v3",
+              "actions/checkout@v3",
+              "shivammathur/cache-extensions@develop"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Main workflow",
+        "true": {
+          "workflow_dispatch": null,
+          "pull_request": {
+            "branches": [
+              "master",
+              "develop",
+              "verbose"
+            ],
+            "paths-ignore": [
+              "**.md",
+              "examples/**"
+            ]
+          },
+          "push": {
+            "branches": [
+              "master",
+              "develop",
+              "verbose"
+            ],
+            "paths-ignore": [
+              "**.md",
+              "examples/**"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "read"
+        },
+        "env": {
+          "default-php-version": "8.2"
+        },
+        "jobs": {
+          "run": {
+            "name": "Run",
+            "runs-on": "${{ matrix.operating-system }}",
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "operating-system": [
+                  "ubuntu-22.04",
+                  "ubuntu-20.04",
+                  "ubuntu-18.04",
+                  "windows-2019",
+                  "macos-latest"
+                ],
+                "php-versions": [
+                  "5.3",
+                  "5.4",
+                  "5.5",
+                  "5.6",
+                  "7.0",
+                  "7.1",
+                  "7.2",
+                  "7.3",
+                  "7.4",
+                  "8.0",
+                  "8.1",
+                  "8.2",
+                  "8.3"
+                ],
+                "include": [
+                  {
+                    "operating-system": "ubuntu-22.04",
+                    "php-versions": "",
+                    "php-version-file": "php-version-file"
+                  }
+                ],
+                "exclude": [
+                  {
+                    "operating-system": "macos-latest",
+                    "php-versions": "8.3"
+                  }
+                ]
+              }
+            },
+            "env": {
+              "extensions": "xml, opcache, xdebug, pcov, gd",
+              "key": "cache-v5"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Setup cache environment",
+                "id": "cache-env",
+                "uses": "shivammathur/cache-extensions@develop",
+                "with": {
+                  "php-version": "${{ matrix.php-versions || env.default-php-version }}",
+                  "extensions": "${{ env.extensions }}",
+                  "key": "${{ env.key }}"
+                }
+              },
+              {
+                "name": "Cache extensions",
+                "uses": "actions/cache@v3",
+                "with": {
+                  "path": "${{ steps.cache-env.outputs.dir }}",
+                  "key": "${{ steps.cache-env.outputs.key }}",
+                  "restore-keys": "${{ steps.cache-env.outputs.key }}"
+                }
+              },
+              {
+                "name": "Stage php-version-file",
+                "if": "${{ matrix.php-version-file == 'php-version-file' }}",
+                "run": "echo ${{ env.default-php-version }} > php-version-file\n"
+              },
+              {
+                "name": "Setup PHP with extensions and custom config",
+                "run": "node dist/index.js",
+                "env": {
+                  "php-version": "${{ matrix.php-versions }}",
+                  "php-version-file": "${{ matrix.php-version-file }}",
+                  "extensions": "${{ env.extensions }}",
+                  "ini-values": "post_max_size=256M, short_open_tag=On, date.timezone=Asia/Kolkata"
+                }
+              },
+              {
+                "name": "Testing PHP version",
+                "run": "php -v\nphp -r \"if(strpos(phpversion(), '${{ matrix.php-versions || env.default-php-version }}') === false) {throw new Exception('Wrong PHP version Installed');}\"\n"
+              },
+              {
+                "name": "Testing Composer version",
+                "run": "composer -V\nphp -r \"if(strpos(@exec('composer -V'), 'Composer version') === false) {throw new Exception('Composer not found');}\"\n"
+              },
+              {
+                "name": "Testing Extensions",
+                "run": "php -m\nphp -r \"if(! extension_loaded('gd')) {throw new Exception('gd not found');}\"\nphp -r \"if(! extension_loaded('xml')) {throw new Exception('xml not found');}\"\nphp -r \"if(! extension_loaded('Xdebug')) {throw new Exception('Xdebug not found');}\"\nphp -r \"if(phpversion()>=7.1 && ! extension_loaded('pcov')) {throw new Exception('PCOV not found');}\"\n"
+              },
+              {
+                "name": "Testing ini values",
+                "run": "php -r \"if(ini_get('memory_limit')!='-1') {throw new Exception('memory_limit not disabled');}\"\nphp -r \"if(ini_get('post_max_size')!='256M') {throw new Exception('post_max_size not added');}\"\nphp -r \"if(ini_get('short_open_tag')!=1) {throw new Exception('short_open_tag not added');}\"\nphp -r \"if(ini_get('date.timezone')!='Asia/Kolkata') {throw new Exception('date.timezone not added');}\""
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-04-03T04-41-53Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "php__2023-04-03T04-41-53Z__1474d67903bffba5001889fded28898a8edc9f7a.yml",
+          "workflow_name": "Main workflow",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 96,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "run": 9
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "run": 9
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/cache@v3",
+              "actions/checkout@v3",
+              "shivammathur/cache-extensions@develop"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Main workflow",
+        "true": {
+          "workflow_dispatch": null,
+          "pull_request": {
+            "branches": [
+              "master",
+              "develop",
+              "verbose"
+            ],
+            "paths-ignore": [
+              "**.md",
+              "examples/**"
+            ]
+          },
+          "push": {
+            "branches": [
+              "master",
+              "develop",
+              "verbose"
+            ],
+            "paths-ignore": [
+              "**.md",
+              "examples/**"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "read"
+        },
+        "env": {
+          "default-php-version": "8.2"
+        },
+        "jobs": {
+          "run": {
+            "name": "Run",
+            "runs-on": "${{ matrix.operating-system }}",
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "operating-system": [
+                  "ubuntu-22.04",
+                  "ubuntu-20.04",
+                  "windows-2019",
+                  "macos-latest"
+                ],
+                "php-versions": [
+                  "5.3",
+                  "5.4",
+                  "5.5",
+                  "5.6",
+                  "7.0",
+                  "7.1",
+                  "7.2",
+                  "7.3",
+                  "7.4",
+                  "8.0",
+                  "8.1",
+                  "8.2",
+                  "8.3"
+                ],
+                "include": [
+                  {
+                    "operating-system": "ubuntu-22.04",
+                    "php-versions": "",
+                    "php-version-file": "php-version-file"
+                  }
+                ],
+                "exclude": [
+                  {
+                    "operating-system": "macos-latest",
+                    "php-versions": "8.3"
+                  }
+                ]
+              }
+            },
+            "env": {
+              "extensions": "xml, opcache, xdebug, pcov, gd",
+              "key": "cache-v5"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Setup cache environment",
+                "id": "cache-env",
+                "uses": "shivammathur/cache-extensions@develop",
+                "with": {
+                  "php-version": "${{ matrix.php-versions || env.default-php-version }}",
+                  "extensions": "${{ env.extensions }}",
+                  "key": "${{ env.key }}"
+                }
+              },
+              {
+                "name": "Cache extensions",
+                "uses": "actions/cache@v3",
+                "with": {
+                  "path": "${{ steps.cache-env.outputs.dir }}",
+                  "key": "${{ steps.cache-env.outputs.key }}",
+                  "restore-keys": "${{ steps.cache-env.outputs.key }}"
+                }
+              },
+              {
+                "name": "Stage php-version-file",
+                "if": "${{ matrix.php-version-file == 'php-version-file' }}",
+                "run": "echo ${{ env.default-php-version }} > php-version-file\n"
+              },
+              {
+                "name": "Setup PHP with extensions and custom config",
+                "run": "node dist/index.js",
+                "env": {
+                  "php-version": "${{ matrix.php-versions }}",
+                  "php-version-file": "${{ matrix.php-version-file }}",
+                  "extensions": "${{ env.extensions }}",
+                  "ini-values": "post_max_size=256M, short_open_tag=On, date.timezone=Asia/Kolkata"
+                }
+              },
+              {
+                "name": "Testing PHP version",
+                "run": "php -v\nphp -r \"if(strpos(phpversion(), '${{ matrix.php-versions || env.default-php-version }}') === false) {throw new Exception('Wrong PHP version Installed');}\"\n"
+              },
+              {
+                "name": "Testing Composer version",
+                "run": "composer -V\nphp -r \"if(strpos(@exec('composer -V'), 'Composer version') === false) {throw new Exception('Composer not found');}\"\n"
+              },
+              {
+                "name": "Testing Extensions",
+                "run": "php -m\nphp -r \"if(! extension_loaded('gd')) {throw new Exception('gd not found');}\"\nphp -r \"if(! extension_loaded('xml')) {throw new Exception('xml not found');}\"\nphp -r \"if(! extension_loaded('Xdebug')) {throw new Exception('Xdebug not found');}\"\nphp -r \"if(phpversion()>=7.1 && ! extension_loaded('pcov')) {throw new Exception('PCOV not found');}\"\n"
+              },
+              {
+                "name": "Testing ini values",
+                "run": "php -r \"if(ini_get('memory_limit')!='-1') {throw new Exception('memory_limit not disabled');}\"\nphp -r \"if(ini_get('post_max_size')!='256M') {throw new Exception('post_max_size not added');}\"\nphp -r \"if(ini_get('short_open_tag')!=1) {throw new Exception('short_open_tag not added');}\"\nphp -r \"if(ini_get('date.timezone')!='Asia/Kolkata') {throw new Exception('date.timezone not added');}\""
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-09-13T21-21-47Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "php__2023-09-13T21-21-47Z__62078293612f15211cd9f3e4fb2c36776c1d8742.yml",
+          "workflow_name": "Main workflow",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 96,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "run": 9
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "run": 9
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/cache@v3",
+              "actions/checkout@v4",
+              "shivammathur/cache-extensions@develop"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Main workflow",
+        "true": {
+          "workflow_dispatch": null,
+          "pull_request": {
+            "branches": [
+              "master",
+              "develop",
+              "verbose"
+            ],
+            "paths-ignore": [
+              "**.md",
+              "examples/**"
+            ]
+          },
+          "push": {
+            "branches": [
+              "master",
+              "develop",
+              "verbose"
+            ],
+            "paths-ignore": [
+              "**.md",
+              "examples/**"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "read"
+        },
+        "env": {
+          "default-php-version": "8.2"
+        },
+        "jobs": {
+          "run": {
+            "name": "Run",
+            "runs-on": "${{ matrix.operating-system }}",
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "operating-system": [
+                  "ubuntu-22.04",
+                  "ubuntu-20.04",
+                  "windows-2019",
+                  "macos-latest"
+                ],
+                "php-versions": [
+                  "5.3",
+                  "5.4",
+                  "5.5",
+                  "5.6",
+                  "7.0",
+                  "7.1",
+                  "7.2",
+                  "7.3",
+                  "7.4",
+                  "8.0",
+                  "8.1",
+                  "8.2",
+                  "8.3"
+                ],
+                "include": [
+                  {
+                    "operating-system": "ubuntu-22.04",
+                    "php-versions": "",
+                    "php-version-file": "php-version-file"
+                  }
+                ],
+                "exclude": [
+                  {
+                    "operating-system": "macos-latest",
+                    "php-versions": "8.3"
+                  }
+                ]
+              }
+            },
+            "env": {
+              "extensions": "xml, opcache, xdebug, pcov, gd",
+              "key": "cache-v5"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Setup cache environment",
+                "id": "cache-env",
+                "uses": "shivammathur/cache-extensions@develop",
+                "with": {
+                  "php-version": "${{ matrix.php-versions || env.default-php-version }}",
+                  "extensions": "${{ env.extensions }}",
+                  "key": "${{ env.key }}"
+                }
+              },
+              {
+                "name": "Cache extensions",
+                "uses": "actions/cache@v3",
+                "with": {
+                  "path": "${{ steps.cache-env.outputs.dir }}",
+                  "key": "${{ steps.cache-env.outputs.key }}",
+                  "restore-keys": "${{ steps.cache-env.outputs.key }}"
+                }
+              },
+              {
+                "name": "Stage php-version-file",
+                "if": "${{ matrix.php-version-file == 'php-version-file' }}",
+                "run": "echo ${{ env.default-php-version }} > php-version-file\n"
+              },
+              {
+                "name": "Setup PHP with extensions and custom config",
+                "run": "node dist/index.js",
+                "env": {
+                  "php-version": "${{ matrix.php-versions }}",
+                  "php-version-file": "${{ matrix.php-version-file }}",
+                  "extensions": "${{ env.extensions }}",
+                  "ini-values": "post_max_size=256M, short_open_tag=On, date.timezone=Asia/Kolkata"
+                }
+              },
+              {
+                "name": "Testing PHP version",
+                "run": "php -v\nphp -r \"if(strpos(phpversion(), '${{ matrix.php-versions || env.default-php-version }}') === false) {throw new Exception('Wrong PHP version Installed');}\"\n"
+              },
+              {
+                "name": "Testing Composer version",
+                "run": "composer -V\nphp -r \"if(strpos(@exec('composer -V'), 'Composer version') === false) {throw new Exception('Composer not found');}\"\n"
+              },
+              {
+                "name": "Testing Extensions",
+                "run": "php -m\nphp -r \"if(! extension_loaded('gd')) {throw new Exception('gd not found');}\"\nphp -r \"if(! extension_loaded('xml')) {throw new Exception('xml not found');}\"\nphp -r \"if(! extension_loaded('Xdebug')) {throw new Exception('Xdebug not found');}\"\nphp -r \"if(phpversion()>=7.1 && ! extension_loaded('pcov')) {throw new Exception('PCOV not found');}\"\n"
+              },
+              {
+                "name": "Testing ini values",
+                "run": "php -r \"if(ini_get('memory_limit')!='-1') {throw new Exception('memory_limit not disabled');}\"\nphp -r \"if(ini_get('post_max_size')!='256M') {throw new Exception('post_max_size not added');}\"\nphp -r \"if(ini_get('short_open_tag')!=1) {throw new Exception('short_open_tag not added');}\"\nphp -r \"if(ini_get('date.timezone')!='Asia/Kolkata') {throw new Exception('date.timezone not added');}\""
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-11-01T04-05-10Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "php__2023-11-01T04-05-10Z__f60e7de98ecee410fedc2394b3dde28fb8e4824c.yml",
+          "workflow_name": "Main workflow",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 93,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "run": 9
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "run": 9
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/cache@v3",
+              "actions/checkout@v4",
+              "shivammathur/cache-extensions@develop"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Main workflow",
+        "true": {
+          "workflow_dispatch": null,
+          "pull_request": {
+            "branches": [
+              "master",
+              "develop",
+              "verbose"
+            ],
+            "paths-ignore": [
+              "**.md",
+              "examples/**"
+            ]
+          },
+          "push": {
+            "branches": [
+              "master",
+              "develop",
+              "verbose"
+            ],
+            "paths-ignore": [
+              "**.md",
+              "examples/**"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "read"
+        },
+        "env": {
+          "default-php-version": "8.2"
+        },
+        "jobs": {
+          "run": {
+            "name": "Run",
+            "runs-on": "${{ matrix.operating-system }}",
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "operating-system": [
+                  "ubuntu-22.04",
+                  "ubuntu-20.04",
+                  "windows-2019",
+                  "macos-latest"
+                ],
+                "php-versions": [
+                  "5.3",
+                  "5.4",
+                  "5.5",
+                  "5.6",
+                  "7.0",
+                  "7.1",
+                  "7.2",
+                  "7.3",
+                  "7.4",
+                  "8.0",
+                  "8.1",
+                  "8.2",
+                  "8.3",
+                  "8.4"
+                ],
+                "include": [
+                  {
+                    "operating-system": "ubuntu-22.04",
+                    "php-versions": "",
+                    "php-version-file": "php-version-file"
+                  }
+                ]
+              }
+            },
+            "env": {
+              "extensions": "xml, opcache, xdebug, pcov, gd",
+              "key": "cache-v5"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Setup cache environment",
+                "id": "cache-env",
+                "uses": "shivammathur/cache-extensions@develop",
+                "with": {
+                  "php-version": "${{ matrix.php-versions || env.default-php-version }}",
+                  "extensions": "${{ env.extensions }}",
+                  "key": "${{ env.key }}"
+                }
+              },
+              {
+                "name": "Cache extensions",
+                "uses": "actions/cache@v3",
+                "with": {
+                  "path": "${{ steps.cache-env.outputs.dir }}",
+                  "key": "${{ steps.cache-env.outputs.key }}",
+                  "restore-keys": "${{ steps.cache-env.outputs.key }}"
+                }
+              },
+              {
+                "name": "Stage php-version-file",
+                "if": "${{ matrix.php-version-file == 'php-version-file' }}",
+                "run": "echo ${{ env.default-php-version }} > php-version-file\n"
+              },
+              {
+                "name": "Setup PHP with extensions and custom config",
+                "run": "node dist/index.js",
+                "env": {
+                  "php-version": "${{ matrix.php-versions }}",
+                  "php-version-file": "${{ matrix.php-version-file }}",
+                  "extensions": "${{ env.extensions }}",
+                  "ini-values": "post_max_size=256M, short_open_tag=On, date.timezone=Asia/Kolkata"
+                }
+              },
+              {
+                "name": "Testing PHP version",
+                "run": "php -v\nphp -r \"if(strpos(phpversion(), '${{ matrix.php-versions || env.default-php-version }}') === false) {throw new Exception('Wrong PHP version Installed');}\"\n"
+              },
+              {
+                "name": "Testing Composer version",
+                "run": "composer -V\nphp -r \"if(strpos(@exec('composer -V'), 'Composer version') === false) {throw new Exception('Composer not found');}\"\n"
+              },
+              {
+                "name": "Testing Extensions",
+                "run": "php -m\nphp -r \"if(! extension_loaded('gd')) {throw new Exception('gd not found');}\"\nphp -r \"if(! extension_loaded('xml')) {throw new Exception('xml not found');}\"\nphp -r \"if(! extension_loaded('Xdebug')) {throw new Exception('Xdebug not found');}\"\nphp -r \"if(phpversion()>=7.1 && ! extension_loaded('pcov')) {throw new Exception('PCOV not found');}\"\n"
+              },
+              {
+                "name": "Testing ini values",
+                "run": "php -r \"if(ini_get('memory_limit')!='-1') {throw new Exception('memory_limit not disabled');}\"\nphp -r \"if(ini_get('post_max_size')!='256M') {throw new Exception('post_max_size not added');}\"\nphp -r \"if(ini_get('short_open_tag')!=1) {throw new Exception('short_open_tag not added');}\"\nphp -r \"if(ini_get('date.timezone')!='Asia/Kolkata') {throw new Exception('date.timezone not added');}\""
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-11-30T15-53-39Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "php__2023-11-30T15-53-39Z__2810265746a6bff07c119e95e5b67d2e6b19e5d4.yml",
+          "workflow_name": "Main workflow",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 93,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "run": 9
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "run": 9
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/cache@v3",
+              "actions/checkout@v4",
+              "shivammathur/cache-extensions@develop"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Main workflow",
+        "true": {
+          "workflow_dispatch": null,
+          "pull_request": {
+            "branches": [
+              "master",
+              "develop",
+              "verbose"
+            ],
+            "paths-ignore": [
+              "**.md",
+              "examples/**"
+            ]
+          },
+          "push": {
+            "branches": [
+              "master",
+              "develop",
+              "verbose"
+            ],
+            "paths-ignore": [
+              "**.md",
+              "examples/**"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "read"
+        },
+        "env": {
+          "default-php-version": "8.2"
+        },
+        "jobs": {
+          "run": {
+            "name": "Run",
+            "runs-on": "${{ matrix.operating-system }}",
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "operating-system": [
+                  "ubuntu-22.04",
+                  "ubuntu-20.04",
+                  "windows-2019",
+                  "macos-latest"
+                ],
+                "php-versions": [
+                  "5.3",
+                  "5.4",
+                  "5.5",
+                  "5.6",
+                  "7.0",
+                  "7.1",
+                  "7.2",
+                  "7.3",
+                  "7.4",
+                  "8.0",
+                  "8.1",
+                  "8.2",
+                  "8.3",
+                  "8.4",
+                  "lowest"
+                ],
+                "include": [
+                  {
+                    "operating-system": "ubuntu-22.04",
+                    "php-versions": "",
+                    "php-version-file": "php-version-file"
+                  }
+                ]
+              }
+            },
+            "env": {
+              "extensions": "xml, opcache, xdebug, pcov, gd",
+              "key": "cache-v5"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Setup cache environment",
+                "id": "cache-env",
+                "uses": "shivammathur/cache-extensions@develop",
+                "with": {
+                  "php-version": "${{ matrix.php-versions || env.default-php-version }}",
+                  "extensions": "${{ env.extensions }}",
+                  "key": "${{ env.key }}"
+                }
+              },
+              {
+                "name": "Cache extensions",
+                "uses": "actions/cache@v3",
+                "with": {
+                  "path": "${{ steps.cache-env.outputs.dir }}",
+                  "key": "${{ steps.cache-env.outputs.key }}",
+                  "restore-keys": "${{ steps.cache-env.outputs.key }}"
+                }
+              },
+              {
+                "name": "Stage php-version-file",
+                "if": "${{ matrix.php-version-file == 'php-version-file' }}",
+                "run": "echo ${{ env.default-php-version }} > php-version-file\n"
+              },
+              {
+                "name": "Setup PHP with extensions and custom config",
+                "run": "node dist/index.js",
+                "env": {
+                  "php-version": "${{ matrix.php-versions }}",
+                  "php-version-file": "${{ matrix.php-version-file }}",
+                  "extensions": "${{ env.extensions }}",
+                  "ini-values": "post_max_size=256M, short_open_tag=On, date.timezone=Asia/Kolkata"
+                }
+              },
+              {
+                "name": "Testing PHP version",
+                "run": "php -v\nphp -r \"if(strpos(phpversion(), '${{ matrix.php-versions || env.default-php-version }}') === false) {throw new Exception('Wrong PHP version Installed');}\"\n"
+              },
+              {
+                "name": "Testing Composer version",
+                "run": "composer -V\nphp -r \"if(strpos(@exec('composer -V'), 'Composer version') === false) {throw new Exception('Composer not found');}\"\n"
+              },
+              {
+                "name": "Testing Extensions",
+                "run": "php -m\nphp -r \"if(! extension_loaded('gd')) {throw new Exception('gd not found');}\"\nphp -r \"if(! extension_loaded('xml')) {throw new Exception('xml not found');}\"\nphp -r \"if(! extension_loaded('Xdebug')) {throw new Exception('Xdebug not found');}\"\nphp -r \"if(phpversion()>=7.1 && ! extension_loaded('pcov')) {throw new Exception('PCOV not found');}\"\n"
+              },
+              {
+                "name": "Testing ini values",
+                "run": "php -r \"if(ini_get('memory_limit')!='-1') {throw new Exception('memory_limit not disabled');}\"\nphp -r \"if(ini_get('post_max_size')!='256M') {throw new Exception('post_max_size not added');}\"\nphp -r \"if(ini_get('short_open_tag')!=1) {throw new Exception('short_open_tag not added');}\"\nphp -r \"if(ini_get('date.timezone')!='Asia/Kolkata') {throw new Exception('date.timezone not added');}\"\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-12-07T16-46-39Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "php__2023-12-07T16-46-39Z__86b90110cbf3fcee0dcd076778d4bfc6e3e15093.yml",
+          "workflow_name": "Main workflow",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 93,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "run": 9
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "run": 9
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/cache@v3",
+              "actions/checkout@v4",
+              "shivammathur/cache-extensions@develop"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Main workflow",
+        "true": {
+          "workflow_dispatch": null,
+          "pull_request": {
+            "branches": [
+              "master",
+              "develop",
+              "verbose"
+            ],
+            "paths-ignore": [
+              "**.md",
+              "examples/**"
+            ]
+          },
+          "push": {
+            "branches": [
+              "master",
+              "develop",
+              "verbose"
+            ],
+            "paths-ignore": [
+              "**.md",
+              "examples/**"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "read"
+        },
+        "env": {
+          "default-php-version": "8.2"
+        },
+        "jobs": {
+          "run": {
+            "name": "Run",
+            "runs-on": "${{ matrix.operating-system }}",
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "operating-system": [
+                  "ubuntu-22.04",
+                  "ubuntu-20.04",
+                  "windows-2019",
+                  "macos-latest"
+                ],
+                "php-versions": [
+                  "5.3",
+                  "5.4",
+                  "5.5",
+                  "5.6",
+                  "7.0",
+                  "7.1",
+                  "7.2",
+                  "7.3",
+                  "7.4",
+                  "8.0",
+                  "8.1",
+                  "8.2",
+                  "8.3",
+                  "8.4"
+                ],
+                "include": [
+                  {
+                    "operating-system": "ubuntu-22.04",
+                    "php-versions": "",
+                    "php-version-file": "php-version-file"
+                  }
+                ]
+              }
+            },
+            "env": {
+              "extensions": "xml, opcache, xdebug, pcov, gd",
+              "key": "cache-v5"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Setup cache environment",
+                "id": "cache-env",
+                "uses": "shivammathur/cache-extensions@develop",
+                "with": {
+                  "php-version": "${{ matrix.php-versions || env.default-php-version }}",
+                  "extensions": "${{ env.extensions }}",
+                  "key": "${{ env.key }}"
+                }
+              },
+              {
+                "name": "Cache extensions",
+                "uses": "actions/cache@v3",
+                "with": {
+                  "path": "${{ steps.cache-env.outputs.dir }}",
+                  "key": "${{ steps.cache-env.outputs.key }}",
+                  "restore-keys": "${{ steps.cache-env.outputs.key }}"
+                }
+              },
+              {
+                "name": "Stage php-version-file",
+                "if": "${{ matrix.php-version-file == 'php-version-file' }}",
+                "run": "echo ${{ env.default-php-version }} > php-version-file\n"
+              },
+              {
+                "name": "Setup PHP with extensions and custom config",
+                "run": "node dist/index.js",
+                "env": {
+                  "php-version": "${{ matrix.php-versions }}",
+                  "php-version-file": "${{ matrix.php-version-file }}",
+                  "extensions": "${{ env.extensions }}",
+                  "ini-values": "post_max_size=256M, short_open_tag=On, date.timezone=Asia/Kolkata"
+                }
+              },
+              {
+                "name": "Testing PHP version",
+                "run": "php -v\nphp -r \"if(strpos(phpversion(), '${{ matrix.php-versions || env.default-php-version }}') === false) {throw new Exception('Wrong PHP version Installed');}\"\n"
+              },
+              {
+                "name": "Testing Composer version",
+                "run": "composer -V\nphp -r \"if(strpos(@exec('composer -V'), 'Composer version') === false) {throw new Exception('Composer not found');}\"\n"
+              },
+              {
+                "name": "Testing Extensions",
+                "run": "php -m\nphp -r \"if(! extension_loaded('gd')) {throw new Exception('gd not found');}\"\nphp -r \"if(! extension_loaded('xml')) {throw new Exception('xml not found');}\"\nphp -r \"if(! extension_loaded('Xdebug')) {throw new Exception('Xdebug not found');}\"\nphp -r \"if(phpversion()>=7.1 && ! extension_loaded('pcov')) {throw new Exception('PCOV not found');}\"\n"
+              },
+              {
+                "name": "Testing ini values",
+                "run": "php -r \"if(ini_get('memory_limit')!='-1') {throw new Exception('memory_limit not disabled');}\"\nphp -r \"if(ini_get('post_max_size')!='256M') {throw new Exception('post_max_size not added');}\"\nphp -r \"if(ini_get('short_open_tag')!=1) {throw new Exception('short_open_tag not added');}\"\nphp -r \"if(ini_get('date.timezone')!='Asia/Kolkata') {throw new Exception('date.timezone not added');}\"\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-01-22T10-07-33Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "php__2024-01-22T10-07-33Z__73dfd2f824964a5fc4860b1c0172969f4f9df5d9.yml",
+          "workflow_name": "Main workflow",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 93,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "run": 9
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "run": 9
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/cache@v4",
+              "actions/checkout@v4",
+              "shivammathur/cache-extensions@develop"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Main workflow",
+        "true": {
+          "workflow_dispatch": null,
+          "pull_request": {
+            "branches": [
+              "master",
+              "develop",
+              "verbose"
+            ],
+            "paths-ignore": [
+              "**.md",
+              "examples/**"
+            ]
+          },
+          "push": {
+            "branches": [
+              "master",
+              "develop",
+              "verbose"
+            ],
+            "paths-ignore": [
+              "**.md",
+              "examples/**"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "read"
+        },
+        "env": {
+          "default-php-version": "8.2"
+        },
+        "jobs": {
+          "run": {
+            "name": "Run",
+            "runs-on": "${{ matrix.operating-system }}",
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "operating-system": [
+                  "ubuntu-22.04",
+                  "ubuntu-20.04",
+                  "windows-2019",
+                  "macos-latest"
+                ],
+                "php-versions": [
+                  "5.3",
+                  "5.4",
+                  "5.5",
+                  "5.6",
+                  "7.0",
+                  "7.1",
+                  "7.2",
+                  "7.3",
+                  "7.4",
+                  "8.0",
+                  "8.1",
+                  "8.2",
+                  "8.3",
+                  "8.4"
+                ],
+                "include": [
+                  {
+                    "operating-system": "ubuntu-22.04",
+                    "php-versions": "",
+                    "php-version-file": "php-version-file"
+                  }
+                ]
+              }
+            },
+            "env": {
+              "extensions": "xml, opcache, xdebug, pcov, gd",
+              "key": "cache-v5"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Setup cache environment",
+                "id": "cache-env",
+                "uses": "shivammathur/cache-extensions@develop",
+                "with": {
+                  "php-version": "${{ matrix.php-versions || env.default-php-version }}",
+                  "extensions": "${{ env.extensions }}",
+                  "key": "${{ env.key }}"
+                }
+              },
+              {
+                "name": "Cache extensions",
+                "uses": "actions/cache@v4",
+                "with": {
+                  "path": "${{ steps.cache-env.outputs.dir }}",
+                  "key": "${{ steps.cache-env.outputs.key }}",
+                  "restore-keys": "${{ steps.cache-env.outputs.key }}"
+                }
+              },
+              {
+                "name": "Stage php-version-file",
+                "if": "${{ matrix.php-version-file == 'php-version-file' }}",
+                "run": "echo ${{ env.default-php-version }} > php-version-file\n"
+              },
+              {
+                "name": "Setup PHP with extensions and custom config",
+                "run": "node dist/index.js",
+                "env": {
+                  "php-version": "${{ matrix.php-versions }}",
+                  "php-version-file": "${{ matrix.php-version-file }}",
+                  "extensions": "${{ env.extensions }}",
+                  "ini-values": "post_max_size=256M, short_open_tag=On, date.timezone=Asia/Kolkata"
+                }
+              },
+              {
+                "name": "Testing PHP version",
+                "run": "php -v\nphp -r \"if(strpos(phpversion(), '${{ matrix.php-versions || env.default-php-version }}') === false) {throw new Exception('Wrong PHP version Installed');}\"\n"
+              },
+              {
+                "name": "Testing Composer version",
+                "run": "composer -V\nphp -r \"if(strpos(@exec('composer -V'), 'Composer version') === false) {throw new Exception('Composer not found');}\"\n"
+              },
+              {
+                "name": "Testing Extensions",
+                "run": "php -m\nphp -r \"if(! extension_loaded('gd')) {throw new Exception('gd not found');}\"\nphp -r \"if(! extension_loaded('xml')) {throw new Exception('xml not found');}\"\nphp -r \"if(! extension_loaded('Xdebug')) {throw new Exception('Xdebug not found');}\"\nphp -r \"if(phpversion()>=7.1 && ! extension_loaded('pcov')) {throw new Exception('PCOV not found');}\"\n"
+              },
+              {
+                "name": "Testing ini values",
+                "run": "php -r \"if(ini_get('memory_limit')!='-1') {throw new Exception('memory_limit not disabled');}\"\nphp -r \"if(ini_get('post_max_size')!='256M') {throw new Exception('post_max_size not added');}\"\nphp -r \"if(ini_get('short_open_tag')!=1) {throw new Exception('short_open_tag not added');}\"\nphp -r \"if(ini_get('date.timezone')!='Asia/Kolkata') {throw new Exception('date.timezone not added');}\"\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-04-23T22-08-15Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "php__2024-04-23T22-08-15Z__436881d08472ec5487c7c758fcfcbb429cc1bc1d.yml",
+          "workflow_name": "Main workflow",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 93,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "run": 9
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "run": 9
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/cache@v4",
+              "actions/checkout@v4",
+              "shivammathur/cache-extensions@develop"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Main workflow",
+        "true": {
+          "workflow_dispatch": null,
+          "pull_request": {
+            "branches": [
+              "master",
+              "develop",
+              "verbose"
+            ],
+            "paths-ignore": [
+              "**.md",
+              "examples/**"
+            ]
+          },
+          "push": {
+            "branches": [
+              "master",
+              "develop",
+              "verbose"
+            ],
+            "paths-ignore": [
+              "**.md",
+              "examples/**"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "read"
+        },
+        "env": {
+          "default-php-version": "8.2"
+        },
+        "jobs": {
+          "run": {
+            "name": "Run",
+            "runs-on": "${{ matrix.operating-system }}",
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "operating-system": [
+                  "ubuntu-22.04",
+                  "ubuntu-20.04",
+                  "windows-2019",
+                  "macos-13"
+                ],
+                "php-versions": [
+                  "5.3",
+                  "5.4",
+                  "5.5",
+                  "5.6",
+                  "7.0",
+                  "7.1",
+                  "7.2",
+                  "7.3",
+                  "7.4",
+                  "8.0",
+                  "8.1",
+                  "8.2",
+                  "8.3",
+                  "8.4"
+                ],
+                "include": [
+                  {
+                    "operating-system": "ubuntu-22.04",
+                    "php-versions": "",
+                    "php-version-file": "php-version-file"
+                  }
+                ]
+              }
+            },
+            "env": {
+              "extensions": "xml, opcache, xdebug, pcov, gd",
+              "key": "cache-v5"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Setup cache environment",
+                "id": "cache-env",
+                "uses": "shivammathur/cache-extensions@develop",
+                "with": {
+                  "php-version": "${{ matrix.php-versions || env.default-php-version }}",
+                  "extensions": "${{ env.extensions }}",
+                  "key": "${{ env.key }}"
+                }
+              },
+              {
+                "name": "Cache extensions",
+                "uses": "actions/cache@v4",
+                "with": {
+                  "path": "${{ steps.cache-env.outputs.dir }}",
+                  "key": "${{ steps.cache-env.outputs.key }}",
+                  "restore-keys": "${{ steps.cache-env.outputs.key }}"
+                }
+              },
+              {
+                "name": "Stage php-version-file",
+                "if": "${{ matrix.php-version-file == 'php-version-file' }}",
+                "run": "echo ${{ env.default-php-version }} > php-version-file\n"
+              },
+              {
+                "name": "Setup PHP with extensions and custom config",
+                "run": "node dist/index.js",
+                "env": {
+                  "php-version": "${{ matrix.php-versions }}",
+                  "php-version-file": "${{ matrix.php-version-file }}",
+                  "extensions": "${{ env.extensions }}",
+                  "ini-values": "post_max_size=256M, short_open_tag=On, date.timezone=Asia/Kolkata"
+                }
+              },
+              {
+                "name": "Testing PHP version",
+                "run": "php -v\nphp -r \"if(strpos(phpversion(), '${{ matrix.php-versions || env.default-php-version }}') === false) {throw new Exception('Wrong PHP version Installed');}\"\n"
+              },
+              {
+                "name": "Testing Composer version",
+                "run": "composer -V\nphp -r \"if(strpos(@exec('composer -V'), 'Composer version') === false) {throw new Exception('Composer not found');}\"\n"
+              },
+              {
+                "name": "Testing Extensions",
+                "run": "php -m\nphp -r \"if(! extension_loaded('gd')) {throw new Exception('gd not found');}\"\nphp -r \"if(! extension_loaded('xml')) {throw new Exception('xml not found');}\"\nphp -r \"if(! extension_loaded('Xdebug')) {throw new Exception('Xdebug not found');}\"\nphp -r \"if(phpversion()>=7.1 && ! extension_loaded('pcov')) {throw new Exception('PCOV not found');}\"\n"
+              },
+              {
+                "name": "Testing ini values",
+                "run": "php -r \"if(ini_get('memory_limit')!='-1') {throw new Exception('memory_limit not disabled');}\"\nphp -r \"if(ini_get('post_max_size')!='256M') {throw new Exception('post_max_size not added');}\"\nphp -r \"if(ini_get('short_open_tag')!=1) {throw new Exception('short_open_tag not added');}\"\nphp -r \"if(ini_get('date.timezone')!='Asia/Kolkata') {throw new Exception('date.timezone not added');}\"\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-05-17T13-49-10Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "php__2024-05-17T13-49-10Z__d6560b1fbbf55bd076855f7ae33e8922596ff192.yml",
+          "workflow_name": "Main workflow",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 93,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "run": 9
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "run": 9
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/cache@v4",
+              "actions/checkout@v4",
+              "shivammathur/cache-extensions@develop"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Main workflow",
+        "true": {
+          "workflow_dispatch": null,
+          "pull_request": {
+            "branches": [
+              "master",
+              "develop",
+              "verbose"
+            ],
+            "paths-ignore": [
+              "**.md",
+              "examples/**"
+            ]
+          },
+          "push": {
+            "branches": [
+              "master",
+              "develop",
+              "verbose"
+            ],
+            "paths-ignore": [
+              "**.md",
+              "examples/**"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "read"
+        },
+        "env": {
+          "default-php-version": "8.2"
+        },
+        "jobs": {
+          "run": {
+            "name": "Run",
+            "runs-on": "${{ matrix.operating-system }}",
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "operating-system": [
+                  "ubuntu-24.04",
+                  "ubuntu-22.04",
+                  "ubuntu-20.04",
+                  "windows-2019",
+                  "macos-13"
+                ],
+                "php-versions": [
+                  "5.3",
+                  "5.4",
+                  "5.5",
+                  "5.6",
+                  "7.0",
+                  "7.1",
+                  "7.2",
+                  "7.3",
+                  "7.4",
+                  "8.0",
+                  "8.1",
+                  "8.2",
+                  "8.3",
+                  "8.4"
+                ],
+                "include": [
+                  {
+                    "operating-system": "ubuntu-24.04",
+                    "php-versions": "",
+                    "php-version-file": "php-version-file"
+                  }
+                ]
+              }
+            },
+            "env": {
+              "extensions": "xml, opcache, xdebug, pcov, gd",
+              "key": "cache-v5"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Setup cache environment",
+                "id": "cache-env",
+                "uses": "shivammathur/cache-extensions@develop",
+                "with": {
+                  "php-version": "${{ matrix.php-versions || env.default-php-version }}",
+                  "extensions": "${{ env.extensions }}",
+                  "key": "${{ env.key }}"
+                }
+              },
+              {
+                "name": "Cache extensions",
+                "uses": "actions/cache@v4",
+                "with": {
+                  "path": "${{ steps.cache-env.outputs.dir }}",
+                  "key": "${{ steps.cache-env.outputs.key }}",
+                  "restore-keys": "${{ steps.cache-env.outputs.key }}"
+                }
+              },
+              {
+                "name": "Stage php-version-file",
+                "if": "${{ matrix.php-version-file == 'php-version-file' }}",
+                "run": "echo ${{ env.default-php-version }} > php-version-file\n"
+              },
+              {
+                "name": "Setup PHP with extensions and custom config",
+                "run": "node dist/index.js",
+                "env": {
+                  "php-version": "${{ matrix.php-versions }}",
+                  "php-version-file": "${{ matrix.php-version-file }}",
+                  "extensions": "${{ env.extensions }}",
+                  "ini-values": "post_max_size=256M, short_open_tag=On, date.timezone=Asia/Kolkata"
+                }
+              },
+              {
+                "name": "Testing PHP version",
+                "run": "php -v\nphp -r \"if(strpos(phpversion(), '${{ matrix.php-versions || env.default-php-version }}') === false) {throw new Exception('Wrong PHP version Installed');}\"\n"
+              },
+              {
+                "name": "Testing Composer version",
+                "run": "composer -V\nphp -r \"if(strpos(@exec('composer -V'), 'Composer version') === false) {throw new Exception('Composer not found');}\"\n"
+              },
+              {
+                "name": "Testing Extensions",
+                "run": "php -m\nphp -r \"if(! extension_loaded('gd')) {throw new Exception('gd not found');}\"\nphp -r \"if(! extension_loaded('xml')) {throw new Exception('xml not found');}\"\nphp -r \"if(! extension_loaded('Xdebug')) {throw new Exception('Xdebug not found');}\"\nphp -r \"if(phpversion()>=7.1 && ! extension_loaded('pcov')) {throw new Exception('PCOV not found');}\"\n"
+              },
+              {
+                "name": "Testing ini values",
+                "run": "php -r \"if(ini_get('memory_limit')!='-1') {throw new Exception('memory_limit not disabled');}\"\nphp -r \"if(ini_get('post_max_size')!='256M') {throw new Exception('post_max_size not added');}\"\nphp -r \"if(ini_get('short_open_tag')!=1) {throw new Exception('short_open_tag not added');}\"\nphp -r \"if(ini_get('date.timezone')!='Asia/Kolkata') {throw new Exception('date.timezone not added');}\"\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-11-04T04-25-55Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "php__2024-11-04T04-25-55Z__58a6e6fb4bbe0142a277b912116b17943b43b012.yml",
+          "workflow_name": "Main workflow",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 93,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "run": 9
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "run": 9
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/cache@v4",
+              "actions/checkout@v4",
+              "shivammathur/cache-extensions@develop"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Main workflow",
+        "true": {
+          "workflow_dispatch": null,
+          "pull_request": {
+            "branches": [
+              "master",
+              "develop",
+              "verbose"
+            ],
+            "paths-ignore": [
+              "**.md",
+              "examples/**"
+            ]
+          },
+          "push": {
+            "branches": [
+              "master",
+              "develop",
+              "verbose"
+            ],
+            "paths-ignore": [
+              "**.md",
+              "examples/**"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "read"
+        },
+        "env": {
+          "default-php-version": "8.2"
+        },
+        "jobs": {
+          "run": {
+            "name": "Run",
+            "runs-on": "${{ matrix.operating-system }}",
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "operating-system": [
+                  "ubuntu-24.04",
+                  "ubuntu-22.04",
+                  "ubuntu-20.04",
+                  "windows-2019",
+                  "macos-13"
+                ],
+                "php-versions": [
+                  "5.3",
+                  "5.4",
+                  "5.5",
+                  "5.6",
+                  "7.0",
+                  "7.1",
+                  "7.2",
+                  "7.3",
+                  "7.4",
+                  "8.0",
+                  "8.1",
+                  "8.2",
+                  "8.3",
+                  "8.4",
+                  "8.5"
+                ],
+                "include": [
+                  {
+                    "operating-system": "ubuntu-24.04",
+                    "php-versions": "",
+                    "php-version-file": "php-version-file"
+                  }
+                ]
+              }
+            },
+            "env": {
+              "extensions": "xml, opcache, xdebug, pcov, gd",
+              "key": "cache-v5"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Setup cache environment",
+                "id": "cache-env",
+                "uses": "shivammathur/cache-extensions@develop",
+                "with": {
+                  "php-version": "${{ matrix.php-versions || env.default-php-version }}",
+                  "extensions": "${{ env.extensions }}",
+                  "key": "${{ env.key }}"
+                }
+              },
+              {
+                "name": "Cache extensions",
+                "uses": "actions/cache@v4",
+                "with": {
+                  "path": "${{ steps.cache-env.outputs.dir }}",
+                  "key": "${{ steps.cache-env.outputs.key }}",
+                  "restore-keys": "${{ steps.cache-env.outputs.key }}"
+                }
+              },
+              {
+                "name": "Stage php-version-file",
+                "if": "${{ matrix.php-version-file == 'php-version-file' }}",
+                "run": "echo ${{ env.default-php-version }} > php-version-file\n"
+              },
+              {
+                "name": "Setup PHP with extensions and custom config",
+                "run": "node dist/index.js",
+                "env": {
+                  "php-version": "${{ matrix.php-versions }}",
+                  "php-version-file": "${{ matrix.php-version-file }}",
+                  "extensions": "${{ env.extensions }}",
+                  "ini-values": "post_max_size=256M, short_open_tag=On, date.timezone=Asia/Kolkata"
+                }
+              },
+              {
+                "name": "Testing PHP version",
+                "run": "php -v\nphp -r \"if(strpos(phpversion(), '${{ matrix.php-versions || env.default-php-version }}') === false) {throw new Exception('Wrong PHP version Installed');}\"\n"
+              },
+              {
+                "name": "Testing Composer version",
+                "run": "composer -V\nphp -r \"if(strpos(@exec('composer -V'), 'Composer version') === false) {throw new Exception('Composer not found');}\"\n"
+              },
+              {
+                "name": "Testing Extensions",
+                "run": "php -m\nphp -r \"if(! extension_loaded('gd')) {throw new Exception('gd not found');}\"\nphp -r \"if(! extension_loaded('xml')) {throw new Exception('xml not found');}\"\nphp -r \"if(! extension_loaded('Xdebug')) {throw new Exception('Xdebug not found');}\"\nphp -r \"if(phpversion()>=7.1 && ! extension_loaded('pcov')) {throw new Exception('PCOV not found');}\"\n"
+              },
+              {
+                "name": "Testing ini values",
+                "run": "php -r \"if(ini_get('memory_limit')!='-1') {throw new Exception('memory_limit not disabled');}\"\nphp -r \"if(ini_get('post_max_size')!='256M') {throw new Exception('post_max_size not added');}\"\nphp -r \"if(ini_get('short_open_tag')!=1) {throw new Exception('short_open_tag not added');}\"\nphp -r \"if(ini_get('date.timezone')!='Asia/Kolkata') {throw new Exception('date.timezone not added');}\"\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-11-04T04-26-32Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "php__2024-11-04T04-26-32Z__cb0fc744e69822aaad298c9ad6e3df50e3537f64.yml",
+          "workflow_name": "Main workflow",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 93,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "run": 9
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "run": 9
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/cache@v4",
+              "actions/checkout@v4",
+              "shivammathur/cache-extensions@develop"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Main workflow",
+        "true": {
+          "workflow_dispatch": null,
+          "pull_request": {
+            "branches": [
+              "master",
+              "develop",
+              "verbose"
+            ],
+            "paths-ignore": [
+              "**.md",
+              "examples/**"
+            ]
+          },
+          "push": {
+            "branches": [
+              "master",
+              "develop",
+              "verbose"
+            ],
+            "paths-ignore": [
+              "**.md",
+              "examples/**"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "read"
+        },
+        "env": {
+          "default-php-version": "8.2"
+        },
+        "jobs": {
+          "run": {
+            "name": "Run",
+            "runs-on": "${{ matrix.operating-system }}",
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "operating-system": [
+                  "ubuntu-24.04",
+                  "ubuntu-22.04",
+                  "ubuntu-20.04",
+                  "windows-2022",
+                  "macos-13"
+                ],
+                "php-versions": [
+                  "5.3",
+                  "5.4",
+                  "5.5",
+                  "5.6",
+                  "7.0",
+                  "7.1",
+                  "7.2",
+                  "7.3",
+                  "7.4",
+                  "8.0",
+                  "8.1",
+                  "8.2",
+                  "8.3",
+                  "8.4",
+                  "8.5"
+                ],
+                "include": [
+                  {
+                    "operating-system": "ubuntu-24.04",
+                    "php-versions": "",
+                    "php-version-file": "php-version-file"
+                  }
+                ]
+              }
+            },
+            "env": {
+              "extensions": "xml, opcache, xdebug, pcov, gd",
+              "key": "cache-v5"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Setup cache environment",
+                "id": "cache-env",
+                "uses": "shivammathur/cache-extensions@develop",
+                "with": {
+                  "php-version": "${{ matrix.php-versions || env.default-php-version }}",
+                  "extensions": "${{ env.extensions }}",
+                  "key": "${{ env.key }}"
+                }
+              },
+              {
+                "name": "Cache extensions",
+                "uses": "actions/cache@v4",
+                "with": {
+                  "path": "${{ steps.cache-env.outputs.dir }}",
+                  "key": "${{ steps.cache-env.outputs.key }}",
+                  "restore-keys": "${{ steps.cache-env.outputs.key }}"
+                }
+              },
+              {
+                "name": "Stage php-version-file",
+                "if": "${{ matrix.php-version-file == 'php-version-file' }}",
+                "run": "echo ${{ env.default-php-version }} > php-version-file\n"
+              },
+              {
+                "name": "Setup PHP with extensions and custom config",
+                "run": "node dist/index.js",
+                "env": {
+                  "php-version": "${{ matrix.php-versions }}",
+                  "php-version-file": "${{ matrix.php-version-file }}",
+                  "extensions": "${{ env.extensions }}",
+                  "ini-values": "post_max_size=256M, short_open_tag=On, date.timezone=Asia/Kolkata"
+                }
+              },
+              {
+                "name": "Testing PHP version",
+                "run": "php -v\nphp -r \"if(strpos(phpversion(), '${{ matrix.php-versions || env.default-php-version }}') === false) {throw new Exception('Wrong PHP version Installed');}\"\n"
+              },
+              {
+                "name": "Testing Composer version",
+                "run": "composer -V\nphp -r \"if(strpos(@exec('composer -V'), 'Composer version') === false) {throw new Exception('Composer not found');}\"\n"
+              },
+              {
+                "name": "Testing Extensions",
+                "run": "php -m\nphp -r \"if(! extension_loaded('gd')) {throw new Exception('gd not found');}\"\nphp -r \"if(! extension_loaded('xml')) {throw new Exception('xml not found');}\"\nphp -r \"if(! extension_loaded('Xdebug')) {throw new Exception('Xdebug not found');}\"\nphp -r \"if(phpversion()>=7.1 && ! extension_loaded('pcov')) {throw new Exception('PCOV not found');}\"\n"
+              },
+              {
+                "name": "Testing ini values",
+                "run": "php -r \"if(ini_get('memory_limit')!='-1') {throw new Exception('memory_limit not disabled');}\"\nphp -r \"if(ini_get('post_max_size')!='256M') {throw new Exception('post_max_size not added');}\"\nphp -r \"if(ini_get('short_open_tag')!=1) {throw new Exception('short_open_tag not added');}\"\nphp -r \"if(ini_get('date.timezone')!='Asia/Kolkata') {throw new Exception('date.timezone not added');}\"\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-04-14T01-55-31Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "php__2025-04-14T01-55-31Z__cf4cade2721270509d5b1c766ab3549210a39a2a.yml",
+          "workflow_name": "Main workflow",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 93,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "run": 9
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "run": 9
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/cache@v4",
+              "actions/checkout@v4",
+              "shivammathur/cache-extensions@develop"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Main workflow",
+        "true": {
+          "workflow_dispatch": null,
+          "pull_request": {
+            "branches": [
+              "master",
+              "develop",
+              "verbose"
+            ],
+            "paths-ignore": [
+              "**.md",
+              "examples/**"
+            ]
+          },
+          "push": {
+            "branches": [
+              "master",
+              "develop",
+              "verbose"
+            ],
+            "paths-ignore": [
+              "**.md",
+              "examples/**"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "read"
+        },
+        "env": {
+          "default-php-version": "8.2"
+        },
+        "jobs": {
+          "run": {
+            "name": "Run",
+            "runs-on": "${{ matrix.operating-system }}",
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "operating-system": [
+                  "ubuntu-24.04",
+                  "ubuntu-22.04",
+                  "windows-2022",
+                  "macos-13"
+                ],
+                "php-versions": [
+                  "5.3",
+                  "5.4",
+                  "5.5",
+                  "5.6",
+                  "7.0",
+                  "7.1",
+                  "7.2",
+                  "7.3",
+                  "7.4",
+                  "8.0",
+                  "8.1",
+                  "8.2",
+                  "8.3",
+                  "8.4",
+                  "8.5"
+                ],
+                "include": [
+                  {
+                    "operating-system": "ubuntu-24.04",
+                    "php-versions": "",
+                    "php-version-file": "php-version-file"
+                  }
+                ]
+              }
+            },
+            "env": {
+              "extensions": "xml, opcache, xdebug, pcov, gd",
+              "key": "cache-v5"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Setup cache environment",
+                "id": "cache-env",
+                "uses": "shivammathur/cache-extensions@develop",
+                "with": {
+                  "php-version": "${{ matrix.php-versions || env.default-php-version }}",
+                  "extensions": "${{ env.extensions }}",
+                  "key": "${{ env.key }}"
+                }
+              },
+              {
+                "name": "Cache extensions",
+                "uses": "actions/cache@v4",
+                "with": {
+                  "path": "${{ steps.cache-env.outputs.dir }}",
+                  "key": "${{ steps.cache-env.outputs.key }}",
+                  "restore-keys": "${{ steps.cache-env.outputs.key }}"
+                }
+              },
+              {
+                "name": "Stage php-version-file",
+                "if": "${{ matrix.php-version-file == 'php-version-file' }}",
+                "run": "echo ${{ env.default-php-version }} > php-version-file\n"
+              },
+              {
+                "name": "Setup PHP with extensions and custom config",
+                "run": "node dist/index.js",
+                "env": {
+                  "php-version": "${{ matrix.php-versions }}",
+                  "php-version-file": "${{ matrix.php-version-file }}",
+                  "extensions": "${{ env.extensions }}",
+                  "ini-values": "post_max_size=256M, short_open_tag=On, date.timezone=Asia/Kolkata"
+                }
+              },
+              {
+                "name": "Testing PHP version",
+                "run": "php -v\nphp -r \"if(strpos(phpversion(), '${{ matrix.php-versions || env.default-php-version }}') === false) {throw new Exception('Wrong PHP version Installed');}\"\n"
+              },
+              {
+                "name": "Testing Composer version",
+                "run": "composer -V\nphp -r \"if(strpos(@exec('composer -V'), 'Composer version') === false) {throw new Exception('Composer not found');}\"\n"
+              },
+              {
+                "name": "Testing Extensions",
+                "run": "php -m\nphp -r \"if(! extension_loaded('gd')) {throw new Exception('gd not found');}\"\nphp -r \"if(! extension_loaded('xml')) {throw new Exception('xml not found');}\"\nphp -r \"if(! extension_loaded('Xdebug')) {throw new Exception('Xdebug not found');}\"\nphp -r \"if(phpversion()>=7.1 && ! extension_loaded('pcov')) {throw new Exception('PCOV not found');}\"\n"
+              },
+              {
+                "name": "Testing ini values",
+                "run": "php -r \"if(ini_get('memory_limit')!='-1') {throw new Exception('memory_limit not disabled');}\"\nphp -r \"if(ini_get('post_max_size')!='256M') {throw new Exception('post_max_size not added');}\"\nphp -r \"if(ini_get('short_open_tag')!=1) {throw new Exception('short_open_tag not added');}\"\nphp -r \"if(ini_get('date.timezone')!='Asia/Kolkata') {throw new Exception('date.timezone not added');}\"\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-07-08T23-06-51Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "php__2025-07-08T23-06-51Z__3514a658eb7ee12c3abd7574dcbe62e47a6524a6.yml",
+          "workflow_name": "Main workflow",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 93,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "run": 9
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "run": 9
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/cache@v4",
+              "actions/checkout@v4",
+              "shivammathur/cache-extensions@develop"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Main workflow",
+        "true": {
+          "workflow_dispatch": null,
+          "pull_request": {
+            "branches": [
+              "main",
+              "develop",
+              "verbose"
+            ],
+            "paths-ignore": [
+              "**.md",
+              "examples/**"
+            ]
+          },
+          "push": {
+            "branches": [
+              "main",
+              "develop",
+              "verbose"
+            ],
+            "paths-ignore": [
+              "**.md",
+              "examples/**"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "read"
+        },
+        "env": {
+          "default-php-version": "8.2"
+        },
+        "jobs": {
+          "run": {
+            "name": "Run",
+            "runs-on": "${{ matrix.operating-system }}",
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "operating-system": [
+                  "ubuntu-24.04",
+                  "ubuntu-22.04",
+                  "windows-2022",
+                  "macos-13"
+                ],
+                "php-versions": [
+                  "5.3",
+                  "5.4",
+                  "5.5",
+                  "5.6",
+                  "7.0",
+                  "7.1",
+                  "7.2",
+                  "7.3",
+                  "7.4",
+                  "8.0",
+                  "8.1",
+                  "8.2",
+                  "8.3",
+                  "8.4",
+                  "8.5"
+                ],
+                "include": [
+                  {
+                    "operating-system": "ubuntu-24.04",
+                    "php-versions": "",
+                    "php-version-file": "php-version-file"
+                  }
+                ]
+              }
+            },
+            "env": {
+              "extensions": "xml, opcache, xdebug, pcov, gd",
+              "key": "cache-v5"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Setup cache environment",
+                "id": "cache-env",
+                "uses": "shivammathur/cache-extensions@develop",
+                "with": {
+                  "php-version": "${{ matrix.php-versions || env.default-php-version }}",
+                  "extensions": "${{ env.extensions }}",
+                  "key": "${{ env.key }}"
+                }
+              },
+              {
+                "name": "Cache extensions",
+                "uses": "actions/cache@v4",
+                "with": {
+                  "path": "${{ steps.cache-env.outputs.dir }}",
+                  "key": "${{ steps.cache-env.outputs.key }}",
+                  "restore-keys": "${{ steps.cache-env.outputs.key }}"
+                }
+              },
+              {
+                "name": "Stage php-version-file",
+                "if": "${{ matrix.php-version-file == 'php-version-file' }}",
+                "run": "echo ${{ env.default-php-version }} > php-version-file\n"
+              },
+              {
+                "name": "Setup PHP with extensions and custom config",
+                "run": "node dist/index.js",
+                "env": {
+                  "php-version": "${{ matrix.php-versions }}",
+                  "php-version-file": "${{ matrix.php-version-file }}",
+                  "extensions": "${{ env.extensions }}",
+                  "ini-values": "post_max_size=256M, short_open_tag=On, date.timezone=Asia/Kolkata"
+                }
+              },
+              {
+                "name": "Testing PHP version",
+                "run": "php -v\nphp -r \"if(strpos(phpversion(), '${{ matrix.php-versions || env.default-php-version }}') === false) {throw new Exception('Wrong PHP version Installed');}\"\n"
+              },
+              {
+                "name": "Testing Composer version",
+                "run": "composer -V\nphp -r \"if(strpos(@exec('composer -V'), 'Composer version') === false) {throw new Exception('Composer not found');}\"\n"
+              },
+              {
+                "name": "Testing Extensions",
+                "run": "php -m\nphp -r \"if(! extension_loaded('gd')) {throw new Exception('gd not found');}\"\nphp -r \"if(! extension_loaded('xml')) {throw new Exception('xml not found');}\"\nphp -r \"if(! extension_loaded('Xdebug')) {throw new Exception('Xdebug not found');}\"\nphp -r \"if(phpversion()>=7.1 && ! extension_loaded('pcov')) {throw new Exception('PCOV not found');}\"\n"
+              },
+              {
+                "name": "Testing ini values",
+                "run": "php -r \"if(ini_get('memory_limit')!='-1') {throw new Exception('memory_limit not disabled');}\"\nphp -r \"if(ini_get('post_max_size')!='256M') {throw new Exception('post_max_size not added');}\"\nphp -r \"if(ini_get('short_open_tag')!=1) {throw new Exception('short_open_tag not added');}\"\nphp -r \"if(ini_get('date.timezone')!='Asia/Kolkata') {throw new Exception('date.timezone not added');}\"\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-08-18T16-21-04Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "php__2025-08-18T16-21-04Z__629475b7b3ce2ceeb264b83820a710e6eff2fa4a.yml",
+          "workflow_name": "Main workflow",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 93,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "run": 9
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "run": 9
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/cache@v4",
+              "actions/checkout@v5",
+              "shivammathur/cache-extensions@develop"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Main workflow",
+        "true": {
+          "workflow_dispatch": null,
+          "pull_request": {
+            "branches": [
+              "main",
+              "develop",
+              "verbose"
+            ],
+            "paths-ignore": [
+              "**.md",
+              "examples/**"
+            ]
+          },
+          "push": {
+            "branches": [
+              "main",
+              "develop",
+              "verbose"
+            ],
+            "paths-ignore": [
+              "**.md",
+              "examples/**"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "read"
+        },
+        "env": {
+          "default-php-version": "8.2"
+        },
+        "jobs": {
+          "run": {
+            "name": "Run",
+            "runs-on": "${{ matrix.operating-system }}",
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "operating-system": [
+                  "ubuntu-24.04",
+                  "ubuntu-22.04",
+                  "windows-2022",
+                  "macos-13"
+                ],
+                "php-versions": [
+                  "5.3",
+                  "5.4",
+                  "5.5",
+                  "5.6",
+                  "7.0",
+                  "7.1",
+                  "7.2",
+                  "7.3",
+                  "7.4",
+                  "8.0",
+                  "8.1",
+                  "8.2",
+                  "8.3",
+                  "8.4",
+                  "8.5"
+                ],
+                "include": [
+                  {
+                    "operating-system": "ubuntu-24.04",
+                    "php-versions": "",
+                    "php-version-file": "php-version-file"
+                  }
+                ]
+              }
+            },
+            "env": {
+              "extensions": "xml, opcache, xdebug, pcov, gd",
+              "key": "cache-v5"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v5"
+              },
+              {
+                "name": "Setup cache environment",
+                "id": "cache-env",
+                "uses": "shivammathur/cache-extensions@develop",
+                "with": {
+                  "php-version": "${{ matrix.php-versions || env.default-php-version }}",
+                  "extensions": "${{ env.extensions }}",
+                  "key": "${{ env.key }}"
+                }
+              },
+              {
+                "name": "Cache extensions",
+                "uses": "actions/cache@v4",
+                "with": {
+                  "path": "${{ steps.cache-env.outputs.dir }}",
+                  "key": "${{ steps.cache-env.outputs.key }}",
+                  "restore-keys": "${{ steps.cache-env.outputs.key }}"
+                }
+              },
+              {
+                "name": "Stage php-version-file",
+                "if": "${{ matrix.php-version-file == 'php-version-file' }}",
+                "run": "echo ${{ env.default-php-version }} > php-version-file\n"
+              },
+              {
+                "name": "Setup PHP with extensions and custom config",
+                "run": "node dist/index.js",
+                "env": {
+                  "php-version": "${{ matrix.php-versions }}",
+                  "php-version-file": "${{ matrix.php-version-file }}",
+                  "extensions": "${{ env.extensions }}",
+                  "ini-values": "post_max_size=256M, short_open_tag=On, date.timezone=Asia/Kolkata"
+                }
+              },
+              {
+                "name": "Testing PHP version",
+                "run": "php -v\nphp -r \"if(strpos(phpversion(), '${{ matrix.php-versions || env.default-php-version }}') === false) {throw new Exception('Wrong PHP version Installed');}\"\n"
+              },
+              {
+                "name": "Testing Composer version",
+                "run": "composer -V\nphp -r \"if(strpos(@exec('composer -V'), 'Composer version') === false) {throw new Exception('Composer not found');}\"\n"
+              },
+              {
+                "name": "Testing Extensions",
+                "run": "php -m\nphp -r \"if(! extension_loaded('gd')) {throw new Exception('gd not found');}\"\nphp -r \"if(! extension_loaded('xml')) {throw new Exception('xml not found');}\"\nphp -r \"if(! extension_loaded('Xdebug')) {throw new Exception('Xdebug not found');}\"\nphp -r \"if(phpversion()>=7.1 && ! extension_loaded('pcov')) {throw new Exception('PCOV not found');}\"\n"
+              },
+              {
+                "name": "Testing ini values",
+                "run": "php -r \"if(ini_get('memory_limit')!='-1') {throw new Exception('memory_limit not disabled');}\"\nphp -r \"if(ini_get('post_max_size')!='256M') {throw new Exception('post_max_size not added');}\"\nphp -r \"if(ini_get('short_open_tag')!=1) {throw new Exception('short_open_tag not added');}\"\nphp -r \"if(ini_get('date.timezone')!='Asia/Kolkata') {throw new Exception('date.timezone not added');}\"\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-09-25T16-41-11Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "php__2025-09-25T16-41-11Z__4cba65b8c5a7681c52ce219a59833167d4550fe0.yml",
+          "workflow_name": "Main workflow",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 93,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "run": 9
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "run": 9
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/cache@v4",
+              "actions/checkout@v5",
+              "shivammathur/cache-extensions@develop"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Main workflow",
+        "true": {
+          "workflow_dispatch": null,
+          "pull_request": {
+            "branches": [
+              "main",
+              "develop",
+              "verbose"
+            ],
+            "paths-ignore": [
+              "**.md",
+              "examples/**"
+            ]
+          },
+          "push": {
+            "branches": [
+              "main",
+              "develop",
+              "verbose"
+            ],
+            "paths-ignore": [
+              "**.md",
+              "examples/**"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "read"
+        },
+        "env": {
+          "default-php-version": "8.2"
+        },
+        "jobs": {
+          "run": {
+            "name": "Run",
+            "runs-on": "${{ matrix.operating-system }}",
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "operating-system": [
+                  "ubuntu-24.04",
+                  "ubuntu-22.04",
+                  "windows-2022",
+                  "macos-15-intel"
+                ],
+                "php-versions": [
+                  "5.3",
+                  "5.4",
+                  "5.5",
+                  "5.6",
+                  "7.0",
+                  "7.1",
+                  "7.2",
+                  "7.3",
+                  "7.4",
+                  "8.0",
+                  "8.1",
+                  "8.2",
+                  "8.3",
+                  "8.4",
+                  "8.5",
+                  "8.6"
+                ],
+                "include": [
+                  {
+                    "operating-system": "ubuntu-24.04",
+                    "php-versions": "",
+                    "php-version-file": "php-version-file"
+                  }
+                ]
+              }
+            },
+            "env": {
+              "extensions": "xml, opcache, xdebug, pcov, gd",
+              "key": "cache-v5"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v5"
+              },
+              {
+                "name": "Setup cache environment",
+                "id": "cache-env",
+                "uses": "shivammathur/cache-extensions@develop",
+                "with": {
+                  "php-version": "${{ matrix.php-versions || env.default-php-version }}",
+                  "extensions": "${{ env.extensions }}",
+                  "key": "${{ env.key }}"
+                }
+              },
+              {
+                "name": "Cache extensions",
+                "uses": "actions/cache@v4",
+                "with": {
+                  "path": "${{ steps.cache-env.outputs.dir }}",
+                  "key": "${{ steps.cache-env.outputs.key }}",
+                  "restore-keys": "${{ steps.cache-env.outputs.key }}"
+                }
+              },
+              {
+                "name": "Stage php-version-file",
+                "if": "${{ matrix.php-version-file == 'php-version-file' }}",
+                "run": "echo ${{ env.default-php-version }} > php-version-file\n"
+              },
+              {
+                "name": "Setup PHP with extensions and custom config",
+                "run": "node dist/index.js",
+                "env": {
+                  "php-version": "${{ matrix.php-versions }}",
+                  "php-version-file": "${{ matrix.php-version-file }}",
+                  "extensions": "${{ env.extensions }}",
+                  "ini-values": "post_max_size=256M, short_open_tag=On, date.timezone=Asia/Kolkata"
+                }
+              },
+              {
+                "name": "Testing PHP version",
+                "run": "php -v\nphp -r \"if(strpos(phpversion(), '${{ matrix.php-versions || env.default-php-version }}') === false) {throw new Exception('Wrong PHP version Installed');}\"\n"
+              },
+              {
+                "name": "Testing Composer version",
+                "run": "composer -V\nphp -r \"if(strpos(@exec('composer -V'), 'Composer version') === false) {throw new Exception('Composer not found');}\"\n"
+              },
+              {
+                "name": "Testing Extensions",
+                "run": "php -m\nphp -r \"if(! extension_loaded('gd')) {throw new Exception('gd not found');}\"\nphp -r \"if(! extension_loaded('xml')) {throw new Exception('xml not found');}\"\nphp -r \"if(! extension_loaded('Xdebug')) {throw new Exception('Xdebug not found');}\"\nphp -r \"if(phpversion()>=7.1 && ! extension_loaded('pcov')) {throw new Exception('PCOV not found');}\"\n"
+              },
+              {
+                "name": "Testing ini values",
+                "run": "php -r \"if(ini_get('memory_limit')!='-1') {throw new Exception('memory_limit not disabled');}\"\nphp -r \"if(ini_get('post_max_size')!='256M') {throw new Exception('post_max_size not added');}\"\nphp -r \"if(ini_get('short_open_tag')!=1) {throw new Exception('short_open_tag not added');}\"\nphp -r \"if(ini_get('date.timezone')!='Asia/Kolkata') {throw new Exception('date.timezone not added');}\"\n"
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,489 @@
+{
+  "repo_owner": "armbian",
+  "repo_name": "build",
+  "workflow_name": "pr-build-artifacts",
+  "history": {
+    "2024-06-09T16-30-45Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-0521593b-09a7-587f-92af-73d318c1d20d",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/pr-build-artifacts__2024-06-09T16-30-45Z__0e7e76dcb15ce17b83118427081339041a94ab0c.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 33,
+                  "startColumn": 5,
+                  "endLine": 44,
+                  "endColumn": 54
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "a77d1078e54b7e3:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "pr-build-artifacts__2024-06-09T16-30-45Z__0e7e76dcb15ce17b83118427081339041a94ab0c.yml",
+          "workflow_name": "Generate artifacts on PR if 'Build' label exists",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 44,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "Check": 1,
+            "Compile": 0
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 1,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Check": 1,
+              "Compile": 0
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 1,
+            "actions_used": [
+              "tspascoal/get-user-teams-membership@v3"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Generate artifacts on PR if 'Build' label exists",
+        "true": {
+          "pull_request": {
+            "types": [
+              "opened",
+              "reopened",
+              "synchronize",
+              "labeled"
+            ]
+          }
+        },
+        "jobs": {
+          "Check": {
+            "permissions": {
+              "pull-requests": "read"
+            },
+            "name": "Check if 'Build' label is active and user is authorized",
+            "if": "contains(github.event.pull_request.labels.*.name, 'Build')",
+            "runs-on": "Linux",
+            "outputs": {
+              "member": "${{ steps.checkUserMember.outputs.isTeamMember }}"
+            },
+            "steps": [
+              {
+                "uses": "tspascoal/get-user-teams-membership@v3",
+                "id": "checkUserMember",
+                "with": {
+                  "username": "${{ github.actor }}",
+                  "organization": "armbian",
+                  "team": "Release manager",
+                  "GITHUB_TOKEN": "${{ secrets.ORG_MEMBERS }}"
+                }
+              }
+            ]
+          },
+          "Compile": {
+            "needs": "Check",
+            "name": "Update artifacts",
+            "concurrency": {
+              "group": "pipeline-pr-${{github.event.pull_request.number}}",
+              "cancel-in-progress": true
+            },
+            "if": "${{ github.repository_owner == 'Armbian' && needs.Check.outputs.member == 'true' }}",
+            "uses": "armbian/os/.github/workflows/complete-artifact-matrix-all.yml@main",
+            "secrets": {
+              "ORG_MEMBERS": "${{ secrets.ORG_MEMBERS }}"
+            },
+            "with": {
+              "extraParamsAllBuilds": "UPLOAD_TO_OCI_ONLY=no",
+              "ref": "${{ github.event.pull_request.head.sha }}"
+            }
+          }
+        }
+      }
+    },
+    "2024-07-11T16-02-32Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-d459dad6-f2c5-5947-87cf-cd369e85359b",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/pr-build-artifacts__2024-07-11T16-02-32Z__2a27fdd4d05b89bfe95d864931c5ce2df95d72a3.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 35,
+                  "startColumn": 5,
+                  "endLine": 46,
+                  "endColumn": 54
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "70bdb0a7d989e07f:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-f41b4e3b-0dc6-519d-a52d-684feb5b9c67",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/pr-build-artifacts__2024-07-11T16-02-32Z__3fff477855427bb179827125372d277ff8d0e7b5.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 35,
+                  "startColumn": 5,
+                  "endLine": 46,
+                  "endColumn": 54
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "a77d1078e54b7e3:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-b4a505e8-f3c7-5a53-8a8e-3c67d448b5c7",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/pr-build-artifacts__2024-07-11T16-02-32Z__6f664c92fd8dd7704a837054ef5137a90e48a82c.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 32,
+                  "startColumn": 5,
+                  "endLine": 43,
+                  "endColumn": 54
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "70bdb0a7d989e07f:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "pr-build-artifacts__2024-07-11T16-02-32Z__6f664c92fd8dd7704a837054ef5137a90e48a82c.yml",
+          "workflow_name": "Generate Artifacts on PR if 'Build' label exists",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 43,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "Check": 1,
+            "Compile": 0
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 1,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Check": 1,
+              "Compile": 0
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 1,
+            "actions_used": [
+              "tspascoal/get-user-teams-membership@v3"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Generate Artifacts on PR if 'Build' label exists",
+        "run-name": "Generate artifacts - PR #${{ github.event.pull_request.number }} - by @${{ github.actor }}",
+        "true": {
+          "pull_request": {
+            "types": [
+              "opened",
+              "reopened",
+              "synchronize",
+              "labeled"
+            ]
+          }
+        },
+        "jobs": {
+          "Check": {
+            "permissions": {
+              "pull-requests": "read"
+            },
+            "name": "Check label and authorization",
+            "if": "contains(github.event.pull_request.labels.*.name, 'Build')",
+            "runs-on": "Linux",
+            "outputs": {
+              "member": "${{ steps.checkUserMember.outputs.isTeamMember }}"
+            },
+            "steps": [
+              {
+                "uses": "tspascoal/get-user-teams-membership@v3",
+                "id": "checkUserMember",
+                "with": {
+                  "username": "${{ github.actor }}",
+                  "organization": "armbian",
+                  "team": "Release manager",
+                  "GITHUB_TOKEN": "${{ secrets.ORG_MEMBERS }}"
+                }
+              }
+            ]
+          },
+          "Compile": {
+            "needs": "Check",
+            "name": "Generate artifacts",
+            "concurrency": {
+              "group": "pipeline-pr-${{github.event.pull_request.number}}",
+              "cancel-in-progress": true
+            },
+            "if": "${{ github.repository_owner == 'Armbian' && needs.Check.outputs.member == 'true' }}",
+            "uses": "armbian/os/.github/workflows/complete-artifact-matrix-all.yml@main",
+            "secrets": {
+              "ORG_MEMBERS": "${{ secrets.ORG_MEMBERS }}"
+            },
+            "with": {
+              "extraParamsAllBuilds": "UPLOAD_TO_OCI_ONLY=no",
+              "ref": "${{ github.event.pull_request.head.sha }}"
+            }
+          }
+        }
+      }
+    },
+    "2024-11-01T07-27-49Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-b80ee389-379b-53f6-9763-a14f09257f33",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/pr-build-artifacts__2024-11-01T07-27-49Z__d355c17dc3b7f3349d1dfe919df9bc40b25e4ed3.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 30,
+                  "startColumn": 5,
+                  "endLine": 41,
+                  "endColumn": 54
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "70bdb0a7d989e07f:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "pr-build-artifacts__2024-11-01T07-27-49Z__d355c17dc3b7f3349d1dfe919df9bc40b25e4ed3.yml",
+          "workflow_name": "Generate Artifacts on PR if 'Build' label exists",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 41,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "Check": 1,
+            "Compile": 0
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 1,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Check": 1,
+              "Compile": 0
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 1,
+            "actions_used": [
+              "tspascoal/get-user-teams-membership@v3"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Generate Artifacts on PR if 'Build' label exists",
+        "run-name": "Generate artifacts - PR #${{ github.event.pull_request.number }} - by @${{ github.actor }}",
+        "true": "pull_request_target",
+        "jobs": {
+          "Check": {
+            "permissions": {
+              "pull-requests": "read"
+            },
+            "name": "Check label and authorization",
+            "runs-on": "Linux",
+            "outputs": {
+              "member": "${{ steps.checkUserMember.outputs.isTeamMember }}"
+            },
+            "steps": [
+              {
+                "uses": "tspascoal/get-user-teams-membership@v3",
+                "if": "contains(github.event.pull_request.labels.*.name, 'Build')",
+                "id": "checkUserMember",
+                "with": {
+                  "username": "${{ github.actor }}",
+                  "organization": "armbian",
+                  "team": "Release manager",
+                  "GITHUB_TOKEN": "${{ secrets.ORG_MEMBERS }}"
+                }
+              }
+            ]
+          },
+          "Compile": {
+            "needs": "Check",
+            "name": "Generate artifacts",
+            "concurrency": {
+              "group": "pipeline-pr-${{github.event.pull_request.number}}",
+              "cancel-in-progress": true
+            },
+            "if": "${{ github.repository_owner == 'Armbian' && needs.Check.outputs.member == 'true' }}",
+            "uses": "armbian/os/.github/workflows/complete-artifact-matrix-all.yml@main",
+            "secrets": {
+              "ORG_MEMBERS": "${{ secrets.ORG_MEMBERS }}"
+            },
+            "with": {
+              "extraParamsAllBuilds": "UPLOAD_TO_OCI_ONLY=no",
+              "ref": "${{ github.event.pull_request.head.sha }}"
+            }
+          }
+        }
+      }
+    }
+  }
+}

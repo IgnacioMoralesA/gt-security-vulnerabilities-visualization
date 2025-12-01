@@ -1,0 +1,115 @@
+{
+  "repo_owner": "ad-m",
+  "repo_name": "github-push-action",
+  "workflow_name": "publish",
+  "history": {
+    "2024-03-10T19-39-20Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-e808aeb4-cbcd-54b3-9090-325045c6c561",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/publish__2024-03-10T19-39-20Z__9870d48124da805820c70ebc6ba563c715551019.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 10,
+                  "startColumn": 5,
+                  "endLine": 23,
+                  "endColumn": 49
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "ab2043074c581be7:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "publish__2024-03-10T19-39-20Z__9870d48124da805820c70ebc6ba563c715551019.yml",
+          "workflow_name": "Publish",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 23,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "publish": 2
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "publish": 2
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 1,
+            "actions_used": [
+              "actions/checkout@v4"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Publish",
+        "true": {
+          "release": {
+            "types": [
+              "published"
+            ]
+          }
+        },
+        "jobs": {
+          "publish": {
+            "name": "Publish the release version",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout the repository and the branch",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Setup the release version and overwrite the existing major version tag",
+                "run": "major_version=$(echo $GITHUB_REF_NAME | cut -d. -f1)\ngit config --local user.email \"github-actions[bot]@users.noreply.github.com\"\ngit config --local user.name \"github-actions[bot]\"\ngit tag -fa $major_version -m \"Update $major_version tag and add version $GITHUB_REF_NAME to it\"\ngit push origin $major_version --force"
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

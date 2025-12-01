@@ -1,0 +1,92 @@
+{
+  "repo_owner": "aws-actions",
+  "repo_name": "configure-aws-credentials",
+  "workflow_name": "issue-regression-labeler",
+  "history": {
+    "2024-09-12T18-12-07Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "issue-regression-labeler__2024-09-12T18-12-07Z__bd1354327e55c2330d56537b3ac2006a8d97c566.yml",
+          "workflow_name": "issue-regression-label",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 32,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "add-regression-label": 2
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "add-regression-label": 2
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 1,
+            "actions_used": [
+              "actions/github-script@v7"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "issue-regression-label",
+        "true": {
+          "issues": {
+            "types": [
+              "opened",
+              "edited"
+            ]
+          }
+        },
+        "jobs": {
+          "add-regression-label": {
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "issues": "write"
+            },
+            "steps": [
+              {
+                "name": "Fetch template body",
+                "id": "check_regression",
+                "uses": "actions/github-script@v7",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}",
+                  "TEMPLATE_BODY": "${{ github.event.issue.body }}"
+                },
+                "with": {
+                  "script": "const regressionPattern = /\\[x\\] Select this option if this issue appears to be a regression\\./i;\nconst template = `${process.env.TEMPLATE_BODY}`\nconst match = regressionPattern.test(template);\ncore.setOutput('is_regression', match);\n"
+                }
+              },
+              {
+                "name": "Manage regression label",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                },
+                "run": "if [ \"${{ steps.check_regression.outputs.is_regression }}\" == \"true\" ]; then\n  gh issue edit ${{ github.event.issue.number }} --add-label \"potential-regression\" -R ${{ github.repository }}\nelse\n  gh issue edit ${{ github.event.issue.number }} --remove-label \"potential-regression\" -R ${{ github.repository }}\nfi\n"
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

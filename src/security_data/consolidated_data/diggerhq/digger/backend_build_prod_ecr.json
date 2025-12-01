@@ -1,0 +1,631 @@
+{
+  "repo_owner": "diggerhq",
+  "repo_name": "digger",
+  "workflow_name": "backend_build_prod_ecr",
+  "history": {
+    "2023-12-19T17-50-21Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "backend_build_prod_ecr__2023-12-19T17-50-21Z__dfea0ea8ffa6b63c50163d1228daffc5ac04d716.yml",
+          "workflow_name": "Backend Build&Push to Prod ECR",
+          "triggers": {},
+          "permissions": {
+            "id-token": "write",
+            "contents": "read"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 57,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "build": 4,
+            "restart": 2
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 1,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 4,
+              "restart": 2
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "aws-actions/amazon-ecr-login@v2",
+              "aws-actions/configure-aws-credentials@v4"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Backend Build&Push to Prod ECR",
+        "true": {
+          "push": {
+            "branches": [
+              "develop"
+            ]
+          }
+        },
+        "permissions": {
+          "id-token": "write",
+          "contents": "read"
+        },
+        "jobs": {
+          "build": {
+            "name": "Build Image",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Check out code",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Configure AWS credentials",
+                "uses": "aws-actions/configure-aws-credentials@v4",
+                "with": {
+                  "role-to-assume": "${{ secrets.PROD_AWS_ROLE }}",
+                  "aws-region": "eu-west-2"
+                }
+              },
+              {
+                "name": "Login to Amazon ECR",
+                "id": "login-ecr",
+                "uses": "aws-actions/amazon-ecr-login@v2"
+              },
+              {
+                "name": "Build, tag, and push image to Amazon ECR",
+                "env": {
+                  "ECR_REGISTRY": "${{ steps.login-ecr.outputs.registry }}",
+                  "ECR_REPOSITORY": "cloud-web",
+                  "IMAGE_TAG": "latest"
+                },
+                "run": "export COMMIT_SHA=$(git rev-parse --short HEAD)\ndocker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG --build-arg COMMIT_SHA=${COMMIT_SHA} -f backend/Dockerfile .\ndocker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG\n",
+                "working-directory": "backend"
+              }
+            ]
+          },
+          "restart": {
+            "needs": "build",
+            "name": "Restart ECS service",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Configure AWS credentials",
+                "uses": "aws-actions/configure-aws-credentials@v4",
+                "with": {
+                  "role-to-assume": "${{ secrets.PROD_AWS_ROLE}}",
+                  "aws-region": "eu-west-2"
+                }
+              },
+              {
+                "name": "Restart ECS",
+                "env": {
+                  "ECR_REGISTRY": "${{ steps.login-ecr.outputs.registry }}",
+                  "AWS_REGION": "eu-west-2"
+                },
+                "run": "aws ecs update-service --cluster ${{ vars.ECS_CLUSTER_NAME }} --service ${{ vars.ECS_SERVICE_NAME }} --force-new-deployment --region $AWS_REGION\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-12-22T16-36-38Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "backend_build_prod_ecr__2023-12-22T16-36-38Z__8a6b382fabfe6431e41bb8767f151cdc4cdb7d22.yml",
+          "workflow_name": "Backend Build&Push to Prod ECR",
+          "triggers": {},
+          "permissions": {
+            "id-token": "write",
+            "contents": "read"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 57,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "build": 4,
+            "restart": 2
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 1,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 4,
+              "restart": 2
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "aws-actions/amazon-ecr-login@v2",
+              "aws-actions/configure-aws-credentials@v4"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Backend Build&Push to Prod ECR",
+        "true": {
+          "push": {
+            "branches": [
+              "develop"
+            ]
+          }
+        },
+        "permissions": {
+          "id-token": "write",
+          "contents": "read"
+        },
+        "jobs": {
+          "build": {
+            "name": "Build Image",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Check out code",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Configure AWS credentials",
+                "uses": "aws-actions/configure-aws-credentials@v4",
+                "with": {
+                  "role-to-assume": "${{ secrets.PROD_AWS_ROLE }}",
+                  "aws-region": "eu-west-2"
+                }
+              },
+              {
+                "name": "Login to Amazon ECR",
+                "id": "login-ecr",
+                "uses": "aws-actions/amazon-ecr-login@v2"
+              },
+              {
+                "name": "Build, tag, and push image to Amazon ECR",
+                "env": {
+                  "ECR_REGISTRY": "${{ steps.login-ecr.outputs.registry }}",
+                  "ECR_REPOSITORY": "cloud-web",
+                  "IMAGE_TAG": "latest"
+                },
+                "run": "export COMMIT_SHA=$(git rev-parse --short HEAD)\ndocker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG --build-arg COMMIT_SHA=${COMMIT_SHA} -f -f Dockerfile_backend .\ndocker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG\n",
+                "working-directory": "backend"
+              }
+            ]
+          },
+          "restart": {
+            "needs": "build",
+            "name": "Restart ECS service",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Configure AWS credentials",
+                "uses": "aws-actions/configure-aws-credentials@v4",
+                "with": {
+                  "role-to-assume": "${{ secrets.PROD_AWS_ROLE}}",
+                  "aws-region": "eu-west-2"
+                }
+              },
+              {
+                "name": "Restart ECS",
+                "env": {
+                  "ECR_REGISTRY": "${{ steps.login-ecr.outputs.registry }}",
+                  "AWS_REGION": "eu-west-2"
+                },
+                "run": "aws ecs update-service --cluster ${{ vars.ECS_CLUSTER_NAME }} --service ${{ vars.ECS_SERVICE_NAME }} --force-new-deployment --region $AWS_REGION\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-12-22T18-31-27Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "backend_build_prod_ecr__2023-12-22T18-31-27Z__f9d6572a4af0f4ec5a2f48e472198c92a02b3415.yml",
+          "workflow_name": "Backend Build&Push to Prod ECR",
+          "triggers": {},
+          "permissions": {
+            "id-token": "write",
+            "contents": "read"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 57,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "build": 4,
+            "restart": 2
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 1,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 4,
+              "restart": 2
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "aws-actions/amazon-ecr-login@v2",
+              "aws-actions/configure-aws-credentials@v4"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Backend Build&Push to Prod ECR",
+        "true": {
+          "push": {
+            "branches": [
+              "develop"
+            ]
+          }
+        },
+        "permissions": {
+          "id-token": "write",
+          "contents": "read"
+        },
+        "jobs": {
+          "build": {
+            "name": "Build Image",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Check out code",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Configure AWS credentials",
+                "uses": "aws-actions/configure-aws-credentials@v4",
+                "with": {
+                  "role-to-assume": "${{ secrets.PROD_AWS_ROLE }}",
+                  "aws-region": "eu-west-2"
+                }
+              },
+              {
+                "name": "Login to Amazon ECR",
+                "id": "login-ecr",
+                "uses": "aws-actions/amazon-ecr-login@v2"
+              },
+              {
+                "name": "Build, tag, and push image to Amazon ECR",
+                "env": {
+                  "ECR_REGISTRY": "${{ steps.login-ecr.outputs.registry }}",
+                  "ECR_REPOSITORY": "cloud-web",
+                  "IMAGE_TAG": "latest"
+                },
+                "run": "export COMMIT_SHA=$(git rev-parse --short HEAD)\ndocker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG --build-arg COMMIT_SHA=${COMMIT_SHA} -f Dockerfile_backend .\ndocker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG\n",
+                "working-directory": "backend"
+              }
+            ]
+          },
+          "restart": {
+            "needs": "build",
+            "name": "Restart ECS service",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Configure AWS credentials",
+                "uses": "aws-actions/configure-aws-credentials@v4",
+                "with": {
+                  "role-to-assume": "${{ secrets.PROD_AWS_ROLE}}",
+                  "aws-region": "eu-west-2"
+                }
+              },
+              {
+                "name": "Restart ECS",
+                "env": {
+                  "ECR_REGISTRY": "${{ steps.login-ecr.outputs.registry }}",
+                  "AWS_REGION": "eu-west-2"
+                },
+                "run": "aws ecs update-service --cluster ${{ vars.ECS_CLUSTER_NAME }} --service ${{ vars.ECS_SERVICE_NAME }} --force-new-deployment --region $AWS_REGION\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-12-22T18-33-07Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "backend_build_prod_ecr__2023-12-22T18-33-07Z__69affcdd5a1b29b8b4e33f904cd58dd464b25f98.yml",
+          "workflow_name": "Backend Build&Push to Prod ECR",
+          "triggers": {},
+          "permissions": {
+            "id-token": "write",
+            "contents": "read"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 56,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "build": 4,
+            "restart": 2
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 1,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 4,
+              "restart": 2
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "aws-actions/amazon-ecr-login@v2",
+              "aws-actions/configure-aws-credentials@v4"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Backend Build&Push to Prod ECR",
+        "true": {
+          "push": {
+            "branches": [
+              "develop"
+            ]
+          }
+        },
+        "permissions": {
+          "id-token": "write",
+          "contents": "read"
+        },
+        "jobs": {
+          "build": {
+            "name": "Build Image",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Check out code",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Configure AWS credentials",
+                "uses": "aws-actions/configure-aws-credentials@v4",
+                "with": {
+                  "role-to-assume": "${{ secrets.PROD_AWS_ROLE }}",
+                  "aws-region": "eu-west-2"
+                }
+              },
+              {
+                "name": "Login to Amazon ECR",
+                "id": "login-ecr",
+                "uses": "aws-actions/amazon-ecr-login@v2"
+              },
+              {
+                "name": "Build, tag, and push image to Amazon ECR",
+                "env": {
+                  "ECR_REGISTRY": "${{ steps.login-ecr.outputs.registry }}",
+                  "ECR_REPOSITORY": "cloud-web",
+                  "IMAGE_TAG": "latest"
+                },
+                "run": "export COMMIT_SHA=$(git rev-parse --short HEAD)\ndocker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG --build-arg COMMIT_SHA=${COMMIT_SHA} -f Dockerfile_backend .\ndocker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG\n"
+              }
+            ]
+          },
+          "restart": {
+            "needs": "build",
+            "name": "Restart ECS service",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Configure AWS credentials",
+                "uses": "aws-actions/configure-aws-credentials@v4",
+                "with": {
+                  "role-to-assume": "${{ secrets.PROD_AWS_ROLE}}",
+                  "aws-region": "eu-west-2"
+                }
+              },
+              {
+                "name": "Restart ECS",
+                "env": {
+                  "ECR_REGISTRY": "${{ steps.login-ecr.outputs.registry }}",
+                  "AWS_REGION": "eu-west-2"
+                },
+                "run": "aws ecs update-service --cluster ${{ vars.ECS_CLUSTER_NAME }} --service ${{ vars.ECS_SERVICE_NAME }} --force-new-deployment --region $AWS_REGION\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-06-12T09-30-15Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "backend_build_prod_ecr__2024-06-12T09-30-15Z__d38a43b691445680c4ea4b481ee0a5def94b1a45.yml",
+          "workflow_name": "Backend Build&Push to Prod ECR",
+          "triggers": {
+            "push": {
+              "branches": [
+                "develop"
+              ]
+            }
+          },
+          "permissions": {
+            "id-token": "write",
+            "contents": "read"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 58,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "build": 4,
+            "restart": 2
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 1,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 1
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 4,
+              "restart": 2
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "aws-actions/amazon-ecr-login@v2",
+              "aws-actions/configure-aws-credentials@v4"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Backend Build&Push to Prod ECR",
+        "true": {
+          "push": {
+            "branches": [
+              "develop"
+            ]
+          }
+        },
+        "permissions": {
+          "id-token": "write",
+          "contents": "read"
+        },
+        "jobs": {
+          "build": {
+            "name": "Build Image",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Check out code",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Configure AWS credentials",
+                "uses": "aws-actions/configure-aws-credentials@v4",
+                "with": {
+                  "role-to-assume": "${{ secrets.PROD_AWS_ROLE }}",
+                  "aws-region": "eu-west-2"
+                }
+              },
+              {
+                "name": "Login to Amazon ECR",
+                "id": "login-ecr",
+                "uses": "aws-actions/amazon-ecr-login@v2"
+              },
+              {
+                "name": "Build, tag, and push image to Amazon ECR",
+                "env": {
+                  "ECR_REGISTRY": "${{ steps.login-ecr.outputs.registry }}",
+                  "ECR_REPOSITORY": "cloud-web",
+                  "IMAGE_TAG": "latest"
+                },
+                "run": "export COMMIT_SHA=$(git rev-parse --short HEAD)\ndocker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG --build-arg COMMIT_SHA=${COMMIT_SHA} -f Dockerfile_backend .\ndocker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG\n"
+              }
+            ]
+          },
+          "restart": {
+            "needs": "build",
+            "name": "Restart ECS service",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Configure AWS credentials",
+                "uses": "aws-actions/configure-aws-credentials@v4",
+                "with": {
+                  "role-to-assume": "${{ secrets.PROD_AWS_ROLE}}",
+                  "aws-region": "eu-west-2"
+                }
+              },
+              {
+                "name": "Restart ECS",
+                "env": {
+                  "ECR_REGISTRY": "${{ steps.login-ecr.outputs.registry }}",
+                  "AWS_REGION": "eu-west-2"
+                },
+                "run": "aws ecs update-service --cluster ${{ vars.ECS_CLUSTER_NAME }} --service ${{ vars.ECS_SERVICE_NAME }} --force-new-deployment --region $AWS_REGION\n"
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

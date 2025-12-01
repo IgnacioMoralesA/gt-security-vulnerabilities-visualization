@@ -1,0 +1,790 @@
+{
+  "repo_owner": "armbian",
+  "repo_name": "build",
+  "workflow_name": "adjust-maintainers",
+  "history": {
+    "2024-10-28T19-15-25Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-98f64016-b9d0-5782-9dac-d9f4318e7de8",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/adjust-maintainers__2024-10-28T19-15-25Z__27129cfce68c4ff7198840071354f51f59b4eac3.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 19,
+                  "startColumn": 5,
+                  "endLine": 128,
+                  "endColumn": 24
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "1658e3ef80da61ea:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "adjust-maintainers__2024-10-28T19-15-25Z__27129cfce68c4ff7198840071354f51f59b4eac3.yml",
+          "workflow_name": "Sync maintainers status",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 128,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Build": 8
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Build": 8
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "peter-evans/create-pull-request@v7",
+              "shimataro/ssh-key-action@v2"
+            ],
+            "num_run_commands": 5,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Sync maintainers status",
+        "true": {
+          "schedule": [
+            {
+              "cron": "0 * * * *"
+            }
+          ],
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "Build": {
+            "name": "Maintainers sync",
+            "runs-on": "ubuntu-latest",
+            "if": "${{ github.repository_owner == 'armbian' }}",
+            "steps": [
+              {
+                "name": "Checkout build repo",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "repository": "armbian/build",
+                  "ref": "main",
+                  "fetch-depth": 0,
+                  "clean": false
+                }
+              },
+              {
+                "name": "Install SSH key for storage",
+                "uses": "shimataro/ssh-key-action@v2",
+                "with": {
+                  "key": "${{ secrets.KEY_UPLOAD }}",
+                  "known_hosts": "${{ secrets.KNOWN_HOSTS_ARMBIAN_UPLOAD }}",
+                  "if_key_exists": "replace"
+                }
+              },
+              {
+                "name": "Install dependencies",
+                "run": "\nsudo apt-get -y -qq install jq\n"
+              },
+              {
+                "name": "Download JSON file",
+                "run": "\n# download json that is prepared for this action in another cron job\nrsync -e \"ssh -p ${{ secrets.HOST_UPLOAD_PORT }}\" -arvc ${{ secrets.HOST_UPLOAD_USER }}@${{ secrets.HOST_UPLOAD }}:/incoming/json/armbian_maintainers.json /tmp/\n"
+              },
+              {
+                "name": "Update maintainers",
+                "run": "\n# reset all maintainers so we generate from scratch\nsed -i \"s/BOARD_MAINTAINER.*/BOARD_MAINTAINER=\\\"\\\"/\" config/boards/*.{conf,wip,eos,tvb}\n\n# extract values fron JSON\ndeclare -A MAINTAINERS\n{\n  # By default, bash run the pipe command in subshells\n  # which make variable can't be assigned to.\n  # And yes, lastpipe can solve it\n  # But this is better.\n  while read -r i; do\n    NAME=\"$(echo \"$i\" | jq --raw-output '.First_Name')\"\n    BOARD=\"$(echo \"$i\" | jq --raw-output '.Maintaining')\"\n    MAINTAINER_GITHUB=\"$(echo \"$i\" | jq --raw-output '.Github' | cut -d\"/\" -f4)\"\n    if [[ \"$BOARD\" != null && \"$MAINTAINER_GITHUB\" != null ]]; then\n      echo \"- [$NAME](https://github.com/${MAINTAINER_GITHUB})\"\n      while read -r i; do\n        echo -e \"  - $i\"\n        MAINTAINERS[\"$i\"]+=\"$MAINTAINER_GITHUB \"\n      done < <( echo \"$BOARD\" | sed \"s/,/\\n/g\" | sort -u )\n    fi\n  done < <(jq -c '.[]' /tmp/armbian_maintainers.json)\n\n  for cfg in config/boards/*.{conf,wip,csc,eos,tvb}; do\n    board_name=\"$(echo \"${cfg##*/}\" | sed -E 's/\\..*//')\"\n    declare -a maintainers\n    readarray -t maintainers < <(echo \"${MAINTAINERS[${board_name}]}\" | xargs -n1 | sort -u)\n    sed -i \"s/BOARD_MAINTAINER=.*/BOARD_MAINTAINER=\\\"${maintainers[*]}\\\"/\" \"${cfg}\"\n  done\n} >> \"$GITHUB_STEP_SUMMARY\"\n"
+              },
+              {
+                "name": "Mark csc for no maintainer",
+                "run": "\ngrep BOARD_MAINTAINER=\\\"\\\" config/boards/*.{wip,conf} | cut -d\":\" -f1 |\n  while read -r line; do\n    if [[ \"${line}\" != \"${line/.conf/.csc}\" ]]; then\n      mv -v \"$line\" \"${line/.conf/.csc}\"\n    fi\n    if [[ \"${line}\" != \"${line/.wip/.csc}\" ]]; then\n      mv -v \"$line\" \"${line/.wip/.csc}\"\n    fi\n  done\n"
+              },
+              {
+                "name": "Re-generate CODEOWNERS",
+                "run": "\n./.github/generate_CODEOWNERS.sh\n"
+              },
+              {
+                "name": "Create Pull Request",
+                "id": "cpr",
+                "uses": "peter-evans/create-pull-request@v7",
+                "with": {
+                  "token": "${{ secrets.GITHUB_TOKEN }}",
+                  "commit-message": "`Automatic` board configs status synchronise",
+                  "signoff": false,
+                  "branch": "update-maintainers",
+                  "delete-branch": true,
+                  "title": "`Automatic` board configs status synchronise",
+                  "body": "Update maintainers and board status\n\n- synced status from the database\n- rename to .`csc` where we don't have anyone\n\nIf you want to become a board maintainer, [adjust data here](https://www.armbian.com/update-data/).\n\nRef:\n  - [Board Maintainers Procedures and Guidelines](https://docs.armbian.com/Board_Maintainers_Procedures_and_Guidelines/)\n  - [Contribute](https://docs.armbian.com/Process_Contribute/)\n",
+                  "labels": "Needs review\n",
+                  "draft": false
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-10-25T19-48-58Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-d9b92ca4-a4f5-5aef-bd36-c6732e6c2cea",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/adjust-maintainers__2024-10-25T19-48-58Z__466a0cd346333ca683971bfe6c4a43a523510779.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 19,
+                  "startColumn": 5,
+                  "endLine": 128,
+                  "endColumn": 24
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "1658e3ef80da61ea:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "adjust-maintainers__2024-10-25T19-48-58Z__466a0cd346333ca683971bfe6c4a43a523510779.yml",
+          "workflow_name": "Sync maintainers status",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 128,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Build": 8
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Build": 8
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "peter-evans/create-pull-request@v6",
+              "shimataro/ssh-key-action@v2"
+            ],
+            "num_run_commands": 5,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Sync maintainers status",
+        "true": {
+          "schedule": [
+            {
+              "cron": "0 * * * *"
+            }
+          ],
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "Build": {
+            "name": "Maintainers sync",
+            "runs-on": "ubuntu-latest",
+            "if": "${{ github.repository_owner == 'armbian' }}",
+            "steps": [
+              {
+                "name": "Checkout build repo",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "repository": "armbian/build",
+                  "ref": "main",
+                  "fetch-depth": 0,
+                  "clean": false
+                }
+              },
+              {
+                "name": "Install SSH key for storage",
+                "uses": "shimataro/ssh-key-action@v2",
+                "with": {
+                  "key": "${{ secrets.KEY_UPLOAD }}",
+                  "known_hosts": "${{ secrets.KNOWN_HOSTS_ARMBIAN_UPLOAD }}",
+                  "if_key_exists": "replace"
+                }
+              },
+              {
+                "name": "Install dependencies",
+                "run": "\nsudo apt-get -y -qq install jq\n"
+              },
+              {
+                "name": "Download JSON file",
+                "run": "\n# download json that is prepared for this action in another cron job\nrsync -e \"ssh -p ${{ secrets.HOST_UPLOAD_PORT }}\" -arvc ${{ secrets.HOST_UPLOAD_USER }}@${{ secrets.HOST_UPLOAD }}:/incoming/json/armbian_maintainers.json /tmp/\n"
+              },
+              {
+                "name": "Update maintainers",
+                "run": "\n# reset all maintainers so we generate from scratch\nsed -i \"s/BOARD_MAINTAINER.*/BOARD_MAINTAINER=\\\"\\\"/\" config/boards/*.{conf,wip,eos,tvb}\n\n# extract values fron JSON\ndeclare -A MAINTAINERS\n{\n  # By default, bash run the pipe command in subshells\n  # which make variable can't be assigned to.\n  # And yes, lastpipe can solve it\n  # But this is better.\n  while read -r i; do\n    NAME=\"$(echo \"$i\" | jq --raw-output '.First_Name')\"\n    BOARD=\"$(echo \"$i\" | jq --raw-output '.Maintaining')\"\n    MAINTAINER_GITHUB=\"$(echo \"$i\" | jq --raw-output '.Github' | cut -d\"/\" -f4)\"\n    if [[ \"$BOARD\" != null && \"$MAINTAINER_GITHUB\" != null ]]; then\n      echo \"- [$NAME](https://github.com/${MAINTAINER_GITHUB})\"\n      while read -r i; do\n        echo -e \"  - $i\"\n        MAINTAINERS[\"$i\"]+=\"$MAINTAINER_GITHUB \"\n      done < <( echo \"$BOARD\" | sed \"s/,/\\n/g\" | sort -u )\n    fi\n  done < <(jq -c '.[]' /tmp/armbian_maintainers.json)\n\n  for cfg in config/boards/*.{conf,wip,csc,eos,tvb}; do\n    board_name=\"$(echo \"${cfg##*/}\" | sed -E 's/\\..*//')\"\n    declare -a maintainers\n    readarray -t maintainers < <(echo \"${MAINTAINERS[${board_name}]}\" | xargs -n1 | sort -u)\n    sed -i \"s/BOARD_MAINTAINER=.*/BOARD_MAINTAINER=\\\"${maintainers[*]}\\\"/\" \"${cfg}\"\n  done\n} >> \"$GITHUB_STEP_SUMMARY\"\n"
+              },
+              {
+                "name": "Mark csc for no maintainer",
+                "run": "\ngrep BOARD_MAINTAINER=\\\"\\\" config/boards/*.{wip,conf} | cut -d\":\" -f1 |\n  while read -r line; do\n    if [[ \"${line}\" != \"${line/.conf/.csc}\" ]]; then\n      mv -v \"$line\" \"${line/.conf/.csc}\"\n    fi\n    if [[ \"${line}\" != \"${line/.wip/.csc}\" ]]; then\n      mv -v \"$line\" \"${line/.wip/.csc}\"\n    fi\n  done\n"
+              },
+              {
+                "name": "Re-generate CODEOWNERS",
+                "run": "\n./.github/generate_CODEOWNERS.sh\n"
+              },
+              {
+                "name": "Create Pull Request",
+                "id": "cpr",
+                "uses": "peter-evans/create-pull-request@v6",
+                "with": {
+                  "token": "${{ secrets.GITHUB_TOKEN }}",
+                  "commit-message": "`Automatic` board configs status synchronise",
+                  "signoff": false,
+                  "branch": "update-maintainers",
+                  "delete-branch": true,
+                  "title": "`Automatic` board configs status synchronise",
+                  "body": "Update maintainers and board status\n\n- synced status from the database\n- rename to .`csc` where we don't have anyone\n\nIf you want to become a board maintainer, [adjust data here](https://www.armbian.com/update-data/).\n\nRef:\n  - [Board Maintainers Procedures and Guidelines](https://docs.armbian.com/Board_Maintainers_Procedures_and_Guidelines/)\n  - [Contribute](https://docs.armbian.com/Process_Contribute/)\n",
+                  "labels": "Needs review\n",
+                  "draft": false
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-08-13T03-42-34Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-c87cd774-0b63-543b-9e30-1271cb669ed2",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/adjust-maintainers__2025-08-13T03-42-34Z__27e0b701906349a61acca534780922e22f6e44d7.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 17,
+                  "startColumn": 5,
+                  "endLine": 121,
+                  "endColumn": 24
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "1658e3ef80da61ea:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "adjust-maintainers__2025-08-13T03-42-34Z__27e0b701906349a61acca534780922e22f6e44d7.yml",
+          "workflow_name": "Sync maintainers status",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 121,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Build": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Build": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v5",
+              "peter-evans/create-pull-request@v7",
+              "shimataro/ssh-key-action@v2"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Sync maintainers status",
+        "true": {
+          "schedule": [
+            {
+              "cron": "0 * * * *"
+            }
+          ],
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "Build": {
+            "name": "Maintainers sync",
+            "runs-on": "ubuntu-latest",
+            "if": "${{ github.repository_owner == 'armbian' }}",
+            "steps": [
+              {
+                "name": "Checkout build repo",
+                "uses": "actions/checkout@v5",
+                "with": {
+                  "repository": "armbian/build",
+                  "ref": "main",
+                  "fetch-depth": 0,
+                  "clean": false
+                }
+              },
+              {
+                "name": "Install SSH key for storage",
+                "uses": "shimataro/ssh-key-action@v2",
+                "with": {
+                  "key": "${{ secrets.KEY_UPLOAD }}",
+                  "known_hosts": "${{ secrets.KNOWN_HOSTS_ARMBIAN_UPLOAD }}",
+                  "if_key_exists": "replace"
+                }
+              },
+              {
+                "name": "Download JSON file",
+                "run": "\n# download json that is prepared in https://github.com/armbian/armbian.github.io\ncurl -o /tmp/armbian_maintainers.json https://github.armbian.com/maintainers.json\n"
+              },
+              {
+                "name": "Update maintainers",
+                "run": "\n# reset all maintainers so we generate from scratch\nsed -i \"s/BOARD_MAINTAINER.*/BOARD_MAINTAINER=\\\"\\\"/\" config/boards/*.{conf,wip,eos,tvb}\n\n# extract values fron JSON\ndeclare -A MAINTAINERS\n{\n  # By default, bash run the pipe command in subshells\n  # which make variable can't be assigned to.\n  # And yes, lastpipe can solve it\n  # But this is better.\n  while read -r i; do\n    NAME=\"$(echo \"$i\" | jq --raw-output '.First_Name')\"\n    BOARD=\"$(echo \"$i\" | jq --raw-output '.Maintaining')\"\n    MAINTAINER_GITHUB=\"$(echo \"$i\" | jq --raw-output '.Github' | cut -d\"/\" -f4)\"\n    if [[ \"$BOARD\" != null && \"$MAINTAINER_GITHUB\" != null ]]; then\n      echo \"- [$NAME](https://github.com/${MAINTAINER_GITHUB})\"\n      while read -r i; do\n        echo -e \"  - $i\"\n        MAINTAINERS[\"$i\"]+=\"$MAINTAINER_GITHUB \"\n      done < <( echo \"$BOARD\" | sed \"s/,/\\n/g\" | sort -u )\n    fi\n  done < <(jq -c '.[]' /tmp/armbian_maintainers.json)\n\n  for cfg in config/boards/*.{conf,wip,csc,eos,tvb}; do\n    board_name=\"$(echo \"${cfg##*/}\" | sed -E 's/\\..*//')\"\n    declare -a maintainers\n    readarray -t maintainers < <(echo \"${MAINTAINERS[${board_name}]}\" | xargs -n1 | sort -u)\n    sed -i \"s/BOARD_MAINTAINER=.*/BOARD_MAINTAINER=\\\"${maintainers[*]}\\\"/\" \"${cfg}\"\n  done\n} >> \"$GITHUB_STEP_SUMMARY\"\n"
+              },
+              {
+                "name": "Mark csc for no maintainer",
+                "run": "\ngrep BOARD_MAINTAINER=\\\"\\\" config/boards/*.{wip,conf} | cut -d\":\" -f1 |\n  while read -r line; do\n    if [[ \"${line}\" != \"${line/.conf/.csc}\" ]]; then\n      mv -v \"$line\" \"${line/.conf/.csc}\"\n    fi\n    if [[ \"${line}\" != \"${line/.wip/.csc}\" ]]; then\n      mv -v \"$line\" \"${line/.wip/.csc}\"\n    fi\n  done\n"
+              },
+              {
+                "name": "Re-generate CODEOWNERS",
+                "run": "\n./.github/generate_CODEOWNERS.sh\n"
+              },
+              {
+                "name": "Create Pull Request",
+                "id": "cpr",
+                "uses": "peter-evans/create-pull-request@v7",
+                "with": {
+                  "token": "${{ secrets.GITHUB_TOKEN }}",
+                  "commit-message": "`Automatic` board configs status synchronise",
+                  "signoff": false,
+                  "branch": "update-maintainers",
+                  "delete-branch": true,
+                  "title": "`Automatic` board configs status synchronise",
+                  "body": "Update maintainers and board status\n\n- synced status from the database\n- rename to .`csc` where we don't have anyone\n\nIf you want to become a board maintainer, [adjust data here](https://www.armbian.com/update-data/).\n\nRef:\n  - [Board Maintainers Procedures and Guidelines](https://docs.armbian.com/Board_Maintainers_Procedures_and_Guidelines/)\n  - [Contribute](https://docs.armbian.com/Process_Contribute/)\n",
+                  "labels": "Needs review\n",
+                  "draft": false
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-05-11T21-34-10Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-5e4a01d8-0a0d-5f53-9ec7-1e06fa0d4aba",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/adjust-maintainers__2025-05-11T21-34-10Z__6e3ad9bca3816872b61973a775f01626bec4f0a6.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 17,
+                  "startColumn": 5,
+                  "endLine": 121,
+                  "endColumn": 24
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "1658e3ef80da61ea:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "adjust-maintainers__2025-05-11T21-34-10Z__6e3ad9bca3816872b61973a775f01626bec4f0a6.yml",
+          "workflow_name": "Sync maintainers status",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 121,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Build": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Build": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "peter-evans/create-pull-request@v7",
+              "shimataro/ssh-key-action@v2"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Sync maintainers status",
+        "true": {
+          "schedule": [
+            {
+              "cron": "0 * * * *"
+            }
+          ],
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "Build": {
+            "name": "Maintainers sync",
+            "runs-on": "ubuntu-latest",
+            "if": "${{ github.repository_owner == 'armbian' }}",
+            "steps": [
+              {
+                "name": "Checkout build repo",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "repository": "armbian/build",
+                  "ref": "main",
+                  "fetch-depth": 0,
+                  "clean": false
+                }
+              },
+              {
+                "name": "Install SSH key for storage",
+                "uses": "shimataro/ssh-key-action@v2",
+                "with": {
+                  "key": "${{ secrets.KEY_UPLOAD }}",
+                  "known_hosts": "${{ secrets.KNOWN_HOSTS_ARMBIAN_UPLOAD }}",
+                  "if_key_exists": "replace"
+                }
+              },
+              {
+                "name": "Download JSON file",
+                "run": "\n# download json that is prepared in https://github.com/armbian/armbian.github.io\ncurl -o /tmp/armbian_maintainers.json https://github.armbian.com/maintainers.json\n"
+              },
+              {
+                "name": "Update maintainers",
+                "run": "\n# reset all maintainers so we generate from scratch\nsed -i \"s/BOARD_MAINTAINER.*/BOARD_MAINTAINER=\\\"\\\"/\" config/boards/*.{conf,wip,eos,tvb}\n\n# extract values fron JSON\ndeclare -A MAINTAINERS\n{\n  # By default, bash run the pipe command in subshells\n  # which make variable can't be assigned to.\n  # And yes, lastpipe can solve it\n  # But this is better.\n  while read -r i; do\n    NAME=\"$(echo \"$i\" | jq --raw-output '.First_Name')\"\n    BOARD=\"$(echo \"$i\" | jq --raw-output '.Maintaining')\"\n    MAINTAINER_GITHUB=\"$(echo \"$i\" | jq --raw-output '.Github' | cut -d\"/\" -f4)\"\n    if [[ \"$BOARD\" != null && \"$MAINTAINER_GITHUB\" != null ]]; then\n      echo \"- [$NAME](https://github.com/${MAINTAINER_GITHUB})\"\n      while read -r i; do\n        echo -e \"  - $i\"\n        MAINTAINERS[\"$i\"]+=\"$MAINTAINER_GITHUB \"\n      done < <( echo \"$BOARD\" | sed \"s/,/\\n/g\" | sort -u )\n    fi\n  done < <(jq -c '.[]' /tmp/armbian_maintainers.json)\n\n  for cfg in config/boards/*.{conf,wip,csc,eos,tvb}; do\n    board_name=\"$(echo \"${cfg##*/}\" | sed -E 's/\\..*//')\"\n    declare -a maintainers\n    readarray -t maintainers < <(echo \"${MAINTAINERS[${board_name}]}\" | xargs -n1 | sort -u)\n    sed -i \"s/BOARD_MAINTAINER=.*/BOARD_MAINTAINER=\\\"${maintainers[*]}\\\"/\" \"${cfg}\"\n  done\n} >> \"$GITHUB_STEP_SUMMARY\"\n"
+              },
+              {
+                "name": "Mark csc for no maintainer",
+                "run": "\ngrep BOARD_MAINTAINER=\\\"\\\" config/boards/*.{wip,conf} | cut -d\":\" -f1 |\n  while read -r line; do\n    if [[ \"${line}\" != \"${line/.conf/.csc}\" ]]; then\n      mv -v \"$line\" \"${line/.conf/.csc}\"\n    fi\n    if [[ \"${line}\" != \"${line/.wip/.csc}\" ]]; then\n      mv -v \"$line\" \"${line/.wip/.csc}\"\n    fi\n  done\n"
+              },
+              {
+                "name": "Re-generate CODEOWNERS",
+                "run": "\n./.github/generate_CODEOWNERS.sh\n"
+              },
+              {
+                "name": "Create Pull Request",
+                "id": "cpr",
+                "uses": "peter-evans/create-pull-request@v7",
+                "with": {
+                  "token": "${{ secrets.GITHUB_TOKEN }}",
+                  "commit-message": "`Automatic` board configs status synchronise",
+                  "signoff": false,
+                  "branch": "update-maintainers",
+                  "delete-branch": true,
+                  "title": "`Automatic` board configs status synchronise",
+                  "body": "Update maintainers and board status\n\n- synced status from the database\n- rename to .`csc` where we don't have anyone\n\nIf you want to become a board maintainer, [adjust data here](https://www.armbian.com/update-data/).\n\nRef:\n  - [Board Maintainers Procedures and Guidelines](https://docs.armbian.com/Board_Maintainers_Procedures_and_Guidelines/)\n  - [Contribute](https://docs.armbian.com/Process_Contribute/)\n",
+                  "labels": "Needs review\n",
+                  "draft": false
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-08-27T08-25-35Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-6abb2625-bd80-577a-b421-0f6bb1ab8b50",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/adjust-maintainers__2025-08-27T08-25-35Z__06e29a5249bf6d66a377b983b54acbf8c9860a40.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 17,
+                  "startColumn": 5,
+                  "endLine": 121,
+                  "endColumn": 24
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "1658e3ef80da61ea:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "adjust-maintainers__2025-08-27T08-25-35Z__06e29a5249bf6d66a377b983b54acbf8c9860a40.yml",
+          "workflow_name": "Sync maintainers status",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 121,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Build": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Build": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v5",
+              "peter-evans/create-pull-request@v7",
+              "shimataro/ssh-key-action@v2"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Sync maintainers status",
+        "true": {
+          "schedule": [
+            {
+              "cron": "0 * * * *"
+            }
+          ],
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "Build": {
+            "name": "Maintainers sync",
+            "runs-on": "ubuntu-latest",
+            "if": "${{ github.repository_owner == 'armbian' }}",
+            "steps": [
+              {
+                "name": "Checkout build repo",
+                "uses": "actions/checkout@v5",
+                "with": {
+                  "repository": "armbian/build",
+                  "ref": "main",
+                  "fetch-depth": 0,
+                  "clean": false
+                }
+              },
+              {
+                "name": "Install SSH key for storage",
+                "uses": "shimataro/ssh-key-action@v2",
+                "with": {
+                  "key": "${{ secrets.KEY_UPLOAD }}",
+                  "known_hosts": "${{ secrets.KNOWN_HOSTS_ARMBIAN_UPLOAD }}",
+                  "if_key_exists": "replace"
+                }
+              },
+              {
+                "name": "Download JSON file",
+                "run": "\n# download json that is prepared in https://github.com/armbian/armbian.github.io\ncurl -o /tmp/armbian_maintainers.json https://github.armbian.com/maintainers.json\n"
+              },
+              {
+                "name": "Update maintainers",
+                "run": "\n# reset all maintainers so we generate from scratch\nsed -i \"s/BOARD_MAINTAINER.*/BOARD_MAINTAINER=\\\"\\\"/\" config/boards/*.{conf,wip,eos,tvb}\n\n# extract values fron JSON\ndeclare -A MAINTAINERS\n{\n  # By default, bash run the pipe command in subshells\n  # which make variable can't be assigned to.\n  # And yes, lastpipe can solve it\n  # But this is better.\n  while read -r i; do\n    NAME=\"$(echo \"$i\" | jq --raw-output '.First_Name')\"\n    BOARD=\"$(echo \"$i\" | jq --raw-output '.Maintaining')\"\n    MAINTAINER_GITHUB=\"$(echo \"$i\" | jq --raw-output '.Github' | cut -d\"/\" -f4)\"\n    if [[ \"$BOARD\" != null && \"$MAINTAINER_GITHUB\" != null ]]; then\n      echo \"- [$NAME](https://github.com/${MAINTAINER_GITHUB})\"\n      while read -r i; do\n        echo -e \"  - $i\"\n        MAINTAINERS[\"$i\"]+=\"$MAINTAINER_GITHUB \"\n      done < <( echo \"$BOARD\" | sed \"s/,/\\n/g\" | sort -u )\n    fi\n  done < <(jq -c '.[]' /tmp/armbian_maintainers.json)\n\n  for cfg in config/boards/*.{conf,wip,csc,eos,tvb}; do\n    board_name=\"$(echo \"${cfg##*/}\" | sed -E 's/\\..*//')\"\n    declare -a maintainers\n    readarray -t maintainers < <(echo \"${MAINTAINERS[${board_name}]}\" | xargs -n1 | sort -u)\n    sed -i \"s/BOARD_MAINTAINER=.*/BOARD_MAINTAINER=\\\"${maintainers[*]}\\\"/\" \"${cfg}\"\n  done\n} >> \"$GITHUB_STEP_SUMMARY\"\n"
+              },
+              {
+                "name": "Mark csc for no maintainer",
+                "run": "\ngrep BOARD_MAINTAINER=\\\"\\\" config/boards/*.{wip,conf} | cut -d\":\" -f1 |\n  while read -r line; do\n    if [[ \"${line}\" != \"${line/.conf/.csc}\" ]]; then\n      mv -v \"$line\" \"${line/.conf/.csc}\"\n    fi\n    if [[ \"${line}\" != \"${line/.wip/.csc}\" ]]; then\n      mv -v \"$line\" \"${line/.wip/.csc}\"\n    fi\n  done\n"
+              },
+              {
+                "name": "Re-generate CODEOWNERS",
+                "run": "\n./.github/generate_CODEOWNERS.sh\n"
+              },
+              {
+                "name": "Create Pull Request",
+                "id": "cpr",
+                "uses": "peter-evans/create-pull-request@v7",
+                "with": {
+                  "token": "${{ secrets.GITHUB_TOKEN }}",
+                  "commit-message": "`Automatic` board configs status synchronise",
+                  "signoff": false,
+                  "branch": "update-maintainers",
+                  "delete-branch": true,
+                  "title": "`Automatic` board configs status synchronise",
+                  "body": "Update maintainers and board status\n\n- synced status from the database\n- rename to .`csc` where we don't have anyone\n\nIf you want to become a board maintainer, [adjust data here](https://www.armbian.com/update-data/).\n\nRef:\n  - [Board Maintainers Procedures and Guidelines](https://docs.armbian.com/Board_Maintainers_Procedures_and_Guidelines/)\n  - [Contribute](https://docs.armbian.com/Process_Contribute/)\n",
+                  "labels": "Work in progress\n",
+                  "draft": false
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

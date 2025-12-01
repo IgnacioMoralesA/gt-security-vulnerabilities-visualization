@@ -1,0 +1,3186 @@
+{
+  "repo_owner": "armbian",
+  "repo_name": "build",
+  "workflow_name": "pr-kernel-security-analysis",
+  "history": {
+    "2024-06-09T16-30-45Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "pr-kernel-security-analysis__2024-06-09T16-30-45Z__0e7e76dcb15ce17b83118427081339041a94ab0c.yml",
+          "workflow_name": "Kernel hardening analysis",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": {
+            "group": "pipeline-security-${{github.event.pull_request.number}}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 55,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "tj-actions/changed-files@v44"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Kernel hardening analysis",
+        "true": {
+          "workflow_dispatch": null,
+          "pull_request": {
+            "types": [
+              "ready_for_review",
+              "opened",
+              "reopened",
+              "synchronize"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "read"
+        },
+        "concurrency": {
+          "group": "pipeline-security-${{github.event.pull_request.number}}",
+          "cancel-in-progress": true
+        },
+        "jobs": {
+          "Analysis": {
+            "name": "Check kernel security options",
+            "runs-on": "ubuntu-latest",
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Get changed files",
+                "id": "changed-files",
+                "uses": "tj-actions/changed-files@v44"
+              },
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "repository": "a13xp0p0v/kconfig-hardened-check",
+                  "path": "kconfig-hardened-check"
+                }
+              },
+              {
+                "name": "Check kernel config for security issues",
+                "run": "for file in ${{ steps.changed-files.outputs.all_changed_files }}; do\n    if [[ \"${file}\" = config/kernel/*.config && ! $(head -n 10 \"${file}\" | grep -q \"riscv\") ]]; then\n        kconfig-hardened-check/bin/kernel-hardening-checker -m show_fail -c $file | sed 's/^/     /; s/\\x1b\\[32m/\u2705 /; s/\\x1b\\[31m/\u274c /; s/\\x1b\\[0m//' >> $GITHUB_STEP_SUMMARY\n    fi\ndone\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-07-11T16-02-32Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "pr-kernel-security-analysis__2024-07-11T16-02-32Z__6f664c92fd8dd7704a837054ef5137a90e48a82c.yml",
+          "workflow_name": "Kernel Hardening Analysis",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": {
+            "group": "pipeline-security-${{github.event.pull_request.number}}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 54,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "tj-actions/changed-files@v44"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Kernel Hardening Analysis",
+        "run-name": "Check kernel security options - PR #${{ github.event.pull_request.number }} (\"${{ github.event.pull_request.title }}\")",
+        "true": {
+          "workflow_dispatch": null,
+          "pull_request": {
+            "types": [
+              "ready_for_review",
+              "opened",
+              "reopened",
+              "synchronize"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "read"
+        },
+        "concurrency": {
+          "group": "pipeline-security-${{github.event.pull_request.number}}",
+          "cancel-in-progress": true
+        },
+        "jobs": {
+          "Analysis": {
+            "name": "Check kernel security options",
+            "runs-on": "ubuntu-latest",
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Get changed files",
+                "id": "changed-files",
+                "uses": "tj-actions/changed-files@v44"
+              },
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "repository": "a13xp0p0v/kconfig-hardened-check",
+                  "path": "kconfig-hardened-check"
+                }
+              },
+              {
+                "name": "Check kernel config for security issues",
+                "run": "for file in ${{ steps.changed-files.outputs.all_changed_files }}; do\n    if [[ \"${file}\" = config/kernel/*.config && ! $(head -n 10 \"${file}\" | grep -q \"riscv\") ]]; then\n        kconfig-hardened-check/bin/kernel-hardening-checker -m show_fail -c $file | sed 's/^/     /; s/\\x1b\\[32m/\u2705 /; s/\\x1b\\[31m/\u274c /; s/\\x1b\\[0m//' >> $GITHUB_STEP_SUMMARY\n    fi\ndone\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-08-27T19-32-47Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "pr-kernel-security-analysis__2024-08-27T19-32-47Z__dc4301c390582ea8b6537768f31d3a3ed500aaf3.yml",
+          "workflow_name": "Kernel Hardening Analysis",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": {
+            "group": "pipeline-security-${{github.event.pull_request.number}}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 54,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "tj-actions/changed-files@v45"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Kernel Hardening Analysis",
+        "run-name": "Check kernel security options - PR #${{ github.event.pull_request.number }} (\"${{ github.event.pull_request.title }}\")",
+        "true": {
+          "workflow_dispatch": null,
+          "pull_request": {
+            "types": [
+              "ready_for_review",
+              "opened",
+              "reopened",
+              "synchronize"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "read"
+        },
+        "concurrency": {
+          "group": "pipeline-security-${{github.event.pull_request.number}}",
+          "cancel-in-progress": true
+        },
+        "jobs": {
+          "Analysis": {
+            "name": "Check kernel security options",
+            "runs-on": "ubuntu-latest",
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Get changed files",
+                "id": "changed-files",
+                "uses": "tj-actions/changed-files@v45"
+              },
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "repository": "a13xp0p0v/kconfig-hardened-check",
+                  "path": "kconfig-hardened-check"
+                }
+              },
+              {
+                "name": "Check kernel config for security issues",
+                "run": "for file in ${{ steps.changed-files.outputs.all_changed_files }}; do\n    if [[ \"${file}\" = config/kernel/*.config && ! $(head -n 10 \"${file}\" | grep -q \"riscv\") ]]; then\n        kconfig-hardened-check/bin/kernel-hardening-checker -m show_fail -c $file | sed 's/^/     /; s/\\x1b\\[32m/\u2705 /; s/\\x1b\\[31m/\u274c /; s/\\x1b\\[0m//' >> $GITHUB_STEP_SUMMARY\n    fi\ndone\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-03-15T15-25-27Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "pr-kernel-security-analysis__2025-03-15T15-25-27Z__d4022fbbbb79676b1ff485c70bb24f2cbb587388.yml",
+          "workflow_name": "Kernel Hardening Analysis",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": {
+            "group": "pipeline-security-${{ github.event.pull_request.number }}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 71,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "UplandJacob/retrieve-changed-files@v4",
+              "actions/checkout@v4"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Kernel Hardening Analysis",
+        "run-name": "Check kernel security options - PR #${{ github.event.pull_request.number }} (\"${{ github.event.pull_request.title }}\")",
+        "true": {
+          "workflow_dispatch": null,
+          "pull_request": {
+            "types": [
+              "ready_for_review",
+              "opened",
+              "reopened",
+              "synchronize"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "read"
+        },
+        "concurrency": {
+          "group": "pipeline-security-${{ github.event.pull_request.number }}",
+          "cancel-in-progress": true
+        },
+        "jobs": {
+          "Analysis": {
+            "name": "Check kernel security options",
+            "runs-on": "ubuntu-latest",
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Get changed files",
+                "id": "files",
+                "uses": "UplandJacob/retrieve-changed-files@v4"
+              },
+              {
+                "name": "Checkout kernel-hardening-checker",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "repository": "a13xp0p0v/kconfig-hardened-check",
+                  "path": "kconfig-hardened-check"
+                }
+              },
+              {
+                "name": "Run kernel security analysis",
+                "run": "for file in ${{ steps.files.outputs.all }}; do\n    # Process only kernel configuration files and skip RISC-V configs\n    if [[ \"${file}\" = config/kernel/*.config && ! $(head -n 10 \"${file}\" | grep -q \"riscv\") ]]; then\n        # Run security checks and format output for GitHub Actions summary\n        kconfig-hardened-check/bin/kernel-hardening-checker -m show_fail -c $file \\\n            | sed 's/^/     /; s/\\x1b\\[32m/\u2705 /; s/\\x1b\\[31m/\u274c /; s/\\x1b\\[0m//' \\\n            >> $GITHUB_STEP_SUMMARY\n    fi\ndone\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-03-28T11-37-41Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "pr-kernel-security-analysis__2025-03-28T11-37-41Z__1ebec53080fed5554001d3dd7cdb241300e58749.yml",
+          "workflow_name": "Kernel Hardening Analysis",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": {
+            "group": "pipeline-security-${{github.event.pull_request.number}}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 54,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "tj-actions/changed-files@27ae6b33eaed7bf87272fdeb9f1c54f9facc9d99"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Kernel Hardening Analysis",
+        "run-name": "Check kernel security options - PR #${{ github.event.pull_request.number }} (\"${{ github.event.pull_request.title }}\")",
+        "true": {
+          "workflow_dispatch": null,
+          "pull_request": {
+            "types": [
+              "ready_for_review",
+              "opened",
+              "reopened",
+              "synchronize"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "read"
+        },
+        "concurrency": {
+          "group": "pipeline-security-${{github.event.pull_request.number}}",
+          "cancel-in-progress": true
+        },
+        "jobs": {
+          "Analysis": {
+            "name": "Check kernel security options",
+            "runs-on": "ubuntu-latest",
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Get changed files",
+                "id": "changed-files",
+                "uses": "tj-actions/changed-files@27ae6b33eaed7bf87272fdeb9f1c54f9facc9d99"
+              },
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "repository": "a13xp0p0v/kconfig-hardened-check",
+                  "path": "kconfig-hardened-check"
+                }
+              },
+              {
+                "name": "Check kernel config for security issues",
+                "run": "for file in ${{ steps.changed-files.outputs.all_changed_files }}; do\n    if [[ \"${file}\" = config/kernel/*.config && ! $(head -n 10 \"${file}\" | grep -q \"riscv\") ]]; then\n        kconfig-hardened-check/bin/kernel-hardening-checker -m show_fail -c $file | sed 's/^/     /; s/\\x1b\\[32m/\u2705 /; s/\\x1b\\[31m/\u274c /; s/\\x1b\\[0m//' >> $GITHUB_STEP_SUMMARY\n    fi\ndone\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-04-05T12-40-44Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "pr-kernel-security-analysis__2025-04-05T12-40-44Z__0ca157ac0af4babdfe49472409937e20279c00bd.yml",
+          "workflow_name": "Kernel Hardening Analysis",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": {
+            "group": "pipeline-security-${{github.event.pull_request.number}}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 54,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "tj-actions/changed-files@b74df86ccb65173a8e33ba5492ac1a2ca6b216fd"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Kernel Hardening Analysis",
+        "run-name": "Check kernel security options - PR #${{ github.event.pull_request.number }} (\"${{ github.event.pull_request.title }}\")",
+        "true": {
+          "workflow_dispatch": null,
+          "pull_request": {
+            "types": [
+              "ready_for_review",
+              "opened",
+              "reopened",
+              "synchronize"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "read"
+        },
+        "concurrency": {
+          "group": "pipeline-security-${{github.event.pull_request.number}}",
+          "cancel-in-progress": true
+        },
+        "jobs": {
+          "Analysis": {
+            "name": "Check kernel security options",
+            "runs-on": "ubuntu-latest",
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Get changed files",
+                "id": "changed-files",
+                "uses": "tj-actions/changed-files@b74df86ccb65173a8e33ba5492ac1a2ca6b216fd"
+              },
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "repository": "a13xp0p0v/kconfig-hardened-check",
+                  "path": "kconfig-hardened-check"
+                }
+              },
+              {
+                "name": "Check kernel config for security issues",
+                "run": "for file in ${{ steps.changed-files.outputs.all_changed_files }}; do\n    if [[ \"${file}\" = config/kernel/*.config && ! $(head -n 10 \"${file}\" | grep -q \"riscv\") ]]; then\n        kconfig-hardened-check/bin/kernel-hardening-checker -m show_fail -c $file | sed 's/^/     /; s/\\x1b\\[32m/\u2705 /; s/\\x1b\\[31m/\u274c /; s/\\x1b\\[0m//' >> $GITHUB_STEP_SUMMARY\n    fi\ndone\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-04-08T15-12-03Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "pr-kernel-security-analysis__2025-04-08T15-12-03Z__8d08098c2e52d9c1e49aae0fbf0be082d8f3d90f.yml",
+          "workflow_name": "Kernel Hardening Analysis",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": {
+            "group": "pipeline-security-${{github.event.pull_request.number}}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 54,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "tj-actions/changed-files@6abeaa506a419f85fa9e681260b443adbeebb3d4"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Kernel Hardening Analysis",
+        "run-name": "Check kernel security options - PR #${{ github.event.pull_request.number }} (\"${{ github.event.pull_request.title }}\")",
+        "true": {
+          "workflow_dispatch": null,
+          "pull_request": {
+            "types": [
+              "ready_for_review",
+              "opened",
+              "reopened",
+              "synchronize"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "read"
+        },
+        "concurrency": {
+          "group": "pipeline-security-${{github.event.pull_request.number}}",
+          "cancel-in-progress": true
+        },
+        "jobs": {
+          "Analysis": {
+            "name": "Check kernel security options",
+            "runs-on": "ubuntu-latest",
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Get changed files",
+                "id": "changed-files",
+                "uses": "tj-actions/changed-files@6abeaa506a419f85fa9e681260b443adbeebb3d4"
+              },
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "repository": "a13xp0p0v/kconfig-hardened-check",
+                  "path": "kconfig-hardened-check"
+                }
+              },
+              {
+                "name": "Check kernel config for security issues",
+                "run": "for file in ${{ steps.changed-files.outputs.all_changed_files }}; do\n    if [[ \"${file}\" = config/kernel/*.config && ! $(head -n 10 \"${file}\" | grep -q \"riscv\") ]]; then\n        kconfig-hardened-check/bin/kernel-hardening-checker -m show_fail -c $file | sed 's/^/     /; s/\\x1b\\[32m/\u2705 /; s/\\x1b\\[31m/\u274c /; s/\\x1b\\[0m//' >> $GITHUB_STEP_SUMMARY\n    fi\ndone\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-04-14T19-02-37Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "pr-kernel-security-analysis__2025-04-14T19-02-37Z__faf34f006bd013e8a1737c845ae8aebcc3fd315c.yml",
+          "workflow_name": "Kernel Hardening Analysis",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": {
+            "group": "pipeline-security-${{github.event.pull_request.number}}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 54,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "tj-actions/changed-files@be393a90381e27c9fec2c8c2e02b00f005710145"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Kernel Hardening Analysis",
+        "run-name": "Check kernel security options - PR #${{ github.event.pull_request.number }} (\"${{ github.event.pull_request.title }}\")",
+        "true": {
+          "workflow_dispatch": null,
+          "pull_request": {
+            "types": [
+              "ready_for_review",
+              "opened",
+              "reopened",
+              "synchronize"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "read"
+        },
+        "concurrency": {
+          "group": "pipeline-security-${{github.event.pull_request.number}}",
+          "cancel-in-progress": true
+        },
+        "jobs": {
+          "Analysis": {
+            "name": "Check kernel security options",
+            "runs-on": "ubuntu-latest",
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Get changed files",
+                "id": "changed-files",
+                "uses": "tj-actions/changed-files@be393a90381e27c9fec2c8c2e02b00f005710145"
+              },
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "repository": "a13xp0p0v/kconfig-hardened-check",
+                  "path": "kconfig-hardened-check"
+                }
+              },
+              {
+                "name": "Check kernel config for security issues",
+                "run": "for file in ${{ steps.changed-files.outputs.all_changed_files }}; do\n    if [[ \"${file}\" = config/kernel/*.config && ! $(head -n 10 \"${file}\" | grep -q \"riscv\") ]]; then\n        kconfig-hardened-check/bin/kernel-hardening-checker -m show_fail -c $file | sed 's/^/     /; s/\\x1b\\[32m/\u2705 /; s/\\x1b\\[31m/\u274c /; s/\\x1b\\[0m//' >> $GITHUB_STEP_SUMMARY\n    fi\ndone\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-04-21T22-07-54Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "pr-kernel-security-analysis__2025-04-21T22-07-54Z__c75632b05ee690e40bbca3da2256928937a12d71.yml",
+          "workflow_name": "Kernel Hardening Analysis",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": {
+            "group": "pipeline-security-${{github.event.pull_request.number}}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 54,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "tj-actions/changed-files@c34c1c13a740b06851baff92ab9a653d93ad6ce7"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Kernel Hardening Analysis",
+        "run-name": "Check kernel security options - PR #${{ github.event.pull_request.number }} (\"${{ github.event.pull_request.title }}\")",
+        "true": {
+          "workflow_dispatch": null,
+          "pull_request": {
+            "types": [
+              "ready_for_review",
+              "opened",
+              "reopened",
+              "synchronize"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "read"
+        },
+        "concurrency": {
+          "group": "pipeline-security-${{github.event.pull_request.number}}",
+          "cancel-in-progress": true
+        },
+        "jobs": {
+          "Analysis": {
+            "name": "Check kernel security options",
+            "runs-on": "ubuntu-latest",
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Get changed files",
+                "id": "changed-files",
+                "uses": "tj-actions/changed-files@c34c1c13a740b06851baff92ab9a653d93ad6ce7"
+              },
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "repository": "a13xp0p0v/kconfig-hardened-check",
+                  "path": "kconfig-hardened-check"
+                }
+              },
+              {
+                "name": "Check kernel config for security issues",
+                "run": "for file in ${{ steps.changed-files.outputs.all_changed_files }}; do\n    if [[ \"${file}\" = config/kernel/*.config && ! $(head -n 10 \"${file}\" | grep -q \"riscv\") ]]; then\n        kconfig-hardened-check/bin/kernel-hardening-checker -m show_fail -c $file | sed 's/^/     /; s/\\x1b\\[32m/\u2705 /; s/\\x1b\\[31m/\u274c /; s/\\x1b\\[0m//' >> $GITHUB_STEP_SUMMARY\n    fi\ndone\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-04-28T22-24-54Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "pr-kernel-security-analysis__2025-04-28T22-24-54Z__3a64aa18836f6e594971cbd88c56809ba0a8d2a9.yml",
+          "workflow_name": "Kernel Hardening Analysis",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": {
+            "group": "pipeline-security-${{github.event.pull_request.number}}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 54,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "tj-actions/changed-files@5426ecc3f5c2b10effaefbd374f0abdc6a571b2f"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Kernel Hardening Analysis",
+        "run-name": "Check kernel security options - PR #${{ github.event.pull_request.number }} (\"${{ github.event.pull_request.title }}\")",
+        "true": {
+          "workflow_dispatch": null,
+          "pull_request": {
+            "types": [
+              "ready_for_review",
+              "opened",
+              "reopened",
+              "synchronize"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "read"
+        },
+        "concurrency": {
+          "group": "pipeline-security-${{github.event.pull_request.number}}",
+          "cancel-in-progress": true
+        },
+        "jobs": {
+          "Analysis": {
+            "name": "Check kernel security options",
+            "runs-on": "ubuntu-latest",
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Get changed files",
+                "id": "changed-files",
+                "uses": "tj-actions/changed-files@5426ecc3f5c2b10effaefbd374f0abdc6a571b2f"
+              },
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "repository": "a13xp0p0v/kconfig-hardened-check",
+                  "path": "kconfig-hardened-check"
+                }
+              },
+              {
+                "name": "Check kernel config for security issues",
+                "run": "for file in ${{ steps.changed-files.outputs.all_changed_files }}; do\n    if [[ \"${file}\" = config/kernel/*.config && ! $(head -n 10 \"${file}\" | grep -q \"riscv\") ]]; then\n        kconfig-hardened-check/bin/kernel-hardening-checker -m show_fail -c $file | sed 's/^/     /; s/\\x1b\\[32m/\u2705 /; s/\\x1b\\[31m/\u274c /; s/\\x1b\\[0m//' >> $GITHUB_STEP_SUMMARY\n    fi\ndone\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-05-05T22-36-39Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "pr-kernel-security-analysis__2025-05-05T22-36-39Z__29a6a7351da4c5318d0d8f63daed998c0f2cc947.yml",
+          "workflow_name": "Kernel Hardening Analysis",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": {
+            "group": "pipeline-security-${{github.event.pull_request.number}}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 54,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "tj-actions/changed-files@4168bb487d5b82227665ab4ec90b67ce02691741"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Kernel Hardening Analysis",
+        "run-name": "Check kernel security options - PR #${{ github.event.pull_request.number }} (\"${{ github.event.pull_request.title }}\")",
+        "true": {
+          "workflow_dispatch": null,
+          "pull_request": {
+            "types": [
+              "ready_for_review",
+              "opened",
+              "reopened",
+              "synchronize"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "read"
+        },
+        "concurrency": {
+          "group": "pipeline-security-${{github.event.pull_request.number}}",
+          "cancel-in-progress": true
+        },
+        "jobs": {
+          "Analysis": {
+            "name": "Check kernel security options",
+            "runs-on": "ubuntu-latest",
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Get changed files",
+                "id": "changed-files",
+                "uses": "tj-actions/changed-files@4168bb487d5b82227665ab4ec90b67ce02691741"
+              },
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "repository": "a13xp0p0v/kconfig-hardened-check",
+                  "path": "kconfig-hardened-check"
+                }
+              },
+              {
+                "name": "Check kernel config for security issues",
+                "run": "for file in ${{ steps.changed-files.outputs.all_changed_files }}; do\n    if [[ \"${file}\" = config/kernel/*.config && ! $(head -n 10 \"${file}\" | grep -q \"riscv\") ]]; then\n        kconfig-hardened-check/bin/kernel-hardening-checker -m show_fail -c $file | sed 's/^/     /; s/\\x1b\\[32m/\u2705 /; s/\\x1b\\[31m/\u274c /; s/\\x1b\\[0m//' >> $GITHUB_STEP_SUMMARY\n    fi\ndone\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-05-13T06-15-31Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "pr-kernel-security-analysis__2025-05-13T06-15-31Z__0f304fc14ed9768da3f8ac7327bbdc211400fcbd.yml",
+          "workflow_name": "Kernel Hardening Analysis",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": {
+            "group": "pipeline-security-${{github.event.pull_request.number}}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 54,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "tj-actions/changed-files@480f49412651059a414a6a5c96887abb1877de8a"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Kernel Hardening Analysis",
+        "run-name": "Check kernel security options - PR #${{ github.event.pull_request.number }} (\"${{ github.event.pull_request.title }}\")",
+        "true": {
+          "workflow_dispatch": null,
+          "pull_request": {
+            "types": [
+              "ready_for_review",
+              "opened",
+              "reopened",
+              "synchronize"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "read"
+        },
+        "concurrency": {
+          "group": "pipeline-security-${{github.event.pull_request.number}}",
+          "cancel-in-progress": true
+        },
+        "jobs": {
+          "Analysis": {
+            "name": "Check kernel security options",
+            "runs-on": "ubuntu-latest",
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Get changed files",
+                "id": "changed-files",
+                "uses": "tj-actions/changed-files@480f49412651059a414a6a5c96887abb1877de8a"
+              },
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "repository": "a13xp0p0v/kconfig-hardened-check",
+                  "path": "kconfig-hardened-check"
+                }
+              },
+              {
+                "name": "Check kernel config for security issues",
+                "run": "for file in ${{ steps.changed-files.outputs.all_changed_files }}; do\n    if [[ \"${file}\" = config/kernel/*.config && ! $(head -n 10 \"${file}\" | grep -q \"riscv\") ]]; then\n        kconfig-hardened-check/bin/kernel-hardening-checker -m show_fail -c $file | sed 's/^/     /; s/\\x1b\\[32m/\u2705 /; s/\\x1b\\[31m/\u274c /; s/\\x1b\\[0m//' >> $GITHUB_STEP_SUMMARY\n    fi\ndone\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-05-27T13-37-52Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "pr-kernel-security-analysis__2025-05-27T13-37-52Z__5d21ca9b79ea7618ef7a49f4158c08b9e37e6d3c.yml",
+          "workflow_name": "Kernel Hardening Analysis",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": {
+            "group": "pipeline-security-${{github.event.pull_request.number}}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 54,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "tj-actions/changed-files@c6634ca281a9fc05b03bee224ba00910cb78ab6e"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Kernel Hardening Analysis",
+        "run-name": "Check kernel security options - PR #${{ github.event.pull_request.number }} (\"${{ github.event.pull_request.title }}\")",
+        "true": {
+          "workflow_dispatch": null,
+          "pull_request": {
+            "types": [
+              "ready_for_review",
+              "opened",
+              "reopened",
+              "synchronize"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "read"
+        },
+        "concurrency": {
+          "group": "pipeline-security-${{github.event.pull_request.number}}",
+          "cancel-in-progress": true
+        },
+        "jobs": {
+          "Analysis": {
+            "name": "Check kernel security options",
+            "runs-on": "ubuntu-latest",
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Get changed files",
+                "id": "changed-files",
+                "uses": "tj-actions/changed-files@c6634ca281a9fc05b03bee224ba00910cb78ab6e"
+              },
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "repository": "a13xp0p0v/kconfig-hardened-check",
+                  "path": "kconfig-hardened-check"
+                }
+              },
+              {
+                "name": "Check kernel config for security issues",
+                "run": "for file in ${{ steps.changed-files.outputs.all_changed_files }}; do\n    if [[ \"${file}\" = config/kernel/*.config && ! $(head -n 10 \"${file}\" | grep -q \"riscv\") ]]; then\n        kconfig-hardened-check/bin/kernel-hardening-checker -m show_fail -c $file | sed 's/^/     /; s/\\x1b\\[32m/\u2705 /; s/\\x1b\\[31m/\u274c /; s/\\x1b\\[0m//' >> $GITHUB_STEP_SUMMARY\n    fi\ndone\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-06-03T07-48-01Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "pr-kernel-security-analysis__2025-06-03T07-48-01Z__dcc9d91b9461f9a6790e8d006a8d8bb875fb0a49.yml",
+          "workflow_name": "Kernel Hardening Analysis",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": {
+            "group": "pipeline-security-${{github.event.pull_request.number}}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 54,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "tj-actions/changed-files@115870536a85eaf050e369291c7895748ff12aea"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Kernel Hardening Analysis",
+        "run-name": "Check kernel security options - PR #${{ github.event.pull_request.number }} (\"${{ github.event.pull_request.title }}\")",
+        "true": {
+          "workflow_dispatch": null,
+          "pull_request": {
+            "types": [
+              "ready_for_review",
+              "opened",
+              "reopened",
+              "synchronize"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "read"
+        },
+        "concurrency": {
+          "group": "pipeline-security-${{github.event.pull_request.number}}",
+          "cancel-in-progress": true
+        },
+        "jobs": {
+          "Analysis": {
+            "name": "Check kernel security options",
+            "runs-on": "ubuntu-latest",
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Get changed files",
+                "id": "changed-files",
+                "uses": "tj-actions/changed-files@115870536a85eaf050e369291c7895748ff12aea"
+              },
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "repository": "a13xp0p0v/kconfig-hardened-check",
+                  "path": "kconfig-hardened-check"
+                }
+              },
+              {
+                "name": "Check kernel config for security issues",
+                "run": "for file in ${{ steps.changed-files.outputs.all_changed_files }}; do\n    if [[ \"${file}\" = config/kernel/*.config && ! $(head -n 10 \"${file}\" | grep -q \"riscv\") ]]; then\n        kconfig-hardened-check/bin/kernel-hardening-checker -m show_fail -c $file | sed 's/^/     /; s/\\x1b\\[32m/\u2705 /; s/\\x1b\\[31m/\u274c /; s/\\x1b\\[0m//' >> $GITHUB_STEP_SUMMARY\n    fi\ndone\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-06-09T19-16-39Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "pr-kernel-security-analysis__2025-06-09T19-16-39Z__06b32ab6198996b6d76f134756a7f9cdfb6f4c55.yml",
+          "workflow_name": "Kernel Hardening Analysis",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": {
+            "group": "pipeline-security-${{github.event.pull_request.number}}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 54,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "tj-actions/changed-files@4140eb99d2cced9bfd78375c2088371853262f79"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Kernel Hardening Analysis",
+        "run-name": "Check kernel security options - PR #${{ github.event.pull_request.number }} (\"${{ github.event.pull_request.title }}\")",
+        "true": {
+          "workflow_dispatch": null,
+          "pull_request": {
+            "types": [
+              "ready_for_review",
+              "opened",
+              "reopened",
+              "synchronize"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "read"
+        },
+        "concurrency": {
+          "group": "pipeline-security-${{github.event.pull_request.number}}",
+          "cancel-in-progress": true
+        },
+        "jobs": {
+          "Analysis": {
+            "name": "Check kernel security options",
+            "runs-on": "ubuntu-latest",
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Get changed files",
+                "id": "changed-files",
+                "uses": "tj-actions/changed-files@4140eb99d2cced9bfd78375c2088371853262f79"
+              },
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "repository": "a13xp0p0v/kconfig-hardened-check",
+                  "path": "kconfig-hardened-check"
+                }
+              },
+              {
+                "name": "Check kernel config for security issues",
+                "run": "for file in ${{ steps.changed-files.outputs.all_changed_files }}; do\n    if [[ \"${file}\" = config/kernel/*.config && ! $(head -n 10 \"${file}\" | grep -q \"riscv\") ]]; then\n        kconfig-hardened-check/bin/kernel-hardening-checker -m show_fail -c $file | sed 's/^/     /; s/\\x1b\\[32m/\u2705 /; s/\\x1b\\[31m/\u274c /; s/\\x1b\\[0m//' >> $GITHUB_STEP_SUMMARY\n    fi\ndone\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-06-19T07-32-03Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "pr-kernel-security-analysis__2025-06-19T07-32-03Z__a1168c263542ab17008a44dacadf0c5ca559771c.yml",
+          "workflow_name": "Kernel Hardening Analysis",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": {
+            "group": "pipeline-security-${{github.event.pull_request.number}}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 54,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "tj-actions/changed-files@d52d20fa3f981cb852b861fd8f55308b5fe29637"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Kernel Hardening Analysis",
+        "run-name": "Check kernel security options - PR #${{ github.event.pull_request.number }} (\"${{ github.event.pull_request.title }}\")",
+        "true": {
+          "workflow_dispatch": null,
+          "pull_request": {
+            "types": [
+              "ready_for_review",
+              "opened",
+              "reopened",
+              "synchronize"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "read"
+        },
+        "concurrency": {
+          "group": "pipeline-security-${{github.event.pull_request.number}}",
+          "cancel-in-progress": true
+        },
+        "jobs": {
+          "Analysis": {
+            "name": "Check kernel security options",
+            "runs-on": "ubuntu-latest",
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Get changed files",
+                "id": "changed-files",
+                "uses": "tj-actions/changed-files@d52d20fa3f981cb852b861fd8f55308b5fe29637"
+              },
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "repository": "a13xp0p0v/kconfig-hardened-check",
+                  "path": "kconfig-hardened-check"
+                }
+              },
+              {
+                "name": "Check kernel config for security issues",
+                "run": "for file in ${{ steps.changed-files.outputs.all_changed_files }}; do\n    if [[ \"${file}\" = config/kernel/*.config && ! $(head -n 10 \"${file}\" | grep -q \"riscv\") ]]; then\n        kconfig-hardened-check/bin/kernel-hardening-checker -m show_fail -c $file | sed 's/^/     /; s/\\x1b\\[32m/\u2705 /; s/\\x1b\\[31m/\u274c /; s/\\x1b\\[0m//' >> $GITHUB_STEP_SUMMARY\n    fi\ndone\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-06-23T20-04-09Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "pr-kernel-security-analysis__2025-06-23T20-04-09Z__530fbc86e8f65548b0e24ae7258c48b240c25f7e.yml",
+          "workflow_name": "Kernel Hardening Analysis",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": {
+            "group": "pipeline-security-${{github.event.pull_request.number}}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 54,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "tj-actions/changed-files@666c9d29007687c52e3c7aa2aac6c0ffcadeadc3"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Kernel Hardening Analysis",
+        "run-name": "Check kernel security options - PR #${{ github.event.pull_request.number }} (\"${{ github.event.pull_request.title }}\")",
+        "true": {
+          "workflow_dispatch": null,
+          "pull_request": {
+            "types": [
+              "ready_for_review",
+              "opened",
+              "reopened",
+              "synchronize"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "read"
+        },
+        "concurrency": {
+          "group": "pipeline-security-${{github.event.pull_request.number}}",
+          "cancel-in-progress": true
+        },
+        "jobs": {
+          "Analysis": {
+            "name": "Check kernel security options",
+            "runs-on": "ubuntu-latest",
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Get changed files",
+                "id": "changed-files",
+                "uses": "tj-actions/changed-files@666c9d29007687c52e3c7aa2aac6c0ffcadeadc3"
+              },
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "repository": "a13xp0p0v/kconfig-hardened-check",
+                  "path": "kconfig-hardened-check"
+                }
+              },
+              {
+                "name": "Check kernel config for security issues",
+                "run": "for file in ${{ steps.changed-files.outputs.all_changed_files }}; do\n    if [[ \"${file}\" = config/kernel/*.config && ! $(head -n 10 \"${file}\" | grep -q \"riscv\") ]]; then\n        kconfig-hardened-check/bin/kernel-hardening-checker -m show_fail -c $file | sed 's/^/     /; s/\\x1b\\[32m/\u2705 /; s/\\x1b\\[31m/\u274c /; s/\\x1b\\[0m//' >> $GITHUB_STEP_SUMMARY\n    fi\ndone\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-07-01T07-07-03Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "pr-kernel-security-analysis__2025-07-01T07-07-03Z__544952fb4cbd77de282aecc9dc44d25247be4b31.yml",
+          "workflow_name": "Kernel Hardening Analysis",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": {
+            "group": "pipeline-security-${{github.event.pull_request.number}}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 54,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "tj-actions/changed-files@e8772ff27de71367c2771ef3e8b5b2075b3f8282"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Kernel Hardening Analysis",
+        "run-name": "Check kernel security options - PR #${{ github.event.pull_request.number }} (\"${{ github.event.pull_request.title }}\")",
+        "true": {
+          "workflow_dispatch": null,
+          "pull_request": {
+            "types": [
+              "ready_for_review",
+              "opened",
+              "reopened",
+              "synchronize"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "read"
+        },
+        "concurrency": {
+          "group": "pipeline-security-${{github.event.pull_request.number}}",
+          "cancel-in-progress": true
+        },
+        "jobs": {
+          "Analysis": {
+            "name": "Check kernel security options",
+            "runs-on": "ubuntu-latest",
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Get changed files",
+                "id": "changed-files",
+                "uses": "tj-actions/changed-files@e8772ff27de71367c2771ef3e8b5b2075b3f8282"
+              },
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "repository": "a13xp0p0v/kconfig-hardened-check",
+                  "path": "kconfig-hardened-check"
+                }
+              },
+              {
+                "name": "Check kernel config for security issues",
+                "run": "for file in ${{ steps.changed-files.outputs.all_changed_files }}; do\n    if [[ \"${file}\" = config/kernel/*.config && ! $(head -n 10 \"${file}\" | grep -q \"riscv\") ]]; then\n        kconfig-hardened-check/bin/kernel-hardening-checker -m show_fail -c $file | sed 's/^/     /; s/\\x1b\\[32m/\u2705 /; s/\\x1b\\[31m/\u274c /; s/\\x1b\\[0m//' >> $GITHUB_STEP_SUMMARY\n    fi\ndone\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-07-08T04-38-33Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "pr-kernel-security-analysis__2025-07-08T04-38-33Z__8942b049b7f038545cd22314d3af50efc033064c.yml",
+          "workflow_name": "Kernel Hardening Analysis",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": {
+            "group": "pipeline-security-${{github.event.pull_request.number}}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 54,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "tj-actions/changed-files@cf79a64fed8a943fb1073260883d08fe0dfb4e56"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Kernel Hardening Analysis",
+        "run-name": "Check kernel security options - PR #${{ github.event.pull_request.number }} (\"${{ github.event.pull_request.title }}\")",
+        "true": {
+          "workflow_dispatch": null,
+          "pull_request": {
+            "types": [
+              "ready_for_review",
+              "opened",
+              "reopened",
+              "synchronize"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "read"
+        },
+        "concurrency": {
+          "group": "pipeline-security-${{github.event.pull_request.number}}",
+          "cancel-in-progress": true
+        },
+        "jobs": {
+          "Analysis": {
+            "name": "Check kernel security options",
+            "runs-on": "ubuntu-latest",
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Get changed files",
+                "id": "changed-files",
+                "uses": "tj-actions/changed-files@cf79a64fed8a943fb1073260883d08fe0dfb4e56"
+              },
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "repository": "a13xp0p0v/kconfig-hardened-check",
+                  "path": "kconfig-hardened-check"
+                }
+              },
+              {
+                "name": "Check kernel config for security issues",
+                "run": "for file in ${{ steps.changed-files.outputs.all_changed_files }}; do\n    if [[ \"${file}\" = config/kernel/*.config && ! $(head -n 10 \"${file}\" | grep -q \"riscv\") ]]; then\n        kconfig-hardened-check/bin/kernel-hardening-checker -m show_fail -c $file | sed 's/^/     /; s/\\x1b\\[32m/\u2705 /; s/\\x1b\\[31m/\u274c /; s/\\x1b\\[0m//' >> $GITHUB_STEP_SUMMARY\n    fi\ndone\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-07-15T02-36-49Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "pr-kernel-security-analysis__2025-07-15T02-36-49Z__8155cc5b0b9cc8e59dbd6a632733dfec6870fb40.yml",
+          "workflow_name": "Kernel Hardening Analysis",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": {
+            "group": "pipeline-security-${{github.event.pull_request.number}}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 54,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "tj-actions/changed-files@055970845dd036d7345da7399b7e89f2e10f2b04"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Kernel Hardening Analysis",
+        "run-name": "Check kernel security options - PR #${{ github.event.pull_request.number }} (\"${{ github.event.pull_request.title }}\")",
+        "true": {
+          "workflow_dispatch": null,
+          "pull_request": {
+            "types": [
+              "ready_for_review",
+              "opened",
+              "reopened",
+              "synchronize"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "read"
+        },
+        "concurrency": {
+          "group": "pipeline-security-${{github.event.pull_request.number}}",
+          "cancel-in-progress": true
+        },
+        "jobs": {
+          "Analysis": {
+            "name": "Check kernel security options",
+            "runs-on": "ubuntu-latest",
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Get changed files",
+                "id": "changed-files",
+                "uses": "tj-actions/changed-files@055970845dd036d7345da7399b7e89f2e10f2b04"
+              },
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "repository": "a13xp0p0v/kconfig-hardened-check",
+                  "path": "kconfig-hardened-check"
+                }
+              },
+              {
+                "name": "Check kernel config for security issues",
+                "run": "for file in ${{ steps.changed-files.outputs.all_changed_files }}; do\n    if [[ \"${file}\" = config/kernel/*.config && ! $(head -n 10 \"${file}\" | grep -q \"riscv\") ]]; then\n        kconfig-hardened-check/bin/kernel-hardening-checker -m show_fail -c $file | sed 's/^/     /; s/\\x1b\\[32m/\u2705 /; s/\\x1b\\[31m/\u274c /; s/\\x1b\\[0m//' >> $GITHUB_STEP_SUMMARY\n    fi\ndone\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-07-22T06-13-33Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "pr-kernel-security-analysis__2025-07-22T06-13-33Z__a86e808c732d52379c9f834111c5ef5567464cea.yml",
+          "workflow_name": "Kernel Hardening Analysis",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": {
+            "group": "pipeline-security-${{github.event.pull_request.number}}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 54,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "tj-actions/changed-files@4662f28b04a04c9b3c760178bc00690771ba6fe1"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Kernel Hardening Analysis",
+        "run-name": "Check kernel security options - PR #${{ github.event.pull_request.number }} (\"${{ github.event.pull_request.title }}\")",
+        "true": {
+          "workflow_dispatch": null,
+          "pull_request": {
+            "types": [
+              "ready_for_review",
+              "opened",
+              "reopened",
+              "synchronize"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "read"
+        },
+        "concurrency": {
+          "group": "pipeline-security-${{github.event.pull_request.number}}",
+          "cancel-in-progress": true
+        },
+        "jobs": {
+          "Analysis": {
+            "name": "Check kernel security options",
+            "runs-on": "ubuntu-latest",
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Get changed files",
+                "id": "changed-files",
+                "uses": "tj-actions/changed-files@4662f28b04a04c9b3c760178bc00690771ba6fe1"
+              },
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "repository": "a13xp0p0v/kconfig-hardened-check",
+                  "path": "kconfig-hardened-check"
+                }
+              },
+              {
+                "name": "Check kernel config for security issues",
+                "run": "for file in ${{ steps.changed-files.outputs.all_changed_files }}; do\n    if [[ \"${file}\" = config/kernel/*.config && ! $(head -n 10 \"${file}\" | grep -q \"riscv\") ]]; then\n        kconfig-hardened-check/bin/kernel-hardening-checker -m show_fail -c $file | sed 's/^/     /; s/\\x1b\\[32m/\u2705 /; s/\\x1b\\[31m/\u274c /; s/\\x1b\\[0m//' >> $GITHUB_STEP_SUMMARY\n    fi\ndone\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-08-13T03-42-34Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "pr-kernel-security-analysis__2025-08-13T03-42-34Z__27e0b701906349a61acca534780922e22f6e44d7.yml",
+          "workflow_name": "Kernel Hardening Analysis",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": {
+            "group": "pipeline-security-${{github.event.pull_request.number}}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 54,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v5",
+              "tj-actions/changed-files@4662f28b04a04c9b3c760178bc00690771ba6fe1"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Kernel Hardening Analysis",
+        "run-name": "Check kernel security options - PR #${{ github.event.pull_request.number }} (\"${{ github.event.pull_request.title }}\")",
+        "true": {
+          "workflow_dispatch": null,
+          "pull_request": {
+            "types": [
+              "ready_for_review",
+              "opened",
+              "reopened",
+              "synchronize"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "read"
+        },
+        "concurrency": {
+          "group": "pipeline-security-${{github.event.pull_request.number}}",
+          "cancel-in-progress": true
+        },
+        "jobs": {
+          "Analysis": {
+            "name": "Check kernel security options",
+            "runs-on": "ubuntu-latest",
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v5",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Get changed files",
+                "id": "changed-files",
+                "uses": "tj-actions/changed-files@4662f28b04a04c9b3c760178bc00690771ba6fe1"
+              },
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v5",
+                "with": {
+                  "repository": "a13xp0p0v/kconfig-hardened-check",
+                  "path": "kconfig-hardened-check"
+                }
+              },
+              {
+                "name": "Check kernel config for security issues",
+                "run": "for file in ${{ steps.changed-files.outputs.all_changed_files }}; do\n    if [[ \"${file}\" = config/kernel/*.config && ! $(head -n 10 \"${file}\" | grep -q \"riscv\") ]]; then\n        kconfig-hardened-check/bin/kernel-hardening-checker -m show_fail -c $file | sed 's/^/     /; s/\\x1b\\[32m/\u2705 /; s/\\x1b\\[31m/\u274c /; s/\\x1b\\[0m//' >> $GITHUB_STEP_SUMMARY\n    fi\ndone\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-08-13T03-43-22Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "pr-kernel-security-analysis__2025-08-13T03-43-22Z__9e37cbd5a3c2eb9c0efbe5de0370e1d9577b7599.yml",
+          "workflow_name": "Kernel Hardening Analysis",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": {
+            "group": "pipeline-security-${{github.event.pull_request.number}}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 54,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v5",
+              "tj-actions/changed-files@f963b3f3562b00b6d2dd25efc390eb04e51ef6c6"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Kernel Hardening Analysis",
+        "run-name": "Check kernel security options - PR #${{ github.event.pull_request.number }} (\"${{ github.event.pull_request.title }}\")",
+        "true": {
+          "workflow_dispatch": null,
+          "pull_request": {
+            "types": [
+              "ready_for_review",
+              "opened",
+              "reopened",
+              "synchronize"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "read"
+        },
+        "concurrency": {
+          "group": "pipeline-security-${{github.event.pull_request.number}}",
+          "cancel-in-progress": true
+        },
+        "jobs": {
+          "Analysis": {
+            "name": "Check kernel security options",
+            "runs-on": "ubuntu-latest",
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v5",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Get changed files",
+                "id": "changed-files",
+                "uses": "tj-actions/changed-files@f963b3f3562b00b6d2dd25efc390eb04e51ef6c6"
+              },
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v5",
+                "with": {
+                  "repository": "a13xp0p0v/kconfig-hardened-check",
+                  "path": "kconfig-hardened-check"
+                }
+              },
+              {
+                "name": "Check kernel config for security issues",
+                "run": "for file in ${{ steps.changed-files.outputs.all_changed_files }}; do\n    if [[ \"${file}\" = config/kernel/*.config && ! $(head -n 10 \"${file}\" | grep -q \"riscv\") ]]; then\n        kconfig-hardened-check/bin/kernel-hardening-checker -m show_fail -c $file | sed 's/^/     /; s/\\x1b\\[32m/\u2705 /; s/\\x1b\\[31m/\u274c /; s/\\x1b\\[0m//' >> $GITHUB_STEP_SUMMARY\n    fi\ndone\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-08-19T09-26-59Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "pr-kernel-security-analysis__2025-08-19T09-26-59Z__9ca5752314b9de2585965fad394a76d7c4e6b93f.yml",
+          "workflow_name": "Kernel Hardening Analysis",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": {
+            "group": "pipeline-security-${{github.event.pull_request.number}}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 54,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v5",
+              "tj-actions/changed-files@2036da178f85576f1940fedb74bb93a36cd89ab7"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Kernel Hardening Analysis",
+        "run-name": "Check kernel security options - PR #${{ github.event.pull_request.number }} (\"${{ github.event.pull_request.title }}\")",
+        "true": {
+          "workflow_dispatch": null,
+          "pull_request": {
+            "types": [
+              "ready_for_review",
+              "opened",
+              "reopened",
+              "synchronize"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "read"
+        },
+        "concurrency": {
+          "group": "pipeline-security-${{github.event.pull_request.number}}",
+          "cancel-in-progress": true
+        },
+        "jobs": {
+          "Analysis": {
+            "name": "Check kernel security options",
+            "runs-on": "ubuntu-latest",
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v5",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Get changed files",
+                "id": "changed-files",
+                "uses": "tj-actions/changed-files@2036da178f85576f1940fedb74bb93a36cd89ab7"
+              },
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v5",
+                "with": {
+                  "repository": "a13xp0p0v/kconfig-hardened-check",
+                  "path": "kconfig-hardened-check"
+                }
+              },
+              {
+                "name": "Check kernel config for security issues",
+                "run": "for file in ${{ steps.changed-files.outputs.all_changed_files }}; do\n    if [[ \"${file}\" = config/kernel/*.config && ! $(head -n 10 \"${file}\" | grep -q \"riscv\") ]]; then\n        kconfig-hardened-check/bin/kernel-hardening-checker -m show_fail -c $file | sed 's/^/     /; s/\\x1b\\[32m/\u2705 /; s/\\x1b\\[31m/\u274c /; s/\\x1b\\[0m//' >> $GITHUB_STEP_SUMMARY\n    fi\ndone\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-08-26T10-25-49Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "pr-kernel-security-analysis__2025-08-26T10-25-49Z__8c1926db2c179556b497ea063a1805788aa3d4de.yml",
+          "workflow_name": "Kernel Hardening Analysis",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": {
+            "group": "pipeline-security-${{github.event.pull_request.number}}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 54,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v5",
+              "tj-actions/changed-files@3b04099b21072562f07469c10deb182b24236ca9"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Kernel Hardening Analysis",
+        "run-name": "Check kernel security options - PR #${{ github.event.pull_request.number }} (\"${{ github.event.pull_request.title }}\")",
+        "true": {
+          "workflow_dispatch": null,
+          "pull_request": {
+            "types": [
+              "ready_for_review",
+              "opened",
+              "reopened",
+              "synchronize"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "read"
+        },
+        "concurrency": {
+          "group": "pipeline-security-${{github.event.pull_request.number}}",
+          "cancel-in-progress": true
+        },
+        "jobs": {
+          "Analysis": {
+            "name": "Check kernel security options",
+            "runs-on": "ubuntu-latest",
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v5",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Get changed files",
+                "id": "changed-files",
+                "uses": "tj-actions/changed-files@3b04099b21072562f07469c10deb182b24236ca9"
+              },
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v5",
+                "with": {
+                  "repository": "a13xp0p0v/kconfig-hardened-check",
+                  "path": "kconfig-hardened-check"
+                }
+              },
+              {
+                "name": "Check kernel config for security issues",
+                "run": "for file in ${{ steps.changed-files.outputs.all_changed_files }}; do\n    if [[ \"${file}\" = config/kernel/*.config && ! $(head -n 10 \"${file}\" | grep -q \"riscv\") ]]; then\n        kconfig-hardened-check/bin/kernel-hardening-checker -m show_fail -c $file | sed 's/^/     /; s/\\x1b\\[32m/\u2705 /; s/\\x1b\\[31m/\u274c /; s/\\x1b\\[0m//' >> $GITHUB_STEP_SUMMARY\n    fi\ndone\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-09-09T04-21-47Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "pr-kernel-security-analysis__2025-09-09T04-21-47Z__d25d906bb9421098fb496c84a7cbd20aab2a2b86.yml",
+          "workflow_name": "Kernel Hardening Analysis",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": {
+            "group": "pipeline-security-${{github.event.pull_request.number}}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 54,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v5",
+              "tj-actions/changed-files@8c14441336bb3d84fd6b7fa83b6d7201c740baf5"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Kernel Hardening Analysis",
+        "run-name": "Check kernel security options - PR #${{ github.event.pull_request.number }} (\"${{ github.event.pull_request.title }}\")",
+        "true": {
+          "workflow_dispatch": null,
+          "pull_request": {
+            "types": [
+              "ready_for_review",
+              "opened",
+              "reopened",
+              "synchronize"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "read"
+        },
+        "concurrency": {
+          "group": "pipeline-security-${{github.event.pull_request.number}}",
+          "cancel-in-progress": true
+        },
+        "jobs": {
+          "Analysis": {
+            "name": "Check kernel security options",
+            "runs-on": "ubuntu-latest",
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v5",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Get changed files",
+                "id": "changed-files",
+                "uses": "tj-actions/changed-files@8c14441336bb3d84fd6b7fa83b6d7201c740baf5"
+              },
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v5",
+                "with": {
+                  "repository": "a13xp0p0v/kconfig-hardened-check",
+                  "path": "kconfig-hardened-check"
+                }
+              },
+              {
+                "name": "Check kernel config for security issues",
+                "run": "for file in ${{ steps.changed-files.outputs.all_changed_files }}; do\n    if [[ \"${file}\" = config/kernel/*.config && ! $(head -n 10 \"${file}\" | grep -q \"riscv\") ]]; then\n        kconfig-hardened-check/bin/kernel-hardening-checker -m show_fail -c $file | sed 's/^/     /; s/\\x1b\\[32m/\u2705 /; s/\\x1b\\[31m/\u274c /; s/\\x1b\\[0m//' >> $GITHUB_STEP_SUMMARY\n    fi\ndone\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-09-14T11-49-49Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "pr-kernel-security-analysis__2025-09-14T11-49-49Z__bd7fbb0fd0d60d28671e579d4ff31add2921e397.yml",
+          "workflow_name": "Kernel Hardening Analysis",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": {
+            "group": "pipeline-security-${{github.event.pull_request.number}}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 54,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v5",
+              "tj-actions/changed-files@1ac60965030588f3b867cdd4a3900f37ec99970c"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Kernel Hardening Analysis",
+        "run-name": "Check kernel security options - PR #${{ github.event.pull_request.number }} (\"${{ github.event.pull_request.title }}\")",
+        "true": {
+          "workflow_dispatch": null,
+          "pull_request": {
+            "types": [
+              "ready_for_review",
+              "opened",
+              "reopened",
+              "synchronize"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "read"
+        },
+        "concurrency": {
+          "group": "pipeline-security-${{github.event.pull_request.number}}",
+          "cancel-in-progress": true
+        },
+        "jobs": {
+          "Analysis": {
+            "name": "Check kernel security options",
+            "runs-on": "ubuntu-latest",
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v5",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Get changed files",
+                "id": "changed-files",
+                "uses": "tj-actions/changed-files@1ac60965030588f3b867cdd4a3900f37ec99970c"
+              },
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v5",
+                "with": {
+                  "repository": "a13xp0p0v/kconfig-hardened-check",
+                  "path": "kconfig-hardened-check"
+                }
+              },
+              {
+                "name": "Check kernel config for security issues",
+                "run": "for file in ${{ steps.changed-files.outputs.all_changed_files }}; do\n    if [[ \"${file}\" = config/kernel/*.config && ! $(head -n 10 \"${file}\" | grep -q \"riscv\") ]]; then\n        kconfig-hardened-check/bin/kernel-hardening-checker -m show_fail -c $file | sed 's/^/     /; s/\\x1b\\[32m/\u2705 /; s/\\x1b\\[31m/\u274c /; s/\\x1b\\[0m//' >> $GITHUB_STEP_SUMMARY\n    fi\ndone\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-09-23T05-34-14Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "pr-kernel-security-analysis__2025-09-23T05-34-14Z__99f1dc0423b97499c7a0737f58688bc32b9503da.yml",
+          "workflow_name": "Kernel Hardening Analysis",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": {
+            "group": "pipeline-security-${{github.event.pull_request.number}}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 54,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v5",
+              "tj-actions/changed-files@4563c729c555b4141fac99c80f699f571219b836"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Kernel Hardening Analysis",
+        "run-name": "Check kernel security options - PR #${{ github.event.pull_request.number }} (\"${{ github.event.pull_request.title }}\")",
+        "true": {
+          "workflow_dispatch": null,
+          "pull_request": {
+            "types": [
+              "ready_for_review",
+              "opened",
+              "reopened",
+              "synchronize"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "read"
+        },
+        "concurrency": {
+          "group": "pipeline-security-${{github.event.pull_request.number}}",
+          "cancel-in-progress": true
+        },
+        "jobs": {
+          "Analysis": {
+            "name": "Check kernel security options",
+            "runs-on": "ubuntu-latest",
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v5",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Get changed files",
+                "id": "changed-files",
+                "uses": "tj-actions/changed-files@4563c729c555b4141fac99c80f699f571219b836"
+              },
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v5",
+                "with": {
+                  "repository": "a13xp0p0v/kconfig-hardened-check",
+                  "path": "kconfig-hardened-check"
+                }
+              },
+              {
+                "name": "Check kernel config for security issues",
+                "run": "for file in ${{ steps.changed-files.outputs.all_changed_files }}; do\n    if [[ \"${file}\" = config/kernel/*.config && ! $(head -n 10 \"${file}\" | grep -q \"riscv\") ]]; then\n        kconfig-hardened-check/bin/kernel-hardening-checker -m show_fail -c $file | sed 's/^/     /; s/\\x1b\\[32m/\u2705 /; s/\\x1b\\[31m/\u274c /; s/\\x1b\\[0m//' >> $GITHUB_STEP_SUMMARY\n    fi\ndone\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-09-30T04-41-01Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "pr-kernel-security-analysis__2025-09-30T04-41-01Z__a95c408eff197980021e5f790b79d2e31130ae2e.yml",
+          "workflow_name": "Kernel Hardening Analysis",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": {
+            "group": "pipeline-security-${{github.event.pull_request.number}}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 54,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v5",
+              "tj-actions/changed-files@28cf3adc4b6dbff2746d5216da021a10e53b4f58"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Kernel Hardening Analysis",
+        "run-name": "Check kernel security options - PR #${{ github.event.pull_request.number }} (\"${{ github.event.pull_request.title }}\")",
+        "true": {
+          "workflow_dispatch": null,
+          "pull_request": {
+            "types": [
+              "ready_for_review",
+              "opened",
+              "reopened",
+              "synchronize"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "read"
+        },
+        "concurrency": {
+          "group": "pipeline-security-${{github.event.pull_request.number}}",
+          "cancel-in-progress": true
+        },
+        "jobs": {
+          "Analysis": {
+            "name": "Check kernel security options",
+            "runs-on": "ubuntu-latest",
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v5",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Get changed files",
+                "id": "changed-files",
+                "uses": "tj-actions/changed-files@28cf3adc4b6dbff2746d5216da021a10e53b4f58"
+              },
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v5",
+                "with": {
+                  "repository": "a13xp0p0v/kconfig-hardened-check",
+                  "path": "kconfig-hardened-check"
+                }
+              },
+              {
+                "name": "Check kernel config for security issues",
+                "run": "for file in ${{ steps.changed-files.outputs.all_changed_files }}; do\n    if [[ \"${file}\" = config/kernel/*.config && ! $(head -n 10 \"${file}\" | grep -q \"riscv\") ]]; then\n        kconfig-hardened-check/bin/kernel-hardening-checker -m show_fail -c $file | sed 's/^/     /; s/\\x1b\\[32m/\u2705 /; s/\\x1b\\[31m/\u274c /; s/\\x1b\\[0m//' >> $GITHUB_STEP_SUMMARY\n    fi\ndone\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-10-06T20-25-21Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "pr-kernel-security-analysis__2025-10-06T20-25-21Z__acd86cace766371b229a8971ac24d41e6e017c16.yml",
+          "workflow_name": "Kernel Hardening Analysis",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": {
+            "group": "pipeline-security-${{github.event.pull_request.number}}",
+            "cancel-in-progress": true
+          },
+          "defaults": null,
+          "line_count": 54,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v5",
+              "tj-actions/changed-files@d03a93c0dbfac6d6dd6a0d8a5e7daff992b07449"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Kernel Hardening Analysis",
+        "run-name": "Check kernel security options - PR #${{ github.event.pull_request.number }} (\"${{ github.event.pull_request.title }}\")",
+        "true": {
+          "workflow_dispatch": null,
+          "pull_request": {
+            "types": [
+              "ready_for_review",
+              "opened",
+              "reopened",
+              "synchronize"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "read"
+        },
+        "concurrency": {
+          "group": "pipeline-security-${{github.event.pull_request.number}}",
+          "cancel-in-progress": true
+        },
+        "jobs": {
+          "Analysis": {
+            "name": "Check kernel security options",
+            "runs-on": "ubuntu-latest",
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v5",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Get changed files",
+                "id": "changed-files",
+                "uses": "tj-actions/changed-files@d03a93c0dbfac6d6dd6a0d8a5e7daff992b07449"
+              },
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v5",
+                "with": {
+                  "repository": "a13xp0p0v/kconfig-hardened-check",
+                  "path": "kconfig-hardened-check"
+                }
+              },
+              {
+                "name": "Check kernel config for security issues",
+                "run": "for file in ${{ steps.changed-files.outputs.all_changed_files }}; do\n    if [[ \"${file}\" = config/kernel/*.config && ! $(head -n 10 \"${file}\" | grep -q \"riscv\") ]]; then\n        kconfig-hardened-check/bin/kernel-hardening-checker -m show_fail -c $file | sed 's/^/     /; s/\\x1b\\[32m/\u2705 /; s/\\x1b\\[31m/\u274c /; s/\\x1b\\[0m//' >> $GITHUB_STEP_SUMMARY\n    fi\ndone\n"
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

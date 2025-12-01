@@ -1,0 +1,1621 @@
+{
+  "repo_owner": "actions",
+  "repo_name": "download-artifact",
+  "workflow_name": "test",
+  "history": {
+    "2020-04-28T13-45-21Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-38f7a2db-c738-5c63-98e3-1bc5fd27b24e",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/test__2020-04-28T13-45-21Z__1de1dea89c32dcb1f37183c96fe85cfe067b682a.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 13,
+                  "startColumn": 5,
+                  "endLine": 104,
+                  "endColumn": 7
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "757294ff04223dde:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2020-04-28T13-45-21Z__1de1dea89c32dcb1f37183c96fe85cfe067b682a.yml",
+          "workflow_name": "Test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 104,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 13
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 13
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 6,
+            "actions_used": [
+              "./",
+              "actions/checkout@v2",
+              "actions/setup-node@v1",
+              "actions/upload-artifact@v1"
+            ],
+            "num_run_commands": 7,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Test",
+        "true": {
+          "push": {
+            "paths-ignore": [
+              "**.md"
+            ]
+          },
+          "pull_request": {
+            "paths-ignore": [
+              "**.md"
+            ]
+          }
+        },
+        "jobs": {
+          "build": {
+            "name": "Build",
+            "strategy": {
+              "matrix": {
+                "runs-on": [
+                  "ubuntu-latest",
+                  "macos-latest",
+                  "windows-latest"
+                ]
+              },
+              "fail-fast": false
+            },
+            "runs-on": "${{ matrix.runs-on }}",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "name": "Set Node.js 12.x",
+                "uses": "actions/setup-node@v1",
+                "with": {
+                  "node-version": "12.x"
+                }
+              },
+              {
+                "name": "npm install",
+                "run": "npm install"
+              },
+              {
+                "name": "Compile",
+                "run": "npm run build"
+              },
+              {
+                "name": "Lint",
+                "run": "npm run lint"
+              },
+              {
+                "name": "Format",
+                "run": "npm run format-check"
+              },
+              {
+                "name": "Create artifacts",
+                "run": "mkdir -p path/to/artifact-A\nmkdir -p path/to/artifact-B\necho \"Lorem ipsum dolor sit amet\" > path/to/artifact-A/file-A.txt\necho \"Hello world from file B\" > path/to/artifact-B/file-B.txt\n"
+              },
+              {
+                "name": "Upload artifact A",
+                "uses": "actions/upload-artifact@v1",
+                "with": {
+                  "name": "Artifact-A",
+                  "path": "path/to/artifact-A"
+                }
+              },
+              {
+                "name": "Upload artifact B",
+                "uses": "actions/upload-artifact@v1",
+                "with": {
+                  "name": "Artifact-B",
+                  "path": "path/to/artifact-B"
+                }
+              },
+              {
+                "name": "Download artifact A",
+                "uses": "./",
+                "with": {
+                  "name": "Artifact-A",
+                  "path": "some/new/path"
+                }
+              },
+              {
+                "name": "Verify successful download",
+                "run": "$file = \"some/new/path/file-A.txt\"\nif(!(Test-Path -path $file))\n{\n    Write-Error \"Expected file does not exist\"\n}\nif(!((Get-Content $file) -ceq \"Lorem ipsum dolor sit amet\"))\n{\n    Write-Error \"File contents of downloaded artifact are incorrect\"\n}\n",
+                "shell": "pwsh"
+              },
+              {
+                "name": "Download all Artifacts",
+                "uses": "./",
+                "with": {
+                  "path": "some/other/path"
+                }
+              },
+              {
+                "name": "Verify successful download",
+                "run": "$fileA = \"some/other/path/Artifact-A/file-A.txt\"\n$fileB = \"some/other/path/Artifact-B/file-B.txt\"\nif(!(Test-Path -path $fileA) -or !(Test-Path -path $fileB))\n{\n    Write-Error \"Expected files do not exist\"\n}\nif(!((Get-Content $fileA) -ceq \"Lorem ipsum dolor sit amet\") -or !((Get-Content $fileB) -ceq \"Hello world from file B\"))\n{\n    Write-Error \"File contents of downloaded artifacts are incorrect\"\n}\n",
+                "shell": "pwsh"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2020-07-30T10-01-38Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-2e48ba75-5a03-5e9a-b92f-045331670bd5",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/test__2020-07-30T10-01-38Z__381af06b4268a1e0ad7b7c7e5a09f1894977120f.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 13,
+                  "startColumn": 5,
+                  "endLine": 112,
+                  "endColumn": 7
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "757294ff04223dde:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2020-07-30T10-01-38Z__381af06b4268a1e0ad7b7c7e5a09f1894977120f.yml",
+          "workflow_name": "Test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 112,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 14
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 14
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 7,
+            "actions_used": [
+              "./",
+              "actions/checkout@v2",
+              "actions/setup-node@v1",
+              "actions/upload-artifact@v1"
+            ],
+            "num_run_commands": 7,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Test",
+        "true": {
+          "push": {
+            "paths-ignore": [
+              "**.md"
+            ]
+          },
+          "pull_request": {
+            "paths-ignore": [
+              "**.md"
+            ]
+          }
+        },
+        "jobs": {
+          "build": {
+            "name": "Build",
+            "strategy": {
+              "matrix": {
+                "runs-on": [
+                  "ubuntu-latest",
+                  "macos-latest",
+                  "windows-latest"
+                ]
+              },
+              "fail-fast": false
+            },
+            "runs-on": "${{ matrix.runs-on }}",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "name": "Set Node.js 12.x",
+                "uses": "actions/setup-node@v1",
+                "with": {
+                  "node-version": "12.x"
+                }
+              },
+              {
+                "name": "npm install",
+                "run": "npm install"
+              },
+              {
+                "name": "Compile",
+                "run": "npm run build"
+              },
+              {
+                "name": "Lint",
+                "run": "npm run lint"
+              },
+              {
+                "name": "Format",
+                "run": "npm run format-check"
+              },
+              {
+                "name": "Create artifacts",
+                "run": "mkdir -p path/to/artifact-A\nmkdir -p path/to/artifact-B\necho \"Lorem ipsum dolor sit amet\" > path/to/artifact-A/file-A.txt\necho \"Hello world from file B\" > path/to/artifact-B/file-B.txt\n"
+              },
+              {
+                "name": "Upload artifact A",
+                "uses": "actions/upload-artifact@v1",
+                "with": {
+                  "name": "Artifact-A",
+                  "path": "path/to/artifact-A"
+                }
+              },
+              {
+                "name": "Upload artifact B",
+                "uses": "actions/upload-artifact@v1",
+                "with": {
+                  "name": "Artifact-B",
+                  "path": "path/to/artifact-B"
+                }
+              },
+              {
+                "name": "Download artifact A",
+                "uses": "./",
+                "with": {
+                  "name": "Artifact-A",
+                  "path": "some/new/path"
+                }
+              },
+              {
+                "name": "Download artifact A",
+                "uses": "./",
+                "with": {
+                  "name": "Artifact-A",
+                  "path": "~/some/path/with/a/tilde"
+                }
+              },
+              {
+                "name": "Verify successful download",
+                "run": "$file1 = \"some/new/path/file-A.txt\"\n$file2 = \"~/some/path/with/a/tilde/file-A.txt\"\nif(!(Test-Path -path $file1) -or !(Test-Path -path $file2))\n{\n    Write-Error \"Expected files do not exist\"\n}\nif(!((Get-Content $file1) -ceq \"Lorem ipsum dolor sit amet\") -or !((Get-Content $file2) -ceq \"Lorem ipsum dolor sit amet\"))\n{\n    Write-Error \"File contents of downloaded artifacts are incorrect\"\n}\n",
+                "shell": "pwsh"
+              },
+              {
+                "name": "Download all Artifacts",
+                "uses": "./",
+                "with": {
+                  "path": "some/other/path"
+                }
+              },
+              {
+                "name": "Verify successful download",
+                "run": "$fileA = \"some/other/path/Artifact-A/file-A.txt\"\n$fileB = \"some/other/path/Artifact-B/file-B.txt\"\nif(!(Test-Path -path $fileA) -or !(Test-Path -path $fileB))\n{\n    Write-Error \"Expected files do not exist\"\n}\nif(!((Get-Content $fileA) -ceq \"Lorem ipsum dolor sit amet\") -or !((Get-Content $fileB) -ceq \"Hello world from file B\"))\n{\n    Write-Error \"File contents of downloaded artifacts are incorrect\"\n}\n",
+                "shell": "pwsh"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-01-04T22-30-33Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-b714ead6-a300-5790-b4af-f93c513202d8",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/test__2023-01-04T22-30-33Z__9bc31d5ccc31df68ecc42ccf4149144866c47d8a.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 13,
+                  "startColumn": 5,
+                  "endLine": 114,
+                  "endColumn": 7
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "757294ff04223dde:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2023-01-04T22-30-33Z__9bc31d5ccc31df68ecc42ccf4149144866c47d8a.yml",
+          "workflow_name": "Test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 114,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 14
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 14
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 7,
+            "actions_used": [
+              "./",
+              "actions/checkout@v3",
+              "actions/setup-node@v3",
+              "actions/upload-artifact@v1"
+            ],
+            "num_run_commands": 7,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Test",
+        "true": {
+          "push": {
+            "paths-ignore": [
+              "**.md"
+            ]
+          },
+          "pull_request": {
+            "paths-ignore": [
+              "**.md"
+            ]
+          }
+        },
+        "jobs": {
+          "build": {
+            "name": "Build",
+            "strategy": {
+              "matrix": {
+                "runs-on": [
+                  "ubuntu-latest",
+                  "macos-latest",
+                  "windows-latest"
+                ]
+              },
+              "fail-fast": false
+            },
+            "runs-on": "${{ matrix.runs-on }}",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Setup Node 16",
+                "uses": "actions/setup-node@v3",
+                "with": {
+                  "node-version": "16.x",
+                  "cache": "npm"
+                }
+              },
+              {
+                "name": "npm install",
+                "run": "npm install"
+              },
+              {
+                "name": "Compile",
+                "run": "npm run build"
+              },
+              {
+                "name": "Lint",
+                "run": "npm run lint"
+              },
+              {
+                "name": "Format",
+                "run": "npm run format-check"
+              },
+              {
+                "name": "Create artifacts",
+                "run": "mkdir -p path/to/artifact-A\nmkdir -p path/to/artifact-B\necho \"Lorem ipsum dolor sit amet\" > path/to/artifact-A/file-A.txt\necho \"Hello world from file B\" > path/to/artifact-B/file-B.txt\n"
+              },
+              {
+                "name": "Upload artifact A",
+                "uses": "actions/upload-artifact@v1",
+                "with": {
+                  "name": "Artifact-A",
+                  "path": "path/to/artifact-A"
+                }
+              },
+              {
+                "name": "Upload artifact B",
+                "uses": "actions/upload-artifact@v1",
+                "with": {
+                  "name": "Artifact-B",
+                  "path": "path/to/artifact-B"
+                }
+              },
+              {
+                "name": "Download artifact A",
+                "uses": "./",
+                "with": {
+                  "name": "Artifact-A",
+                  "path": "some/new/path"
+                }
+              },
+              {
+                "name": "Download artifact A",
+                "uses": "./",
+                "with": {
+                  "name": "Artifact-A",
+                  "path": "~/some/path/with/a/tilde"
+                }
+              },
+              {
+                "name": "Verify successful download",
+                "run": "$file1 = \"some/new/path/file-A.txt\"\n$file2 = \"~/some/path/with/a/tilde/file-A.txt\"\nif(!(Test-Path -path $file1) -or !(Test-Path -path $file2))\n{\n    Write-Error \"Expected files do not exist\"\n}\nif(!((Get-Content $file1) -ceq \"Lorem ipsum dolor sit amet\") -or !((Get-Content $file2) -ceq \"Lorem ipsum dolor sit amet\"))\n{\n    Write-Error \"File contents of downloaded artifacts are incorrect\"\n}\n",
+                "shell": "pwsh"
+              },
+              {
+                "name": "Download all Artifacts",
+                "uses": "./",
+                "with": {
+                  "path": "some/other/path"
+                }
+              },
+              {
+                "name": "Verify successful download",
+                "run": "$fileA = \"some/other/path/Artifact-A/file-A.txt\"\n$fileB = \"some/other/path/Artifact-B/file-B.txt\"\nif(!(Test-Path -path $fileA) -or !(Test-Path -path $fileB))\n{\n    Write-Error \"Expected files do not exist\"\n}\nif(!((Get-Content $fileA) -ceq \"Lorem ipsum dolor sit amet\") -or !((Get-Content $fileB) -ceq \"Hello world from file B\"))\n{\n    Write-Error \"File contents of downloaded artifacts are incorrect\"\n}\n",
+                "shell": "pwsh"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-12-13T00-21-23Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-0ff93e37-092e-536f-96f7-c7917dea4894",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/test__2023-12-13T00-21-23Z__ada9446619b84dd8a557aaaec3b79b58c4986cdf.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 108,
+                  "endColumn": 19
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "757294ff04223dde:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2023-12-13T00-21-23Z__ada9446619b84dd8a557aaaec3b79b58c4986cdf.yml",
+          "workflow_name": "Test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 108,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 14
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 14
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 7,
+            "actions_used": [
+              "./",
+              "actions/checkout@v4",
+              "actions/setup-node@v4",
+              "actions/upload-artifact@v4-beta"
+            ],
+            "num_run_commands": 7,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Test",
+        "true": {
+          "push": {
+            "paths-ignore": [
+              "**.md"
+            ]
+          },
+          "pull_request": {
+            "paths-ignore": [
+              "**.md"
+            ]
+          }
+        },
+        "jobs": {
+          "build": {
+            "name": "Build",
+            "strategy": {
+              "matrix": {
+                "runs-on": [
+                  "ubuntu-latest",
+                  "macos-latest",
+                  "windows-latest"
+                ]
+              },
+              "fail-fast": false
+            },
+            "runs-on": "${{ matrix.runs-on }}",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Setup Node 20",
+                "uses": "actions/setup-node@v4",
+                "with": {
+                  "node-version": "20.x",
+                  "cache": "npm"
+                }
+              },
+              {
+                "name": "npm install",
+                "run": "npm install"
+              },
+              {
+                "name": "Compile",
+                "run": "npm run build"
+              },
+              {
+                "name": "Lint",
+                "run": "npm run lint"
+              },
+              {
+                "name": "Format",
+                "run": "npm run format-check"
+              },
+              {
+                "name": "Create artifacts",
+                "run": "mkdir -p path/to/artifact-A\nmkdir -p path/to/artifact-B\necho \"Lorem ipsum dolor sit amet\" > path/to/artifact-A/file-A.txt\necho \"Hello world from file B\" > path/to/artifact-B/file-B.txt\n"
+              },
+              {
+                "name": "Upload artifact A",
+                "uses": "actions/upload-artifact@v4-beta",
+                "with": {
+                  "name": "Artifact-A",
+                  "path": "path/to/artifact-A"
+                }
+              },
+              {
+                "name": "Upload artifact B",
+                "uses": "actions/upload-artifact@v4-beta",
+                "with": {
+                  "name": "Artifact-B",
+                  "path": "path/to/artifact-B"
+                }
+              },
+              {
+                "name": "Download artifact A",
+                "uses": "./",
+                "with": {
+                  "name": "Artifact-A",
+                  "path": "some/new/path"
+                }
+              },
+              {
+                "name": "Download artifact A",
+                "uses": "./",
+                "with": {
+                  "name": "Artifact-A",
+                  "path": "~/some/path/with/a/tilde"
+                }
+              },
+              {
+                "name": "Verify successful download",
+                "run": "$file1 = \"some/new/path/file-A.txt\"\n$file2 = \"~/some/path/with/a/tilde/file-A.txt\"\nif(!(Test-Path -path $file1) -or !(Test-Path -path $file2))\n{\n    Write-Error \"Expected files do not exist\"\n}\nif(!((Get-Content $file1) -ceq \"Lorem ipsum dolor sit amet\") -or !((Get-Content $file2) -ceq \"Lorem ipsum dolor sit amet\"))\n{\n    Write-Error \"File contents of downloaded artifacts are incorrect\"\n}\n",
+                "shell": "pwsh"
+              },
+              {
+                "name": "Download all Artifacts",
+                "uses": "./",
+                "with": {
+                  "path": "some/other/path"
+                }
+              },
+              {
+                "name": "Verify successful download",
+                "run": "$fileA = \"some/other/path/Artifact-A/file-A.txt\"\n$fileB = \"some/other/path/Artifact-B/file-B.txt\"\nif(!(Test-Path -path $fileA) -or !(Test-Path -path $fileB))\n{\n    Write-Error \"Expected files do not exist\"\n}\nif(!((Get-Content $fileA) -ceq \"Lorem ipsum dolor sit amet\") -or !((Get-Content $fileB) -ceq \"Hello world from file B\"))\n{\n    Write-Error \"File contents of downloaded artifacts are incorrect\"\n}\n",
+                "shell": "pwsh"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-12-13T00-38-16Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-03dac8a3-71f0-55bd-b5b9-de53742d56bb",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/test__2023-12-13T00-38-16Z__7226129829bb686fdff47bd63bbd0d1373993a84.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 108,
+                  "endColumn": 19
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "757294ff04223dde:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2023-12-13T00-38-16Z__7226129829bb686fdff47bd63bbd0d1373993a84.yml",
+          "workflow_name": "Test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 108,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 14
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 14
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 7,
+            "actions_used": [
+              "./",
+              "actions/checkout@v4",
+              "actions/setup-node@v4",
+              "actions/upload-artifact@v4-beta"
+            ],
+            "num_run_commands": 7,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Test",
+        "true": {
+          "push": {
+            "paths-ignore": [
+              "**.md"
+            ]
+          },
+          "pull_request": {
+            "paths-ignore": [
+              "**.md"
+            ]
+          }
+        },
+        "jobs": {
+          "build": {
+            "name": "Build",
+            "strategy": {
+              "matrix": {
+                "runs-on": [
+                  "ubuntu-latest",
+                  "macos-latest",
+                  "windows-latest"
+                ]
+              },
+              "fail-fast": false
+            },
+            "runs-on": "${{ matrix.runs-on }}",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Setup Node 20",
+                "uses": "actions/setup-node@v4",
+                "with": {
+                  "node-version": "20.x",
+                  "cache": "npm"
+                }
+              },
+              {
+                "name": "npm install",
+                "run": "npm install"
+              },
+              {
+                "name": "Compile",
+                "run": "npm run build"
+              },
+              {
+                "name": "Lint",
+                "run": "npm run lint"
+              },
+              {
+                "name": "Format",
+                "run": "npm run format-check"
+              },
+              {
+                "name": "Create artifacts",
+                "run": "mkdir -p path/to/artifact-A\nmkdir -p path/to/artifact-B\necho \"Lorem ipsum dolor sit amet\" > path/to/artifact-A/file-A.txt\necho \"Hello world from file B\" > path/to/artifact-B/file-B.txt\n"
+              },
+              {
+                "name": "Upload artifact A",
+                "uses": "actions/upload-artifact@v4-beta",
+                "with": {
+                  "name": "Artifact-A-${{ matrix.runs-on }}",
+                  "path": "path/to/artifact-A"
+                }
+              },
+              {
+                "name": "Upload artifact B",
+                "uses": "actions/upload-artifact@v4-beta",
+                "with": {
+                  "name": "Artifact-B-${{ matrix.runs-on }}",
+                  "path": "path/to/artifact-B"
+                }
+              },
+              {
+                "name": "Download artifact A",
+                "uses": "./",
+                "with": {
+                  "name": "Artifact-A-${{ matrix.runs-on }}",
+                  "path": "some/new/path"
+                }
+              },
+              {
+                "name": "Download artifact A",
+                "uses": "./",
+                "with": {
+                  "name": "Artifact-A-${{ matrix.runs-on }}",
+                  "path": "~/some/path/with/a/tilde"
+                }
+              },
+              {
+                "name": "Verify successful download",
+                "run": "$file1 = \"some/new/path/file-A.txt\"\n$file2 = \"~/some/path/with/a/tilde/file-A.txt\"\nif(!(Test-Path -path $file1) -or !(Test-Path -path $file2))\n{\n    Write-Error \"Expected files do not exist\"\n}\nif(!((Get-Content $file1) -ceq \"Lorem ipsum dolor sit amet\") -or !((Get-Content $file2) -ceq \"Lorem ipsum dolor sit amet\"))\n{\n    Write-Error \"File contents of downloaded artifacts are incorrect\"\n}\n",
+                "shell": "pwsh"
+              },
+              {
+                "name": "Download all Artifacts",
+                "uses": "./",
+                "with": {
+                  "path": "some/other/path"
+                }
+              },
+              {
+                "name": "Verify successful download",
+                "run": "$fileA = \"some/other/path/Artifact-A-${{ matrix.runs-on }}/file-A.txt\"\n$fileB = \"some/other/path/Artifact-B-${{ matrix.runs-on }}/file-B.txt\"\nif(!(Test-Path -path $fileA) -or !(Test-Path -path $fileB))\n{\n    Write-Error \"Expected files do not exist\"\n}\nif(!((Get-Content $fileA) -ceq \"Lorem ipsum dolor sit amet\") -or !((Get-Content $fileB) -ceq \"Hello world from file B\"))\n{\n    Write-Error \"File contents of downloaded artifacts are incorrect\"\n}\n",
+                "shell": "pwsh"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-12-18T17-43-05Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-b8edfcda-8ffc-5543-a904-229b15262028",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/test__2023-12-18T17-43-05Z__0b55470e40ab7435f445813ebc18b1107ecf7e32.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 130,
+                  "endColumn": 19
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "757294ff04223dde:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2023-12-18T17-43-05Z__0b55470e40ab7435f445813ebc18b1107ecf7e32.yml",
+          "workflow_name": "Test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 130,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 16
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 16
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 8,
+            "actions_used": [
+              "./",
+              "actions/checkout@v4",
+              "actions/setup-node@v4",
+              "actions/upload-artifact@v4"
+            ],
+            "num_run_commands": 8,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Test",
+        "true": {
+          "push": {
+            "paths-ignore": [
+              "**.md"
+            ]
+          },
+          "pull_request": {
+            "paths-ignore": [
+              "**.md"
+            ]
+          }
+        },
+        "jobs": {
+          "build": {
+            "name": "Build",
+            "strategy": {
+              "matrix": {
+                "runs-on": [
+                  "ubuntu-latest",
+                  "macos-latest",
+                  "windows-latest"
+                ]
+              },
+              "fail-fast": false
+            },
+            "runs-on": "${{ matrix.runs-on }}",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Setup Node 20",
+                "uses": "actions/setup-node@v4",
+                "with": {
+                  "node-version": "20.x",
+                  "cache": "npm"
+                }
+              },
+              {
+                "name": "npm install",
+                "run": "npm install"
+              },
+              {
+                "name": "Compile",
+                "run": "npm run build"
+              },
+              {
+                "name": "Lint",
+                "run": "npm run lint"
+              },
+              {
+                "name": "Format",
+                "run": "npm run format-check"
+              },
+              {
+                "name": "Create artifacts",
+                "run": "mkdir -p path/to/artifact-A\nmkdir -p path/to/artifact-B\necho \"Lorem ipsum dolor sit amet\" > path/to/artifact-A/file-A.txt\necho \"Hello world from file B\" > path/to/artifact-B/file-B.txt\n"
+              },
+              {
+                "name": "Upload artifact A",
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "Artifact-A-${{ matrix.runs-on }}",
+                  "path": "path/to/artifact-A"
+                }
+              },
+              {
+                "name": "Upload artifact B",
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "Artifact-B-${{ matrix.runs-on }}",
+                  "path": "path/to/artifact-B"
+                }
+              },
+              {
+                "name": "Download artifact A",
+                "uses": "./",
+                "with": {
+                  "name": "Artifact-A-${{ matrix.runs-on }}",
+                  "path": "some/new/path"
+                }
+              },
+              {
+                "name": "Download artifact A",
+                "uses": "./",
+                "with": {
+                  "name": "Artifact-A-${{ matrix.runs-on }}",
+                  "path": "~/some/path/with/a/tilde"
+                }
+              },
+              {
+                "name": "Verify successful download",
+                "run": "$file1 = \"some/new/path/file-A.txt\"\n$file2 = \"~/some/path/with/a/tilde/file-A.txt\"\nif(!(Test-Path -path $file1) -or !(Test-Path -path $file2))\n{\n    Write-Error \"Expected files do not exist\"\n}\nif(!((Get-Content $file1) -ceq \"Lorem ipsum dolor sit amet\") -or !((Get-Content $file2) -ceq \"Lorem ipsum dolor sit amet\"))\n{\n    Write-Error \"File contents of downloaded artifacts are incorrect\"\n}\n",
+                "shell": "pwsh"
+              },
+              {
+                "name": "Download all Artifacts",
+                "uses": "./",
+                "with": {
+                  "path": "some/other/path"
+                }
+              },
+              {
+                "name": "Verify successful download",
+                "run": "$fileA = \"some/other/path/Artifact-A-${{ matrix.runs-on }}/file-A.txt\"\n$fileB = \"some/other/path/Artifact-B-${{ matrix.runs-on }}/file-B.txt\"\nif(!(Test-Path -path $fileA) -or !(Test-Path -path $fileB))\n{\n    Write-Error \"Expected files do not exist\"\n}\nif(!((Get-Content $fileA) -ceq \"Lorem ipsum dolor sit amet\") -or !((Get-Content $fileB) -ceq \"Hello world from file B\"))\n{\n    Write-Error \"File contents of downloaded artifacts are incorrect\"\n}\n",
+                "shell": "pwsh"
+              },
+              {
+                "name": "Download all Artifacts",
+                "uses": "./",
+                "with": {
+                  "pattern": "Artifact-*",
+                  "path": "single/directory",
+                  "merge-multiple": true
+                }
+              },
+              {
+                "name": "Verify successful download",
+                "run": "$fileA = \"single/directory/file-A.txt\"\n$fileB = \"single/directory/file-B.txt\"\nif(!(Test-Path -path $fileA) -or !(Test-Path -path $fileB))\n{\n    Write-Error \"Expected files do not exist\"\n}\nif(!((Get-Content $fileA) -ceq \"Lorem ipsum dolor sit amet\") -or !((Get-Content $fileB) -ceq \"Hello world from file B\"))\n{\n    Write-Error \"File contents of downloaded artifacts are incorrect\"\n}\n",
+                "shell": "pwsh"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-12-14T20-10-05Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-ac584d08-07a5-5fe6-a67f-387d54fd6e71",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/test__2023-12-14T20-10-05Z__bf8f7d968aaaabcfa201d1db7d5cbd8f3d68400a.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 108,
+                  "endColumn": 19
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "757294ff04223dde:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2023-12-14T20-10-05Z__bf8f7d968aaaabcfa201d1db7d5cbd8f3d68400a.yml",
+          "workflow_name": "Test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 108,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 14
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 14
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 7,
+            "actions_used": [
+              "./",
+              "actions/checkout@v4",
+              "actions/setup-node@v4",
+              "actions/upload-artifact@v4"
+            ],
+            "num_run_commands": 7,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Test",
+        "true": {
+          "push": {
+            "paths-ignore": [
+              "**.md"
+            ]
+          },
+          "pull_request": {
+            "paths-ignore": [
+              "**.md"
+            ]
+          }
+        },
+        "jobs": {
+          "build": {
+            "name": "Build",
+            "strategy": {
+              "matrix": {
+                "runs-on": [
+                  "ubuntu-latest",
+                  "macos-latest",
+                  "windows-latest"
+                ]
+              },
+              "fail-fast": false
+            },
+            "runs-on": "${{ matrix.runs-on }}",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Setup Node 20",
+                "uses": "actions/setup-node@v4",
+                "with": {
+                  "node-version": "20.x",
+                  "cache": "npm"
+                }
+              },
+              {
+                "name": "npm install",
+                "run": "npm install"
+              },
+              {
+                "name": "Compile",
+                "run": "npm run build"
+              },
+              {
+                "name": "Lint",
+                "run": "npm run lint"
+              },
+              {
+                "name": "Format",
+                "run": "npm run format-check"
+              },
+              {
+                "name": "Create artifacts",
+                "run": "mkdir -p path/to/artifact-A\nmkdir -p path/to/artifact-B\necho \"Lorem ipsum dolor sit amet\" > path/to/artifact-A/file-A.txt\necho \"Hello world from file B\" > path/to/artifact-B/file-B.txt\n"
+              },
+              {
+                "name": "Upload artifact A",
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "Artifact-A-${{ matrix.runs-on }}",
+                  "path": "path/to/artifact-A"
+                }
+              },
+              {
+                "name": "Upload artifact B",
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "Artifact-B-${{ matrix.runs-on }}",
+                  "path": "path/to/artifact-B"
+                }
+              },
+              {
+                "name": "Download artifact A",
+                "uses": "./",
+                "with": {
+                  "name": "Artifact-A-${{ matrix.runs-on }}",
+                  "path": "some/new/path"
+                }
+              },
+              {
+                "name": "Download artifact A",
+                "uses": "./",
+                "with": {
+                  "name": "Artifact-A-${{ matrix.runs-on }}",
+                  "path": "~/some/path/with/a/tilde"
+                }
+              },
+              {
+                "name": "Verify successful download",
+                "run": "$file1 = \"some/new/path/file-A.txt\"\n$file2 = \"~/some/path/with/a/tilde/file-A.txt\"\nif(!(Test-Path -path $file1) -or !(Test-Path -path $file2))\n{\n    Write-Error \"Expected files do not exist\"\n}\nif(!((Get-Content $file1) -ceq \"Lorem ipsum dolor sit amet\") -or !((Get-Content $file2) -ceq \"Lorem ipsum dolor sit amet\"))\n{\n    Write-Error \"File contents of downloaded artifacts are incorrect\"\n}\n",
+                "shell": "pwsh"
+              },
+              {
+                "name": "Download all Artifacts",
+                "uses": "./",
+                "with": {
+                  "path": "some/other/path"
+                }
+              },
+              {
+                "name": "Verify successful download",
+                "run": "$fileA = \"some/other/path/Artifact-A-${{ matrix.runs-on }}/file-A.txt\"\n$fileB = \"some/other/path/Artifact-B-${{ matrix.runs-on }}/file-B.txt\"\nif(!(Test-Path -path $fileA) -or !(Test-Path -path $fileB))\n{\n    Write-Error \"Expected files do not exist\"\n}\nif(!((Get-Content $fileA) -ceq \"Lorem ipsum dolor sit amet\") -or !((Get-Content $fileB) -ceq \"Hello world from file B\"))\n{\n    Write-Error \"File contents of downloaded artifacts are incorrect\"\n}\n",
+                "shell": "pwsh"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-03-19T15-01-26Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-3df0c40b-7434-577f-9e10-619768086896",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/test__2025-03-19T15-01-26Z__f9415c0ec30f02c18e075f091cafcfe4159168d0.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 133,
+                  "endColumn": 19
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "757294ff04223dde:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "test__2025-03-19T15-01-26Z__f9415c0ec30f02c18e075f091cafcfe4159168d0.yml",
+          "workflow_name": "Test",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 133,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 17
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 17
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 8,
+            "actions_used": [
+              "./",
+              "actions/checkout@v4",
+              "actions/setup-node@v4",
+              "actions/upload-artifact@v4"
+            ],
+            "num_run_commands": 9,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Test",
+        "true": {
+          "push": {
+            "paths-ignore": [
+              "**.md"
+            ]
+          },
+          "pull_request": {
+            "paths-ignore": [
+              "**.md"
+            ]
+          }
+        },
+        "jobs": {
+          "build": {
+            "name": "Build",
+            "strategy": {
+              "matrix": {
+                "runs-on": [
+                  "ubuntu-latest",
+                  "macos-latest",
+                  "windows-latest"
+                ]
+              },
+              "fail-fast": false
+            },
+            "runs-on": "${{ matrix.runs-on }}",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Setup Node 20",
+                "uses": "actions/setup-node@v4",
+                "with": {
+                  "node-version": "20.x",
+                  "cache": "npm"
+                }
+              },
+              {
+                "name": "npm install",
+                "run": "npm install"
+              },
+              {
+                "name": "Compile",
+                "run": "npm run build"
+              },
+              {
+                "name": "Lint",
+                "run": "npm run lint"
+              },
+              {
+                "name": "Format",
+                "run": "npm run format-check"
+              },
+              {
+                "name": "Run Unit Tests",
+                "run": "npm test"
+              },
+              {
+                "name": "Create artifacts",
+                "run": "mkdir -p path/to/artifact-A\nmkdir -p path/to/artifact-B\necho \"Lorem ipsum dolor sit amet\" > path/to/artifact-A/file-A.txt\necho \"Hello world from file B\" > path/to/artifact-B/file-B.txt\n"
+              },
+              {
+                "name": "Upload artifact A",
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "Artifact-A-${{ matrix.runs-on }}",
+                  "path": "path/to/artifact-A"
+                }
+              },
+              {
+                "name": "Upload artifact B",
+                "uses": "actions/upload-artifact@v4",
+                "with": {
+                  "name": "Artifact-B-${{ matrix.runs-on }}",
+                  "path": "path/to/artifact-B"
+                }
+              },
+              {
+                "name": "Download artifact A",
+                "uses": "./",
+                "with": {
+                  "name": "Artifact-A-${{ matrix.runs-on }}",
+                  "path": "some/new/path"
+                }
+              },
+              {
+                "name": "Download artifact A",
+                "uses": "./",
+                "with": {
+                  "name": "Artifact-A-${{ matrix.runs-on }}",
+                  "path": "~/some/path/with/a/tilde"
+                }
+              },
+              {
+                "name": "Verify successful download",
+                "run": "$file1 = \"some/new/path/file-A.txt\"\n$file2 = \"~/some/path/with/a/tilde/file-A.txt\"\nif(!(Test-Path -path $file1) -or !(Test-Path -path $file2))\n{\n    Write-Error \"Expected files do not exist\"\n}\nif(!((Get-Content $file1) -ceq \"Lorem ipsum dolor sit amet\") -or !((Get-Content $file2) -ceq \"Lorem ipsum dolor sit amet\"))\n{\n    Write-Error \"File contents of downloaded artifacts are incorrect\"\n}\n",
+                "shell": "pwsh"
+              },
+              {
+                "name": "Download all Artifacts",
+                "uses": "./",
+                "with": {
+                  "path": "some/other/path"
+                }
+              },
+              {
+                "name": "Verify successful download",
+                "run": "$fileA = \"some/other/path/Artifact-A-${{ matrix.runs-on }}/file-A.txt\"\n$fileB = \"some/other/path/Artifact-B-${{ matrix.runs-on }}/file-B.txt\"\nif(!(Test-Path -path $fileA) -or !(Test-Path -path $fileB))\n{\n    Write-Error \"Expected files do not exist\"\n}\nif(!((Get-Content $fileA) -ceq \"Lorem ipsum dolor sit amet\") -or !((Get-Content $fileB) -ceq \"Hello world from file B\"))\n{\n    Write-Error \"File contents of downloaded artifacts are incorrect\"\n}\n",
+                "shell": "pwsh"
+              },
+              {
+                "name": "Download all Artifacts",
+                "uses": "./",
+                "with": {
+                  "pattern": "Artifact-*",
+                  "path": "single/directory",
+                  "merge-multiple": true
+                }
+              },
+              {
+                "name": "Verify successful download",
+                "run": "$fileA = \"single/directory/file-A.txt\"\n$fileB = \"single/directory/file-B.txt\"\nif(!(Test-Path -path $fileA) -or !(Test-Path -path $fileB))\n{\n    Write-Error \"Expected files do not exist\"\n}\nif(!((Get-Content $fileA) -ceq \"Lorem ipsum dolor sit amet\") -or !((Get-Content $fileB) -ceq \"Hello world from file B\"))\n{\n    Write-Error \"File contents of downloaded artifacts are incorrect\"\n}\n",
+                "shell": "pwsh"
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

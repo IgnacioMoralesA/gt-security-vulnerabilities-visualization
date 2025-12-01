@@ -1,0 +1,1532 @@
+{
+  "repo_owner": "trufflesecurity",
+  "repo_name": "trufflehog",
+  "workflow_name": "detector-tests",
+  "history": {
+    "2023-09-21T17-32-40Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "detector-tests__2023-09-21T17-32-40Z__b66bd9544c96346052fdc1814d577a88bc835c9a.yml",
+          "workflow_name": "detector test aggregation",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 51,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "test-detectors": 8
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test-detectors": 8
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 5,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-go@v4",
+              "buildpulse/buildpulse-action@main",
+              "google-github-actions/auth@v1",
+              "mikepenz/action-junit-report@v3"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "detector test aggregation",
+        "true": {
+          "workflow_dispatch": null,
+          "schedule": [
+            {
+              "cron": "0 8 * * *"
+            }
+          ]
+        },
+        "jobs": {
+          "test-detectors": {
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "actions": "read",
+              "contents": "read",
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v4",
+                "with": {
+                  "go-version": "1.21"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "id": "auth",
+                "uses": "google-github-actions/auth@v1",
+                "with": {
+                  "workload_identity_provider": "projects/811013774421/locations/global/workloadIdentityPools/github-pool/providers/github-provider",
+                  "service_account": "github-ci-external@trufflehog-testing.iam.gserviceaccount.com"
+                }
+              },
+              {
+                "name": "Test",
+                "run": "make test-integration"
+              },
+              {
+                "name": "Set up gotestsum",
+                "run": "go install gotest.tools/gotestsum@latest\nmkdir -p tmp/test-results\n"
+              },
+              {
+                "name": "Test",
+                "run": "CGO_ENABLED=1 gotestsum --junitfile tmp/test-results/test.xml --raw-command -- go test -json -tags=detectors -timeout=15m $(go list ./... | pkg/detectors)\n"
+              },
+              {
+                "name": "Upload test results to BuildPulse for flaky test detection",
+                "if": "${{ !cancelled() }}",
+                "uses": "buildpulse/buildpulse-action@main",
+                "with": {
+                  "account": 79229934,
+                  "repository": 694446374,
+                  "path": "tmp/test-results/*.xml\n",
+                  "key": "${{ secrets.BUILDPULSE_DETECTORS_ACCESS_KEY_ID }}",
+                  "secret": "${{ secrets.BUILDPULSE_DETECTORS_SECRET_ACCESS_KEY }}",
+                  "tags": "detectors"
+                }
+              },
+              {
+                "name": "Annotate test results",
+                "uses": "mikepenz/action-junit-report@v3",
+                "if": "success() || failure()",
+                "with": {
+                  "report_paths": "tmp/test-results/*.xml"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-09-21T22-16-00Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "detector-tests__2023-09-21T22-16-00Z__5afc7a32ca5d3d83f042607478eb8ecba2def1f6.yml",
+          "workflow_name": "detector test aggregation",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 46,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "test-detectors": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test-detectors": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-go@v4",
+              "buildpulse/buildpulse-action@main",
+              "google-github-actions/auth@v1"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "detector test aggregation",
+        "true": {
+          "workflow_dispatch": null,
+          "schedule": [
+            {
+              "cron": "0 8 * * *"
+            }
+          ]
+        },
+        "jobs": {
+          "test-detectors": {
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "actions": "read",
+              "contents": "read",
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v4",
+                "with": {
+                  "go-version": "1.21"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "id": "auth",
+                "uses": "google-github-actions/auth@v1",
+                "with": {
+                  "workload_identity_provider": "projects/811013774421/locations/global/workloadIdentityPools/github-pool/providers/github-provider",
+                  "service_account": "github-ci-external@trufflehog-testing.iam.gserviceaccount.com"
+                }
+              },
+              {
+                "name": "Test",
+                "run": "make test-integration"
+              },
+              {
+                "name": "Set up gotestsum",
+                "run": "go install gotest.tools/gotestsum@latest\nmkdir -p tmp/test-results\n"
+              },
+              {
+                "name": "Test",
+                "run": "CGO_ENABLED=1 gotestsum --junitfile tmp/test-results/test.xml --raw-command -- go test -json -tags=detectors -timeout=15m $(go list ./... | grep pkg/detectors)\n"
+              },
+              {
+                "name": "Upload test results to BuildPulse for flaky test detection",
+                "if": "${{ !cancelled() }}",
+                "uses": "buildpulse/buildpulse-action@main",
+                "with": {
+                  "account": 79229934,
+                  "repository": 694446374,
+                  "path": "tmp/test-results/*.xml\n",
+                  "key": "${{ secrets.BUILDPULSE_DETECTORS_ACCESS_KEY_ID }}",
+                  "secret": "${{ secrets.BUILDPULSE_DETECTORS_SECRET_ACCESS_KEY }}",
+                  "tags": "detectors"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-10-02T14-37-57Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "detector-tests__2023-10-02T14-37-57Z__c7965b2df6d1f5d0a20ad9eecadf002fd74a8b5c.yml",
+          "workflow_name": "detector test aggregation",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 46,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "test-detectors": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test-detectors": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v4",
+              "buildpulse/buildpulse-action@main",
+              "google-github-actions/auth@v1"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "detector test aggregation",
+        "true": {
+          "workflow_dispatch": null,
+          "schedule": [
+            {
+              "cron": "0 8 * * *"
+            }
+          ]
+        },
+        "jobs": {
+          "test-detectors": {
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "actions": "read",
+              "contents": "read",
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v4",
+                "with": {
+                  "go-version": "1.21"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "id": "auth",
+                "uses": "google-github-actions/auth@v1",
+                "with": {
+                  "workload_identity_provider": "projects/811013774421/locations/global/workloadIdentityPools/github-pool/providers/github-provider",
+                  "service_account": "github-ci-external@trufflehog-testing.iam.gserviceaccount.com"
+                }
+              },
+              {
+                "name": "Test",
+                "run": "make test-integration"
+              },
+              {
+                "name": "Set up gotestsum",
+                "run": "go install gotest.tools/gotestsum@latest\nmkdir -p tmp/test-results\n"
+              },
+              {
+                "name": "Test",
+                "run": "CGO_ENABLED=1 gotestsum --junitfile tmp/test-results/test.xml --raw-command -- go test -json -tags=detectors -timeout=15m $(go list ./... | grep pkg/detectors)\n"
+              },
+              {
+                "name": "Upload test results to BuildPulse for flaky test detection",
+                "if": "${{ !cancelled() }}",
+                "uses": "buildpulse/buildpulse-action@main",
+                "with": {
+                  "account": 79229934,
+                  "repository": 694446374,
+                  "path": "tmp/test-results/*.xml\n",
+                  "key": "${{ secrets.BUILDPULSE_DETECTORS_ACCESS_KEY_ID }}",
+                  "secret": "${{ secrets.BUILDPULSE_DETECTORS_SECRET_ACCESS_KEY }}",
+                  "tags": "detectors"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-12-05T00-46-56Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "detector-tests__2023-12-05T00-46-56Z__16cf8584954d2f35967f6a8629f556ad1291d083.yml",
+          "workflow_name": "detector test aggregation",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 46,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "test-detectors": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test-detectors": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v4",
+              "buildpulse/buildpulse-action@main",
+              "google-github-actions/auth@v2"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "detector test aggregation",
+        "true": {
+          "workflow_dispatch": null,
+          "schedule": [
+            {
+              "cron": "0 8 * * *"
+            }
+          ]
+        },
+        "jobs": {
+          "test-detectors": {
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "actions": "read",
+              "contents": "read",
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v4",
+                "with": {
+                  "go-version": "1.21"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "id": "auth",
+                "uses": "google-github-actions/auth@v2",
+                "with": {
+                  "workload_identity_provider": "projects/811013774421/locations/global/workloadIdentityPools/github-pool/providers/github-provider",
+                  "service_account": "github-ci-external@trufflehog-testing.iam.gserviceaccount.com"
+                }
+              },
+              {
+                "name": "Test",
+                "run": "make test-integration"
+              },
+              {
+                "name": "Set up gotestsum",
+                "run": "go install gotest.tools/gotestsum@latest\nmkdir -p tmp/test-results\n"
+              },
+              {
+                "name": "Test",
+                "run": "CGO_ENABLED=1 gotestsum --junitfile tmp/test-results/test.xml --raw-command -- go test -json -tags=detectors -timeout=15m $(go list ./... | grep pkg/detectors)\n"
+              },
+              {
+                "name": "Upload test results to BuildPulse for flaky test detection",
+                "if": "${{ !cancelled() }}",
+                "uses": "buildpulse/buildpulse-action@main",
+                "with": {
+                  "account": 79229934,
+                  "repository": 694446374,
+                  "path": "tmp/test-results/*.xml\n",
+                  "key": "${{ secrets.BUILDPULSE_DETECTORS_ACCESS_KEY_ID }}",
+                  "secret": "${{ secrets.BUILDPULSE_DETECTORS_SECRET_ACCESS_KEY }}",
+                  "tags": "detectors"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-12-17T16-32-07Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "detector-tests__2023-12-17T16-32-07Z__2928e2ee763ee225e4411160a7cd8da996f52390.yml",
+          "workflow_name": "detector test aggregation",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 47,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "test-detectors": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test-detectors": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v4",
+              "buildpulse/buildpulse-action@main",
+              "google-github-actions/auth@v2"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "detector test aggregation",
+        "true": {
+          "workflow_dispatch": null,
+          "schedule": [
+            {
+              "cron": "0 8 * * *"
+            }
+          ]
+        },
+        "jobs": {
+          "test-detectors": {
+            "if": "${{ github.repository == 'trufflesecurity/trufflehog' }}",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "actions": "read",
+              "contents": "read",
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v4",
+                "with": {
+                  "go-version": "1.21"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "id": "auth",
+                "uses": "google-github-actions/auth@v2",
+                "with": {
+                  "workload_identity_provider": "projects/811013774421/locations/global/workloadIdentityPools/github-pool/providers/github-provider",
+                  "service_account": "github-ci-external@trufflehog-testing.iam.gserviceaccount.com"
+                }
+              },
+              {
+                "name": "Test",
+                "run": "make test-integration"
+              },
+              {
+                "name": "Set up gotestsum",
+                "run": "go install gotest.tools/gotestsum@latest\nmkdir -p tmp/test-results\n"
+              },
+              {
+                "name": "Test",
+                "run": "CGO_ENABLED=1 gotestsum --junitfile tmp/test-results/test.xml --raw-command -- go test -json -tags=detectors -timeout=15m $(go list ./... | grep pkg/detectors)\n"
+              },
+              {
+                "name": "Upload test results to BuildPulse for flaky test detection",
+                "if": "${{ !cancelled() }}",
+                "uses": "buildpulse/buildpulse-action@main",
+                "with": {
+                  "account": 79229934,
+                  "repository": 694446374,
+                  "path": "tmp/test-results/*.xml\n",
+                  "key": "${{ secrets.BUILDPULSE_DETECTORS_ACCESS_KEY_ID }}",
+                  "secret": "${{ secrets.BUILDPULSE_DETECTORS_SECRET_ACCESS_KEY }}",
+                  "tags": "detectors"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-02-13T03-15-50Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "detector-tests__2024-02-13T03-15-50Z__774c48545eda5446d0045714317e5d7db670a4d6.yml",
+          "workflow_name": "detector test aggregation",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 47,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "test-detectors": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test-detectors": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5",
+              "buildpulse/buildpulse-action@main",
+              "google-github-actions/auth@v2"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "detector test aggregation",
+        "true": {
+          "workflow_dispatch": null,
+          "schedule": [
+            {
+              "cron": "0 8 * * *"
+            }
+          ]
+        },
+        "jobs": {
+          "test-detectors": {
+            "if": "${{ github.repository == 'trufflesecurity/trufflehog' }}",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "actions": "read",
+              "contents": "read",
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.21"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "id": "auth",
+                "uses": "google-github-actions/auth@v2",
+                "with": {
+                  "workload_identity_provider": "projects/811013774421/locations/global/workloadIdentityPools/github-pool/providers/github-provider",
+                  "service_account": "github-ci-external@trufflehog-testing.iam.gserviceaccount.com"
+                }
+              },
+              {
+                "name": "Test",
+                "run": "make test-integration"
+              },
+              {
+                "name": "Set up gotestsum",
+                "run": "go install gotest.tools/gotestsum@latest\nmkdir -p tmp/test-results\n"
+              },
+              {
+                "name": "Test",
+                "run": "CGO_ENABLED=1 gotestsum --junitfile tmp/test-results/test.xml --raw-command -- go test -json -tags=detectors -timeout=15m $(go list ./... | grep pkg/detectors)\n"
+              },
+              {
+                "name": "Upload test results to BuildPulse for flaky test detection",
+                "if": "${{ !cancelled() }}",
+                "uses": "buildpulse/buildpulse-action@main",
+                "with": {
+                  "account": 79229934,
+                  "repository": 694446374,
+                  "path": "tmp/test-results/*.xml\n",
+                  "key": "${{ secrets.BUILDPULSE_DETECTORS_ACCESS_KEY_ID }}",
+                  "secret": "${{ secrets.BUILDPULSE_DETECTORS_SECRET_ACCESS_KEY }}",
+                  "tags": "detectors"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-03-22T15-23-04Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "detector-tests__2024-03-22T15-23-04Z__41d58739bd32b0180af3a863a764f9163586e37a.yml",
+          "workflow_name": "detector test aggregation",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 47,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "test-detectors": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test-detectors": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5",
+              "buildpulse/buildpulse-action@main",
+              "google-github-actions/auth@v2"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "detector test aggregation",
+        "true": {
+          "workflow_dispatch": null,
+          "schedule": [
+            {
+              "cron": "0 8 * * *"
+            }
+          ]
+        },
+        "jobs": {
+          "test-detectors": {
+            "if": "${{ github.repository == 'trufflesecurity/trufflehog' }}",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "actions": "read",
+              "contents": "read",
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.22"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "id": "auth",
+                "uses": "google-github-actions/auth@v2",
+                "with": {
+                  "workload_identity_provider": "projects/811013774421/locations/global/workloadIdentityPools/github-pool/providers/github-provider",
+                  "service_account": "github-ci-external@trufflehog-testing.iam.gserviceaccount.com"
+                }
+              },
+              {
+                "name": "Test",
+                "run": "make test-integration"
+              },
+              {
+                "name": "Set up gotestsum",
+                "run": "go install gotest.tools/gotestsum@latest\nmkdir -p tmp/test-results\n"
+              },
+              {
+                "name": "Test",
+                "run": "CGO_ENABLED=1 gotestsum --junitfile tmp/test-results/test.xml --raw-command -- go test -json -tags=detectors -timeout=15m $(go list ./... | grep pkg/detectors)\n"
+              },
+              {
+                "name": "Upload test results to BuildPulse for flaky test detection",
+                "if": "${{ !cancelled() }}",
+                "uses": "buildpulse/buildpulse-action@main",
+                "with": {
+                  "account": 79229934,
+                  "repository": 694446374,
+                  "path": "tmp/test-results/*.xml\n",
+                  "key": "${{ secrets.BUILDPULSE_DETECTORS_ACCESS_KEY_ID }}",
+                  "secret": "${{ secrets.BUILDPULSE_DETECTORS_SECRET_ACCESS_KEY }}",
+                  "tags": "detectors"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-06-20T16-43-11Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "detector-tests__2024-06-20T16-43-11Z__9176e25a263bc49d6e51006cfaf4df2d42f583d7.yml",
+          "workflow_name": "detector test aggregation",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 47,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "test-detectors": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test-detectors": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5",
+              "buildpulse/buildpulse-action@main",
+              "google-github-actions/auth@v2"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "detector test aggregation",
+        "true": {
+          "workflow_dispatch": null,
+          "schedule": [
+            {
+              "cron": "0 8 * * *"
+            }
+          ]
+        },
+        "jobs": {
+          "test-detectors": {
+            "if": "${{ github.repository == 'trufflesecurity/trufflehog' }}",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "actions": "read",
+              "contents": "read",
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.22"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "id": "auth",
+                "uses": "google-github-actions/auth@v2",
+                "with": {
+                  "workload_identity_provider": "projects/811013774421/locations/global/workloadIdentityPools/github-pool/providers/github-provider",
+                  "service_account": "github-ci-external@trufflehog-testing.iam.gserviceaccount.com"
+                }
+              },
+              {
+                "name": "Test integration",
+                "run": "make test-integration"
+              },
+              {
+                "name": "Set up gotestsum",
+                "run": "go install gotest.tools/gotestsum@latest\nmkdir -p tmp/test-results\n"
+              },
+              {
+                "name": "Test detectors",
+                "run": "CGO_ENABLED=1 gotestsum --junitfile tmp/test-results/test.xml --raw-command -- go test -json -tags=detectors -timeout=15m $(go list ./... | grep pkg/detectors)\n"
+              },
+              {
+                "name": "Upload test results to BuildPulse for flaky test detection",
+                "if": "${{ !cancelled() }}",
+                "uses": "buildpulse/buildpulse-action@main",
+                "with": {
+                  "account": 79229934,
+                  "repository": 694446374,
+                  "path": "tmp/test-results/*.xml\n",
+                  "key": "${{ secrets.BUILDPULSE_DETECTORS_ACCESS_KEY_ID }}",
+                  "secret": "${{ secrets.BUILDPULSE_DETECTORS_SECRET_ACCESS_KEY }}",
+                  "tags": "detectors"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-06-24T18-19-43Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "detector-tests__2024-06-24T18-19-43Z__f210767394df1e3001dc9c91f3460f6640be9e03.yml",
+          "workflow_name": "detector test aggregation",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 48,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "test-detectors": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test-detectors": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 1,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5",
+              "buildpulse/buildpulse-action@main",
+              "google-github-actions/auth@v2"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 1,
+            "steps_with_continue_on_error": 1
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "detector test aggregation",
+        "true": {
+          "workflow_dispatch": null,
+          "schedule": [
+            {
+              "cron": "0 8 * * *"
+            }
+          ]
+        },
+        "jobs": {
+          "test-detectors": {
+            "if": "${{ github.repository == 'trufflesecurity/trufflehog' }}",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "actions": "read",
+              "contents": "read",
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "name": "Install Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.22"
+                }
+              },
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "id": "auth",
+                "uses": "google-github-actions/auth@v2",
+                "with": {
+                  "workload_identity_provider": "projects/811013774421/locations/global/workloadIdentityPools/github-pool/providers/github-provider",
+                  "service_account": "github-ci-external@trufflehog-testing.iam.gserviceaccount.com"
+                }
+              },
+              {
+                "name": "Test integration",
+                "continue-on-error": true,
+                "run": "make test-integration"
+              },
+              {
+                "name": "Set up gotestsum",
+                "run": "go install gotest.tools/gotestsum@latest\nmkdir -p tmp/test-results\n"
+              },
+              {
+                "name": "Test detectors",
+                "run": "CGO_ENABLED=1 gotestsum --junitfile tmp/test-results/test.xml --raw-command -- go test -json -tags=detectors -timeout=15m $(go list ./... | grep pkg/detectors)\n"
+              },
+              {
+                "name": "Upload test results to BuildPulse for flaky test detection",
+                "if": "${{ !cancelled() }}",
+                "uses": "buildpulse/buildpulse-action@main",
+                "with": {
+                  "account": 79229934,
+                  "repository": 694446374,
+                  "path": "tmp/test-results/*.xml\n",
+                  "key": "${{ secrets.BUILDPULSE_DETECTORS_ACCESS_KEY_ID }}",
+                  "secret": "${{ secrets.BUILDPULSE_DETECTORS_SECRET_ACCESS_KEY }}",
+                  "tags": "detectors"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-09-24T18-51-52Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "detector-tests__2024-09-24T18-51-52Z__3b0f2fcf398af20fb5bbbf3950697c39d6c2c073.yml",
+          "workflow_name": "detector test aggregation",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 29,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "test-detectors": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test-detectors": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5",
+              "jaxxstorm/action-install-gh-release@v1.12.0",
+              "rwx-research/setup-captain@v1"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "detector test aggregation",
+        "true": {
+          "workflow_dispatch": null,
+          "schedule": [
+            {
+              "cron": "0 8 * * *"
+            }
+          ]
+        },
+        "jobs": {
+          "test-detectors": {
+            "if": "${{ github.repository == 'trufflesecurity/trufflehog' }}",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "actions": "read",
+              "contents": "read",
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "uses": "actions/setup-go@v5"
+              },
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Install gotestsum",
+                "uses": "jaxxstorm/action-install-gh-release@v1.12.0",
+                "with": {
+                  "repo": "gotestyourself/gotestsum"
+                }
+              },
+              {
+                "uses": "rwx-research/setup-captain@v1"
+              },
+              {
+                "name": "Test Go",
+                "run": "export CGO_ENABLED=1\ncaptain run detectors\n",
+                "env": {
+                  "RWX_ACCESS_TOKEN": "${{ secrets.RWX_ACCESS_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-09-24T19-04-56Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "detector-tests__2024-09-24T19-04-56Z__9089fb7df1632f67b2546834b43dcbdbb11b0c98.yml",
+          "workflow_name": "Detectors Aggregation",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 29,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "test-detectors": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test-detectors": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5",
+              "jaxxstorm/action-install-gh-release@v1.12.0",
+              "rwx-research/setup-captain@v1"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Detectors Aggregation",
+        "true": {
+          "workflow_dispatch": null,
+          "schedule": [
+            {
+              "cron": "0 8 * * *"
+            }
+          ]
+        },
+        "jobs": {
+          "test-detectors": {
+            "if": "${{ github.repository == 'trufflesecurity/trufflehog' }}",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "actions": "read",
+              "contents": "read",
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "uses": "actions/setup-go@v5"
+              },
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Install gotestsum",
+                "uses": "jaxxstorm/action-install-gh-release@v1.12.0",
+                "with": {
+                  "repo": "gotestyourself/gotestsum"
+                }
+              },
+              {
+                "uses": "rwx-research/setup-captain@v1"
+              },
+              {
+                "name": "Test Go",
+                "run": "export CGO_ENABLED=1\ncaptain run detectors\n",
+                "env": {
+                  "RWX_ACCESS_TOKEN": "${{ secrets.RWX_ACCESS_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-11-14T18-36-45Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "detector-tests__2024-11-14T18-36-45Z__3365260a4e835b27c3e585e7b6e325f319cd0dc3.yml",
+          "workflow_name": "Detectors Aggregation",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 29,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "test-detectors": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test-detectors": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5",
+              "jaxxstorm/action-install-gh-release@v1.13.0",
+              "rwx-research/setup-captain@v1"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Detectors Aggregation",
+        "true": {
+          "workflow_dispatch": null,
+          "schedule": [
+            {
+              "cron": "0 8 * * *"
+            }
+          ]
+        },
+        "jobs": {
+          "test-detectors": {
+            "if": "${{ github.repository == 'trufflesecurity/trufflehog' }}",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "actions": "read",
+              "contents": "read",
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "uses": "actions/setup-go@v5"
+              },
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Install gotestsum",
+                "uses": "jaxxstorm/action-install-gh-release@v1.13.0",
+                "with": {
+                  "repo": "gotestyourself/gotestsum"
+                }
+              },
+              {
+                "uses": "rwx-research/setup-captain@v1"
+              },
+              {
+                "name": "Test Go",
+                "run": "export CGO_ENABLED=1\ncaptain run detectors\n",
+                "env": {
+                  "RWX_ACCESS_TOKEN": "${{ secrets.RWX_ACCESS_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-11-26T18-32-39Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "detector-tests__2024-11-26T18-32-39Z__33879e43687cb837f04fdb3874c99463b108475c.yml",
+          "workflow_name": "Detectors Aggregation",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 29,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "test-detectors": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test-detectors": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5",
+              "jaxxstorm/action-install-gh-release@v1.14.0",
+              "rwx-research/setup-captain@v1"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Detectors Aggregation",
+        "true": {
+          "workflow_dispatch": null,
+          "schedule": [
+            {
+              "cron": "0 8 * * *"
+            }
+          ]
+        },
+        "jobs": {
+          "test-detectors": {
+            "if": "${{ github.repository == 'trufflesecurity/trufflehog' }}",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "actions": "read",
+              "contents": "read",
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "uses": "actions/setup-go@v5"
+              },
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Install gotestsum",
+                "uses": "jaxxstorm/action-install-gh-release@v1.14.0",
+                "with": {
+                  "repo": "gotestyourself/gotestsum"
+                }
+              },
+              {
+                "uses": "rwx-research/setup-captain@v1"
+              },
+              {
+                "name": "Test Go",
+                "run": "export CGO_ENABLED=1\ncaptain run detectors\n",
+                "env": {
+                  "RWX_ACCESS_TOKEN": "${{ secrets.RWX_ACCESS_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-05-19T23-18-13Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "detector-tests__2025-05-19T23-18-13Z__fa703eacf669db678b9f402eeda5cbaef02f59f0.yml",
+          "workflow_name": "Detectors Aggregation",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 29,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "test-detectors": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "test-detectors": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5",
+              "jaxxstorm/action-install-gh-release@v1.14.0",
+              "rwx-research/setup-captain@v1"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Detectors Aggregation",
+        "true": {
+          "workflow_dispatch": null,
+          "schedule": [
+            {
+              "cron": "0 8 * * *"
+            }
+          ]
+        },
+        "jobs": {
+          "test-detectors": {
+            "if": "${{ github.repository == 'trufflesecurity/trufflehog' }}",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "actions": "read",
+              "contents": "read",
+              "id-token": "write"
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "uses": "actions/setup-go@v5"
+              },
+              {
+                "name": "Install gotestsum",
+                "uses": "jaxxstorm/action-install-gh-release@v1.14.0",
+                "with": {
+                  "repo": "gotestyourself/gotestsum"
+                }
+              },
+              {
+                "uses": "rwx-research/setup-captain@v1"
+              },
+              {
+                "name": "Test Go",
+                "run": "export CGO_ENABLED=1\ncaptain run detectors\n",
+                "env": {
+                  "RWX_ACCESS_TOKEN": "${{ secrets.RWX_ACCESS_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,750 @@
+{
+  "repo_owner": "aws-actions",
+  "repo_name": "configure-aws-credentials",
+  "workflow_name": "automerge-approved-prs",
+  "history": {
+    "2024-11-05T23-55-23Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "automerge-approved-prs__2024-11-05T23-55-23Z__16ffc4e9d9f32c3680fe46c04be1bfe4cde7b524.yml",
+          "workflow_name": "automerge-approved-prs__2024-11-05T23-55-23Z__16ffc4e9d9f32c3680fe46c04be1bfe4cde7b524",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 34,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "approved_pr": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "approved_pr": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "aws-actions/aws-secretsmanager-get-secrets@v2",
+              "aws-actions/configure-aws-credentials@v4"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "true": {
+          "pull_request_review": {
+            "types": "submitted"
+          }
+        },
+        "jobs": {
+          "approved_pr": {
+            "name": "Automerge approved PRs",
+            "permissions": {
+              "contents": "write",
+              "pull-requests": "write"
+            },
+            "if": "github.event.review.state == 'approved' && github.event.repository == 'aws/configure-aws-credentials' && (github.event.review.author_association == 'OWNER' || github.event.review.user.login == 'aws-sdk-osds')",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Configure AWS credentials",
+                "uses": "aws-actions/configure-aws-credentials@v4",
+                "with": {
+                  "aws-region": "us-west-2",
+                  "role-to-assume": "${{ secrets.SECRETS_AWS_PACKAGING_ROLE_TO_ASSUME }}",
+                  "role-duration-seconds": 900,
+                  "role-session-name": "SecretsManagerFetch"
+                }
+              },
+              {
+                "name": "Get bot user token",
+                "uses": "aws-actions/aws-secretsmanager-get-secrets@v2",
+                "with": {
+                  "parse-json-secrets": true,
+                  "secret-ids": "OSDS,arn:aws:secretsmanager:us-west-2:206735643321:secret:github-aws-sdk-osds-automation-gebs9n\n"
+                }
+              },
+              {
+                "name": "Enable PR automerge",
+                "run": "gh pr merge --auto --squash \"$PR_URL\"",
+                "env": {
+                  "PR_URL": "${{ github.event.pull_request.html_url }}",
+                  "GITHUB_TOKEN": "${{ env.OSDS_ACCESS_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-11-06T23-30-39Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "automerge-approved-prs__2024-11-06T23-30-39Z__97834a484a5ab3c40fa9e2eb40fcf8041105a573.yml",
+          "workflow_name": "automerge-approved-prs__2024-11-06T23-30-39Z__97834a484a5ab3c40fa9e2eb40fcf8041105a573",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 35,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "approved_pr": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "approved_pr": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "aws-actions/aws-secretsmanager-get-secrets@v2",
+              "aws-actions/configure-aws-credentials@v4"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "true": {
+          "pull_request_review": {
+            "types": "submitted"
+          }
+        },
+        "jobs": {
+          "approved_pr": {
+            "name": "Automerge approved PRs",
+            "permissions": {
+              "contents": "write",
+              "pull-requests": "write",
+              "id-token": "write"
+            },
+            "if": "github.event.review.state == 'approved' && github.event.repository == 'aws/configure-aws-credentials' && (github.event.review.author_association == 'OWNER' || github.event.review.user.login == 'aws-sdk-osds')",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Configure AWS credentials",
+                "uses": "aws-actions/configure-aws-credentials@v4",
+                "with": {
+                  "aws-region": "us-west-2",
+                  "role-to-assume": "${{ secrets.SECRETS_AWS_PACKAGING_ROLE_TO_ASSUME }}",
+                  "role-duration-seconds": 900,
+                  "role-session-name": "SecretsManagerFetch"
+                }
+              },
+              {
+                "name": "Get bot user token",
+                "uses": "aws-actions/aws-secretsmanager-get-secrets@v2",
+                "with": {
+                  "parse-json-secrets": true,
+                  "secret-ids": "OSDS,arn:aws:secretsmanager:us-west-2:206735643321:secret:github-aws-sdk-osds-automation-gebs9n\n"
+                }
+              },
+              {
+                "name": "Enable PR automerge",
+                "run": "gh pr merge --auto --squash \"$PR_URL\"",
+                "env": {
+                  "PR_URL": "${{ github.event.pull_request.html_url }}",
+                  "GITHUB_TOKEN": "${{ env.OSDS_ACCESS_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-02-04T20-02-34Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "automerge-approved-prs__2025-02-04T20-02-34Z__cf624fbdad9dc9b457e91daba168efccd33398bd.yml",
+          "workflow_name": "automerge-approved-prs__2025-02-04T20-02-34Z__cf624fbdad9dc9b457e91daba168efccd33398bd",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 32,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "approved_pr": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "approved_pr": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "aws-actions/aws-secretsmanager-get-secrets@v2",
+              "aws-actions/configure-aws-credentials@v4"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "true": {
+          "pull_request_review": {
+            "types": "submitted"
+          }
+        },
+        "jobs": {
+          "approved_pr": {
+            "name": "Automerge approved PRs",
+            "permissions": {
+              "contents": "write",
+              "pull-requests": "write",
+              "id-token": "write"
+            },
+            "if": "${{ github.event.review.state == 'approved' && github.repository == 'aws/configure-aws-credentials' && (github.event.review.author_association == 'OWNER' || github.event.review.author_association == 'MEMBER' || github.event.review.user.login == 'aws-sdk-osds') }}",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Configure AWS credentials",
+                "uses": "aws-actions/configure-aws-credentials@v4",
+                "with": {
+                  "aws-region": "us-west-2",
+                  "role-to-assume": "${{ secrets.SECRETS_AWS_PACKAGING_ROLE_TO_ASSUME }}",
+                  "role-duration-seconds": 900,
+                  "role-session-name": "SecretsManagerFetch"
+                }
+              },
+              {
+                "name": "Get bot user token",
+                "uses": "aws-actions/aws-secretsmanager-get-secrets@v2",
+                "with": {
+                  "parse-json-secrets": true,
+                  "secret-ids": "OSDS,arn:aws:secretsmanager:us-west-2:206735643321:secret:github-aws-sdk-osds-automation-gebs9n\n"
+                }
+              },
+              {
+                "name": "Enable PR automerge",
+                "run": "gh pr merge --auto --squash \"$PR_URL\"",
+                "env": {
+                  "PR_URL": "${{ github.event.pull_request.html_url }}",
+                  "GITHUB_TOKEN": "${{ env.OSDS_ACCESS_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-02-04T22-10-35Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "automerge-approved-prs__2025-02-04T22-10-35Z__39fd91c08ed8bf770034de4e62662503e8007d76.yml",
+          "workflow_name": "automerge-approved-prs__2025-02-04T22-10-35Z__39fd91c08ed8bf770034de4e62662503e8007d76",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 32,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "approved_pr": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "approved_pr": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "aws-actions/aws-secretsmanager-get-secrets@v2",
+              "aws-actions/configure-aws-credentials@v4"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "true": {
+          "pull_request_review": {
+            "types": "submitted"
+          }
+        },
+        "jobs": {
+          "approved_pr": {
+            "name": "Automerge approved PRs",
+            "permissions": {
+              "contents": "write",
+              "pull-requests": "write",
+              "id-token": "write"
+            },
+            "if": "${{ github.event.review.state == 'approved' && github.repository == 'aws-actions/configure-aws-credentials' && (github.event.review.author_association == 'OWNER' || github.event.review.author_association == 'MEMBER' || github.event.review.user.login == 'aws-sdk-osds') }}",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Configure AWS credentials",
+                "uses": "aws-actions/configure-aws-credentials@v4",
+                "with": {
+                  "aws-region": "us-west-2",
+                  "role-to-assume": "${{ secrets.SECRETS_AWS_PACKAGING_ROLE_TO_ASSUME }}",
+                  "role-duration-seconds": 900,
+                  "role-session-name": "SecretsManagerFetch"
+                }
+              },
+              {
+                "name": "Get bot user token",
+                "uses": "aws-actions/aws-secretsmanager-get-secrets@v2",
+                "with": {
+                  "parse-json-secrets": true,
+                  "secret-ids": "OSDS,arn:aws:secretsmanager:us-west-2:206735643321:secret:github-aws-sdk-osds-automation-gebs9n\n"
+                }
+              },
+              {
+                "name": "Enable PR automerge",
+                "run": "gh pr merge --auto --squash \"$PR_URL\"",
+                "env": {
+                  "PR_URL": "${{ github.event.pull_request.html_url }}",
+                  "GITHUB_TOKEN": "${{ env.OSDS_ACCESS_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-07-25T22-08-17Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "automerge-approved-prs__2025-07-25T22-08-17Z__fd13a40502168ccbcac047ce2aeeb87cda9f1fdb.yml",
+          "workflow_name": "automerge-approved-prs__2025-07-25T22-08-17Z__fd13a40502168ccbcac047ce2aeeb87cda9f1fdb",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 32,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "approved_pr": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "approved_pr": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "aws-actions/aws-secretsmanager-get-secrets@v2",
+              "aws-actions/configure-aws-credentials@v4"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "true": {
+          "pull_request_review": {
+            "types": "submitted"
+          }
+        },
+        "jobs": {
+          "approved_pr": {
+            "name": "Automerge approved PRs",
+            "permissions": {
+              "contents": "write",
+              "pull-requests": "write",
+              "id-token": "write"
+            },
+            "if": "${{ github.event.review.state == 'approved' && github.repository == 'aws-actions/configure-aws-credentials' && (github.event.review.author_association == 'OWNER' || github.event.review.author_association == 'MEMBER' || github.event.review.user.login == 'aws-sdk-osds') }}",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Configure AWS credentials",
+                "uses": "aws-actions/configure-aws-credentials@v4",
+                "with": {
+                  "aws-region": "us-west-2",
+                  "role-to-assume": "${{ secrets.SECRETS_AWS_PACKAGING_ROLE_TO_ASSUME }}",
+                  "role-duration-seconds": 900,
+                  "role-session-name": "SecretsManagerFetch"
+                }
+              },
+              {
+                "name": "Get bot user token",
+                "uses": "aws-actions/aws-secretsmanager-get-secrets@v2",
+                "with": {
+                  "parse-json-secrets": true,
+                  "secret-ids": "${{ secrets.OSDS_PACKAGING_ROLE }}\n"
+                }
+              },
+              {
+                "name": "Enable PR automerge",
+                "run": "gh pr merge --auto --squash \"$PR_URL\"",
+                "env": {
+                  "PR_URL": "${{ github.event.pull_request.html_url }}",
+                  "GITHUB_TOKEN": "${{ env.OSDS_ACCESS_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-09-04T23-46-38Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "automerge-approved-prs__2025-09-04T23-46-38Z__163b496f8ba421cd48c1968467c1fe5f98f9c83a.yml",
+          "workflow_name": "automerge-approved-prs__2025-09-04T23-46-38Z__163b496f8ba421cd48c1968467c1fe5f98f9c83a",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 32,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "approved_pr": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "approved_pr": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "aws-actions/aws-secretsmanager-get-secrets@v2",
+              "aws-actions/configure-aws-credentials@v4"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "true": {
+          "pull_request_review": {
+            "types": "submitted"
+          }
+        },
+        "jobs": {
+          "approved_pr": {
+            "name": "Automerge approved PRs",
+            "permissions": {
+              "contents": "write",
+              "pull-requests": "write",
+              "id-token": "write"
+            },
+            "if": "${{ github.event.review.state == 'approved' && github.repository == 'aws-actions/configure-aws-credentials' && (github.event.review.author_association == 'OWNER' || github.event.review.author_association == 'MEMBER' || github.event.review.user.login == 'aws-sdk-osds') }}",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Configure AWS credentials",
+                "uses": "aws-actions/configure-aws-credentials@v4",
+                "with": {
+                  "aws-region": "us-west-2",
+                  "role-to-assume": "${{ vars.AWS_PACKAGING_ROLE_TO_ASSUME }}",
+                  "role-duration-seconds": 900,
+                  "role-session-name": "SecretsManagerFetch"
+                }
+              },
+              {
+                "name": "Get bot user token",
+                "uses": "aws-actions/aws-secretsmanager-get-secrets@v2",
+                "with": {
+                  "parse-json-secrets": true,
+                  "secret-ids": "${{ vars.OSDS_PACKAGING_ROLE }}\n"
+                }
+              },
+              {
+                "name": "Enable PR automerge",
+                "run": "gh pr merge --auto --squash \"$PR_URL\"",
+                "env": {
+                  "PR_URL": "${{ github.event.pull_request.html_url }}",
+                  "GITHUB_TOKEN": "${{ env.OSDS_ACCESS_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-09-04T23-52-28Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "automerge-approved-prs__2025-09-04T23-52-28Z__1ec058b7a1e669f0e8c6d39bd9c53d5fc053eebc.yml",
+          "workflow_name": "automerge-approved-prs__2025-09-04T23-52-28Z__1ec058b7a1e669f0e8c6d39bd9c53d5fc053eebc",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 32,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "approved_pr": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "approved_pr": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "aws-actions/aws-secretsmanager-get-secrets@v2",
+              "aws-actions/configure-aws-credentials@v4"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "true": {
+          "pull_request_review": {
+            "types": "submitted"
+          }
+        },
+        "jobs": {
+          "approved_pr": {
+            "name": "Automerge approved PRs",
+            "permissions": {
+              "contents": "write",
+              "pull-requests": "write",
+              "id-token": "write"
+            },
+            "if": "${{ github.event.review.state == 'approved' && github.repository == 'aws-actions/configure-aws-credentials' && (github.event.review.author_association == 'OWNER' || github.event.review.author_association == 'MEMBER' || github.event.review.user.login == 'aws-sdk-osds') }}",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Configure AWS credentials",
+                "uses": "aws-actions/configure-aws-credentials@v4",
+                "with": {
+                  "aws-region": "us-west-2",
+                  "role-to-assume": "${{ secrets.SECRETS_AWS_PACKAGING_ROLE_TO_ASSUME }}",
+                  "role-duration-seconds": 900,
+                  "role-session-name": "SecretsManagerFetch"
+                }
+              },
+              {
+                "name": "Get bot user token",
+                "uses": "aws-actions/aws-secretsmanager-get-secrets@v2",
+                "with": {
+                  "parse-json-secrets": true,
+                  "secret-ids": "${{ secrets.OSDS_PACKAGING_ROLE }}\n"
+                }
+              },
+              {
+                "name": "Enable PR automerge",
+                "run": "gh pr merge --auto --squash \"$PR_URL\"",
+                "env": {
+                  "PR_URL": "${{ github.event.pull_request.html_url }}",
+                  "GITHUB_TOKEN": "${{ env.OSDS_ACCESS_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-09-04T23-58-13Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "automerge-approved-prs__2025-09-04T23-58-13Z__8e2d02296bcf12c081e192c60f3cb80d77f4f76a.yml",
+          "workflow_name": "automerge-approved-prs__2025-09-04T23-58-13Z__8e2d02296bcf12c081e192c60f3cb80d77f4f76a",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 32,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "approved_pr": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "approved_pr": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "aws-actions/aws-secretsmanager-get-secrets@v2",
+              "aws-actions/configure-aws-credentials@v5"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "true": {
+          "pull_request_review": {
+            "types": "submitted"
+          }
+        },
+        "jobs": {
+          "approved_pr": {
+            "name": "Automerge approved PRs",
+            "permissions": {
+              "contents": "write",
+              "pull-requests": "write",
+              "id-token": "write"
+            },
+            "if": "${{ github.event.review.state == 'approved' && github.repository == 'aws-actions/configure-aws-credentials' && (github.event.review.author_association == 'OWNER' || github.event.review.author_association == 'MEMBER' || github.event.review.user.login == 'aws-sdk-osds') }}",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Configure AWS credentials",
+                "uses": "aws-actions/configure-aws-credentials@v5",
+                "with": {
+                  "aws-region": "us-west-2",
+                  "role-to-assume": "${{ secrets.SECRETS_AWS_PACKAGING_ROLE_TO_ASSUME }}",
+                  "role-duration-seconds": 900,
+                  "role-session-name": "SecretsManagerFetch"
+                }
+              },
+              {
+                "name": "Get bot user token",
+                "uses": "aws-actions/aws-secretsmanager-get-secrets@v2",
+                "with": {
+                  "parse-json-secrets": true,
+                  "secret-ids": "${{ secrets.OSDS_PACKAGING_ROLE }}\n"
+                }
+              },
+              {
+                "name": "Enable PR automerge",
+                "run": "gh pr merge --auto --squash \"$PR_URL\"",
+                "env": {
+                  "PR_URL": "${{ github.event.pull_request.html_url }}",
+                  "GITHUB_TOKEN": "${{ env.OSDS_ACCESS_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

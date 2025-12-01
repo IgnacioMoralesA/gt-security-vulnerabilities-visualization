@@ -1,0 +1,429 @@
+{
+  "repo_owner": "diggerhq",
+  "repo_name": "digger",
+  "workflow_name": "ee_backend_test",
+  "history": {
+    "2024-06-05T11-19-38Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-b40af48c-420c-562e-b978-aa6179b46fc7",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ee_backend_test__2024-06-05T11-19-38Z__cbf4a0318187f9b35e7612697f541388bb32133b.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 10,
+                  "startColumn": 5,
+                  "endLine": 40,
+                  "endColumn": 39
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "9fc0562fbe2453c7:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "ee_backend_test__2024-06-05T11-19-38Z__cbf4a0318187f9b35e7612697f541388bb32133b.yml",
+          "workflow_name": "EE Backend Go Tests",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 43,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "EE Backend Go Tests",
+        "true": {
+          "push": {
+            "branches": [
+              "develop"
+            ]
+          },
+          "pull_request": null
+        },
+        "jobs": {
+          "build": {
+            "name": "Build",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Download Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.21.1"
+                },
+                "id": "go"
+              },
+              {
+                "name": "Check out code into the Go module directory",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Test that the docker image still builds successfully",
+                "run": "export COMMIT_SHA=$(git rev-parse --short HEAD)\ndocker build -t testingbuild:latest --build-arg COMMIT_SHA=${COMMIT_SHA} . -f Dockerfile_backend\n"
+              },
+              {
+                "name": "Deps",
+                "run": "go get -v ./...",
+                "working-directory": "ee/backend"
+              },
+              {
+                "name": "Build",
+                "run": "go build",
+                "working-directory": "ee/backend"
+              },
+              {
+                "name": "Test",
+                "run": "go test -v ./...",
+                "env": {
+                  "GITHUB_PAT_TOKEN": "${{ secrets.TOKEN_GITHUB }}"
+                },
+                "working-directory": "ee/backend"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-06-12T09-30-15Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-22e64bbc-bf31-5570-a070-fc44bf3e7013",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ee_backend_test__2024-06-12T09-30-15Z__d38a43b691445680c4ea4b481ee0a5def94b1a45.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 11,
+                  "startColumn": 5,
+                  "endLine": 41,
+                  "endColumn": 39
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "8fc7348a57138443:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "ee_backend_test__2024-06-12T09-30-15Z__d38a43b691445680c4ea4b481ee0a5def94b1a45.yml",
+          "workflow_name": "EE Backend Go Tests",
+          "triggers": {
+            "push": {
+              "branches": [
+                "develop"
+              ]
+            },
+            "pull_request": null
+          },
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 41,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 2
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "EE Backend Go Tests",
+        "true": {
+          "push": {
+            "branches": [
+              "develop"
+            ]
+          },
+          "pull_request": null
+        },
+        "jobs": {
+          "build": {
+            "name": "Build",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Download Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.21.1"
+                },
+                "id": "go"
+              },
+              {
+                "name": "Check out code into the Go module directory",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Test that the docker image still builds successfully",
+                "run": "export COMMIT_SHA=$(git rev-parse --short HEAD)\ndocker build -t testingbuild:latest --build-arg COMMIT_SHA=${COMMIT_SHA} . -f Dockerfile_backend\n"
+              },
+              {
+                "name": "Deps",
+                "run": "go get -v ./...",
+                "working-directory": "ee/backend"
+              },
+              {
+                "name": "Build",
+                "run": "go build",
+                "working-directory": "ee/backend"
+              },
+              {
+                "name": "Test",
+                "run": "go test -v ./...",
+                "env": {
+                  "GITHUB_PAT_TOKEN": "${{ secrets.TOKEN_GITHUB }}"
+                },
+                "working-directory": "ee/backend"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-05-20T00-26-44Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-0b454209-f659-5f78-9d27-9f6f5bfcf62f",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ee_backend_test__2025-05-20T00-26-44Z__20cefd9faf4bffe8f41bd82ef12b4c4494cca032.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 11,
+                  "startColumn": 5,
+                  "endLine": 41,
+                  "endColumn": 39
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "8fc7348a57138443:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "ee_backend_test__2025-05-20T00-26-44Z__20cefd9faf4bffe8f41bd82ef12b4c4494cca032.yml",
+          "workflow_name": "EE Backend Go Tests",
+          "triggers": {
+            "push": {
+              "branches": [
+                "develop"
+              ]
+            },
+            "pull_request": null
+          },
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 41,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 2
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "EE Backend Go Tests",
+        "true": {
+          "push": {
+            "branches": [
+              "develop"
+            ]
+          },
+          "pull_request": null
+        },
+        "jobs": {
+          "build": {
+            "name": "Build",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Download Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.24.0"
+                },
+                "id": "go"
+              },
+              {
+                "name": "Check out code into the Go module directory",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Test that the docker image still builds successfully",
+                "run": "export COMMIT_SHA=$(git rev-parse --short HEAD)\ndocker build -t testingbuild:latest --build-arg COMMIT_SHA=${COMMIT_SHA} . -f Dockerfile_backend\n"
+              },
+              {
+                "name": "Deps",
+                "run": "go get -v ./...",
+                "working-directory": "ee/backend"
+              },
+              {
+                "name": "Build",
+                "run": "go build",
+                "working-directory": "ee/backend"
+              },
+              {
+                "name": "Test",
+                "run": "go test -v ./...",
+                "env": {
+                  "GITHUB_PAT_TOKEN": "${{ secrets.TOKEN_GITHUB }}"
+                },
+                "working-directory": "ee/backend"
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,2018 @@
+{
+  "repo_owner": "cypress-io",
+  "repo_name": "github-action",
+  "workflow_name": "example-start-and-pnpm-workspaces",
+  "history": {
+    "2024-03-07T15-24-25Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-cd29757a-7a92-5999-b343-7e94d987bc64",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/example-start-and-pnpm-workspaces__2024-03-07T15-24-25Z__4090c6544790f523247816eeff103a68fcd57d75.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 20,
+                  "startColumn": 5,
+                  "endLine": 77,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "16cc93d03b53e8c7:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-7aa7ab69-8b9b-514b-8e00-79d8331f61ca",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/example-start-and-pnpm-workspaces__2024-03-07T15-24-25Z__4090c6544790f523247816eeff103a68fcd57d75.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 83,
+                  "startColumn": 5,
+                  "endLine": 127,
+                  "endColumn": 44
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "fcd6e59529b43e7f:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "example-start-and-pnpm-workspaces__2024-03-07T15-24-25Z__4090c6544790f523247816eeff103a68fcd57d75.yml",
+          "workflow_name": "example-start-and-pnpm-workspaces",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 127,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "single-ws": 6,
+            "multiple-ws": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "single-ws": 6,
+              "multiple-ws": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 8,
+            "actions_used": [
+              "./",
+              "actions/cache@v4",
+              "actions/checkout@v4"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "example-start-and-pnpm-workspaces",
+        "true": {
+          "push": {
+            "branches": [
+              "master"
+            ]
+          },
+          "pull_request": null,
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "single-ws": {
+            "runs-on": "ubuntu-22.04",
+            "name": "Single workspace",
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Install pnpm",
+                "run": "npm install -g pnpm@8"
+              },
+              {
+                "name": "Get pnpm store directory",
+                "shell": "bash",
+                "run": "echo \"STORE_PATH=$(pnpm store path --silent)\" >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Setup pnpm cache",
+                "uses": "actions/cache@v4",
+                "with": {
+                  "path": "${{ env.STORE_PATH }}",
+                  "key": "${{ runner.os }}-pnpm-store-${{ hashFiles('examples/basic-pnpm/pnpm-lock.yaml') }}",
+                  "restore-keys": "${{ runner.os }}-pnpm-store-\n"
+                }
+              },
+              {
+                "name": "Install dependencies",
+                "uses": "./",
+                "with": {
+                  "working-directory": "examples/start-and-pnpm-workspaces",
+                  "runTests": false
+                }
+              },
+              {
+                "name": "Cypress test Single",
+                "uses": "./",
+                "with": {
+                  "install": false,
+                  "working-directory": "examples/start-and-pnpm-workspaces/packages/workspace-1",
+                  "build": "pnpm run build",
+                  "start": "pnpm start",
+                  "wait-on": "http://localhost:5000"
+                }
+              }
+            ]
+          },
+          "multiple-ws": {
+            "runs-on": "ubuntu-22.04",
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "cypress": [
+                  {
+                    "working_directory": "examples/start-and-pnpm-workspaces/packages/workspace-1"
+                  },
+                  {
+                    "working_directory": "examples/start-and-pnpm-workspaces/packages/workspace-2"
+                  }
+                ]
+              }
+            },
+            "name": "Multiple workspaces",
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Install pnpm",
+                "run": "npm install -g pnpm@8"
+              },
+              {
+                "name": "Get pnpm store directory",
+                "shell": "bash",
+                "run": "echo \"STORE_PATH=$(pnpm store path --silent)\" >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Setup pnpm cache",
+                "uses": "actions/cache@v4",
+                "with": {
+                  "path": "${{ env.STORE_PATH }}",
+                  "key": "${{ runner.os }}-pnpm-store-${{ hashFiles('examples/basic-pnpm/pnpm-lock.yaml') }}",
+                  "restore-keys": "${{ runner.os }}-pnpm-store-\n"
+                }
+              },
+              {
+                "name": "Install dependencies",
+                "uses": "./",
+                "with": {
+                  "working-directory": "examples/start-and-pnpm-workspaces",
+                  "runTests": false
+                }
+              },
+              {
+                "name": "Cypress test Multiple",
+                "uses": "./",
+                "with": {
+                  "install": false,
+                  "working-directory": "${{ matrix.cypress.working_directory }}",
+                  "build": "pnpm run build",
+                  "start": "pnpm start",
+                  "wait-on": "http://localhost:5000"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-04-16T13-15-41Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-b9365bcd-5b1b-58e9-9f06-0e9a318318b6",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/example-start-and-pnpm-workspaces__2024-04-16T13-15-41Z__256f7f2ce42b8623ba0651fe7bfccd94828016dc.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 20,
+                  "startColumn": 5,
+                  "endLine": 77,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "16cc93d03b53e8c7:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-b0b11dd6-42bd-5ef1-993a-f142d8d42115",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/example-start-and-pnpm-workspaces__2024-04-16T13-15-41Z__256f7f2ce42b8623ba0651fe7bfccd94828016dc.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 83,
+                  "startColumn": 5,
+                  "endLine": 127,
+                  "endColumn": 44
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "fcd6e59529b43e7f:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "example-start-and-pnpm-workspaces__2024-04-16T13-15-41Z__256f7f2ce42b8623ba0651fe7bfccd94828016dc.yml",
+          "workflow_name": "example-start-and-pnpm-workspaces",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 127,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "single-ws": 6,
+            "multiple-ws": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "single-ws": 6,
+              "multiple-ws": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 8,
+            "actions_used": [
+              "./",
+              "actions/cache@v4",
+              "actions/checkout@v4"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "example-start-and-pnpm-workspaces",
+        "true": {
+          "push": {
+            "branches": [
+              "master"
+            ]
+          },
+          "pull_request": null,
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "single-ws": {
+            "runs-on": "ubuntu-22.04",
+            "name": "Single workspace",
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Install pnpm",
+                "run": "npm install -g pnpm@9"
+              },
+              {
+                "name": "Get pnpm store directory",
+                "shell": "bash",
+                "run": "echo \"STORE_PATH=$(pnpm store path --silent)\" >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Setup pnpm cache",
+                "uses": "actions/cache@v4",
+                "with": {
+                  "path": "${{ env.STORE_PATH }}",
+                  "key": "${{ runner.os }}-pnpm-store-${{ hashFiles('examples/basic-pnpm/pnpm-lock.yaml') }}",
+                  "restore-keys": "${{ runner.os }}-pnpm-store-\n"
+                }
+              },
+              {
+                "name": "Install dependencies",
+                "uses": "./",
+                "with": {
+                  "working-directory": "examples/start-and-pnpm-workspaces",
+                  "runTests": false
+                }
+              },
+              {
+                "name": "Cypress test Single",
+                "uses": "./",
+                "with": {
+                  "install": false,
+                  "working-directory": "examples/start-and-pnpm-workspaces/packages/workspace-1",
+                  "build": "pnpm run build",
+                  "start": "pnpm start",
+                  "wait-on": "http://localhost:5000"
+                }
+              }
+            ]
+          },
+          "multiple-ws": {
+            "runs-on": "ubuntu-22.04",
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "cypress": [
+                  {
+                    "working_directory": "examples/start-and-pnpm-workspaces/packages/workspace-1"
+                  },
+                  {
+                    "working_directory": "examples/start-and-pnpm-workspaces/packages/workspace-2"
+                  }
+                ]
+              }
+            },
+            "name": "Multiple workspaces",
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Install pnpm",
+                "run": "npm install -g pnpm@9"
+              },
+              {
+                "name": "Get pnpm store directory",
+                "shell": "bash",
+                "run": "echo \"STORE_PATH=$(pnpm store path --silent)\" >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Setup pnpm cache",
+                "uses": "actions/cache@v4",
+                "with": {
+                  "path": "${{ env.STORE_PATH }}",
+                  "key": "${{ runner.os }}-pnpm-store-${{ hashFiles('examples/basic-pnpm/pnpm-lock.yaml') }}",
+                  "restore-keys": "${{ runner.os }}-pnpm-store-\n"
+                }
+              },
+              {
+                "name": "Install dependencies",
+                "uses": "./",
+                "with": {
+                  "working-directory": "examples/start-and-pnpm-workspaces",
+                  "runTests": false
+                }
+              },
+              {
+                "name": "Cypress test Multiple",
+                "uses": "./",
+                "with": {
+                  "install": false,
+                  "working-directory": "${{ matrix.cypress.working_directory }}",
+                  "build": "pnpm run build",
+                  "start": "pnpm start",
+                  "wait-on": "http://localhost:5000"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-05-13T19-48-20Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-41ef9361-a6e1-5e00-9adc-e9b734bdf592",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/example-start-and-pnpm-workspaces__2024-05-13T19-48-20Z__1d3deeb0a22584d005f4fde87544e51dfe248283.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 20,
+                  "startColumn": 5,
+                  "endLine": 75,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "16cc93d03b53e8c7:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-6484cefc-3fab-52e0-8c4d-6a219357c89a",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/example-start-and-pnpm-workspaces__2024-05-13T19-48-20Z__1d3deeb0a22584d005f4fde87544e51dfe248283.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 81,
+                  "startColumn": 5,
+                  "endLine": 123,
+                  "endColumn": 44
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "fcd6e59529b43e7f:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "example-start-and-pnpm-workspaces__2024-05-13T19-48-20Z__1d3deeb0a22584d005f4fde87544e51dfe248283.yml",
+          "workflow_name": "example-start-and-pnpm-workspaces",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 123,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "single-ws": 6,
+            "multiple-ws": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "single-ws": 6,
+              "multiple-ws": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 8,
+            "actions_used": [
+              "./",
+              "actions/cache@v4",
+              "actions/checkout@v4"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "example-start-and-pnpm-workspaces",
+        "true": {
+          "push": {
+            "branches": [
+              "master"
+            ]
+          },
+          "pull_request": null,
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "single-ws": {
+            "runs-on": "ubuntu-22.04",
+            "name": "Single workspace",
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Install pnpm",
+                "run": "npm install -g pnpm@9"
+              },
+              {
+                "name": "Get pnpm store directory",
+                "shell": "bash",
+                "run": "echo \"STORE_PATH=$(pnpm store path --silent)\" >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Setup pnpm cache",
+                "uses": "actions/cache@v4",
+                "with": {
+                  "path": "${{ env.STORE_PATH }}",
+                  "key": "${{ runner.os }}-pnpm-store-${{ hashFiles('examples/start-and-pnpm-workspaces/pnpm-lock.yaml') }}"
+                }
+              },
+              {
+                "name": "Install dependencies",
+                "uses": "./",
+                "with": {
+                  "working-directory": "examples/start-and-pnpm-workspaces",
+                  "runTests": false
+                }
+              },
+              {
+                "name": "Cypress test Single",
+                "uses": "./",
+                "with": {
+                  "install": false,
+                  "working-directory": "examples/start-and-pnpm-workspaces/packages/workspace-1",
+                  "build": "pnpm run build",
+                  "start": "pnpm start",
+                  "wait-on": "http://localhost:5000"
+                }
+              }
+            ]
+          },
+          "multiple-ws": {
+            "runs-on": "ubuntu-22.04",
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "cypress": [
+                  {
+                    "working_directory": "examples/start-and-pnpm-workspaces/packages/workspace-1"
+                  },
+                  {
+                    "working_directory": "examples/start-and-pnpm-workspaces/packages/workspace-2"
+                  }
+                ]
+              }
+            },
+            "name": "Multiple workspaces",
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Install pnpm",
+                "run": "npm install -g pnpm@9"
+              },
+              {
+                "name": "Get pnpm store directory",
+                "shell": "bash",
+                "run": "echo \"STORE_PATH=$(pnpm store path --silent)\" >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Setup pnpm cache",
+                "uses": "actions/cache@v4",
+                "with": {
+                  "path": "${{ env.STORE_PATH }}",
+                  "key": "${{ runner.os }}-pnpm-store-${{ hashFiles('examples/start-and-pnpm-workspaces/pnpm-lock.yaml') }}"
+                }
+              },
+              {
+                "name": "Install dependencies",
+                "uses": "./",
+                "with": {
+                  "working-directory": "examples/start-and-pnpm-workspaces",
+                  "runTests": false
+                }
+              },
+              {
+                "name": "Cypress test Multiple",
+                "uses": "./",
+                "with": {
+                  "install": false,
+                  "working-directory": "${{ matrix.cypress.working_directory }}",
+                  "build": "pnpm run build",
+                  "start": "pnpm start",
+                  "wait-on": "http://localhost:5000"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-05-27T11-47-46Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-91c73589-7b81-561e-9466-6d601760ac8d",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/example-start-and-pnpm-workspaces__2024-05-27T11-47-46Z__d1971e91b3a4b685eaa6fc1a9fb50049b262dfa9.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 19,
+                  "startColumn": 5,
+                  "endLine": 60,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "16cc93d03b53e8c7:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-27800685-fef5-5df3-bfac-8a3886b696d3",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/example-start-and-pnpm-workspaces__2024-05-27T11-47-46Z__d1971e91b3a4b685eaa6fc1a9fb50049b262dfa9.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 65,
+                  "startColumn": 5,
+                  "endLine": 96,
+                  "endColumn": 44
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "fcd6e59529b43e7f:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "example-start-and-pnpm-workspaces__2024-05-27T11-47-46Z__d1971e91b3a4b685eaa6fc1a9fb50049b262dfa9.yml",
+          "workflow_name": "example-start-and-pnpm-workspaces",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 96,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "single-ws": 4,
+            "multiple-ws": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "single-ws": 4,
+              "multiple-ws": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 6,
+            "actions_used": [
+              "./",
+              "actions/checkout@v4"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "example-start-and-pnpm-workspaces",
+        "true": {
+          "push": {
+            "branches": [
+              "master"
+            ]
+          },
+          "pull_request": null,
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "single-ws": {
+            "runs-on": "ubuntu-22.04",
+            "name": "Single workspace",
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Install pnpm",
+                "run": "npm install -g pnpm@9"
+              },
+              {
+                "name": "Install dependencies",
+                "uses": "./",
+                "with": {
+                  "working-directory": "examples/start-and-pnpm-workspaces",
+                  "runTests": false
+                }
+              },
+              {
+                "name": "Cypress test Single",
+                "uses": "./",
+                "with": {
+                  "install": false,
+                  "working-directory": "examples/start-and-pnpm-workspaces/packages/workspace-1",
+                  "build": "pnpm run build",
+                  "start": "pnpm start",
+                  "wait-on": "http://localhost:5000"
+                }
+              }
+            ]
+          },
+          "multiple-ws": {
+            "runs-on": "ubuntu-22.04",
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "cypress": [
+                  {
+                    "working_directory": "examples/start-and-pnpm-workspaces/packages/workspace-1"
+                  },
+                  {
+                    "working_directory": "examples/start-and-pnpm-workspaces/packages/workspace-2"
+                  }
+                ]
+              }
+            },
+            "name": "Multiple workspaces",
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Install pnpm",
+                "run": "npm install -g pnpm@9"
+              },
+              {
+                "name": "Install dependencies",
+                "uses": "./",
+                "with": {
+                  "working-directory": "examples/start-and-pnpm-workspaces",
+                  "runTests": false
+                }
+              },
+              {
+                "name": "Cypress test Multiple",
+                "uses": "./",
+                "with": {
+                  "install": false,
+                  "working-directory": "${{ matrix.cypress.working_directory }}",
+                  "build": "pnpm run build",
+                  "start": "pnpm start",
+                  "wait-on": "http://localhost:5000"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-09-30T15-27-19Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-f607a2d4-b98f-5a97-b89c-84a15f2045e1",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/example-start-and-pnpm-workspaces__2024-09-30T15-27-19Z__57759c96de6558800c9f4ca0891ee00208151c43.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 19,
+                  "startColumn": 5,
+                  "endLine": 60,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "590fa8f560d22001:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-30fa46df-15d9-56ed-b238-751d5e011503",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/example-start-and-pnpm-workspaces__2024-09-30T15-27-19Z__57759c96de6558800c9f4ca0891ee00208151c43.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 65,
+                  "startColumn": 5,
+                  "endLine": 96,
+                  "endColumn": 44
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "3f19faba4f3275b9:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "example-start-and-pnpm-workspaces__2024-09-30T15-27-19Z__57759c96de6558800c9f4ca0891ee00208151c43.yml",
+          "workflow_name": "example-start-and-pnpm-workspaces",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 96,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "single-ws": 4,
+            "multiple-ws": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "single-ws": 4,
+              "multiple-ws": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 6,
+            "actions_used": [
+              "./",
+              "actions/checkout@v4"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "example-start-and-pnpm-workspaces",
+        "true": {
+          "push": {
+            "branches": [
+              "master"
+            ]
+          },
+          "pull_request": null,
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "single-ws": {
+            "runs-on": "ubuntu-24.04",
+            "name": "Single workspace",
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Install pnpm",
+                "run": "npm install -g pnpm@9"
+              },
+              {
+                "name": "Install dependencies",
+                "uses": "./",
+                "with": {
+                  "working-directory": "examples/start-and-pnpm-workspaces",
+                  "runTests": false
+                }
+              },
+              {
+                "name": "Cypress test Single",
+                "uses": "./",
+                "with": {
+                  "install": false,
+                  "working-directory": "examples/start-and-pnpm-workspaces/packages/workspace-1",
+                  "build": "pnpm run build",
+                  "start": "pnpm start",
+                  "wait-on": "http://localhost:5000"
+                }
+              }
+            ]
+          },
+          "multiple-ws": {
+            "runs-on": "ubuntu-24.04",
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "cypress": [
+                  {
+                    "working_directory": "examples/start-and-pnpm-workspaces/packages/workspace-1"
+                  },
+                  {
+                    "working_directory": "examples/start-and-pnpm-workspaces/packages/workspace-2"
+                  }
+                ]
+              }
+            },
+            "name": "Multiple workspaces",
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Install pnpm",
+                "run": "npm install -g pnpm@9"
+              },
+              {
+                "name": "Install dependencies",
+                "uses": "./",
+                "with": {
+                  "working-directory": "examples/start-and-pnpm-workspaces",
+                  "runTests": false
+                }
+              },
+              {
+                "name": "Cypress test Multiple",
+                "uses": "./",
+                "with": {
+                  "install": false,
+                  "working-directory": "${{ matrix.cypress.working_directory }}",
+                  "build": "pnpm run build",
+                  "start": "pnpm start",
+                  "wait-on": "http://localhost:5000"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-01-10T14-01-48Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-351787c9-6d0a-53ab-85af-baea9e77334c",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/example-start-and-pnpm-workspaces__2025-01-10T14-01-48Z__4b9ec6b8f2bc3ea9dfc5af64c1aae1a18af0d521.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 19,
+                  "startColumn": 5,
+                  "endLine": 60,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "590fa8f560d22001:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-912719c7-77f5-569c-97c1-296f74fbe005",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/example-start-and-pnpm-workspaces__2025-01-10T14-01-48Z__4b9ec6b8f2bc3ea9dfc5af64c1aae1a18af0d521.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 65,
+                  "startColumn": 5,
+                  "endLine": 96,
+                  "endColumn": 44
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "3f19faba4f3275b9:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "example-start-and-pnpm-workspaces__2025-01-10T14-01-48Z__4b9ec6b8f2bc3ea9dfc5af64c1aae1a18af0d521.yml",
+          "workflow_name": "example-start-and-pnpm-workspaces",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 96,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "single-ws": 4,
+            "multiple-ws": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "single-ws": 4,
+              "multiple-ws": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 6,
+            "actions_used": [
+              "./",
+              "actions/checkout@v4"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "example-start-and-pnpm-workspaces",
+        "true": {
+          "push": {
+            "branches": [
+              "master"
+            ]
+          },
+          "pull_request": null,
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "single-ws": {
+            "runs-on": "ubuntu-24.04",
+            "name": "Single workspace",
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Install pnpm",
+                "run": "npm install -g pnpm@10"
+              },
+              {
+                "name": "Install dependencies",
+                "uses": "./",
+                "with": {
+                  "working-directory": "examples/start-and-pnpm-workspaces",
+                  "runTests": false
+                }
+              },
+              {
+                "name": "Cypress test Single",
+                "uses": "./",
+                "with": {
+                  "install": false,
+                  "working-directory": "examples/start-and-pnpm-workspaces/packages/workspace-1",
+                  "build": "pnpm run build",
+                  "start": "pnpm start",
+                  "wait-on": "http://localhost:5000"
+                }
+              }
+            ]
+          },
+          "multiple-ws": {
+            "runs-on": "ubuntu-24.04",
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "cypress": [
+                  {
+                    "working_directory": "examples/start-and-pnpm-workspaces/packages/workspace-1"
+                  },
+                  {
+                    "working_directory": "examples/start-and-pnpm-workspaces/packages/workspace-2"
+                  }
+                ]
+              }
+            },
+            "name": "Multiple workspaces",
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Install pnpm",
+                "run": "npm install -g pnpm@10"
+              },
+              {
+                "name": "Install dependencies",
+                "uses": "./",
+                "with": {
+                  "working-directory": "examples/start-and-pnpm-workspaces",
+                  "runTests": false
+                }
+              },
+              {
+                "name": "Cypress test Multiple",
+                "uses": "./",
+                "with": {
+                  "install": false,
+                  "working-directory": "${{ matrix.cypress.working_directory }}",
+                  "build": "pnpm run build",
+                  "start": "pnpm start",
+                  "wait-on": "http://localhost:5000"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-09-03T11-29-49Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-2e8b6949-c006-598a-9506-10e0cfb944ea",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/example-start-and-pnpm-workspaces__2025-09-03T11-29-49Z__b1038d04bbc8442bf15d168bdf4f599fff1170b6.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 24,
+                  "startColumn": 5,
+                  "endLine": 65,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "590fa8f560d22001:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-fd3d0ef7-8a4c-5a32-8f84-78b4317781b0",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/example-start-and-pnpm-workspaces__2025-09-03T11-29-49Z__b1038d04bbc8442bf15d168bdf4f599fff1170b6.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 70,
+                  "startColumn": 5,
+                  "endLine": 101,
+                  "endColumn": 44
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "3f19faba4f3275b9:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "example-start-and-pnpm-workspaces__2025-09-03T11-29-49Z__b1038d04bbc8442bf15d168bdf4f599fff1170b6.yml",
+          "workflow_name": "example-start-and-pnpm-workspaces",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 101,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "single-ws": 4,
+            "multiple-ws": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "single-ws": 4,
+              "multiple-ws": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 6,
+            "actions_used": [
+              "./",
+              "actions/checkout@v4"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "example-start-and-pnpm-workspaces",
+        "true": {
+          "push": {
+            "branches": [
+              "master"
+            ]
+          },
+          "pull_request": null,
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "single-ws": {
+            "runs-on": "ubuntu-24.04",
+            "name": "Single workspace",
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Install pnpm",
+                "run": "npm install -g pnpm@10"
+              },
+              {
+                "name": "Install dependencies",
+                "uses": "./",
+                "with": {
+                  "working-directory": "examples/start-and-pnpm-workspaces",
+                  "runTests": false
+                }
+              },
+              {
+                "name": "Cypress test Single",
+                "uses": "./",
+                "with": {
+                  "install": false,
+                  "working-directory": "examples/start-and-pnpm-workspaces/packages/workspace-1",
+                  "build": "pnpm run build",
+                  "start": "pnpm start",
+                  "wait-on": "http://localhost:5000"
+                }
+              }
+            ]
+          },
+          "multiple-ws": {
+            "runs-on": "ubuntu-24.04",
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "cypress": [
+                  {
+                    "working_directory": "examples/start-and-pnpm-workspaces/packages/workspace-1"
+                  },
+                  {
+                    "working_directory": "examples/start-and-pnpm-workspaces/packages/workspace-2"
+                  }
+                ]
+              }
+            },
+            "name": "Multiple workspaces",
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Install pnpm",
+                "run": "npm install -g pnpm@10"
+              },
+              {
+                "name": "Install dependencies",
+                "uses": "./",
+                "with": {
+                  "working-directory": "examples/start-and-pnpm-workspaces",
+                  "runTests": false
+                }
+              },
+              {
+                "name": "Cypress test Multiple",
+                "uses": "./",
+                "with": {
+                  "install": false,
+                  "working-directory": "${{ matrix.cypress.working_directory }}",
+                  "build": "pnpm run build",
+                  "start": "pnpm start",
+                  "wait-on": "http://localhost:5000"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-09-11T12-59-49Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-00679fcd-b805-51d6-b847-354ae235f1e9",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/example-start-and-pnpm-workspaces__2025-09-11T12-59-49Z__14fc5fa363bdff6b3dd58fd340181a4e4db17166.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 24,
+                  "startColumn": 5,
+                  "endLine": 59,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "590fa8f560d22001:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-ff431d58-0295-5dda-a845-b242fd5b049b",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/example-start-and-pnpm-workspaces__2025-09-11T12-59-49Z__14fc5fa363bdff6b3dd58fd340181a4e4db17166.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 64,
+                  "startColumn": 5,
+                  "endLine": 95,
+                  "endColumn": 44
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "3f19faba4f3275b9:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "example-start-and-pnpm-workspaces__2025-09-11T12-59-49Z__14fc5fa363bdff6b3dd58fd340181a4e4db17166.yml",
+          "workflow_name": "example-start-and-pnpm-workspaces",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 95,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "single-ws": 4,
+            "multiple-ws": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "single-ws": 4,
+              "multiple-ws": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 6,
+            "actions_used": [
+              "./",
+              "actions/checkout@v4"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "example-start-and-pnpm-workspaces",
+        "true": {
+          "push": {
+            "branches": [
+              "master"
+            ]
+          },
+          "pull_request": null,
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "single-ws": {
+            "runs-on": "ubuntu-24.04",
+            "name": "Single workspace",
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Install pnpm",
+                "run": "npm install -g pnpm@10"
+              },
+              {
+                "name": "Install dependencies",
+                "uses": "./",
+                "with": {
+                  "working-directory": "examples/start-and-pnpm-workspaces",
+                  "runTests": false
+                }
+              },
+              {
+                "name": "Cypress test Single",
+                "uses": "./",
+                "with": {
+                  "install": false,
+                  "working-directory": "examples/start-and-pnpm-workspaces/packages/workspace-1",
+                  "build": "pnpm run build",
+                  "start": "pnpm start",
+                  "wait-on": "http://localhost:5000"
+                }
+              }
+            ]
+          },
+          "multiple-ws": {
+            "runs-on": "ubuntu-24.04",
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "cypress": [
+                  {
+                    "working_directory": "examples/start-and-pnpm-workspaces/packages/workspace-1"
+                  },
+                  {
+                    "working_directory": "examples/start-and-pnpm-workspaces/packages/workspace-2"
+                  }
+                ]
+              }
+            },
+            "name": "Multiple workspaces",
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Install pnpm",
+                "run": "npm install -g pnpm@10"
+              },
+              {
+                "name": "Install dependencies",
+                "uses": "./",
+                "with": {
+                  "working-directory": "examples/start-and-pnpm-workspaces",
+                  "runTests": false
+                }
+              },
+              {
+                "name": "Cypress test Multiple",
+                "uses": "./",
+                "with": {
+                  "install": false,
+                  "working-directory": "${{ matrix.cypress.working_directory }}",
+                  "build": "pnpm run build",
+                  "start": "pnpm start",
+                  "wait-on": "http://localhost:5000"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-03-07T14-28-37Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-2cd4095d-6033-5a47-a2bc-220b1d62ecb7",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/example-start-and-pnpm-workspaces__2025-03-07T14-28-37Z__fc2e1ee348a2be2a5c765fabb246f611a4916c0d.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 19,
+                  "startColumn": 5,
+                  "endLine": 60,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "590fa8f560d22001:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-e21d5aaa-676f-56c0-83a4-cb977da79d8a",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/example-start-and-pnpm-workspaces__2025-03-07T14-28-37Z__fc2e1ee348a2be2a5c765fabb246f611a4916c0d.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 65,
+                  "startColumn": 5,
+                  "endLine": 96,
+                  "endColumn": 44
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "3f19faba4f3275b9:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "example-start-and-pnpm-workspaces__2025-03-07T14-28-37Z__fc2e1ee348a2be2a5c765fabb246f611a4916c0d.yml",
+          "workflow_name": "example-start-and-pnpm-workspaces",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 96,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "single-ws": 4,
+            "multiple-ws": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "single-ws": 4,
+              "multiple-ws": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 6,
+            "actions_used": [
+              "./",
+              "actions/checkout@v4"
+            ],
+            "num_run_commands": 2,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "example-start-and-pnpm-workspaces",
+        "true": {
+          "push": {
+            "branches": [
+              "master"
+            ]
+          },
+          "pull_request": null,
+          "workflow_dispatch": null
+        },
+        "jobs": {
+          "single-ws": {
+            "runs-on": "ubuntu-24.04",
+            "name": "Single workspace",
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Install pnpm",
+                "run": "npm install -g pnpm@10"
+              },
+              {
+                "name": "Install dependencies",
+                "uses": "./",
+                "with": {
+                  "working-directory": "examples/start-and-pnpm-workspaces",
+                  "runTests": false
+                }
+              },
+              {
+                "name": "Cypress test Single",
+                "uses": "./",
+                "with": {
+                  "install": false,
+                  "working-directory": "examples/start-and-pnpm-workspaces/packages/workspace-1",
+                  "build": "pnpm run build",
+                  "start": "pnpm start",
+                  "wait-on": "http://localhost:5000"
+                }
+              }
+            ]
+          },
+          "multiple-ws": {
+            "runs-on": "ubuntu-24.04",
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "cypress": [
+                  {
+                    "working_directory": "examples/start-and-pnpm-workspaces/packages/workspace-1"
+                  },
+                  {
+                    "working_directory": "examples/start-and-pnpm-workspaces/packages/workspace-2"
+                  }
+                ]
+              }
+            },
+            "name": "Multiple workspaces",
+            "steps": [
+              {
+                "name": "Checkout repository",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Install pnpm",
+                "run": "npm install -g pnpm@10"
+              },
+              {
+                "name": "Install dependencies",
+                "uses": "./",
+                "with": {
+                  "working-directory": "examples/start-and-pnpm-workspaces",
+                  "runTests": false
+                }
+              },
+              {
+                "name": "Cypress test Multiple",
+                "uses": "./",
+                "with": {
+                  "install": false,
+                  "working-directory": "${{ matrix.cypress.working_directory }}",
+                  "build": "pnpm run build",
+                  "start": "pnpm start",
+                  "wait-on": "http://localhost:5000"
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

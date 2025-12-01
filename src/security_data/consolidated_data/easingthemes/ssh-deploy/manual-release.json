@@ -1,0 +1,1511 @@
+{
+  "repo_owner": "easingthemes",
+  "repo_name": "ssh-deploy",
+  "workflow_name": "manual-release",
+  "history": {
+    "2021-05-27T20-56-27Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-dbf455fa-a8a4-5a08-84e0-cd8da9710a68",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/manual-release__2021-05-27T20-56-27Z__ac3c9b51d5cb52f4add40e2fc2dcc5e970153afc.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 11,
+                  "startColumn": 5,
+                  "endLine": 43,
+                  "endColumn": 20
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "14ced80579718ec1:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "manual-release__2021-05-27T20-56-27Z__ac3c9b51d5cb52f4add40e2fc2dcc5e970153afc.yml",
+          "workflow_name": "Manual Release",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 43,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "release": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "release": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v2",
+              "actions/setup-node@v1",
+              "cycjimmy/semantic-release-action@v2"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Manual Release",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "dryrun": {
+                "description": "DryRUn",
+                "required": true,
+                "default": "false"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "release": {
+            "name": "Test, Build and Release",
+            "runs-on": "${{ matrix.os }}",
+            "strategy": {
+              "matrix": {
+                "os": [
+                  "ubuntu-latest"
+                ],
+                "node-version": [
+                  "14.x"
+                ]
+              }
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "name": "Setup Node.js",
+                "uses": "actions/setup-node@v1",
+                "with": {
+                  "node-version": "${{ matrix['node-version'] }}"
+                }
+              },
+              {
+                "name": "Install dependencies",
+                "run": "npm ci"
+              },
+              {
+                "name": "Build Library",
+                "run": "npm run build --if-present"
+              },
+              {
+                "name": "Run Tests",
+                "run": "npm test --if-present"
+              },
+              {
+                "name": "Release",
+                "uses": "cycjimmy/semantic-release-action@v2",
+                "with": {
+                  "dry_run": "${{ github.event.inputs.dryrun == 'true' }}",
+                  "extra_plugins": "@semantic-release/changelog@3.0.0\n@semantic-release/git\n"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}",
+                  "GIT_AUTHOR_NAME": "github-actions",
+                  "GIT_AUTHOR_EMAIL": "github-actions@github.com",
+                  "GIT_COMMITTER_NAME": "github-actions",
+                  "GIT_COMMITTER_EMAIL": "github-actions@github.com",
+                  "CI": true
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2021-05-27T21-57-27Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-fc52aaad-cf45-59a9-9520-b191ebdf0d09",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/manual-release__2021-05-27T21-57-27Z__2197bc60ef7870d4bd494966b314eabec1615bd7.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 11,
+                  "startColumn": 5,
+                  "endLine": 44,
+                  "endColumn": 20
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "14ced80579718ec1:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "manual-release__2021-05-27T21-57-27Z__2197bc60ef7870d4bd494966b314eabec1615bd7.yml",
+          "workflow_name": "Manual Release",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 44,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "release": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "release": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v2",
+              "actions/setup-node@v1",
+              "cycjimmy/semantic-release-action@v2"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Manual Release",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "dryrun": {
+                "description": "DryRUn",
+                "required": true,
+                "default": "false"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "release": {
+            "name": "Test, Build and Release",
+            "runs-on": "${{ matrix.os }}",
+            "strategy": {
+              "matrix": {
+                "os": [
+                  "ubuntu-latest"
+                ],
+                "node-version": [
+                  "14.x"
+                ]
+              }
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "name": "Setup Node.js",
+                "uses": "actions/setup-node@v1",
+                "with": {
+                  "node-version": "${{ matrix['node-version'] }}"
+                }
+              },
+              {
+                "name": "Install dependencies",
+                "run": "npm ci"
+              },
+              {
+                "name": "Build Library",
+                "run": "npm run build --if-present"
+              },
+              {
+                "name": "Run Tests",
+                "run": "npm test --if-present"
+              },
+              {
+                "name": "Release",
+                "uses": "cycjimmy/semantic-release-action@v2",
+                "with": {
+                  "dry_run": "${{ github.event.inputs.dryrun == 'true' }}",
+                  "extra_plugins": "@semantic-release/changelog@3.0.0\n@semantic-release/git\n"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}",
+                  "NPM_TOKEN": "${{ secrets.NPM_TOKEN }}",
+                  "GIT_AUTHOR_NAME": "github-actions",
+                  "GIT_AUTHOR_EMAIL": "github-actions@github.com",
+                  "GIT_COMMITTER_NAME": "github-actions",
+                  "GIT_COMMITTER_EMAIL": "github-actions@github.com",
+                  "CI": true
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-10-28T01-44-28Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-dab186d7-521f-5c26-beea-c689df64d5e4",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/manual-release__2022-10-28T01-44-28Z__12adb9b8399d8d728ebf2361a6ea37886cdd326d.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 11,
+                  "startColumn": 5,
+                  "endLine": 44,
+                  "endColumn": 20
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "14ced80579718ec1:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "manual-release__2022-10-28T01-44-28Z__12adb9b8399d8d728ebf2361a6ea37886cdd326d.yml",
+          "workflow_name": "Manual Release",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 44,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "release": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "release": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v2",
+              "actions/setup-node@v1",
+              "cycjimmy/semantic-release-action@v2"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Manual Release",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "dryrun": {
+                "description": "DryRUn",
+                "required": true,
+                "default": "false"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "release": {
+            "name": "Test, Build and Release",
+            "runs-on": "${{ matrix.os }}",
+            "strategy": {
+              "matrix": {
+                "os": [
+                  "ubuntu-latest"
+                ],
+                "node-version": [
+                  "16.x"
+                ]
+              }
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "name": "Setup Node.js",
+                "uses": "actions/setup-node@v1",
+                "with": {
+                  "node-version": "${{ matrix['node-version'] }}"
+                }
+              },
+              {
+                "name": "Install dependencies",
+                "run": "npm ci"
+              },
+              {
+                "name": "Build Library",
+                "run": "npm run build --if-present"
+              },
+              {
+                "name": "Run Tests",
+                "run": "npm test --if-present"
+              },
+              {
+                "name": "Release",
+                "uses": "cycjimmy/semantic-release-action@v2",
+                "with": {
+                  "dry_run": "${{ github.event.inputs.dryrun == 'true' }}",
+                  "extra_plugins": "@semantic-release/changelog@3.0.0\n@semantic-release/git\n"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}",
+                  "NPM_TOKEN": "${{ secrets.NPM_TOKEN }}",
+                  "GIT_AUTHOR_NAME": "github-actions",
+                  "GIT_AUTHOR_EMAIL": "github-actions@github.com",
+                  "GIT_COMMITTER_NAME": "github-actions",
+                  "GIT_COMMITTER_EMAIL": "github-actions@github.com",
+                  "CI": true
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-01-02T20-06-33Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-46da31d2-84f7-5d2d-af9b-5146151d8ca8",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/manual-release__2023-01-02T20-06-33Z__ec9347f8c60811cb02d14f028b78f188c3dc18ca.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 11,
+                  "startColumn": 5,
+                  "endLine": 44,
+                  "endColumn": 20
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "14ced80579718ec1:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "manual-release__2023-01-02T20-06-33Z__ec9347f8c60811cb02d14f028b78f188c3dc18ca.yml",
+          "workflow_name": "Manual Release",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 44,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "release": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "release": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-node@v3",
+              "cycjimmy/semantic-release-action@v3"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Manual Release",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "dryrun": {
+                "description": "DryRUn",
+                "required": true,
+                "default": "false"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "release": {
+            "name": "Test, Build and Release",
+            "runs-on": "${{ matrix.os }}",
+            "strategy": {
+              "matrix": {
+                "os": [
+                  "ubuntu-latest"
+                ],
+                "node-version": [
+                  "16.x"
+                ]
+              }
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Setup Node.js",
+                "uses": "actions/setup-node@v3",
+                "with": {
+                  "node-version": "${{ matrix['node-version'] }}"
+                }
+              },
+              {
+                "name": "Install dependencies",
+                "run": "npm ci"
+              },
+              {
+                "name": "Build Library",
+                "run": "npm run build --if-present"
+              },
+              {
+                "name": "Run Tests",
+                "run": "npm test --if-present"
+              },
+              {
+                "name": "Release",
+                "uses": "cycjimmy/semantic-release-action@v3",
+                "with": {
+                  "dry_run": "${{ github.event.inputs.dryrun == 'true' }}",
+                  "extra_plugins": "@semantic-release/changelog\n@semantic-release/git\n"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}",
+                  "NPM_TOKEN": "${{ secrets.NPM_TOKEN }}",
+                  "GIT_AUTHOR_NAME": "github-actions",
+                  "GIT_AUTHOR_EMAIL": "github-actions@github.com",
+                  "GIT_COMMITTER_NAME": "github-actions",
+                  "GIT_COMMITTER_EMAIL": "github-actions@github.com",
+                  "CI": true
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-01-03T01-49-54Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-b070af02-a4aa-5e19-aac5-c703573f77ed",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/manual-release__2023-01-03T01-49-54Z__73a65ec97c5046a53f6b4c40823be5fd3826ede0.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 32,
+                  "startColumn": 5,
+                  "endLine": 41,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "b0a6021697b7b144:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-5e64a7c9-67e6-5182-ab41-65a2b5894726",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/manual-release__2023-01-03T01-49-54Z__73a65ec97c5046a53f6b4c40823be5fd3826ede0.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 42,
+                  "startColumn": 5,
+                  "endLine": 73,
+                  "endColumn": 35
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "bc23155def9c9b8a:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "manual-release__2023-01-03T01-49-54Z__73a65ec97c5046a53f6b4c40823be5fd3826ede0.yml",
+          "workflow_name": "Manual Release",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 73,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "config": 1,
+            "release-manual": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 1,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "config": 1,
+              "release-manual": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 2,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-node@v3",
+              "cycjimmy/semantic-release-action@v3"
+            ],
+            "num_run_commands": 5,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Manual Release",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "version": {
+                "description": "Version",
+                "type": "choice",
+                "required": true,
+                "default": "patch",
+                "options": [
+                  "patch",
+                  "minor",
+                  "major"
+                ]
+              },
+              "dryRun": {
+                "description": "DryRun",
+                "type": "boolean",
+                "default": true
+              }
+            }
+          }
+        },
+        "env": {
+          "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}",
+          "NPM_TOKEN": "${{ secrets.NPM_TOKEN }}",
+          "GIT_AUTHOR_NAME": "github-actions",
+          "GIT_AUTHOR_EMAIL": "github-actions@github.com",
+          "GIT_COMMITTER_NAME": "github-actions",
+          "GIT_COMMITTER_EMAIL": "github-actions@github.com",
+          "CI": true,
+          "CONFIG_NODE_VERSION": "[\"lts/*\"]",
+          "CONFIG_OS": "[\"ubuntu-latest\"]"
+        },
+        "jobs": {
+          "config": {
+            "runs-on": "ubuntu-latest",
+            "outputs": {
+              "NODE_VERSION": "${{ steps.set-config.outputs.CONFIG_NODE_VERSION }}",
+              "OS": "${{ steps.set-config.outputs.CONFIG_OS }}"
+            },
+            "steps": [
+              {
+                "id": "set-config",
+                "run": "echo \"CONFIG_NODE_VERSION=${{ toJSON(env.CONFIG_NODE_VERSION) }}\" >> $GITHUB_OUTPUT\necho \"CONFIG_OS=${{ toJSON(env.CONFIG_OS) }}\" >> $GITHUB_OUTPUT\n"
+              }
+            ]
+          },
+          "release-manual": {
+            "name": "Test, Build and force Release",
+            "needs": "config",
+            "runs-on": "${{ matrix.OS }}",
+            "strategy": {
+              "matrix": {
+                "OS": "${{ fromJSON(needs.config.outputs.OS) }}",
+                "NODE_VERSION": "${{ fromJSON(needs.config.outputs.NODE_VERSION) }}"
+              }
+            },
+            "steps": [
+              {
+                "name": "Checkout repo",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Setup Node.js ${{ matrix.NODE_VERSION }}",
+                "uses": "actions/setup-node@v3",
+                "with": {
+                  "node-version": "${{ matrix.NODE_VERSION }}"
+                }
+              },
+              {
+                "name": "Commit trigger",
+                "run": "git commit --allow-empty -m \"${{ github.event.inputs.version }}: Trigger Manual Release\"\n"
+              },
+              {
+                "name": "Install dependencies",
+                "run": "npm ci"
+              },
+              {
+                "name": "Build Library",
+                "run": "npm run build --if-present"
+              },
+              {
+                "name": "Run Tests",
+                "run": "npm test --if-present"
+              },
+              {
+                "name": "Publish npm package",
+                "uses": "cycjimmy/semantic-release-action@v3",
+                "with": {
+                  "dry_run": "${{ github.event.inputs.dryRun == 'true' }}",
+                  "extra_plugins": "@semantic-release/changelog\n@semantic-release/git\n"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-01-06T20-50-25Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-15271976-eecd-5798-9501-ddae37a29a18",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/manual-release__2023-01-06T20-50-25Z__245b7a9d2fe5272ee34608f86a612d643694c23b.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 31,
+                  "startColumn": 5,
+                  "endLine": 40,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "b0a6021697b7b144:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-b321d38d-70da-5d8b-9343-b22c53c977a2",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/manual-release__2023-01-06T20-50-25Z__245b7a9d2fe5272ee34608f86a612d643694c23b.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 41,
+                  "startColumn": 5,
+                  "endLine": 72,
+                  "endColumn": 35
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "bc23155def9c9b8a:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "manual-release__2023-01-06T20-50-25Z__245b7a9d2fe5272ee34608f86a612d643694c23b.yml",
+          "workflow_name": "Manual Release",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 72,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "config": 1,
+            "release-manual": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 1,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "config": 1,
+              "release-manual": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 2,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-node@v3",
+              "cycjimmy/semantic-release-action@v3"
+            ],
+            "num_run_commands": 5,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Manual Release",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "version": {
+                "description": "Version",
+                "type": "choice",
+                "required": true,
+                "default": "fix",
+                "options": [
+                  "fix",
+                  "feat"
+                ]
+              },
+              "dryRun": {
+                "description": "DryRun",
+                "type": "boolean",
+                "default": true
+              }
+            }
+          }
+        },
+        "env": {
+          "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}",
+          "NPM_TOKEN": "${{ secrets.NPM_TOKEN }}",
+          "GIT_AUTHOR_NAME": "github-actions",
+          "GIT_AUTHOR_EMAIL": "github-actions@github.com",
+          "GIT_COMMITTER_NAME": "github-actions",
+          "GIT_COMMITTER_EMAIL": "github-actions@github.com",
+          "CI": true,
+          "CONFIG_NODE_VERSION": "[\"lts/*\"]",
+          "CONFIG_OS": "[\"ubuntu-latest\"]"
+        },
+        "jobs": {
+          "config": {
+            "runs-on": "ubuntu-latest",
+            "outputs": {
+              "NODE_VERSION": "${{ steps.set-config.outputs.CONFIG_NODE_VERSION }}",
+              "OS": "${{ steps.set-config.outputs.CONFIG_OS }}"
+            },
+            "steps": [
+              {
+                "id": "set-config",
+                "run": "echo \"CONFIG_NODE_VERSION=${{ toJSON(env.CONFIG_NODE_VERSION) }}\" >> $GITHUB_OUTPUT\necho \"CONFIG_OS=${{ toJSON(env.CONFIG_OS) }}\" >> $GITHUB_OUTPUT\n"
+              }
+            ]
+          },
+          "release-manual": {
+            "name": "Test, Build and force Release",
+            "needs": "config",
+            "runs-on": "${{ matrix.OS }}",
+            "strategy": {
+              "matrix": {
+                "OS": "${{ fromJSON(needs.config.outputs.OS) }}",
+                "NODE_VERSION": "${{ fromJSON(needs.config.outputs.NODE_VERSION) }}"
+              }
+            },
+            "steps": [
+              {
+                "name": "Checkout repo",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Setup Node.js ${{ matrix.NODE_VERSION }}",
+                "uses": "actions/setup-node@v3",
+                "with": {
+                  "node-version": "${{ matrix.NODE_VERSION }}"
+                }
+              },
+              {
+                "name": "Commit trigger",
+                "run": "git commit --allow-empty -m \"${{ github.event.inputs.version }}: Trigger Manual Release\"\n"
+              },
+              {
+                "name": "Install dependencies",
+                "run": "npm ci"
+              },
+              {
+                "name": "Build Library",
+                "run": "npm run build --if-present"
+              },
+              {
+                "name": "Run Tests",
+                "run": "npm test --if-present"
+              },
+              {
+                "name": "Create a release - ${{ github.event.inputs.version }}",
+                "uses": "cycjimmy/semantic-release-action@v3",
+                "with": {
+                  "dry_run": "${{ github.event.inputs.dryRun == 'true' }}",
+                  "extra_plugins": "@semantic-release/changelog\n@semantic-release/git\n"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-02-15T23-53-05Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-1eb934c6-cf5a-56e7-99d7-f5a69a7c0319",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/manual-release__2024-02-15T23-53-05Z__07d369f5c8ae643329f1fd3563e889d03afb1ac9.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 31,
+                  "startColumn": 5,
+                  "endLine": 40,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "b0a6021697b7b144:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-1a90641e-8e73-5685-aabd-4acfd311a877",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/manual-release__2024-02-15T23-53-05Z__07d369f5c8ae643329f1fd3563e889d03afb1ac9.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 41,
+                  "startColumn": 5,
+                  "endLine": 72,
+                  "endColumn": 35
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "bc23155def9c9b8a:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "manual-release__2024-02-15T23-53-05Z__07d369f5c8ae643329f1fd3563e889d03afb1ac9.yml",
+          "workflow_name": "Manual Release",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 72,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "config": 1,
+            "release-manual": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 1,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "config": 1,
+              "release-manual": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 2,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-node@v4",
+              "cycjimmy/semantic-release-action@v3"
+            ],
+            "num_run_commands": 5,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Manual Release",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "version": {
+                "description": "Version",
+                "type": "choice",
+                "required": true,
+                "default": "fix",
+                "options": [
+                  "fix",
+                  "feat"
+                ]
+              },
+              "dryRun": {
+                "description": "DryRun",
+                "type": "boolean",
+                "default": true
+              }
+            }
+          }
+        },
+        "env": {
+          "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}",
+          "NPM_TOKEN": "${{ secrets.NPM_TOKEN }}",
+          "GIT_AUTHOR_NAME": "github-actions",
+          "GIT_AUTHOR_EMAIL": "github-actions@github.com",
+          "GIT_COMMITTER_NAME": "github-actions",
+          "GIT_COMMITTER_EMAIL": "github-actions@github.com",
+          "CI": true,
+          "CONFIG_NODE_VERSION": "[\"lts/*\"]",
+          "CONFIG_OS": "[\"ubuntu-latest\"]"
+        },
+        "jobs": {
+          "config": {
+            "runs-on": "ubuntu-latest",
+            "outputs": {
+              "NODE_VERSION": "${{ steps.set-config.outputs.CONFIG_NODE_VERSION }}",
+              "OS": "${{ steps.set-config.outputs.CONFIG_OS }}"
+            },
+            "steps": [
+              {
+                "id": "set-config",
+                "run": "echo \"CONFIG_NODE_VERSION=${{ toJSON(env.CONFIG_NODE_VERSION) }}\" >> $GITHUB_OUTPUT\necho \"CONFIG_OS=${{ toJSON(env.CONFIG_OS) }}\" >> $GITHUB_OUTPUT\n"
+              }
+            ]
+          },
+          "release-manual": {
+            "name": "Test, Build and force Release",
+            "needs": "config",
+            "runs-on": "${{ matrix.OS }}",
+            "strategy": {
+              "matrix": {
+                "OS": "${{ fromJSON(needs.config.outputs.OS) }}",
+                "NODE_VERSION": "${{ fromJSON(needs.config.outputs.NODE_VERSION) }}"
+              }
+            },
+            "steps": [
+              {
+                "name": "Checkout repo",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Setup Node.js ${{ matrix.NODE_VERSION }}",
+                "uses": "actions/setup-node@v4",
+                "with": {
+                  "node-version": "${{ matrix.NODE_VERSION }}"
+                }
+              },
+              {
+                "name": "Commit trigger",
+                "run": "git commit --allow-empty -m \"${{ github.event.inputs.version }}: Trigger Manual Release\"\n"
+              },
+              {
+                "name": "Install dependencies",
+                "run": "npm ci"
+              },
+              {
+                "name": "Build Library",
+                "run": "npm run build --if-present"
+              },
+              {
+                "name": "Run Tests",
+                "run": "npm test --if-present"
+              },
+              {
+                "name": "Create a release - ${{ github.event.inputs.version }}",
+                "uses": "cycjimmy/semantic-release-action@v3",
+                "with": {
+                  "dry_run": "${{ github.event.inputs.dryRun == 'true' }}",
+                  "extra_plugins": "@semantic-release/changelog\n@semantic-release/git\n"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-02-16T00-06-08Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-f4179866-cc2e-53bf-a08c-2deb11ff0a43",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/manual-release__2024-02-16T00-06-08Z__d42d2576ab91b95145121de7955839a9a8a7d2a4.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 31,
+                  "startColumn": 5,
+                  "endLine": 40,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "b0a6021697b7b144:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-b0eb26bd-ffe4-5be7-b7af-1e3bac26693f",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/manual-release__2024-02-16T00-06-08Z__d42d2576ab91b95145121de7955839a9a8a7d2a4.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 41,
+                  "startColumn": 5,
+                  "endLine": 72,
+                  "endColumn": 35
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "bc23155def9c9b8a:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "manual-release__2024-02-16T00-06-08Z__d42d2576ab91b95145121de7955839a9a8a7d2a4.yml",
+          "workflow_name": "Manual Release",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 72,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "config": 1,
+            "release-manual": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 1,
+            "num_matrix_strategies": 1,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "config": 1,
+              "release-manual": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 2,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-node@v4",
+              "cycjimmy/semantic-release-action@v4"
+            ],
+            "num_run_commands": 5,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Manual Release",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "version": {
+                "description": "Version",
+                "type": "choice",
+                "required": true,
+                "default": "fix",
+                "options": [
+                  "fix",
+                  "feat"
+                ]
+              },
+              "dryRun": {
+                "description": "DryRun",
+                "type": "boolean",
+                "default": true
+              }
+            }
+          }
+        },
+        "env": {
+          "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}",
+          "NPM_TOKEN": "${{ secrets.NPM_TOKEN }}",
+          "GIT_AUTHOR_NAME": "github-actions",
+          "GIT_AUTHOR_EMAIL": "github-actions@github.com",
+          "GIT_COMMITTER_NAME": "github-actions",
+          "GIT_COMMITTER_EMAIL": "github-actions@github.com",
+          "CI": true,
+          "CONFIG_NODE_VERSION": "[\"lts/*\"]",
+          "CONFIG_OS": "[\"ubuntu-latest\"]"
+        },
+        "jobs": {
+          "config": {
+            "runs-on": "ubuntu-latest",
+            "outputs": {
+              "NODE_VERSION": "${{ steps.set-config.outputs.CONFIG_NODE_VERSION }}",
+              "OS": "${{ steps.set-config.outputs.CONFIG_OS }}"
+            },
+            "steps": [
+              {
+                "id": "set-config",
+                "run": "echo \"CONFIG_NODE_VERSION=${{ toJSON(env.CONFIG_NODE_VERSION) }}\" >> $GITHUB_OUTPUT\necho \"CONFIG_OS=${{ toJSON(env.CONFIG_OS) }}\" >> $GITHUB_OUTPUT\n"
+              }
+            ]
+          },
+          "release-manual": {
+            "name": "Test, Build and force Release",
+            "needs": "config",
+            "runs-on": "${{ matrix.OS }}",
+            "strategy": {
+              "matrix": {
+                "OS": "${{ fromJSON(needs.config.outputs.OS) }}",
+                "NODE_VERSION": "${{ fromJSON(needs.config.outputs.NODE_VERSION) }}"
+              }
+            },
+            "steps": [
+              {
+                "name": "Checkout repo",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Setup Node.js ${{ matrix.NODE_VERSION }}",
+                "uses": "actions/setup-node@v4",
+                "with": {
+                  "node-version": "${{ matrix.NODE_VERSION }}"
+                }
+              },
+              {
+                "name": "Commit trigger",
+                "run": "git commit --allow-empty -m \"${{ github.event.inputs.version }}: Trigger Manual Release\"\n"
+              },
+              {
+                "name": "Install dependencies",
+                "run": "npm ci"
+              },
+              {
+                "name": "Build Library",
+                "run": "npm run build --if-present"
+              },
+              {
+                "name": "Run Tests",
+                "run": "npm test --if-present"
+              },
+              {
+                "name": "Create a release - ${{ github.event.inputs.version }}",
+                "uses": "cycjimmy/semantic-release-action@v4",
+                "with": {
+                  "dry_run": "${{ github.event.inputs.dryRun == 'true' }}",
+                  "extra_plugins": "@semantic-release/changelog\n@semantic-release/git\n"
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

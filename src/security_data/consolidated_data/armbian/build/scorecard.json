@@ -1,0 +1,4654 @@
+{
+  "repo_owner": "armbian",
+  "repo_name": "build",
+  "workflow_name": "scorecard",
+  "history": {
+    "2022-06-11T16-17-40Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "scorecard__2022-06-11T16-17-40Z__1dddf78cd0ed096edd6506241cfd9aa8cc27ba4e.yml",
+          "workflow_name": "Scorecards supply-chain security",
+          "triggers": {},
+          "permissions": "read-all",
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 63,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@a12a3943b4bdde767164f792f33f40b04645d846",
+              "actions/upload-artifact@6673cd052c4cd6fcf4b4e6e60ea986c889389535",
+              "github/codeql-action/upload-sarif@v2",
+              "ossf/scorecard-action@3e15ea8318eee9b333819ec77a36aca8d39df13e"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Scorecards supply-chain security",
+        "true": {
+          "branch_protection_rule": null,
+          "schedule": [
+            {
+              "cron": "30 1 * * 6"
+            }
+          ],
+          "push": {
+            "branches": [
+              "master"
+            ]
+          }
+        },
+        "permissions": "read-all",
+        "jobs": {
+          "analysis": {
+            "name": "Scorecards analysis",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "security-events": "write",
+              "id-token": "write",
+              "actions": "read",
+              "contents": "read"
+            },
+            "steps": [
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@a12a3943b4bdde767164f792f33f40b04645d846",
+                "with": {
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "Run analysis",
+                "uses": "ossf/scorecard-action@3e15ea8318eee9b333819ec77a36aca8d39df13e",
+                "with": {
+                  "results_file": "results.sarif",
+                  "results_format": "sarif",
+                  "repo_token": "${{ secrets.SCORECARD_READ_TOKEN }}",
+                  "publish_results": true
+                }
+              },
+              {
+                "name": "Upload artifact",
+                "uses": "actions/upload-artifact@6673cd052c4cd6fcf4b4e6e60ea986c889389535",
+                "with": {
+                  "name": "SARIF file",
+                  "path": "results.sarif",
+                  "retention-days": 5
+                }
+              },
+              {
+                "name": "Upload to code-scanning",
+                "uses": "github/codeql-action/upload-sarif@v2",
+                "with": {
+                  "sarif_file": "results.sarif"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-06-18T21-53-45Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "scorecard__2022-06-18T21-53-45Z__1cccbf481ef9645f29b026a66506efb079243225.yml",
+          "workflow_name": "Scorecards Security Scan",
+          "triggers": {},
+          "permissions": "read-all",
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 64,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@a12a3943b4bdde767164f792f33f40b04645d846",
+              "actions/upload-artifact@6673cd052c4cd6fcf4b4e6e60ea986c889389535",
+              "github/codeql-action/upload-sarif@v2",
+              "ossf/scorecard-action@3e15ea8318eee9b333819ec77a36aca8d39df13e"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Scorecards Security Scan",
+        "true": {
+          "branch_protection_rule": null,
+          "schedule": [
+            {
+              "cron": "30 1 * * 6"
+            }
+          ],
+          "push": {
+            "branches": [
+              "master"
+            ]
+          }
+        },
+        "permissions": "read-all",
+        "jobs": {
+          "analysis": {
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "name": "Scorecards analysis",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "security-events": "write",
+              "id-token": "write",
+              "actions": "read",
+              "contents": "read"
+            },
+            "steps": [
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@a12a3943b4bdde767164f792f33f40b04645d846",
+                "with": {
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "Run analysis",
+                "uses": "ossf/scorecard-action@3e15ea8318eee9b333819ec77a36aca8d39df13e",
+                "with": {
+                  "results_file": "results.sarif",
+                  "results_format": "sarif",
+                  "repo_token": "${{ secrets.SCORECARD_READ_TOKEN }}",
+                  "publish_results": true
+                }
+              },
+              {
+                "name": "Upload artifact",
+                "uses": "actions/upload-artifact@6673cd052c4cd6fcf4b4e6e60ea986c889389535",
+                "with": {
+                  "name": "SARIF file",
+                  "path": "results.sarif",
+                  "retention-days": 5
+                }
+              },
+              {
+                "name": "Upload to code-scanning",
+                "uses": "github/codeql-action/upload-sarif@v2",
+                "with": {
+                  "sarif_file": "results.sarif"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-07-09T09-36-26Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "scorecard__2022-07-09T09-36-26Z__be5119af9e20b3a646ad6524cbc7745328d0183b.yml",
+          "workflow_name": "Scorecards Security Scan",
+          "triggers": {},
+          "permissions": "read-all",
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 64,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@a12a3943b4bdde767164f792f33f40b04645d846",
+              "actions/upload-artifact@6673cd052c4cd6fcf4b4e6e60ea986c889389535",
+              "github/codeql-action/upload-sarif@v2",
+              "ossf/scorecard-action@ce330fde6b1a5c9c75b417e7efc510b822a35564"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Scorecards Security Scan",
+        "true": {
+          "branch_protection_rule": null,
+          "schedule": [
+            {
+              "cron": "30 1 * * 6"
+            }
+          ],
+          "push": {
+            "branches": [
+              "master"
+            ]
+          }
+        },
+        "permissions": "read-all",
+        "jobs": {
+          "analysis": {
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "name": "Scorecards analysis",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "security-events": "write",
+              "id-token": "write",
+              "actions": "read",
+              "contents": "read"
+            },
+            "steps": [
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@a12a3943b4bdde767164f792f33f40b04645d846",
+                "with": {
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "Run analysis",
+                "uses": "ossf/scorecard-action@ce330fde6b1a5c9c75b417e7efc510b822a35564",
+                "with": {
+                  "results_file": "results.sarif",
+                  "results_format": "sarif",
+                  "repo_token": "${{ secrets.SCORECARD_READ_TOKEN }}",
+                  "publish_results": true
+                }
+              },
+              {
+                "name": "Upload artifact",
+                "uses": "actions/upload-artifact@6673cd052c4cd6fcf4b4e6e60ea986c889389535",
+                "with": {
+                  "name": "SARIF file",
+                  "path": "results.sarif",
+                  "retention-days": 5
+                }
+              },
+              {
+                "name": "Upload to code-scanning",
+                "uses": "github/codeql-action/upload-sarif@v2",
+                "with": {
+                  "sarif_file": "results.sarif"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-09-13T13-14-18Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "scorecard__2022-09-13T13-14-18Z__25cdb3f446c206407e334b3e9fd0f20d4cfaec02.yml",
+          "workflow_name": "Scorecards Security Scan",
+          "triggers": {},
+          "permissions": "read-all",
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 64,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@a12a3943b4bdde767164f792f33f40b04645d846",
+              "actions/upload-artifact@6673cd052c4cd6fcf4b4e6e60ea986c889389535",
+              "github/codeql-action/upload-sarif@v2",
+              "ossf/scorecard-action@865b4092859256271290c77adbd10a43f4779972"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Scorecards Security Scan",
+        "true": {
+          "branch_protection_rule": null,
+          "schedule": [
+            {
+              "cron": "30 1 * * 6"
+            }
+          ],
+          "push": {
+            "branches": [
+              "master"
+            ]
+          }
+        },
+        "permissions": "read-all",
+        "jobs": {
+          "analysis": {
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "name": "Scorecards analysis",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "security-events": "write",
+              "id-token": "write",
+              "actions": "read",
+              "contents": "read"
+            },
+            "steps": [
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@a12a3943b4bdde767164f792f33f40b04645d846",
+                "with": {
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "Run analysis",
+                "uses": "ossf/scorecard-action@865b4092859256271290c77adbd10a43f4779972",
+                "with": {
+                  "results_file": "results.sarif",
+                  "results_format": "sarif",
+                  "repo_token": "${{ secrets.SCORECARD_READ_TOKEN }}",
+                  "publish_results": true
+                }
+              },
+              {
+                "name": "Upload artifact",
+                "uses": "actions/upload-artifact@6673cd052c4cd6fcf4b4e6e60ea986c889389535",
+                "with": {
+                  "name": "SARIF file",
+                  "path": "results.sarif",
+                  "retention-days": 5
+                }
+              },
+              {
+                "name": "Upload to code-scanning",
+                "uses": "github/codeql-action/upload-sarif@v2",
+                "with": {
+                  "sarif_file": "results.sarif"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-10-04T04-40-15Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "scorecard__2022-10-04T04-40-15Z__e911e645d830d0b4c0fc2c7655c801870dbe1001.yml",
+          "workflow_name": "Scorecards Security Scan",
+          "triggers": {},
+          "permissions": "read-all",
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 64,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@a12a3943b4bdde767164f792f33f40b04645d846",
+              "actions/upload-artifact@6673cd052c4cd6fcf4b4e6e60ea986c889389535",
+              "github/codeql-action/upload-sarif@v2",
+              "ossf/scorecard-action@e363bfca00e752f91de7b7d2a77340e2e523cb18"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Scorecards Security Scan",
+        "true": {
+          "branch_protection_rule": null,
+          "schedule": [
+            {
+              "cron": "30 1 * * 6"
+            }
+          ],
+          "push": {
+            "branches": [
+              "master"
+            ]
+          }
+        },
+        "permissions": "read-all",
+        "jobs": {
+          "analysis": {
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "name": "Scorecards analysis",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "security-events": "write",
+              "id-token": "write",
+              "actions": "read",
+              "contents": "read"
+            },
+            "steps": [
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@a12a3943b4bdde767164f792f33f40b04645d846",
+                "with": {
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "Run analysis",
+                "uses": "ossf/scorecard-action@e363bfca00e752f91de7b7d2a77340e2e523cb18",
+                "with": {
+                  "results_file": "results.sarif",
+                  "results_format": "sarif",
+                  "repo_token": "${{ secrets.SCORECARD_READ_TOKEN }}",
+                  "publish_results": true
+                }
+              },
+              {
+                "name": "Upload artifact",
+                "uses": "actions/upload-artifact@6673cd052c4cd6fcf4b4e6e60ea986c889389535",
+                "with": {
+                  "name": "SARIF file",
+                  "path": "results.sarif",
+                  "retention-days": 5
+                }
+              },
+              {
+                "name": "Upload to code-scanning",
+                "uses": "github/codeql-action/upload-sarif@v2",
+                "with": {
+                  "sarif_file": "results.sarif"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-10-25T09-27-32Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "scorecard__2022-10-25T09-27-32Z__ab7cb8df103046a33d6995ffb4cd155f38c0a6d1.yml",
+          "workflow_name": "Scorecards Security Scan",
+          "triggers": {},
+          "permissions": "read-all",
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 64,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@a12a3943b4bdde767164f792f33f40b04645d846",
+              "actions/upload-artifact@6673cd052c4cd6fcf4b4e6e60ea986c889389535",
+              "github/codeql-action/upload-sarif@v2",
+              "ossf/scorecard-action@99c53751e09b9529366343771cc321ec74e9bd3d"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Scorecards Security Scan",
+        "true": {
+          "branch_protection_rule": null,
+          "schedule": [
+            {
+              "cron": "30 1 * * 6"
+            }
+          ],
+          "push": {
+            "branches": [
+              "master"
+            ]
+          }
+        },
+        "permissions": "read-all",
+        "jobs": {
+          "analysis": {
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "name": "Scorecards analysis",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "security-events": "write",
+              "id-token": "write",
+              "actions": "read",
+              "contents": "read"
+            },
+            "steps": [
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@a12a3943b4bdde767164f792f33f40b04645d846",
+                "with": {
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "Run analysis",
+                "uses": "ossf/scorecard-action@99c53751e09b9529366343771cc321ec74e9bd3d",
+                "with": {
+                  "results_file": "results.sarif",
+                  "results_format": "sarif",
+                  "repo_token": "${{ secrets.SCORECARD_READ_TOKEN }}",
+                  "publish_results": true
+                }
+              },
+              {
+                "name": "Upload artifact",
+                "uses": "actions/upload-artifact@6673cd052c4cd6fcf4b4e6e60ea986c889389535",
+                "with": {
+                  "name": "SARIF file",
+                  "path": "results.sarif",
+                  "retention-days": 5
+                }
+              },
+              {
+                "name": "Upload to code-scanning",
+                "uses": "github/codeql-action/upload-sarif@v2",
+                "with": {
+                  "sarif_file": "results.sarif"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-12-20T09-36-06Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "scorecard__2022-12-20T09-36-06Z__b54d6d6653ff782da71374ee6e7f928b109e1517.yml",
+          "workflow_name": "Scorecards Security Scan",
+          "triggers": {},
+          "permissions": "read-all",
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 64,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@a12a3943b4bdde767164f792f33f40b04645d846",
+              "actions/upload-artifact@6673cd052c4cd6fcf4b4e6e60ea986c889389535",
+              "github/codeql-action/upload-sarif@v2",
+              "ossf/scorecard-action@937ffa90d79c7d720498178154ad4c7ba1e4ad8c"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Scorecards Security Scan",
+        "true": {
+          "branch_protection_rule": null,
+          "schedule": [
+            {
+              "cron": "30 1 * * 6"
+            }
+          ],
+          "push": {
+            "branches": [
+              "master"
+            ]
+          }
+        },
+        "permissions": "read-all",
+        "jobs": {
+          "analysis": {
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "name": "Scorecards analysis",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "security-events": "write",
+              "id-token": "write",
+              "actions": "read",
+              "contents": "read"
+            },
+            "steps": [
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@a12a3943b4bdde767164f792f33f40b04645d846",
+                "with": {
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "Run analysis",
+                "uses": "ossf/scorecard-action@937ffa90d79c7d720498178154ad4c7ba1e4ad8c",
+                "with": {
+                  "results_file": "results.sarif",
+                  "results_format": "sarif",
+                  "repo_token": "${{ secrets.SCORECARD_READ_TOKEN }}",
+                  "publish_results": true
+                }
+              },
+              {
+                "name": "Upload artifact",
+                "uses": "actions/upload-artifact@6673cd052c4cd6fcf4b4e6e60ea986c889389535",
+                "with": {
+                  "name": "SARIF file",
+                  "path": "results.sarif",
+                  "retention-days": 5
+                }
+              },
+              {
+                "name": "Upload to code-scanning",
+                "uses": "github/codeql-action/upload-sarif@v2",
+                "with": {
+                  "sarif_file": "results.sarif"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-12-26T08-31-26Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "scorecard__2022-12-26T08-31-26Z__d20fb2811eaf74fa93580a69b3a69297843d2d86.yml",
+          "workflow_name": "Scorecards Security Scan",
+          "triggers": {},
+          "permissions": "read-all",
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 64,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@a12a3943b4bdde767164f792f33f40b04645d846",
+              "actions/upload-artifact@6673cd052c4cd6fcf4b4e6e60ea986c889389535",
+              "github/codeql-action/upload-sarif@v2",
+              "ossf/scorecard-action@e38b1902ae4f44df626f11ba0734b14fb91f8f86"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Scorecards Security Scan",
+        "true": {
+          "branch_protection_rule": null,
+          "schedule": [
+            {
+              "cron": "30 1 * * 6"
+            }
+          ],
+          "push": {
+            "branches": [
+              "master"
+            ]
+          }
+        },
+        "permissions": "read-all",
+        "jobs": {
+          "analysis": {
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "name": "Scorecards analysis",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "security-events": "write",
+              "id-token": "write",
+              "actions": "read",
+              "contents": "read"
+            },
+            "steps": [
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@a12a3943b4bdde767164f792f33f40b04645d846",
+                "with": {
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "Run analysis",
+                "uses": "ossf/scorecard-action@e38b1902ae4f44df626f11ba0734b14fb91f8f86",
+                "with": {
+                  "results_file": "results.sarif",
+                  "results_format": "sarif",
+                  "repo_token": "${{ secrets.SCORECARD_READ_TOKEN }}",
+                  "publish_results": true
+                }
+              },
+              {
+                "name": "Upload artifact",
+                "uses": "actions/upload-artifact@6673cd052c4cd6fcf4b4e6e60ea986c889389535",
+                "with": {
+                  "name": "SARIF file",
+                  "path": "results.sarif",
+                  "retention-days": 5
+                }
+              },
+              {
+                "name": "Upload to code-scanning",
+                "uses": "github/codeql-action/upload-sarif@v2",
+                "with": {
+                  "sarif_file": "results.sarif"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-01-20T17-44-25Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "scorecard__2023-01-20T17-44-25Z__d1a7a49277ed1da457001366c53eea97b84e57db.yml",
+          "workflow_name": "Scorecards Security Scan",
+          "triggers": {},
+          "permissions": "read-all",
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 64,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v3.3.0",
+              "actions/upload-artifact@6673cd052c4cd6fcf4b4e6e60ea986c889389535",
+              "github/codeql-action/upload-sarif@v2",
+              "ossf/scorecard-action@v2.1.2"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Scorecards Security Scan",
+        "true": {
+          "branch_protection_rule": null,
+          "schedule": [
+            {
+              "cron": "30 1 * * 6"
+            }
+          ],
+          "push": {
+            "branches": [
+              "master"
+            ]
+          }
+        },
+        "permissions": "read-all",
+        "jobs": {
+          "analysis": {
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "name": "Scorecards analysis",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "security-events": "write",
+              "id-token": "write",
+              "actions": "read",
+              "contents": "read"
+            },
+            "steps": [
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v3.3.0",
+                "with": {
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "Run analysis",
+                "uses": "ossf/scorecard-action@v2.1.2",
+                "with": {
+                  "results_file": "results.sarif",
+                  "results_format": "sarif",
+                  "repo_token": "${{ secrets.SCORECARD_READ_TOKEN }}",
+                  "publish_results": true
+                }
+              },
+              {
+                "name": "Upload artifact",
+                "uses": "actions/upload-artifact@6673cd052c4cd6fcf4b4e6e60ea986c889389535",
+                "with": {
+                  "name": "SARIF file",
+                  "path": "results.sarif",
+                  "retention-days": 5
+                }
+              },
+              {
+                "name": "Upload to code-scanning",
+                "uses": "github/codeql-action/upload-sarif@v2",
+                "with": {
+                  "sarif_file": "results.sarif"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-02-13T20-25-43Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "scorecard__2023-02-13T20-25-43Z__39ef59c3cf9bd894486f81b661edaddb7d9ef0bb.yml",
+          "workflow_name": "Scorecards Security Scan",
+          "triggers": {},
+          "permissions": "read-all",
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 64,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v3.3.0",
+              "actions/upload-artifact@6673cd052c4cd6fcf4b4e6e60ea986c889389535",
+              "github/codeql-action/upload-sarif@v2",
+              "ossf/scorecard-action@v2.1.2"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Scorecards Security Scan",
+        "true": {
+          "branch_protection_rule": null,
+          "schedule": [
+            {
+              "cron": "30 1 * * 6"
+            }
+          ],
+          "push": {
+            "branches": [
+              "main"
+            ]
+          }
+        },
+        "permissions": "read-all",
+        "jobs": {
+          "analysis": {
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "name": "Scorecards analysis",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "security-events": "write",
+              "id-token": "write",
+              "actions": "read",
+              "contents": "read"
+            },
+            "steps": [
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v3.3.0",
+                "with": {
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "Run analysis",
+                "uses": "ossf/scorecard-action@v2.1.2",
+                "with": {
+                  "results_file": "results.sarif",
+                  "results_format": "sarif",
+                  "repo_token": "${{ secrets.SCORECARD_READ_TOKEN }}",
+                  "publish_results": true
+                }
+              },
+              {
+                "name": "Upload artifact",
+                "uses": "actions/upload-artifact@6673cd052c4cd6fcf4b4e6e60ea986c889389535",
+                "with": {
+                  "name": "SARIF file",
+                  "path": "results.sarif",
+                  "retention-days": 5
+                }
+              },
+              {
+                "name": "Upload to code-scanning",
+                "uses": "github/codeql-action/upload-sarif@v2",
+                "with": {
+                  "sarif_file": "results.sarif"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-02-22T07-18-41Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "scorecard__2023-02-22T07-18-41Z__d89ada6b7172c06eeb5a0e66b1994ee3a3136d64.yml",
+          "workflow_name": "Scorecards Security Scan",
+          "triggers": {},
+          "permissions": "read-all",
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 64,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v3.3.0",
+              "actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce",
+              "github/codeql-action/upload-sarif@v2",
+              "ossf/scorecard-action@v2.1.2"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Scorecards Security Scan",
+        "true": {
+          "branch_protection_rule": null,
+          "schedule": [
+            {
+              "cron": "30 1 * * 6"
+            }
+          ],
+          "push": {
+            "branches": [
+              "main"
+            ]
+          }
+        },
+        "permissions": "read-all",
+        "jobs": {
+          "analysis": {
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "name": "Scorecards analysis",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "security-events": "write",
+              "id-token": "write",
+              "actions": "read",
+              "contents": "read"
+            },
+            "steps": [
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v3.3.0",
+                "with": {
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "Run analysis",
+                "uses": "ossf/scorecard-action@v2.1.2",
+                "with": {
+                  "results_file": "results.sarif",
+                  "results_format": "sarif",
+                  "repo_token": "${{ secrets.SCORECARD_READ_TOKEN }}",
+                  "publish_results": true
+                }
+              },
+              {
+                "name": "Upload artifact",
+                "uses": "actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce",
+                "with": {
+                  "name": "SARIF file",
+                  "path": "results.sarif",
+                  "retention-days": 5
+                }
+              },
+              {
+                "name": "Upload to code-scanning",
+                "uses": "github/codeql-action/upload-sarif@v2",
+                "with": {
+                  "sarif_file": "results.sarif"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-04-03T19-20-48Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "scorecard__2023-04-03T19-20-48Z__ea4e75a79bab340c5c4539b73763e5182817d4ef.yml",
+          "workflow_name": "Scorecards Security Scan",
+          "triggers": {},
+          "permissions": "read-all",
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 64,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v3.3.0",
+              "actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce",
+              "github/codeql-action/upload-sarif@v2",
+              "ossf/scorecard-action@v2.1.3"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Scorecards Security Scan",
+        "true": {
+          "branch_protection_rule": null,
+          "schedule": [
+            {
+              "cron": "30 1 * * 6"
+            }
+          ],
+          "push": {
+            "branches": [
+              "main"
+            ]
+          }
+        },
+        "permissions": "read-all",
+        "jobs": {
+          "analysis": {
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "name": "Scorecards analysis",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "security-events": "write",
+              "id-token": "write",
+              "actions": "read",
+              "contents": "read"
+            },
+            "steps": [
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v3.3.0",
+                "with": {
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "Run analysis",
+                "uses": "ossf/scorecard-action@v2.1.3",
+                "with": {
+                  "results_file": "results.sarif",
+                  "results_format": "sarif",
+                  "repo_token": "${{ secrets.SCORECARD_READ_TOKEN }}",
+                  "publish_results": true
+                }
+              },
+              {
+                "name": "Upload artifact",
+                "uses": "actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce",
+                "with": {
+                  "name": "SARIF file",
+                  "path": "results.sarif",
+                  "retention-days": 5
+                }
+              },
+              {
+                "name": "Upload to code-scanning",
+                "uses": "github/codeql-action/upload-sarif@v2",
+                "with": {
+                  "sarif_file": "results.sarif"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-06-26T19-19-49Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "scorecard__2023-06-26T19-19-49Z__0359e2241b60036445793a1d971c60f28859ac2c.yml",
+          "workflow_name": "Scorecards Security Scan",
+          "triggers": {},
+          "permissions": "read-all",
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 64,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v3.3.0",
+              "actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce",
+              "github/codeql-action/upload-sarif@v2",
+              "ossf/scorecard-action@v2.2.0"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Scorecards Security Scan",
+        "true": {
+          "branch_protection_rule": null,
+          "schedule": [
+            {
+              "cron": "30 1 * * 6"
+            }
+          ],
+          "push": {
+            "branches": [
+              "main"
+            ]
+          }
+        },
+        "permissions": "read-all",
+        "jobs": {
+          "analysis": {
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "name": "Scorecards analysis",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "security-events": "write",
+              "id-token": "write",
+              "actions": "read",
+              "contents": "read"
+            },
+            "steps": [
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v3.3.0",
+                "with": {
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "Run analysis",
+                "uses": "ossf/scorecard-action@v2.2.0",
+                "with": {
+                  "results_file": "results.sarif",
+                  "results_format": "sarif",
+                  "repo_token": "${{ secrets.SCORECARD_READ_TOKEN }}",
+                  "publish_results": true
+                }
+              },
+              {
+                "name": "Upload artifact",
+                "uses": "actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce",
+                "with": {
+                  "name": "SARIF file",
+                  "path": "results.sarif",
+                  "retention-days": 5
+                }
+              },
+              {
+                "name": "Upload to code-scanning",
+                "uses": "github/codeql-action/upload-sarif@v2",
+                "with": {
+                  "sarif_file": "results.sarif"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-09-06T11-09-07Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "scorecard__2023-09-06T11-09-07Z__8edfe5520b03f214d40c40c08f76aad56db2c93d.yml",
+          "workflow_name": "Scorecards Security Scan",
+          "triggers": {},
+          "permissions": "read-all",
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 64,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce",
+              "github/codeql-action/upload-sarif@v2",
+              "ossf/scorecard-action@v2.2.0"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Scorecards Security Scan",
+        "true": {
+          "branch_protection_rule": null,
+          "schedule": [
+            {
+              "cron": "30 1 * * 6"
+            }
+          ],
+          "push": {
+            "branches": [
+              "main"
+            ]
+          }
+        },
+        "permissions": "read-all",
+        "jobs": {
+          "analysis": {
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "name": "Scorecards analysis",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "security-events": "write",
+              "id-token": "write",
+              "actions": "read",
+              "contents": "read"
+            },
+            "steps": [
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "Run analysis",
+                "uses": "ossf/scorecard-action@v2.2.0",
+                "with": {
+                  "results_file": "results.sarif",
+                  "results_format": "sarif",
+                  "repo_token": "${{ secrets.SCORECARD_READ_TOKEN }}",
+                  "publish_results": true
+                }
+              },
+              {
+                "name": "Upload artifact",
+                "uses": "actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce",
+                "with": {
+                  "name": "SARIF file",
+                  "path": "results.sarif",
+                  "retention-days": 5
+                }
+              },
+              {
+                "name": "Upload to code-scanning",
+                "uses": "github/codeql-action/upload-sarif@v2",
+                "with": {
+                  "sarif_file": "results.sarif"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-09-12T08-02-36Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "scorecard__2023-09-12T08-02-36Z__6ecca26cedb2c104e4ba905802d24c0385d996cb.yml",
+          "workflow_name": "Scorecards Security Scan",
+          "triggers": {},
+          "permissions": "read-all",
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 64,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32",
+              "github/codeql-action/upload-sarif@v2",
+              "ossf/scorecard-action@v2.2.0"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Scorecards Security Scan",
+        "true": {
+          "branch_protection_rule": null,
+          "schedule": [
+            {
+              "cron": "30 1 * * 6"
+            }
+          ],
+          "push": {
+            "branches": [
+              "main"
+            ]
+          }
+        },
+        "permissions": "read-all",
+        "jobs": {
+          "analysis": {
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "name": "Scorecards analysis",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "security-events": "write",
+              "id-token": "write",
+              "actions": "read",
+              "contents": "read"
+            },
+            "steps": [
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "Run analysis",
+                "uses": "ossf/scorecard-action@v2.2.0",
+                "with": {
+                  "results_file": "results.sarif",
+                  "results_format": "sarif",
+                  "repo_token": "${{ secrets.SCORECARD_READ_TOKEN }}",
+                  "publish_results": true
+                }
+              },
+              {
+                "name": "Upload artifact",
+                "uses": "actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32",
+                "with": {
+                  "name": "SARIF file",
+                  "path": "results.sarif",
+                  "retention-days": 5
+                }
+              },
+              {
+                "name": "Upload to code-scanning",
+                "uses": "github/codeql-action/upload-sarif@v2",
+                "with": {
+                  "sarif_file": "results.sarif"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-10-10T18-26-17Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "scorecard__2023-10-10T18-26-17Z__b7bc0015b064b825cb0340c7fd6492c3f3e78e2e.yml",
+          "workflow_name": "Scorecards Security Scan",
+          "triggers": {},
+          "permissions": "read-all",
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 64,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32",
+              "github/codeql-action/upload-sarif@v2",
+              "ossf/scorecard-action@v2.3.0"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Scorecards Security Scan",
+        "true": {
+          "branch_protection_rule": null,
+          "schedule": [
+            {
+              "cron": "30 1 * * 6"
+            }
+          ],
+          "push": {
+            "branches": [
+              "main"
+            ]
+          }
+        },
+        "permissions": "read-all",
+        "jobs": {
+          "analysis": {
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "name": "Scorecards analysis",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "security-events": "write",
+              "id-token": "write",
+              "actions": "read",
+              "contents": "read"
+            },
+            "steps": [
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "Run analysis",
+                "uses": "ossf/scorecard-action@v2.3.0",
+                "with": {
+                  "results_file": "results.sarif",
+                  "results_format": "sarif",
+                  "repo_token": "${{ secrets.SCORECARD_READ_TOKEN }}",
+                  "publish_results": true
+                }
+              },
+              {
+                "name": "Upload artifact",
+                "uses": "actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32",
+                "with": {
+                  "name": "SARIF file",
+                  "path": "results.sarif",
+                  "retention-days": 5
+                }
+              },
+              {
+                "name": "Upload to code-scanning",
+                "uses": "github/codeql-action/upload-sarif@v2",
+                "with": {
+                  "sarif_file": "results.sarif"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-10-31T07-02-38Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "scorecard__2023-10-31T07-02-38Z__2cc436b0045f32d24dea7355840a154f2b143d2c.yml",
+          "workflow_name": "Scorecards Security Scan",
+          "triggers": {},
+          "permissions": "read-all",
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 64,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32",
+              "github/codeql-action/upload-sarif@v2",
+              "ossf/scorecard-action@v2.3.1"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Scorecards Security Scan",
+        "true": {
+          "branch_protection_rule": null,
+          "schedule": [
+            {
+              "cron": "30 1 * * 6"
+            }
+          ],
+          "push": {
+            "branches": [
+              "main"
+            ]
+          }
+        },
+        "permissions": "read-all",
+        "jobs": {
+          "analysis": {
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "name": "Scorecards analysis",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "security-events": "write",
+              "id-token": "write",
+              "actions": "read",
+              "contents": "read"
+            },
+            "steps": [
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "Run analysis",
+                "uses": "ossf/scorecard-action@v2.3.1",
+                "with": {
+                  "results_file": "results.sarif",
+                  "results_format": "sarif",
+                  "repo_token": "${{ secrets.SCORECARD_READ_TOKEN }}",
+                  "publish_results": true
+                }
+              },
+              {
+                "name": "Upload artifact",
+                "uses": "actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32",
+                "with": {
+                  "name": "SARIF file",
+                  "path": "results.sarif",
+                  "retention-days": 5
+                }
+              },
+              {
+                "name": "Upload to code-scanning",
+                "uses": "github/codeql-action/upload-sarif@v2",
+                "with": {
+                  "sarif_file": "results.sarif"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-12-24T08-15-34Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "scorecard__2023-12-24T08-15-34Z__656f0128f887ea3ebca2b10234826048f61dc6fe.yml",
+          "workflow_name": "Scorecards Security Scan",
+          "triggers": {},
+          "permissions": "read-all",
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 64,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32",
+              "github/codeql-action/upload-sarif@v3",
+              "ossf/scorecard-action@v2.3.1"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Scorecards Security Scan",
+        "true": {
+          "branch_protection_rule": null,
+          "schedule": [
+            {
+              "cron": "30 1 * * 6"
+            }
+          ],
+          "push": {
+            "branches": [
+              "main"
+            ]
+          }
+        },
+        "permissions": "read-all",
+        "jobs": {
+          "analysis": {
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "name": "Scorecards analysis",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "security-events": "write",
+              "id-token": "write",
+              "actions": "read",
+              "contents": "read"
+            },
+            "steps": [
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "Run analysis",
+                "uses": "ossf/scorecard-action@v2.3.1",
+                "with": {
+                  "results_file": "results.sarif",
+                  "results_format": "sarif",
+                  "repo_token": "${{ secrets.SCORECARD_READ_TOKEN }}",
+                  "publish_results": true
+                }
+              },
+              {
+                "name": "Upload artifact",
+                "uses": "actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32",
+                "with": {
+                  "name": "SARIF file",
+                  "path": "results.sarif",
+                  "retention-days": 5
+                }
+              },
+              {
+                "name": "Upload to code-scanning",
+                "uses": "github/codeql-action/upload-sarif@v3",
+                "with": {
+                  "sarif_file": "results.sarif"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-12-24T08-15-42Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "scorecard__2023-12-24T08-15-42Z__f782eb9647117fa5da8ab0e732e80c455628d4dc.yml",
+          "workflow_name": "Scorecards Security Scan",
+          "triggers": {},
+          "permissions": "read-all",
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 64,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392",
+              "github/codeql-action/upload-sarif@v3",
+              "ossf/scorecard-action@v2.3.1"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Scorecards Security Scan",
+        "true": {
+          "branch_protection_rule": null,
+          "schedule": [
+            {
+              "cron": "30 1 * * 6"
+            }
+          ],
+          "push": {
+            "branches": [
+              "main"
+            ]
+          }
+        },
+        "permissions": "read-all",
+        "jobs": {
+          "analysis": {
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "name": "Scorecards analysis",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "security-events": "write",
+              "id-token": "write",
+              "actions": "read",
+              "contents": "read"
+            },
+            "steps": [
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "Run analysis",
+                "uses": "ossf/scorecard-action@v2.3.1",
+                "with": {
+                  "results_file": "results.sarif",
+                  "results_format": "sarif",
+                  "repo_token": "${{ secrets.SCORECARD_READ_TOKEN }}",
+                  "publish_results": true
+                }
+              },
+              {
+                "name": "Upload artifact",
+                "uses": "actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392",
+                "with": {
+                  "name": "SARIF file",
+                  "path": "results.sarif",
+                  "retention-days": 5
+                }
+              },
+              {
+                "name": "Upload to code-scanning",
+                "uses": "github/codeql-action/upload-sarif@v3",
+                "with": {
+                  "sarif_file": "results.sarif"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-01-17T21-44-26Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "scorecard__2024-01-17T21-44-26Z__705aff9f985bb5c0bf3c4134cc127ab913ecfc61.yml",
+          "workflow_name": "Scorecards Security Scan",
+          "triggers": {},
+          "permissions": "read-all",
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 64,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/upload-artifact@1eb3cb2b3e0f29609092a73eb033bb759a334595",
+              "github/codeql-action/upload-sarif@v3",
+              "ossf/scorecard-action@v2.3.1"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Scorecards Security Scan",
+        "true": {
+          "branch_protection_rule": null,
+          "schedule": [
+            {
+              "cron": "30 1 * * 6"
+            }
+          ],
+          "push": {
+            "branches": [
+              "main"
+            ]
+          }
+        },
+        "permissions": "read-all",
+        "jobs": {
+          "analysis": {
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "name": "Scorecards analysis",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "security-events": "write",
+              "id-token": "write",
+              "actions": "read",
+              "contents": "read"
+            },
+            "steps": [
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "Run analysis",
+                "uses": "ossf/scorecard-action@v2.3.1",
+                "with": {
+                  "results_file": "results.sarif",
+                  "results_format": "sarif",
+                  "repo_token": "${{ secrets.SCORECARD_READ_TOKEN }}",
+                  "publish_results": true
+                }
+              },
+              {
+                "name": "Upload artifact",
+                "uses": "actions/upload-artifact@1eb3cb2b3e0f29609092a73eb033bb759a334595",
+                "with": {
+                  "name": "SARIF file",
+                  "path": "results.sarif",
+                  "retention-days": 5
+                }
+              },
+              {
+                "name": "Upload to code-scanning",
+                "uses": "github/codeql-action/upload-sarif@v3",
+                "with": {
+                  "sarif_file": "results.sarif"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-01-22T20-16-12Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "scorecard__2024-01-22T20-16-12Z__ff463e9745539bc4ce0215df6bbbbe114dc3ed20.yml",
+          "workflow_name": "Scorecards Security Scan",
+          "triggers": {},
+          "permissions": "read-all",
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 64,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/upload-artifact@694cdabd8bdb0f10b2cea11669e1bf5453eed0a6",
+              "github/codeql-action/upload-sarif@v3",
+              "ossf/scorecard-action@v2.3.1"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Scorecards Security Scan",
+        "true": {
+          "branch_protection_rule": null,
+          "schedule": [
+            {
+              "cron": "30 1 * * 6"
+            }
+          ],
+          "push": {
+            "branches": [
+              "main"
+            ]
+          }
+        },
+        "permissions": "read-all",
+        "jobs": {
+          "analysis": {
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "name": "Scorecards analysis",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "security-events": "write",
+              "id-token": "write",
+              "actions": "read",
+              "contents": "read"
+            },
+            "steps": [
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "Run analysis",
+                "uses": "ossf/scorecard-action@v2.3.1",
+                "with": {
+                  "results_file": "results.sarif",
+                  "results_format": "sarif",
+                  "repo_token": "${{ secrets.SCORECARD_READ_TOKEN }}",
+                  "publish_results": true
+                }
+              },
+              {
+                "name": "Upload artifact",
+                "uses": "actions/upload-artifact@694cdabd8bdb0f10b2cea11669e1bf5453eed0a6",
+                "with": {
+                  "name": "SARIF file",
+                  "path": "results.sarif",
+                  "retention-days": 5
+                }
+              },
+              {
+                "name": "Upload to code-scanning",
+                "uses": "github/codeql-action/upload-sarif@v3",
+                "with": {
+                  "sarif_file": "results.sarif"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-01-29T18-42-54Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "scorecard__2024-01-29T18-42-54Z__b148000043e8752e582035474ed0ed5c8ced1a52.yml",
+          "workflow_name": "Scorecards Security Scan",
+          "triggers": {},
+          "permissions": "read-all",
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 64,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/upload-artifact@26f96dfa697d77e81fd5907df203aa23a56210a8",
+              "github/codeql-action/upload-sarif@v3",
+              "ossf/scorecard-action@v2.3.1"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Scorecards Security Scan",
+        "true": {
+          "branch_protection_rule": null,
+          "schedule": [
+            {
+              "cron": "30 1 * * 6"
+            }
+          ],
+          "push": {
+            "branches": [
+              "main"
+            ]
+          }
+        },
+        "permissions": "read-all",
+        "jobs": {
+          "analysis": {
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "name": "Scorecards analysis",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "security-events": "write",
+              "id-token": "write",
+              "actions": "read",
+              "contents": "read"
+            },
+            "steps": [
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "Run analysis",
+                "uses": "ossf/scorecard-action@v2.3.1",
+                "with": {
+                  "results_file": "results.sarif",
+                  "results_format": "sarif",
+                  "repo_token": "${{ secrets.SCORECARD_READ_TOKEN }}",
+                  "publish_results": true
+                }
+              },
+              {
+                "name": "Upload artifact",
+                "uses": "actions/upload-artifact@26f96dfa697d77e81fd5907df203aa23a56210a8",
+                "with": {
+                  "name": "SARIF file",
+                  "path": "results.sarif",
+                  "retention-days": 5
+                }
+              },
+              {
+                "name": "Upload to code-scanning",
+                "uses": "github/codeql-action/upload-sarif@v3",
+                "with": {
+                  "sarif_file": "results.sarif"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-02-12T19-06-16Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "scorecard__2024-02-12T19-06-16Z__fa3c79675ae955cde11fc8a7cbf52fd84774e624.yml",
+          "workflow_name": "Scorecards Security Scan",
+          "triggers": {},
+          "permissions": "read-all",
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 64,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/upload-artifact@5d5d22a31266ced268874388b861e4b58bb5c2f3",
+              "github/codeql-action/upload-sarif@v3",
+              "ossf/scorecard-action@v2.3.1"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Scorecards Security Scan",
+        "true": {
+          "branch_protection_rule": null,
+          "schedule": [
+            {
+              "cron": "30 1 * * 6"
+            }
+          ],
+          "push": {
+            "branches": [
+              "main"
+            ]
+          }
+        },
+        "permissions": "read-all",
+        "jobs": {
+          "analysis": {
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "name": "Scorecards analysis",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "security-events": "write",
+              "id-token": "write",
+              "actions": "read",
+              "contents": "read"
+            },
+            "steps": [
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "Run analysis",
+                "uses": "ossf/scorecard-action@v2.3.1",
+                "with": {
+                  "results_file": "results.sarif",
+                  "results_format": "sarif",
+                  "repo_token": "${{ secrets.SCORECARD_READ_TOKEN }}",
+                  "publish_results": true
+                }
+              },
+              {
+                "name": "Upload artifact",
+                "uses": "actions/upload-artifact@5d5d22a31266ced268874388b861e4b58bb5c2f3",
+                "with": {
+                  "name": "SARIF file",
+                  "path": "results.sarif",
+                  "retention-days": 5
+                }
+              },
+              {
+                "name": "Upload to code-scanning",
+                "uses": "github/codeql-action/upload-sarif@v3",
+                "with": {
+                  "sarif_file": "results.sarif"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-04-22T19-05-07Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "scorecard__2024-04-22T19-05-07Z__327a6664a44263d10c61a1af2354f53f94de4099.yml",
+          "workflow_name": "Scorecards Security Scan",
+          "triggers": {},
+          "permissions": "read-all",
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 64,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808",
+              "github/codeql-action/upload-sarif@v3",
+              "ossf/scorecard-action@v2.3.1"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Scorecards Security Scan",
+        "true": {
+          "branch_protection_rule": null,
+          "schedule": [
+            {
+              "cron": "30 1 * * 6"
+            }
+          ],
+          "push": {
+            "branches": [
+              "main"
+            ]
+          }
+        },
+        "permissions": "read-all",
+        "jobs": {
+          "analysis": {
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "name": "Scorecards analysis",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "security-events": "write",
+              "id-token": "write",
+              "actions": "read",
+              "contents": "read"
+            },
+            "steps": [
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "Run analysis",
+                "uses": "ossf/scorecard-action@v2.3.1",
+                "with": {
+                  "results_file": "results.sarif",
+                  "results_format": "sarif",
+                  "repo_token": "${{ secrets.SCORECARD_READ_TOKEN }}",
+                  "publish_results": true
+                }
+              },
+              {
+                "name": "Upload artifact",
+                "uses": "actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808",
+                "with": {
+                  "name": "SARIF file",
+                  "path": "results.sarif",
+                  "retention-days": 5
+                }
+              },
+              {
+                "name": "Upload to code-scanning",
+                "uses": "github/codeql-action/upload-sarif@v3",
+                "with": {
+                  "sarif_file": "results.sarif"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-05-14T05-12-51Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "scorecard__2024-05-14T05-12-51Z__9fa690c2038b885ed337271740ed31fd19494584.yml",
+          "workflow_name": "Scorecards Security Scan",
+          "triggers": {},
+          "permissions": "read-all",
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 64,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808",
+              "github/codeql-action/upload-sarif@v3",
+              "ossf/scorecard-action@v2.3.3"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Scorecards Security Scan",
+        "true": {
+          "branch_protection_rule": null,
+          "schedule": [
+            {
+              "cron": "30 1 * * 6"
+            }
+          ],
+          "push": {
+            "branches": [
+              "main"
+            ]
+          }
+        },
+        "permissions": "read-all",
+        "jobs": {
+          "analysis": {
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "name": "Scorecards analysis",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "security-events": "write",
+              "id-token": "write",
+              "actions": "read",
+              "contents": "read"
+            },
+            "steps": [
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "Run analysis",
+                "uses": "ossf/scorecard-action@v2.3.3",
+                "with": {
+                  "results_file": "results.sarif",
+                  "results_format": "sarif",
+                  "repo_token": "${{ secrets.SCORECARD_READ_TOKEN }}",
+                  "publish_results": true
+                }
+              },
+              {
+                "name": "Upload artifact",
+                "uses": "actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808",
+                "with": {
+                  "name": "SARIF file",
+                  "path": "results.sarif",
+                  "retention-days": 5
+                }
+              },
+              {
+                "name": "Upload to code-scanning",
+                "uses": "github/codeql-action/upload-sarif@v3",
+                "with": {
+                  "sarif_file": "results.sarif"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-07-09T04-19-56Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "scorecard__2024-07-09T04-19-56Z__718aa52b1708b9b894e754829cd22cea86b26466.yml",
+          "workflow_name": "Scorecards Security Scan",
+          "triggers": {},
+          "permissions": "read-all",
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 64,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/upload-artifact@0b2256b8c012f0828dc542b3febcab082c67f72b",
+              "github/codeql-action/upload-sarif@v3",
+              "ossf/scorecard-action@v2.3.3"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Scorecards Security Scan",
+        "true": {
+          "branch_protection_rule": null,
+          "schedule": [
+            {
+              "cron": "30 1 * * 6"
+            }
+          ],
+          "push": {
+            "branches": [
+              "main"
+            ]
+          }
+        },
+        "permissions": "read-all",
+        "jobs": {
+          "analysis": {
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "name": "Scorecards analysis",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "security-events": "write",
+              "id-token": "write",
+              "actions": "read",
+              "contents": "read"
+            },
+            "steps": [
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "Run analysis",
+                "uses": "ossf/scorecard-action@v2.3.3",
+                "with": {
+                  "results_file": "results.sarif",
+                  "results_format": "sarif",
+                  "repo_token": "${{ secrets.SCORECARD_READ_TOKEN }}",
+                  "publish_results": true
+                }
+              },
+              {
+                "name": "Upload artifact",
+                "uses": "actions/upload-artifact@0b2256b8c012f0828dc542b3febcab082c67f72b",
+                "with": {
+                  "name": "SARIF file",
+                  "path": "results.sarif",
+                  "retention-days": 5
+                }
+              },
+              {
+                "name": "Upload to code-scanning",
+                "uses": "github/codeql-action/upload-sarif@v3",
+                "with": {
+                  "sarif_file": "results.sarif"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-07-11T16-02-32Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "scorecard__2024-07-11T16-02-32Z__6f664c92fd8dd7704a837054ef5137a90e48a82c.yml",
+          "workflow_name": "Scorecards Security Scan",
+          "triggers": {},
+          "permissions": "read-all",
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 66,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/upload-artifact@0b2256b8c012f0828dc542b3febcab082c67f72b",
+              "github/codeql-action/upload-sarif@v3",
+              "ossf/scorecard-action@v2.3.3"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Scorecards Security Scan",
+        "run-name": "Scan scorecards security on ${{ github.event_name }}",
+        "true": {
+          "branch_protection_rule": null,
+          "schedule": [
+            {
+              "cron": "30 1 * * 6"
+            }
+          ],
+          "push": {
+            "branches": [
+              "main"
+            ]
+          }
+        },
+        "permissions": "read-all",
+        "jobs": {
+          "analysis": {
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "name": "Scorecards analysis",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "security-events": "write",
+              "id-token": "write",
+              "actions": "read",
+              "contents": "read"
+            },
+            "steps": [
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "Run analysis",
+                "uses": "ossf/scorecard-action@v2.3.3",
+                "with": {
+                  "results_file": "results.sarif",
+                  "results_format": "sarif",
+                  "repo_token": "${{ secrets.SCORECARD_READ_TOKEN }}",
+                  "publish_results": true
+                }
+              },
+              {
+                "name": "Upload artifact",
+                "uses": "actions/upload-artifact@0b2256b8c012f0828dc542b3febcab082c67f72b",
+                "with": {
+                  "name": "SARIF file",
+                  "path": "results.sarif",
+                  "retention-days": 5
+                }
+              },
+              {
+                "name": "Upload to code-scanning",
+                "uses": "github/codeql-action/upload-sarif@v3",
+                "with": {
+                  "sarif_file": "results.sarif"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-08-02T15-22-58Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "scorecard__2024-08-02T15-22-58Z__8ec78921e164cfb22de1872a83d5db819d27c343.yml",
+          "workflow_name": "Scorecards Security Scan",
+          "triggers": {},
+          "permissions": "read-all",
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 66,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/upload-artifact@0b2256b8c012f0828dc542b3febcab082c67f72b",
+              "github/codeql-action/upload-sarif@v3",
+              "ossf/scorecard-action@v2.4.0"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Scorecards Security Scan",
+        "run-name": "Scan scorecards security on ${{ github.event_name }}",
+        "true": {
+          "branch_protection_rule": null,
+          "schedule": [
+            {
+              "cron": "30 1 * * 6"
+            }
+          ],
+          "push": {
+            "branches": [
+              "main"
+            ]
+          }
+        },
+        "permissions": "read-all",
+        "jobs": {
+          "analysis": {
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "name": "Scorecards analysis",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "security-events": "write",
+              "id-token": "write",
+              "actions": "read",
+              "contents": "read"
+            },
+            "steps": [
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "Run analysis",
+                "uses": "ossf/scorecard-action@v2.4.0",
+                "with": {
+                  "results_file": "results.sarif",
+                  "results_format": "sarif",
+                  "repo_token": "${{ secrets.SCORECARD_READ_TOKEN }}",
+                  "publish_results": true
+                }
+              },
+              {
+                "name": "Upload artifact",
+                "uses": "actions/upload-artifact@0b2256b8c012f0828dc542b3febcab082c67f72b",
+                "with": {
+                  "name": "SARIF file",
+                  "path": "results.sarif",
+                  "retention-days": 5
+                }
+              },
+              {
+                "name": "Upload to code-scanning",
+                "uses": "github/codeql-action/upload-sarif@v3",
+                "with": {
+                  "sarif_file": "results.sarif"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-08-05T18-38-00Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "scorecard__2024-08-05T18-38-00Z__48128c869fe4fe55836550c77ee4f861c5ea2852.yml",
+          "workflow_name": "Scorecards Security Scan",
+          "triggers": {},
+          "permissions": "read-all",
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 66,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/upload-artifact@89ef406dd8d7e03cfd12d9e0a4a378f454709029",
+              "github/codeql-action/upload-sarif@v3",
+              "ossf/scorecard-action@v2.4.0"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Scorecards Security Scan",
+        "run-name": "Scan scorecards security on ${{ github.event_name }}",
+        "true": {
+          "branch_protection_rule": null,
+          "schedule": [
+            {
+              "cron": "30 1 * * 6"
+            }
+          ],
+          "push": {
+            "branches": [
+              "main"
+            ]
+          }
+        },
+        "permissions": "read-all",
+        "jobs": {
+          "analysis": {
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "name": "Scorecards analysis",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "security-events": "write",
+              "id-token": "write",
+              "actions": "read",
+              "contents": "read"
+            },
+            "steps": [
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "Run analysis",
+                "uses": "ossf/scorecard-action@v2.4.0",
+                "with": {
+                  "results_file": "results.sarif",
+                  "results_format": "sarif",
+                  "repo_token": "${{ secrets.SCORECARD_READ_TOKEN }}",
+                  "publish_results": true
+                }
+              },
+              {
+                "name": "Upload artifact",
+                "uses": "actions/upload-artifact@89ef406dd8d7e03cfd12d9e0a4a378f454709029",
+                "with": {
+                  "name": "SARIF file",
+                  "path": "results.sarif",
+                  "retention-days": 5
+                }
+              },
+              {
+                "name": "Upload to code-scanning",
+                "uses": "github/codeql-action/upload-sarif@v3",
+                "with": {
+                  "sarif_file": "results.sarif"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-08-13T10-20-02Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "scorecard__2024-08-13T10-20-02Z__a9e2c0b3228231a2791e1b0b1a617b542d7f7329.yml",
+          "workflow_name": "Scorecards Security Scan",
+          "triggers": {},
+          "permissions": "read-all",
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 66,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/upload-artifact@834a144ee995460fba8ed112a2fc961b36a5ec5a",
+              "github/codeql-action/upload-sarif@v3",
+              "ossf/scorecard-action@v2.4.0"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Scorecards Security Scan",
+        "run-name": "Scan scorecards security on ${{ github.event_name }}",
+        "true": {
+          "branch_protection_rule": null,
+          "schedule": [
+            {
+              "cron": "30 1 * * 6"
+            }
+          ],
+          "push": {
+            "branches": [
+              "main"
+            ]
+          }
+        },
+        "permissions": "read-all",
+        "jobs": {
+          "analysis": {
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "name": "Scorecards analysis",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "security-events": "write",
+              "id-token": "write",
+              "actions": "read",
+              "contents": "read"
+            },
+            "steps": [
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "Run analysis",
+                "uses": "ossf/scorecard-action@v2.4.0",
+                "with": {
+                  "results_file": "results.sarif",
+                  "results_format": "sarif",
+                  "repo_token": "${{ secrets.SCORECARD_READ_TOKEN }}",
+                  "publish_results": true
+                }
+              },
+              {
+                "name": "Upload artifact",
+                "uses": "actions/upload-artifact@834a144ee995460fba8ed112a2fc961b36a5ec5a",
+                "with": {
+                  "name": "SARIF file",
+                  "path": "results.sarif",
+                  "retention-days": 5
+                }
+              },
+              {
+                "name": "Upload to code-scanning",
+                "uses": "github/codeql-action/upload-sarif@v3",
+                "with": {
+                  "sarif_file": "results.sarif"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-09-03T13-02-31Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "scorecard__2024-09-03T13-02-31Z__7fd33a404fade333a4616879cf7ec782645b2786.yml",
+          "workflow_name": "Scorecards Security Scan",
+          "triggers": {},
+          "permissions": "read-all",
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 66,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874",
+              "github/codeql-action/upload-sarif@v3",
+              "ossf/scorecard-action@v2.4.0"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Scorecards Security Scan",
+        "run-name": "Scan scorecards security on ${{ github.event_name }}",
+        "true": {
+          "branch_protection_rule": null,
+          "schedule": [
+            {
+              "cron": "30 1 * * 6"
+            }
+          ],
+          "push": {
+            "branches": [
+              "main"
+            ]
+          }
+        },
+        "permissions": "read-all",
+        "jobs": {
+          "analysis": {
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "name": "Scorecards analysis",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "security-events": "write",
+              "id-token": "write",
+              "actions": "read",
+              "contents": "read"
+            },
+            "steps": [
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "Run analysis",
+                "uses": "ossf/scorecard-action@v2.4.0",
+                "with": {
+                  "results_file": "results.sarif",
+                  "results_format": "sarif",
+                  "repo_token": "${{ secrets.SCORECARD_READ_TOKEN }}",
+                  "publish_results": true
+                }
+              },
+              {
+                "name": "Upload artifact",
+                "uses": "actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874",
+                "with": {
+                  "name": "SARIF file",
+                  "path": "results.sarif",
+                  "retention-days": 5
+                }
+              },
+              {
+                "name": "Upload to code-scanning",
+                "uses": "github/codeql-action/upload-sarif@v3",
+                "with": {
+                  "sarif_file": "results.sarif"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-10-09T17-52-29Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "scorecard__2024-10-09T17-52-29Z__692a2827161f14220c6696939a2e40fe030cadf4.yml",
+          "workflow_name": "Scorecards Security Scan",
+          "triggers": {},
+          "permissions": "read-all",
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 66,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/upload-artifact@604373da6381bf24206979c74d06a550515601b9",
+              "github/codeql-action/upload-sarif@v3",
+              "ossf/scorecard-action@v2.4.0"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Scorecards Security Scan",
+        "run-name": "Scan scorecards security on ${{ github.event_name }}",
+        "true": {
+          "branch_protection_rule": null,
+          "schedule": [
+            {
+              "cron": "30 1 * * 6"
+            }
+          ],
+          "push": {
+            "branches": [
+              "main"
+            ]
+          }
+        },
+        "permissions": "read-all",
+        "jobs": {
+          "analysis": {
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "name": "Scorecards analysis",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "security-events": "write",
+              "id-token": "write",
+              "actions": "read",
+              "contents": "read"
+            },
+            "steps": [
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "Run analysis",
+                "uses": "ossf/scorecard-action@v2.4.0",
+                "with": {
+                  "results_file": "results.sarif",
+                  "results_format": "sarif",
+                  "repo_token": "${{ secrets.SCORECARD_READ_TOKEN }}",
+                  "publish_results": true
+                }
+              },
+              {
+                "name": "Upload artifact",
+                "uses": "actions/upload-artifact@604373da6381bf24206979c74d06a550515601b9",
+                "with": {
+                  "name": "SARIF file",
+                  "path": "results.sarif",
+                  "retention-days": 5
+                }
+              },
+              {
+                "name": "Upload to code-scanning",
+                "uses": "github/codeql-action/upload-sarif@v3",
+                "with": {
+                  "sarif_file": "results.sarif"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-10-15T13-55-59Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "scorecard__2024-10-15T13-55-59Z__749aea39e4279956b2bc2ede6b41639a2aac2e3b.yml",
+          "workflow_name": "Scorecards Security Scan",
+          "triggers": {},
+          "permissions": "read-all",
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 66,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882",
+              "github/codeql-action/upload-sarif@v3",
+              "ossf/scorecard-action@v2.4.0"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Scorecards Security Scan",
+        "run-name": "Scan scorecards security on ${{ github.event_name }}",
+        "true": {
+          "branch_protection_rule": null,
+          "schedule": [
+            {
+              "cron": "30 1 * * 6"
+            }
+          ],
+          "push": {
+            "branches": [
+              "main"
+            ]
+          }
+        },
+        "permissions": "read-all",
+        "jobs": {
+          "analysis": {
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "name": "Scorecards analysis",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "security-events": "write",
+              "id-token": "write",
+              "actions": "read",
+              "contents": "read"
+            },
+            "steps": [
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "Run analysis",
+                "uses": "ossf/scorecard-action@v2.4.0",
+                "with": {
+                  "results_file": "results.sarif",
+                  "results_format": "sarif",
+                  "repo_token": "${{ secrets.SCORECARD_READ_TOKEN }}",
+                  "publish_results": true
+                }
+              },
+              {
+                "name": "Upload artifact",
+                "uses": "actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882",
+                "with": {
+                  "name": "SARIF file",
+                  "path": "results.sarif",
+                  "retention-days": 5
+                }
+              },
+              {
+                "name": "Upload to code-scanning",
+                "uses": "github/codeql-action/upload-sarif@v3",
+                "with": {
+                  "sarif_file": "results.sarif"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-12-24T13-29-11Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "scorecard__2024-12-24T13-29-11Z__48ad33ed22dccec09a344114b9b37679cf8c048c.yml",
+          "workflow_name": "Scorecards Security Scan",
+          "triggers": {},
+          "permissions": "read-all",
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 66,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b",
+              "github/codeql-action/upload-sarif@v3",
+              "ossf/scorecard-action@v2.4.0"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Scorecards Security Scan",
+        "run-name": "Scan scorecards security on ${{ github.event_name }}",
+        "true": {
+          "branch_protection_rule": null,
+          "schedule": [
+            {
+              "cron": "30 1 * * 6"
+            }
+          ],
+          "push": {
+            "branches": [
+              "main"
+            ]
+          }
+        },
+        "permissions": "read-all",
+        "jobs": {
+          "analysis": {
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "name": "Scorecards analysis",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "security-events": "write",
+              "id-token": "write",
+              "actions": "read",
+              "contents": "read"
+            },
+            "steps": [
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "Run analysis",
+                "uses": "ossf/scorecard-action@v2.4.0",
+                "with": {
+                  "results_file": "results.sarif",
+                  "results_format": "sarif",
+                  "repo_token": "${{ secrets.SCORECARD_READ_TOKEN }}",
+                  "publish_results": true
+                }
+              },
+              {
+                "name": "Upload artifact",
+                "uses": "actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b",
+                "with": {
+                  "name": "SARIF file",
+                  "path": "results.sarif",
+                  "retention-days": 5
+                }
+              },
+              {
+                "name": "Upload to code-scanning",
+                "uses": "github/codeql-action/upload-sarif@v3",
+                "with": {
+                  "sarif_file": "results.sarif"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-01-19T19-23-06Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "scorecard__2025-01-19T19-23-06Z__3edb905b71b6686ed0354cd781d0f992bf35b794.yml",
+          "workflow_name": "Scorecards Security Scan",
+          "triggers": {},
+          "permissions": "read-all",
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 66,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08",
+              "github/codeql-action/upload-sarif@v3",
+              "ossf/scorecard-action@v2.4.0"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Scorecards Security Scan",
+        "run-name": "Scan scorecards security on ${{ github.event_name }}",
+        "true": {
+          "branch_protection_rule": null,
+          "schedule": [
+            {
+              "cron": "30 1 * * 6"
+            }
+          ],
+          "push": {
+            "branches": [
+              "main"
+            ]
+          }
+        },
+        "permissions": "read-all",
+        "jobs": {
+          "analysis": {
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "name": "Scorecards analysis",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "security-events": "write",
+              "id-token": "write",
+              "actions": "read",
+              "contents": "read"
+            },
+            "steps": [
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "Run analysis",
+                "uses": "ossf/scorecard-action@v2.4.0",
+                "with": {
+                  "results_file": "results.sarif",
+                  "results_format": "sarif",
+                  "repo_token": "${{ secrets.SCORECARD_READ_TOKEN }}",
+                  "publish_results": true
+                }
+              },
+              {
+                "name": "Upload artifact",
+                "uses": "actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08",
+                "with": {
+                  "name": "SARIF file",
+                  "path": "results.sarif",
+                  "retention-days": 5
+                }
+              },
+              {
+                "name": "Upload to code-scanning",
+                "uses": "github/codeql-action/upload-sarif@v3",
+                "with": {
+                  "sarif_file": "results.sarif"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-02-24T19-40-28Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "scorecard__2025-02-24T19-40-28Z__a872d9477883c80fcb533186e1f49811061ca543.yml",
+          "workflow_name": "Scorecards Security Scan",
+          "triggers": {},
+          "permissions": "read-all",
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 66,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb9dce8ec1",
+              "github/codeql-action/upload-sarif@v3",
+              "ossf/scorecard-action@v2.4.0"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Scorecards Security Scan",
+        "run-name": "Scan scorecards security on ${{ github.event_name }}",
+        "true": {
+          "branch_protection_rule": null,
+          "schedule": [
+            {
+              "cron": "30 1 * * 6"
+            }
+          ],
+          "push": {
+            "branches": [
+              "main"
+            ]
+          }
+        },
+        "permissions": "read-all",
+        "jobs": {
+          "analysis": {
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "name": "Scorecards analysis",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "security-events": "write",
+              "id-token": "write",
+              "actions": "read",
+              "contents": "read"
+            },
+            "steps": [
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "Run analysis",
+                "uses": "ossf/scorecard-action@v2.4.0",
+                "with": {
+                  "results_file": "results.sarif",
+                  "results_format": "sarif",
+                  "repo_token": "${{ secrets.SCORECARD_READ_TOKEN }}",
+                  "publish_results": true
+                }
+              },
+              {
+                "name": "Upload artifact",
+                "uses": "actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb9dce8ec1",
+                "with": {
+                  "name": "SARIF file",
+                  "path": "results.sarif",
+                  "retention-days": 5
+                }
+              },
+              {
+                "name": "Upload to code-scanning",
+                "uses": "github/codeql-action/upload-sarif@v3",
+                "with": {
+                  "sarif_file": "results.sarif"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-02-24T19-40-40Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "scorecard__2025-02-24T19-40-40Z__ddc137de239b11b8be76806e3cc3b233a4bab2f1.yml",
+          "workflow_name": "Scorecards Security Scan",
+          "triggers": {},
+          "permissions": "read-all",
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 66,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb9dce8ec1",
+              "github/codeql-action/upload-sarif@v3",
+              "ossf/scorecard-action@v2.4.1"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Scorecards Security Scan",
+        "run-name": "Scan scorecards security on ${{ github.event_name }}",
+        "true": {
+          "branch_protection_rule": null,
+          "schedule": [
+            {
+              "cron": "30 1 * * 6"
+            }
+          ],
+          "push": {
+            "branches": [
+              "main"
+            ]
+          }
+        },
+        "permissions": "read-all",
+        "jobs": {
+          "analysis": {
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "name": "Scorecards analysis",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "security-events": "write",
+              "id-token": "write",
+              "actions": "read",
+              "contents": "read"
+            },
+            "steps": [
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "Run analysis",
+                "uses": "ossf/scorecard-action@v2.4.1",
+                "with": {
+                  "results_file": "results.sarif",
+                  "results_format": "sarif",
+                  "repo_token": "${{ secrets.SCORECARD_READ_TOKEN }}",
+                  "publish_results": true
+                }
+              },
+              {
+                "name": "Upload artifact",
+                "uses": "actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb9dce8ec1",
+                "with": {
+                  "name": "SARIF file",
+                  "path": "results.sarif",
+                  "retention-days": 5
+                }
+              },
+              {
+                "name": "Upload to code-scanning",
+                "uses": "github/codeql-action/upload-sarif@v3",
+                "with": {
+                  "sarif_file": "results.sarif"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-03-26T09-07-09Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "scorecard__2025-03-26T09-07-09Z__12f6e7c2d1744e9245123d49136ece9b02e19222.yml",
+          "workflow_name": "Scorecards Security Scan",
+          "triggers": {},
+          "permissions": "read-all",
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 66,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+              "github/codeql-action/upload-sarif@v3",
+              "ossf/scorecard-action@v2.4.1"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Scorecards Security Scan",
+        "run-name": "Scan scorecards security on ${{ github.event_name }}",
+        "true": {
+          "branch_protection_rule": null,
+          "schedule": [
+            {
+              "cron": "30 1 * * 6"
+            }
+          ],
+          "push": {
+            "branches": [
+              "main"
+            ]
+          }
+        },
+        "permissions": "read-all",
+        "jobs": {
+          "analysis": {
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "name": "Scorecards analysis",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "security-events": "write",
+              "id-token": "write",
+              "actions": "read",
+              "contents": "read"
+            },
+            "steps": [
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "Run analysis",
+                "uses": "ossf/scorecard-action@v2.4.1",
+                "with": {
+                  "results_file": "results.sarif",
+                  "results_format": "sarif",
+                  "repo_token": "${{ secrets.SCORECARD_READ_TOKEN }}",
+                  "publish_results": true
+                }
+              },
+              {
+                "name": "Upload artifact",
+                "uses": "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+                "with": {
+                  "name": "SARIF file",
+                  "path": "results.sarif",
+                  "retention-days": 5
+                }
+              },
+              {
+                "name": "Upload to code-scanning",
+                "uses": "github/codeql-action/upload-sarif@v3",
+                "with": {
+                  "sarif_file": "results.sarif"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-06-03T07-48-12Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "scorecard__2025-06-03T07-48-12Z__217149cb01040334778147dcd257cfc848713d50.yml",
+          "workflow_name": "Scorecards Security Scan",
+          "triggers": {},
+          "permissions": "read-all",
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 66,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+              "github/codeql-action/upload-sarif@v3",
+              "ossf/scorecard-action@v2.4.2"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Scorecards Security Scan",
+        "run-name": "Scan scorecards security on ${{ github.event_name }}",
+        "true": {
+          "branch_protection_rule": null,
+          "schedule": [
+            {
+              "cron": "30 1 * * 6"
+            }
+          ],
+          "push": {
+            "branches": [
+              "main"
+            ]
+          }
+        },
+        "permissions": "read-all",
+        "jobs": {
+          "analysis": {
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "name": "Scorecards analysis",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "security-events": "write",
+              "id-token": "write",
+              "actions": "read",
+              "contents": "read"
+            },
+            "steps": [
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "Run analysis",
+                "uses": "ossf/scorecard-action@v2.4.2",
+                "with": {
+                  "results_file": "results.sarif",
+                  "results_format": "sarif",
+                  "repo_token": "${{ secrets.SCORECARD_READ_TOKEN }}",
+                  "publish_results": true
+                }
+              },
+              {
+                "name": "Upload artifact",
+                "uses": "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+                "with": {
+                  "name": "SARIF file",
+                  "path": "results.sarif",
+                  "retention-days": 5
+                }
+              },
+              {
+                "name": "Upload to code-scanning",
+                "uses": "github/codeql-action/upload-sarif@v3",
+                "with": {
+                  "sarif_file": "results.sarif"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-08-13T03-42-34Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "scorecard__2025-08-13T03-42-34Z__27e0b701906349a61acca534780922e22f6e44d7.yml",
+          "workflow_name": "Scorecards Security Scan",
+          "triggers": {},
+          "permissions": "read-all",
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 66,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v5",
+              "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+              "github/codeql-action/upload-sarif@v3",
+              "ossf/scorecard-action@v2.4.2"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Scorecards Security Scan",
+        "run-name": "Scan scorecards security on ${{ github.event_name }}",
+        "true": {
+          "branch_protection_rule": null,
+          "schedule": [
+            {
+              "cron": "30 1 * * 6"
+            }
+          ],
+          "push": {
+            "branches": [
+              "main"
+            ]
+          }
+        },
+        "permissions": "read-all",
+        "jobs": {
+          "analysis": {
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "name": "Scorecards analysis",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "security-events": "write",
+              "id-token": "write",
+              "actions": "read",
+              "contents": "read"
+            },
+            "steps": [
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v5",
+                "with": {
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "Run analysis",
+                "uses": "ossf/scorecard-action@v2.4.2",
+                "with": {
+                  "results_file": "results.sarif",
+                  "results_format": "sarif",
+                  "repo_token": "${{ secrets.SCORECARD_READ_TOKEN }}",
+                  "publish_results": true
+                }
+              },
+              {
+                "name": "Upload artifact",
+                "uses": "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+                "with": {
+                  "name": "SARIF file",
+                  "path": "results.sarif",
+                  "retention-days": 5
+                }
+              },
+              {
+                "name": "Upload to code-scanning",
+                "uses": "github/codeql-action/upload-sarif@v3",
+                "with": {
+                  "sarif_file": "results.sarif"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-10-06T20-25-11Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "scorecard__2025-10-06T20-25-11Z__e4bbaea4fe8150ed4c4225bc61e8b5d83d6705f6.yml",
+          "workflow_name": "Scorecards Security Scan",
+          "triggers": {},
+          "permissions": "read-all",
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 66,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "analysis": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "analysis": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 4,
+            "actions_used": [
+              "actions/checkout@v5",
+              "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+              "github/codeql-action/upload-sarif@v3",
+              "ossf/scorecard-action@v2.4.3"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Scorecards Security Scan",
+        "run-name": "Scan scorecards security on ${{ github.event_name }}",
+        "true": {
+          "branch_protection_rule": null,
+          "schedule": [
+            {
+              "cron": "30 1 * * 6"
+            }
+          ],
+          "push": {
+            "branches": [
+              "main"
+            ]
+          }
+        },
+        "permissions": "read-all",
+        "jobs": {
+          "analysis": {
+            "if": "${{ github.repository_owner == 'Armbian' }}",
+            "name": "Scorecards analysis",
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "security-events": "write",
+              "id-token": "write",
+              "actions": "read",
+              "contents": "read"
+            },
+            "steps": [
+              {
+                "name": "Checkout code",
+                "uses": "actions/checkout@v5",
+                "with": {
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "Run analysis",
+                "uses": "ossf/scorecard-action@v2.4.3",
+                "with": {
+                  "results_file": "results.sarif",
+                  "results_format": "sarif",
+                  "repo_token": "${{ secrets.SCORECARD_READ_TOKEN }}",
+                  "publish_results": true
+                }
+              },
+              {
+                "name": "Upload artifact",
+                "uses": "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+                "with": {
+                  "name": "SARIF file",
+                  "path": "results.sarif",
+                  "retention-days": 5
+                }
+              },
+              {
+                "name": "Upload to code-scanning",
+                "uses": "github/codeql-action/upload-sarif@v3",
+                "with": {
+                  "sarif_file": "results.sarif"
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

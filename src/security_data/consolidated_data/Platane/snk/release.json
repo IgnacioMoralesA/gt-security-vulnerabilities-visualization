@@ -1,0 +1,2829 @@
+{
+  "repo_owner": "Platane",
+  "repo_name": "snk",
+  "workflow_name": "release",
+  "history": {
+    "2022-03-24T09-59-43Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-a3b03f6a-f1c8-5448-b33f-6fe152d4043e",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/release__2022-03-24T09-59-43Z__c97378f17528ae76c358d07b8bd9f91ca2189dee.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 22,
+                  "startColumn": 5,
+                  "endLine": 73,
+                  "endColumn": 61
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "b1d0f457f94d5952:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2022-03-24T09-59-43Z__c97378f17528ae76c358d07b8bd9f91ca2189dee.yml",
+          "workflow_name": "release",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 73,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "release": 11
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "release": 11
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 8,
+            "actions_used": [
+              "EndBug/add-and-commit@v7",
+              "actions/checkout@v2",
+              "actions/create-release@v1",
+              "actions/setup-node@v2",
+              "docker/build-push-action@v2",
+              "docker/login-action@v1",
+              "docker/setup-buildx-action@v1",
+              "docker/setup-qemu-action@v1"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "release",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "version": {
+                "description": "Version",
+                "default": "0.0.1",
+                "required": true,
+                "type": "string"
+              },
+              "description": {
+                "description": "Version description",
+                "type": "string"
+              },
+              "prerelease": {
+                "description": "Prerelease",
+                "default": false,
+                "required": true,
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "release": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "uses": "docker/setup-qemu-action@v1"
+              },
+              {
+                "uses": "docker/setup-buildx-action@v1"
+              },
+              {
+                "uses": "docker/login-action@v1",
+                "with": {
+                  "username": "${{ secrets.DOCKERHUB_USERNAME }}",
+                  "password": "${{ secrets.DOCKERHUB_TOKEN }}"
+                }
+              },
+              {
+                "uses": "docker/build-push-action@v2",
+                "id": "docker-build",
+                "with": {
+                  "push": true,
+                  "tags": "platane/snk:${{ github.sha }} platane/snk:${{ github.event.inputs.version }}"
+                }
+              },
+              {
+                "name": "update action.yml",
+                "run": "sed -i \"s/image: .*/image: docker:\\/\\/platane\\/snk:${{ steps.docker-build.outputs.digest }}/\" action.yml\n"
+              },
+              {
+                "uses": "actions/setup-node@v2",
+                "with": {
+                  "cache": "yarn",
+                  "node-version": 16
+                }
+              },
+              {
+                "name": "bump version",
+                "run": "yarn version --no-git-tag-version --new-version ${{ github.event.inputs.version }}"
+              },
+              {
+                "name": "build svg-only action",
+                "run": "yarn install --frozen-lockfile\nyarn build:demo\nmv packages/demo/dist/* svg-only/\n"
+              },
+              {
+                "name": "push new commit",
+                "uses": "EndBug/add-and-commit@v7",
+                "with": {
+                  "add": "package.json svg-only action.yml",
+                  "message": "\ud83d\udce6 ${{ github.event.inputs.version }}",
+                  "tag": "v${{ github.event.inputs.version }}"
+                }
+              },
+              {
+                "uses": "actions/create-release@v1",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                },
+                "with": {
+                  "tag_name": "v${{ github.event.inputs.version }}",
+                  "body": "${{ github.event.inputs.description }}",
+                  "prerelease": "${{ github.event.inputs.prerelease }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-03-24T10-04-01Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-7f2935ac-8989-5cb0-87f9-b877198faf66",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/release__2022-03-24T10-04-01Z__67c66ac8ae1edcba4cdf765750b038e93c18f62d.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 22,
+                  "startColumn": 5,
+                  "endLine": 75,
+                  "endColumn": 61
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "b1d0f457f94d5952:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2022-03-24T10-04-01Z__67c66ac8ae1edcba4cdf765750b038e93c18f62d.yml",
+          "workflow_name": "release",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 75,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "release": 11
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "release": 11
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 8,
+            "actions_used": [
+              "EndBug/add-and-commit@v7",
+              "actions/checkout@v2",
+              "actions/create-release@v1",
+              "actions/setup-node@v2",
+              "docker/build-push-action@v2",
+              "docker/login-action@v1",
+              "docker/setup-buildx-action@v1",
+              "docker/setup-qemu-action@v1"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "release",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "version": {
+                "description": "Version",
+                "default": "0.0.1",
+                "required": true,
+                "type": "string"
+              },
+              "description": {
+                "description": "Version description",
+                "type": "string"
+              },
+              "prerelease": {
+                "description": "Prerelease",
+                "default": false,
+                "required": true,
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "release": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "uses": "docker/setup-qemu-action@v1"
+              },
+              {
+                "uses": "docker/setup-buildx-action@v1"
+              },
+              {
+                "uses": "docker/login-action@v1",
+                "with": {
+                  "username": "${{ secrets.DOCKERHUB_USERNAME }}",
+                  "password": "${{ secrets.DOCKERHUB_TOKEN }}"
+                }
+              },
+              {
+                "uses": "docker/build-push-action@v2",
+                "id": "docker-build",
+                "with": {
+                  "push": true,
+                  "tags": "platane/snk:${{ github.sha }}\nplatane/snk:${{ github.event.inputs.version }}\n"
+                }
+              },
+              {
+                "name": "update action.yml",
+                "run": "sed -i \"s/image: .*/image: docker:\\/\\/platane\\/snk:${{ steps.docker-build.outputs.digest }}/\" action.yml\n"
+              },
+              {
+                "uses": "actions/setup-node@v2",
+                "with": {
+                  "cache": "yarn",
+                  "node-version": 16
+                }
+              },
+              {
+                "name": "bump version",
+                "run": "yarn version --no-git-tag-version --new-version ${{ github.event.inputs.version }}"
+              },
+              {
+                "name": "build svg-only action",
+                "run": "yarn install --frozen-lockfile\nyarn build:demo\nmv packages/demo/dist/* svg-only/\n"
+              },
+              {
+                "name": "push new commit",
+                "uses": "EndBug/add-and-commit@v7",
+                "with": {
+                  "add": "package.json svg-only action.yml",
+                  "message": "\ud83d\udce6 ${{ github.event.inputs.version }}",
+                  "tag": "v${{ github.event.inputs.version }}"
+                }
+              },
+              {
+                "uses": "actions/create-release@v1",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                },
+                "with": {
+                  "tag_name": "v${{ github.event.inputs.version }}",
+                  "body": "${{ github.event.inputs.description }}",
+                  "prerelease": "${{ github.event.inputs.prerelease }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-03-24T10-13-40Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-80a79837-7b4f-5bd9-aad6-3f59be8d6f79",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/release__2022-03-24T10-13-40Z__be91c43c7143dbb42cf09ae81122eaff9cd0810d.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 22,
+                  "startColumn": 5,
+                  "endLine": 74,
+                  "endColumn": 61
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "b1d0f457f94d5952:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2022-03-24T10-13-40Z__be91c43c7143dbb42cf09ae81122eaff9cd0810d.yml",
+          "workflow_name": "release",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 74,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "release": 11
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "release": 11
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 8,
+            "actions_used": [
+              "EndBug/add-and-commit@v7",
+              "actions/checkout@v2",
+              "actions/create-release@v1",
+              "actions/setup-node@v2",
+              "docker/build-push-action@v2",
+              "docker/login-action@v1",
+              "docker/setup-buildx-action@v1",
+              "docker/setup-qemu-action@v1"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "release",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "version": {
+                "description": "Version",
+                "default": "0.0.1",
+                "required": true,
+                "type": "string"
+              },
+              "description": {
+                "description": "Version description",
+                "type": "string"
+              },
+              "prerelease": {
+                "description": "Prerelease",
+                "default": false,
+                "required": true,
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "release": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "uses": "docker/setup-qemu-action@v1"
+              },
+              {
+                "uses": "docker/setup-buildx-action@v1"
+              },
+              {
+                "uses": "docker/login-action@v1",
+                "with": {
+                  "username": "${{ secrets.DOCKERHUB_USERNAME }}",
+                  "password": "${{ secrets.DOCKERHUB_TOKEN }}"
+                }
+              },
+              {
+                "uses": "docker/build-push-action@v2",
+                "id": "docker-build",
+                "with": {
+                  "push": true,
+                  "tags": "platane/snk:${{ github.sha }}\nplatane/snk:${{ github.event.inputs.version }}\n"
+                }
+              },
+              {
+                "name": "update action.yml",
+                "run": "sed -i \"s/image: .*/image: docker:\\/\\/platane\\/snk:${{ steps.docker-build.outputs.digest }}/\" action.yml\n"
+              },
+              {
+                "uses": "actions/setup-node@v2",
+                "with": {
+                  "cache": "yarn",
+                  "node-version": 16
+                }
+              },
+              {
+                "name": "bump version",
+                "run": "yarn version --no-git-tag-version --new-version ${{ github.event.inputs.version }}"
+              },
+              {
+                "name": "build svg-only action",
+                "run": "yarn install --frozen-lockfile\nyarn build:action\nmv packages/action/dist/* svg-only/\n"
+              },
+              {
+                "name": "push new commit",
+                "uses": "EndBug/add-and-commit@v7",
+                "with": {
+                  "add": "package.json svg-only action.yml",
+                  "message": "\ud83d\udce6 ${{ github.event.inputs.version }}",
+                  "tag": "v${{ github.event.inputs.version }}"
+                }
+              },
+              {
+                "uses": "actions/create-release@v1",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                },
+                "with": {
+                  "tag_name": "v${{ github.event.inputs.version }}",
+                  "body": "${{ github.event.inputs.description }}",
+                  "prerelease": "${{ github.event.inputs.prerelease }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-03-24T10-25-50Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-5818be15-cc19-5d11-8271-6d90322fcb6e",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/release__2022-03-24T10-25-50Z__e79b3bb6349935dab0cfe23cf811f6ec09708542.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 22,
+                  "startColumn": 5,
+                  "endLine": 74,
+                  "endColumn": 61
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "b1d0f457f94d5952:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2022-03-24T10-25-50Z__e79b3bb6349935dab0cfe23cf811f6ec09708542.yml",
+          "workflow_name": "release",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 74,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "release": 11
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "release": 11
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 8,
+            "actions_used": [
+              "EndBug/add-and-commit@v7",
+              "actions/checkout@v2",
+              "actions/create-release@v1",
+              "actions/setup-node@v2",
+              "docker/build-push-action@v2",
+              "docker/login-action@v1",
+              "docker/setup-buildx-action@v1",
+              "docker/setup-qemu-action@v1"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "release",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "version": {
+                "description": "Version",
+                "default": "0.0.1",
+                "required": true,
+                "type": "string"
+              },
+              "description": {
+                "description": "Version description",
+                "type": "string"
+              },
+              "prerelease": {
+                "description": "Prerelease",
+                "default": false,
+                "required": true,
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "release": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "uses": "docker/setup-qemu-action@v1"
+              },
+              {
+                "uses": "docker/setup-buildx-action@v1"
+              },
+              {
+                "uses": "docker/login-action@v1",
+                "with": {
+                  "username": "${{ secrets.DOCKERHUB_USERNAME }}",
+                  "password": "${{ secrets.DOCKERHUB_TOKEN }}"
+                }
+              },
+              {
+                "uses": "docker/build-push-action@v2",
+                "id": "docker-build",
+                "with": {
+                  "push": true,
+                  "tags": "platane/snk:${{ github.sha }}\nplatane/snk:${{ github.event.inputs.version }}\n"
+                }
+              },
+              {
+                "name": "update action.yml",
+                "run": "sed -i \"s/image: .*/image: docker:\\/\\/platane\\/snk@${{ steps.docker-build.outputs.digest }}/\" action.yml\n"
+              },
+              {
+                "uses": "actions/setup-node@v2",
+                "with": {
+                  "cache": "yarn",
+                  "node-version": 16
+                }
+              },
+              {
+                "name": "bump version",
+                "run": "yarn version --no-git-tag-version --new-version ${{ github.event.inputs.version }}"
+              },
+              {
+                "name": "build svg-only action",
+                "run": "yarn install --frozen-lockfile\nyarn build:action\nmv packages/action/dist/* svg-only/\n"
+              },
+              {
+                "name": "push new commit",
+                "uses": "EndBug/add-and-commit@v7",
+                "with": {
+                  "add": "package.json svg-only action.yml",
+                  "message": "\ud83d\udce6 ${{ github.event.inputs.version }}",
+                  "tag": "v${{ github.event.inputs.version }}"
+                }
+              },
+              {
+                "uses": "actions/create-release@v1",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                },
+                "with": {
+                  "tag_name": "v${{ github.event.inputs.version }}",
+                  "body": "${{ github.event.inputs.description }}",
+                  "prerelease": "${{ github.event.inputs.prerelease }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-03-24T11-21-27Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-f725a375-4f34-506a-a9c2-c7e222b985e4",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/release__2022-03-24T11-21-27Z__7ba88d1fbd6b980660755506397c69818f8c9bd8.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 22,
+                  "startColumn": 5,
+                  "endLine": 75,
+                  "endColumn": 61
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "b1d0f457f94d5952:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2022-03-24T11-21-27Z__7ba88d1fbd6b980660755506397c69818f8c9bd8.yml",
+          "workflow_name": "release",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 75,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "release": 11
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "release": 11
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 8,
+            "actions_used": [
+              "EndBug/add-and-commit@v7",
+              "actions/checkout@v2",
+              "actions/create-release@v1",
+              "actions/setup-node@v2",
+              "docker/build-push-action@v2",
+              "docker/login-action@v1",
+              "docker/setup-buildx-action@v1",
+              "docker/setup-qemu-action@v1"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "release",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "version": {
+                "description": "Version",
+                "default": "0.0.1",
+                "required": true,
+                "type": "string"
+              },
+              "description": {
+                "description": "Version description",
+                "type": "string"
+              },
+              "prerelease": {
+                "description": "Prerelease",
+                "default": false,
+                "required": true,
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "release": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "uses": "docker/setup-qemu-action@v1"
+              },
+              {
+                "uses": "docker/setup-buildx-action@v1"
+              },
+              {
+                "uses": "docker/login-action@v1",
+                "with": {
+                  "username": "${{ secrets.DOCKERHUB_USERNAME }}",
+                  "password": "${{ secrets.DOCKERHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "build and publish the docker image",
+                "uses": "docker/build-push-action@v2",
+                "id": "docker-build",
+                "with": {
+                  "push": true,
+                  "tags": "platane/snk:${{ github.sha }}\nplatane/snk:${{ github.event.inputs.version }}\n"
+                }
+              },
+              {
+                "name": "update action.yml to point to the newly created docker image",
+                "run": "sed -i \"s/image: .*/image: docker:\\/\\/platane\\/snk@${{ steps.docker-build.outputs.digest }}/\" action.yml\n"
+              },
+              {
+                "uses": "actions/setup-node@v2",
+                "with": {
+                  "cache": "yarn",
+                  "node-version": 16
+                }
+              },
+              {
+                "name": "build svg-only action",
+                "run": "yarn install --frozen-lockfile\nyarn build:action\nmv packages/action/dist svg-only/dist\n"
+              },
+              {
+                "name": "bump package version",
+                "run": "yarn version --no-git-tag-version --new-version ${{ github.event.inputs.version }}"
+              },
+              {
+                "name": "push new commit",
+                "uses": "EndBug/add-and-commit@v7",
+                "with": {
+                  "add": "package.json svg-only/dist action.yml",
+                  "message": "\ud83d\udce6 ${{ github.event.inputs.version }}",
+                  "tag": "v${{ github.event.inputs.version }}"
+                }
+              },
+              {
+                "uses": "actions/create-release@v1",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                },
+                "with": {
+                  "tag_name": "v${{ github.event.inputs.version }}",
+                  "body": "${{ github.event.inputs.description }}",
+                  "prerelease": "${{ github.event.inputs.prerelease }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-03-24T10-58-31Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-5172b84e-7206-5858-984a-d039603901cb",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/release__2022-03-24T10-58-31Z__e1dcae75b9cdadbae43e0b241a1e2fca68a0139c.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 22,
+                  "startColumn": 5,
+                  "endLine": 74,
+                  "endColumn": 61
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "b1d0f457f94d5952:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2022-03-24T10-58-31Z__e1dcae75b9cdadbae43e0b241a1e2fca68a0139c.yml",
+          "workflow_name": "release",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 74,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "release": 11
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "release": 11
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 8,
+            "actions_used": [
+              "EndBug/add-and-commit@v7",
+              "actions/checkout@v2",
+              "actions/create-release@v1",
+              "actions/setup-node@v2",
+              "docker/build-push-action@v2",
+              "docker/login-action@v1",
+              "docker/setup-buildx-action@v1",
+              "docker/setup-qemu-action@v1"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "release",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "version": {
+                "description": "Version",
+                "default": "0.0.1",
+                "required": true,
+                "type": "string"
+              },
+              "description": {
+                "description": "Version description",
+                "type": "string"
+              },
+              "prerelease": {
+                "description": "Prerelease",
+                "default": false,
+                "required": true,
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "release": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "uses": "docker/setup-qemu-action@v1"
+              },
+              {
+                "uses": "docker/setup-buildx-action@v1"
+              },
+              {
+                "uses": "docker/login-action@v1",
+                "with": {
+                  "username": "${{ secrets.DOCKERHUB_USERNAME }}",
+                  "password": "${{ secrets.DOCKERHUB_TOKEN }}"
+                }
+              },
+              {
+                "uses": "docker/build-push-action@v2",
+                "id": "docker-build",
+                "with": {
+                  "push": true,
+                  "tags": "platane/snk:${{ github.sha }}\nplatane/snk:${{ github.event.inputs.version }}\n"
+                }
+              },
+              {
+                "name": "update action.yml",
+                "run": "sed -i \"s/image: .*/image: docker:\\/\\/platane\\/snk@${{ steps.docker-build.outputs.digest }}/\" action.yml\n"
+              },
+              {
+                "uses": "actions/setup-node@v2",
+                "with": {
+                  "cache": "yarn",
+                  "node-version": 16
+                }
+              },
+              {
+                "name": "bump version",
+                "run": "yarn version --no-git-tag-version --new-version ${{ github.event.inputs.version }}"
+              },
+              {
+                "name": "build svg-only action",
+                "run": "yarn install --frozen-lockfile\nyarn build:action\nmv packages/action/dist svg-only/dist\n"
+              },
+              {
+                "name": "push new commit",
+                "uses": "EndBug/add-and-commit@v7",
+                "with": {
+                  "add": "package.json svg-only action.yml",
+                  "message": "\ud83d\udce6 ${{ github.event.inputs.version }}",
+                  "tag": "v${{ github.event.inputs.version }}"
+                }
+              },
+              {
+                "uses": "actions/create-release@v1",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                },
+                "with": {
+                  "tag_name": "v${{ github.event.inputs.version }}",
+                  "body": "${{ github.event.inputs.description }}",
+                  "prerelease": "${{ github.event.inputs.prerelease }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-03-24T12-11-04Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-de78fa92-318e-523a-87f6-11f14f6f30af",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/release__2022-03-24T12-11-04Z__9232c14971b1dab57eba7c9ddd6de463d635d942.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 22,
+                  "startColumn": 5,
+                  "endLine": 76,
+                  "endColumn": 61
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "b1d0f457f94d5952:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2022-03-24T12-11-04Z__9232c14971b1dab57eba7c9ddd6de463d635d942.yml",
+          "workflow_name": "release",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 76,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "release": 11
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "release": 11
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 8,
+            "actions_used": [
+              "EndBug/add-and-commit@v7",
+              "actions/checkout@v2",
+              "actions/create-release@v1",
+              "actions/setup-node@v2",
+              "docker/build-push-action@v2",
+              "docker/login-action@v1",
+              "docker/setup-buildx-action@v1",
+              "docker/setup-qemu-action@v1"
+            ],
+            "num_run_commands": 3,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "release",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "version": {
+                "description": "Version",
+                "default": "0.0.1",
+                "required": true,
+                "type": "string"
+              },
+              "description": {
+                "description": "Version description",
+                "type": "string"
+              },
+              "prerelease": {
+                "description": "Prerelease",
+                "default": false,
+                "required": true,
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "release": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "uses": "docker/setup-qemu-action@v1"
+              },
+              {
+                "uses": "docker/setup-buildx-action@v1"
+              },
+              {
+                "uses": "docker/login-action@v1",
+                "with": {
+                  "username": "${{ secrets.DOCKERHUB_USERNAME }}",
+                  "password": "${{ secrets.DOCKERHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "build and publish the docker image",
+                "uses": "docker/build-push-action@v2",
+                "id": "docker-build",
+                "with": {
+                  "push": true,
+                  "tags": "platane/snk:${{ github.sha }}\nplatane/snk:${{ github.event.inputs.version }}\n"
+                }
+              },
+              {
+                "name": "update action.yml to point to the newly created docker image",
+                "run": "sed -i \"s/image: .*/image: docker:\\/\\/platane\\/snk@${{ steps.docker-build.outputs.digest }}/\" action.yml\n"
+              },
+              {
+                "uses": "actions/setup-node@v2",
+                "with": {
+                  "cache": "yarn",
+                  "node-version": 16
+                }
+              },
+              {
+                "name": "build svg-only action",
+                "run": "yarn install --frozen-lockfile\nyarn build:action\nrm -r svg-only/dist\nmv packages/action/dist svg-only/dist\n"
+              },
+              {
+                "name": "bump package version",
+                "run": "yarn version --no-git-tag-version --new-version ${{ github.event.inputs.version }}"
+              },
+              {
+                "name": "push new commit",
+                "uses": "EndBug/add-and-commit@v7",
+                "with": {
+                  "add": "package.json svg-only/dist action.yml",
+                  "message": "\ud83d\udce6 ${{ github.event.inputs.version }}",
+                  "tag": "v${{ github.event.inputs.version }}"
+                }
+              },
+              {
+                "uses": "actions/create-release@v1",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                },
+                "with": {
+                  "tag_name": "v${{ github.event.inputs.version }}",
+                  "body": "${{ github.event.inputs.description }}",
+                  "prerelease": "${{ github.event.inputs.prerelease }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-04-08T21-25-09Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-e8c18943-997c-5275-ba76-c347be3d89e3",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/release__2022-04-08T21-25-09Z__b0d592375a0ca72e995fca8cf3482281eed680e6.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 17,
+                  "startColumn": 5,
+                  "endLine": 83,
+                  "endColumn": 65
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "b1d0f457f94d5952:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2022-04-08T21-25-09Z__b0d592375a0ca72e995fca8cf3482281eed680e6.yml",
+          "workflow_name": "release",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 83,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "release": 11
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "release": 11
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 7,
+            "actions_used": [
+              "actions/checkout@v2",
+              "actions/create-release@v1",
+              "actions/setup-node@v2",
+              "docker/build-push-action@v2",
+              "docker/login-action@v1",
+              "docker/setup-buildx-action@v1",
+              "docker/setup-qemu-action@v1"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "release",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "version": {
+                "description": "Version",
+                "default": "0.0.1",
+                "required": true,
+                "type": "string"
+              },
+              "description": {
+                "description": "Version description",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "release": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "uses": "docker/setup-qemu-action@v1"
+              },
+              {
+                "uses": "docker/setup-buildx-action@v1"
+              },
+              {
+                "uses": "docker/login-action@v1",
+                "with": {
+                  "username": "${{ secrets.DOCKERHUB_USERNAME }}",
+                  "password": "${{ secrets.DOCKERHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "build and publish the docker image",
+                "uses": "docker/build-push-action@v2",
+                "id": "docker-build",
+                "with": {
+                  "push": true,
+                  "tags": "platane/snk:${{ github.sha }}\nplatane/snk:${{ github.event.inputs.version }}\n"
+                }
+              },
+              {
+                "name": "update action.yml to point to the newly created docker image",
+                "run": "sed -i \"s/image: .*/image: docker:\\/\\/platane\\/snk@${{ steps.docker-build.outputs.digest }}/\" action.yml\n"
+              },
+              {
+                "uses": "actions/setup-node@v2",
+                "with": {
+                  "cache": "yarn",
+                  "node-version": 16
+                }
+              },
+              {
+                "name": "build svg-only action",
+                "run": "yarn install --frozen-lockfile\nyarn build:action\nrm -r svg-only/dist\nmv packages/action/dist svg-only/dist\n"
+              },
+              {
+                "name": "bump package version",
+                "run": "yarn version --no-git-tag-version --new-version ${{ github.event.inputs.version }}"
+              },
+              {
+                "name": "push new build, tag version and push",
+                "id": "push-tags",
+                "run": "VERSION=${{ github.event.inputs.version }}\n\ngit add package.json svg-only/dist action.yml\ngit commit -m \"\ud83d\udce6 $VERSION\"\ngit tag v$VERSION\ngit push origin master --tags\n\nif [[ \"$VERSION\" =~ ^\\d+\\.\\d+\\.\\d+$ ]] then\n  git tag --force v$( echo VERSION | cut -d. -f 1-1 )\n  git tag --force v$( echo VERSION | cut -d. -f 1-2 )\n  git push origin --tags --force\n  echo ::set-output name=prerelease::false\nelse \n  echo ::set-output name=prerelease::true\nfi\n"
+              },
+              {
+                "uses": "actions/create-release@v1",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                },
+                "with": {
+                  "tag_name": "v${{ github.event.inputs.version }}",
+                  "body": "${{ github.event.inputs.description }}",
+                  "prerelease": "${{ steps.push-tags.outputs.prerelease }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-04-08T22-23-17Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-9a2cde91-547c-5322-99f5-dd20204f7f35",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/release__2022-04-08T22-23-17Z__faf76e6eb6d73256e7d3e097ea091f3acb5df22a.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 17,
+                  "startColumn": 5,
+                  "endLine": 85,
+                  "endColumn": 65
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "b1d0f457f94d5952:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2022-04-08T22-23-17Z__faf76e6eb6d73256e7d3e097ea091f3acb5df22a.yml",
+          "workflow_name": "release",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 85,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "release": 11
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "release": 11
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 7,
+            "actions_used": [
+              "actions/checkout@v2",
+              "actions/create-release@v1",
+              "actions/setup-node@v2",
+              "docker/build-push-action@v2",
+              "docker/login-action@v1",
+              "docker/setup-buildx-action@v1",
+              "docker/setup-qemu-action@v1"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "release",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "version": {
+                "description": "Version",
+                "default": "0.0.1",
+                "required": true,
+                "type": "string"
+              },
+              "description": {
+                "description": "Version description",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "release": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "uses": "docker/setup-qemu-action@v1"
+              },
+              {
+                "uses": "docker/setup-buildx-action@v1"
+              },
+              {
+                "uses": "docker/login-action@v1",
+                "with": {
+                  "username": "${{ secrets.DOCKERHUB_USERNAME }}",
+                  "password": "${{ secrets.DOCKERHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "build and publish the docker image",
+                "uses": "docker/build-push-action@v2",
+                "id": "docker-build",
+                "with": {
+                  "push": true,
+                  "tags": "platane/snk:${{ github.sha }}\nplatane/snk:${{ github.event.inputs.version }}\n"
+                }
+              },
+              {
+                "name": "update action.yml to point to the newly created docker image",
+                "run": "sed -i \"s/image: .*/image: docker:\\/\\/platane\\/snk@${{ steps.docker-build.outputs.digest }}/\" action.yml\n"
+              },
+              {
+                "uses": "actions/setup-node@v2",
+                "with": {
+                  "cache": "yarn",
+                  "node-version": 16
+                }
+              },
+              {
+                "name": "build svg-only action",
+                "run": "yarn install --frozen-lockfile\nyarn build:action\nrm -r svg-only/dist\nmv packages/action/dist svg-only/dist\n"
+              },
+              {
+                "name": "bump package version",
+                "run": "yarn version --no-git-tag-version --new-version ${{ github.event.inputs.version }}"
+              },
+              {
+                "name": "push new build, tag version and push",
+                "id": "push-tags",
+                "run": "VERSION=${{ github.event.inputs.version }}\n\ngit config --global user.email \"bot@platane.me\"\ngit config --global user.name \"release bot\"\ngit add package.json svg-only/dist action.yml\ngit commit -m \"\ud83d\udce6 $VERSION\"\ngit tag v$VERSION\ngit push origin master --tags\n\nif [[ \"$VERSION\" =~ ^\\ d+\\.\\d+\\.\\d+$ ]] then\n  git tag --force v$( echo VERSION | cut -d. -f 1-1 )\n  git tag --force v$( echo VERSION | cut -d. -f 1-2 )\n  git push origin --tags --force\n  echo ::set-output name=prerelease::false\nelse \n  echo ::set-output name=prerelease::true\nfi\n"
+              },
+              {
+                "uses": "actions/create-release@v1",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                },
+                "with": {
+                  "tag_name": "v${{ github.event.inputs.version }}",
+                  "body": "${{ github.event.inputs.description }}",
+                  "prerelease": "${{ steps.push-tags.outputs.prerelease }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-04-08T23-16-14Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-e095f76b-6579-5905-ab33-1a4660ebc2e5",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/release__2022-04-08T23-16-14Z__4edf90f41bb12e9418d0725160ce016d0998e4f4.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 17,
+                  "startColumn": 5,
+                  "endLine": 85,
+                  "endColumn": 65
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "b1d0f457f94d5952:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2022-04-08T23-16-14Z__4edf90f41bb12e9418d0725160ce016d0998e4f4.yml",
+          "workflow_name": "release",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 85,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "release": 11
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "release": 11
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 7,
+            "actions_used": [
+              "actions/checkout@v2",
+              "actions/create-release@v1",
+              "actions/setup-node@v2",
+              "docker/build-push-action@v2",
+              "docker/login-action@v1",
+              "docker/setup-buildx-action@v1",
+              "docker/setup-qemu-action@v1"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "release",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "version": {
+                "description": "Version",
+                "default": "0.0.1",
+                "required": true,
+                "type": "string"
+              },
+              "description": {
+                "description": "Version description",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "release": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "uses": "docker/setup-qemu-action@v1"
+              },
+              {
+                "uses": "docker/setup-buildx-action@v1"
+              },
+              {
+                "uses": "docker/login-action@v1",
+                "with": {
+                  "username": "${{ secrets.DOCKERHUB_USERNAME }}",
+                  "password": "${{ secrets.DOCKERHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "build and publish the docker image",
+                "uses": "docker/build-push-action@v2",
+                "id": "docker-build",
+                "with": {
+                  "push": true,
+                  "tags": "platane/snk:${{ github.sha }}\nplatane/snk:${{ github.event.inputs.version }}\n"
+                }
+              },
+              {
+                "name": "update action.yml to point to the newly created docker image",
+                "run": "sed -i \"s/image: .*/image: docker:\\/\\/platane\\/snk@${{ steps.docker-build.outputs.digest }}/\" action.yml\n"
+              },
+              {
+                "uses": "actions/setup-node@v2",
+                "with": {
+                  "cache": "yarn",
+                  "node-version": 16
+                }
+              },
+              {
+                "name": "build svg-only action",
+                "run": "yarn install --frozen-lockfile\nyarn build:action\nrm -r svg-only/dist\nmv packages/action/dist svg-only/dist\n"
+              },
+              {
+                "name": "bump package version",
+                "run": "yarn version --no-git-tag-version --new-version ${{ github.event.inputs.version }}"
+              },
+              {
+                "name": "push new build, tag version and push",
+                "id": "push-tags",
+                "run": "VERSION=${{ github.event.inputs.version }}\n\ngit config --global user.email \"bot@platane.me\"\ngit config --global user.name \"release bot\"\ngit add package.json svg-only/dist action.yml\ngit commit -m \"\ud83d\udce6 $VERSION\"\ngit tag v$VERSION\ngit push origin master --tags\n\nif [[ \"$VERSION\" =~ ^[0-9]+\\ .[0-9]+\\.[0-9]+$ ]]; then\n  git tag v$( echo $VERSION | cut -d. -f 1-1 )\n  git tag v$( echo $VERSION | cut -d. -f 1-2 )\n  git push origin --tags --force\n  echo ::set-output name=prerelease::false\nelse \n  echo ::set-output name=prerelease::true\nfi\n"
+              },
+              {
+                "uses": "actions/create-release@v1",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                },
+                "with": {
+                  "tag_name": "v${{ github.event.inputs.version }}",
+                  "body": "${{ github.event.inputs.description }}",
+                  "prerelease": "${{ steps.push-tags.outputs.prerelease }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-04-11T21-19-33Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-a3673a77-8550-51b8-9c97-918c63823a7e",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/release__2022-04-11T21-19-33Z__6b320a1ac48e45a0caf267baacf95d9de7fa58b0.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 17,
+                  "startColumn": 5,
+                  "endLine": 85,
+                  "endColumn": 65
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "b1d0f457f94d5952:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2022-04-11T21-19-33Z__6b320a1ac48e45a0caf267baacf95d9de7fa58b0.yml",
+          "workflow_name": "release",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 85,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "release": 11
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "release": 11
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 7,
+            "actions_used": [
+              "actions/checkout@v2",
+              "actions/create-release@v1",
+              "actions/setup-node@v2",
+              "docker/build-push-action@v2",
+              "docker/login-action@v1",
+              "docker/setup-buildx-action@v1",
+              "docker/setup-qemu-action@v1"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "release",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "version": {
+                "description": "Version",
+                "default": "0.0.1",
+                "required": true,
+                "type": "string"
+              },
+              "description": {
+                "description": "Version description",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "release": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "uses": "docker/setup-qemu-action@v1"
+              },
+              {
+                "uses": "docker/setup-buildx-action@v1"
+              },
+              {
+                "uses": "docker/login-action@v1",
+                "with": {
+                  "username": "${{ secrets.DOCKERHUB_USERNAME }}",
+                  "password": "${{ secrets.DOCKERHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "build and publish the docker image",
+                "uses": "docker/build-push-action@v2",
+                "id": "docker-build",
+                "with": {
+                  "push": true,
+                  "tags": "platane/snk:${{ github.sha }}\nplatane/snk:${{ github.event.inputs.version }}\n"
+                }
+              },
+              {
+                "name": "update action.yml to point to the newly created docker image",
+                "run": "sed -i \"s/image: .*/image: docker:\\/\\/platane\\/snk@${{ steps.docker-build.outputs.digest }}/\" action.yml\n"
+              },
+              {
+                "uses": "actions/setup-node@v2",
+                "with": {
+                  "cache": "yarn",
+                  "node-version": 16
+                }
+              },
+              {
+                "name": "build svg-only action",
+                "run": "yarn install --frozen-lockfile\nyarn build:action\nrm -r svg-only/dist\nmv packages/action/dist svg-only/dist\n"
+              },
+              {
+                "name": "bump package version",
+                "run": "yarn version --no-git-tag-version --new-version ${{ github.event.inputs.version }}"
+              },
+              {
+                "name": "push new build, tag version and push",
+                "id": "push-tags",
+                "run": "VERSION=${{ github.event.inputs.version }}\n\ngit config --global user.email \"bot@platane.me\"\ngit config --global user.name \"release bot\"\ngit add package.json svg-only/dist action.yml\ngit commit -m \"\ud83d\udce6 $VERSION\"\ngit tag v$VERSION\ngit push origin main --tags\n\nif [[ \"$VERSION\" =~ ^[0-9]+\\ .[0-9]+\\.[0-9]+$ ]]; then\n  git tag v$( echo $VERSION | cut -d. -f 1-1 )\n  git tag v$( echo $VERSION | cut -d. -f 1-2 )\n  git push origin --tags --force\n  echo ::set-output name=prerelease::false\nelse \n  echo ::set-output name=prerelease::true\nfi\n"
+              },
+              {
+                "uses": "actions/create-release@v1",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                },
+                "with": {
+                  "tag_name": "v${{ github.event.inputs.version }}",
+                  "body": "${{ github.event.inputs.description }}",
+                  "prerelease": "${{ steps.push-tags.outputs.prerelease }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-11-03T08-59-26Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2022-11-03T08-59-26Z__21655d1bdafa630a767b5790a9283784a173108e.yml",
+          "workflow_name": "release",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 90,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "release": 11
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "release": 11
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 7,
+            "actions_used": [
+              "actions/checkout@v2",
+              "actions/setup-node@v2",
+              "docker/build-push-action@v2",
+              "docker/login-action@v1",
+              "docker/setup-buildx-action@v1",
+              "docker/setup-qemu-action@v1",
+              "ncipollo/release-action@v1.11.1"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "release",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "version": {
+                "description": "New version for the release\nIf the version is in format <major>.<minor>.<patch> a new release is emitted.\nOtherwise for other format ( for example <major>.<minor>.<patch>-beta.1 ), a prerelease is emitted.\n",
+                "default": "0.0.1",
+                "required": true,
+                "type": "string"
+              },
+              "description": {
+                "description": "Version description",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "release": {
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "contents": "write"
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "uses": "docker/setup-qemu-action@v1"
+              },
+              {
+                "uses": "docker/setup-buildx-action@v1"
+              },
+              {
+                "uses": "docker/login-action@v1",
+                "with": {
+                  "username": "${{ secrets.DOCKERHUB_USERNAME }}",
+                  "password": "${{ secrets.DOCKERHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "build and publish the docker image",
+                "uses": "docker/build-push-action@v2",
+                "id": "docker-build",
+                "with": {
+                  "push": true,
+                  "tags": "platane/snk:${{ github.sha }}\nplatane/snk:${{ github.event.inputs.version }}\n"
+                }
+              },
+              {
+                "name": "update action.yml to point to the newly created docker image",
+                "run": "sed -i \"s/image: .*/image: docker:\\/\\/platane\\/snk@${{ steps.docker-build.outputs.digest }}/\" action.yml\n"
+              },
+              {
+                "uses": "actions/setup-node@v2",
+                "with": {
+                  "cache": "yarn",
+                  "node-version": 16
+                }
+              },
+              {
+                "name": "build svg-only action",
+                "run": "yarn install --frozen-lockfile\nyarn build:action\nrm -r svg-only/dist\nmv packages/action/dist svg-only/dist\n"
+              },
+              {
+                "name": "bump package version",
+                "run": "yarn version --no-git-tag-version --new-version ${{ github.event.inputs.version }}"
+              },
+              {
+                "name": "push new build, tag version and push",
+                "id": "push-tags",
+                "run": "VERSION=${{ github.event.inputs.version }}\n\ngit config --global user.email \"bot@platane.me\"\ngit config --global user.name \"release bot\"\ngit add package.json svg-only/dist action.yml\ngit commit -m \"\ud83d\udce6 $VERSION\"\ngit tag v$VERSION\ngit push origin main --tags\n\nif [[ \"$VERSION\" =~ ^[0-9]+\\ .[0-9]+\\.[0-9]+$ ]]; then\n  git tag v$( echo $VERSION | cut -d. -f 1-1 )\n  git tag v$( echo $VERSION | cut -d. -f 1-2 )\n  git push origin --tags --force\n  echo \"prerelease=false\" >> $GITHUB_OUTPUT\nelse \n  echo \"prerelease=true\" >> $GITHUB_OUTPUT\nfi\n"
+              },
+              {
+                "uses": "ncipollo/release-action@v1.11.1",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                },
+                "with": {
+                  "tag": "v${{ github.event.inputs.version }}",
+                  "body": "${{ github.event.inputs.description }}",
+                  "prerelease": "${{ steps.push-tags.outputs.prerelease }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-02-26T09-15-41Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2023-02-26T09-15-41Z__229c9a9cd6df2f759b53f585d29ab323a58f1982.yml",
+          "workflow_name": "release",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 90,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "release": 11
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "release": 11
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 7,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-node@v3",
+              "docker/build-push-action@v4",
+              "docker/login-action@v2",
+              "docker/setup-buildx-action@v2",
+              "docker/setup-qemu-action@v2",
+              "ncipollo/release-action@v1.12.0"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "release",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "version": {
+                "description": "New version for the release\nIf the version is in format <major>.<minor>.<patch> a new release is emitted.\nOtherwise for other format ( for example <major>.<minor>.<patch>-beta.1 ), a prerelease is emitted.\n",
+                "default": "0.0.1",
+                "required": true,
+                "type": "string"
+              },
+              "description": {
+                "description": "Version description",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "release": {
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "contents": "write"
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "uses": "docker/setup-qemu-action@v2"
+              },
+              {
+                "uses": "docker/setup-buildx-action@v2"
+              },
+              {
+                "uses": "docker/login-action@v2",
+                "with": {
+                  "username": "${{ secrets.DOCKERHUB_USERNAME }}",
+                  "password": "${{ secrets.DOCKERHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "build and publish the docker image",
+                "uses": "docker/build-push-action@v4",
+                "id": "docker-build",
+                "with": {
+                  "push": true,
+                  "tags": "platane/snk:${{ github.sha }}\nplatane/snk:${{ github.event.inputs.version }}\n"
+                }
+              },
+              {
+                "name": "update action.yml to point to the newly created docker image",
+                "run": "sed -i \"s/image: .*/image: docker:\\/\\/platane\\/snk@${{ steps.docker-build.outputs.digest }}/\" action.yml\n"
+              },
+              {
+                "uses": "actions/setup-node@v3",
+                "with": {
+                  "cache": "yarn",
+                  "node-version": 16
+                }
+              },
+              {
+                "name": "build svg-only action",
+                "run": "yarn install --frozen-lockfile\nyarn build:action\nrm -r svg-only/dist\nmv packages/action/dist svg-only/dist\n"
+              },
+              {
+                "name": "bump package version",
+                "run": "yarn version --no-git-tag-version --new-version ${{ github.event.inputs.version }}"
+              },
+              {
+                "name": "push new build, tag version and push",
+                "id": "push-tags",
+                "run": "VERSION=${{ github.event.inputs.version }}\n\ngit config --global user.email \"bot@platane.me\"\ngit config --global user.name \"release bot\"\ngit add package.json svg-only/dist action.yml\ngit commit -m \"\ud83d\udce6 $VERSION\"\ngit tag v$VERSION\ngit push origin main --tags\n\nif [[ \"$VERSION\" =~ ^[0-9]+\\ .[0-9]+\\.[0-9]+$ ]]; then\n  git tag v$( echo $VERSION | cut -d. -f 1-1 )\n  git tag v$( echo $VERSION | cut -d. -f 1-2 )\n  git push origin --tags --force\n  echo \"prerelease=false\" >> $GITHUB_OUTPUT\nelse \n  echo \"prerelease=true\" >> $GITHUB_OUTPUT\nfi\n"
+              },
+              {
+                "uses": "ncipollo/release-action@v1.12.0",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                },
+                "with": {
+                  "tag": "v${{ github.event.inputs.version }}",
+                  "body": "${{ github.event.inputs.description }}",
+                  "prerelease": "${{ steps.push-tags.outputs.prerelease }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-07-17T20-13-00Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2023-07-17T20-13-00Z__54dbbbf73de0747363c6500dd9a6362205d14752.yml",
+          "workflow_name": "release",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 90,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "release": 11
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "release": 11
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 7,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-node@v3",
+              "docker/build-push-action@v4",
+              "docker/login-action@v2",
+              "docker/setup-buildx-action@v2",
+              "docker/setup-qemu-action@v2",
+              "ncipollo/release-action@v1.12.0"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "release",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "version": {
+                "description": "New version for the release\nIf the version is in format <major>.<minor>.<patch> a new release is emitted.\nOtherwise for other format ( for example <major>.<minor>.<patch>-beta.1 ), a prerelease is emitted.\n",
+                "default": "0.0.1",
+                "required": true,
+                "type": "string"
+              },
+              "description": {
+                "description": "Version description",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "release": {
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "contents": "write"
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "uses": "docker/setup-qemu-action@v2"
+              },
+              {
+                "uses": "docker/setup-buildx-action@v2"
+              },
+              {
+                "uses": "docker/login-action@v2",
+                "with": {
+                  "username": "${{ secrets.DOCKERHUB_USERNAME }}",
+                  "password": "${{ secrets.DOCKERHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "build and publish the docker image",
+                "uses": "docker/build-push-action@v4",
+                "id": "docker-build",
+                "with": {
+                  "push": true,
+                  "tags": "platane/snk:${{ github.sha }}\nplatane/snk:${{ github.event.inputs.version }}\n"
+                }
+              },
+              {
+                "name": "update action.yml to point to the newly created docker image",
+                "run": "sed -i \"s/image: .*/image: docker:\\/\\/platane\\/snk@${{ steps.docker-build.outputs.digest }}/\" action.yml\n"
+              },
+              {
+                "uses": "actions/setup-node@v3",
+                "with": {
+                  "cache": "yarn",
+                  "node-version": 16
+                }
+              },
+              {
+                "name": "build svg-only action",
+                "run": "yarn install --frozen-lockfile\nnpm run build:action\nrm -r svg-only/dist\nmv packages/action/dist svg-only/dist\n"
+              },
+              {
+                "name": "bump package version",
+                "run": "yarn version --no-git-tag-version --new-version ${{ github.event.inputs.version }}"
+              },
+              {
+                "name": "push new build, tag version and push",
+                "id": "push-tags",
+                "run": "VERSION=${{ github.event.inputs.version }}\n\ngit config --global user.email \"bot@platane.me\"\ngit config --global user.name \"release bot\"\ngit add package.json svg-only/dist action.yml\ngit commit -m \"\ud83d\udce6 $VERSION\"\ngit tag v$VERSION\ngit push origin main --tags\n\nif [[ \"$VERSION\" =~ ^[0-9]+\\ .[0-9]+\\.[0-9]+$ ]]; then\n  git tag v$( echo $VERSION | cut -d. -f 1-1 )\n  git tag v$( echo $VERSION | cut -d. -f 1-2 )\n  git push origin --tags --force\n  echo \"prerelease=false\" >> $GITHUB_OUTPUT\nelse \n  echo \"prerelease=true\" >> $GITHUB_OUTPUT\nfi\n"
+              },
+              {
+                "uses": "ncipollo/release-action@v1.12.0",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                },
+                "with": {
+                  "tag": "v${{ github.event.inputs.version }}",
+                  "body": "${{ github.event.inputs.description }}",
+                  "prerelease": "${{ steps.push-tags.outputs.prerelease }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-09-23T18-07-23Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2023-09-23T18-07-23Z__743771147da786d249f717c7e7dfc3c6f05f273d.yml",
+          "workflow_name": "release",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 90,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "release": 11
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "release": 11
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 7,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-node@v3",
+              "docker/build-push-action@v4",
+              "docker/login-action@v2",
+              "docker/setup-buildx-action@v2",
+              "docker/setup-qemu-action@v2",
+              "ncipollo/release-action@v1.12.0"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "release",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "version": {
+                "description": "New version for the release\nIf the version is in format <major>.<minor>.<patch> a new release is emitted.\nOtherwise for other format ( for example <major>.<minor>.<patch>-beta.1 ), a prerelease is emitted.\n",
+                "default": "0.0.1",
+                "required": true,
+                "type": "string"
+              },
+              "description": {
+                "description": "Version description",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "release": {
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "contents": "write"
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "uses": "docker/setup-qemu-action@v2"
+              },
+              {
+                "uses": "docker/setup-buildx-action@v2"
+              },
+              {
+                "uses": "docker/login-action@v2",
+                "with": {
+                  "username": "${{ secrets.DOCKERHUB_USERNAME }}",
+                  "password": "${{ secrets.DOCKERHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "build and publish the docker image",
+                "uses": "docker/build-push-action@v4",
+                "id": "docker-build",
+                "with": {
+                  "push": true,
+                  "tags": "platane/snk:${{ github.sha }}\nplatane/snk:${{ github.event.inputs.version }}\n"
+                }
+              },
+              {
+                "name": "update action.yml to point to the newly created docker image",
+                "run": "sed -i \"s/image: .*/image: docker:\\/\\/platane\\/snk@${{ steps.docker-build.outputs.digest }}/\" action.yml\n"
+              },
+              {
+                "uses": "actions/setup-node@v3",
+                "with": {
+                  "cache": "yarn",
+                  "node-version": 16
+                }
+              },
+              {
+                "name": "build svg-only action",
+                "run": "yarn install --frozen-lockfile\nnpm run build:action\nrm -r svg-only/dist\nmv packages/action/dist svg-only/dist\n"
+              },
+              {
+                "name": "bump package version",
+                "run": "yarn version --no-git-tag-version --new-version ${{ github.event.inputs.version }}"
+              },
+              {
+                "name": "push new build, tag version and push",
+                "id": "push-tags",
+                "run": "VERSION=${{ github.event.inputs.version }}\n\ngit config --global user.email \"bot@platane.me\"\ngit config --global user.name \"release bot\"\ngit add package.json svg-only/dist action.yml\ngit commit -m \"\ud83d\udce6 $VERSION\"\ngit tag v$VERSION\ngit push origin main --tags\n\nif [[ \"$VERSION\" =~ ^[0-9]+\\ .[0-9]+\\.[0-9]+$ ]]; then\n  git tag v$( echo $VERSION | cut -d. -f 1-1 )\n  git tag v$( echo $VERSION | cut -d. -f 1-2 )\n  git push origin --tags --force\n  echo \"prerelease=false\" >> $GITHUB_OUTPUT\nelse \n  echo \"prerelease=true\" >> $GITHUB_OUTPUT\nfi\n"
+              },
+              {
+                "uses": "ncipollo/release-action@v1.12.0",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                },
+                "with": {
+                  "tag": "v${{ github.event.inputs.version }}",
+                  "body": "${{ github.event.inputs.description }}",
+                  "prerelease": "${{ steps.push-tags.outputs.prerelease }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-09-23T18-18-51Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2023-09-23T18-18-51Z__4e5805f8af2ca6636db75a77a422a4016932a3f3.yml",
+          "workflow_name": "release",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 90,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "release": 11
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "release": 11
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 7,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-node@v3",
+              "docker/build-push-action@v4",
+              "docker/login-action@v2",
+              "docker/setup-buildx-action@v2",
+              "docker/setup-qemu-action@v2",
+              "ncipollo/release-action@v1.12.0"
+            ],
+            "num_run_commands": 4,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "release",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "version": {
+                "description": "New version for the release\nIf the version is in format <major>.<minor>.<patch> a new release is emitted.\nOtherwise for other format ( for example <major>.<minor>.<patch>-beta.1 ), a prerelease is emitted.\n",
+                "default": "0.0.1",
+                "required": true,
+                "type": "string"
+              },
+              "description": {
+                "description": "Version description",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "release": {
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "contents": "write"
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "uses": "docker/setup-qemu-action@v2"
+              },
+              {
+                "uses": "docker/setup-buildx-action@v2"
+              },
+              {
+                "uses": "docker/login-action@v2",
+                "with": {
+                  "username": "${{ secrets.DOCKERHUB_USERNAME }}",
+                  "password": "${{ secrets.DOCKERHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "build and publish the docker image",
+                "uses": "docker/build-push-action@v4",
+                "id": "docker-build",
+                "with": {
+                  "push": true,
+                  "tags": "platane/snk:${{ github.sha }}\nplatane/snk:${{ github.event.inputs.version }}\n"
+                }
+              },
+              {
+                "name": "update action.yml to point to the newly created docker image",
+                "run": "sed -i \"s/image: .*/image: docker:\\/\\/platane\\/snk@${{ steps.docker-build.outputs.digest }}/\" action.yml\n"
+              },
+              {
+                "uses": "actions/setup-node@v3",
+                "with": {
+                  "cache": "yarn",
+                  "node-version": 20
+                }
+              },
+              {
+                "name": "build svg-only action",
+                "run": "yarn install --frozen-lockfile\nnpm run build:action\nrm -r svg-only/dist\nmv packages/action/dist svg-only/dist\n"
+              },
+              {
+                "name": "bump package version",
+                "run": "yarn version --no-git-tag-version --new-version ${{ github.event.inputs.version }}"
+              },
+              {
+                "name": "push new build, tag version and push",
+                "id": "push-tags",
+                "run": "VERSION=${{ github.event.inputs.version }}\n\ngit config --global user.email \"bot@platane.me\"\ngit config --global user.name \"release bot\"\ngit add package.json svg-only/dist action.yml\ngit commit -m \"\ud83d\udce6 $VERSION\"\ngit tag v$VERSION\ngit push origin main --tags\n\nif [[ \"$VERSION\" =~ ^[0-9]+\\ .[0-9]+\\.[0-9]+$ ]]; then\n  git tag v$( echo $VERSION | cut -d. -f 1-1 )\n  git tag v$( echo $VERSION | cut -d. -f 1-2 )\n  git push origin --tags --force\n  echo \"prerelease=false\" >> $GITHUB_OUTPUT\nelse \n  echo \"prerelease=true\" >> $GITHUB_OUTPUT\nfi\n"
+              },
+              {
+                "uses": "ncipollo/release-action@v1.12.0",
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                },
+                "with": {
+                  "tag": "v${{ github.event.inputs.version }}",
+                  "body": "${{ github.event.inputs.description }}",
+                  "prerelease": "${{ steps.push-tags.outputs.prerelease }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-02-20T12-34-18Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2025-02-20T12-34-18Z__85da3901f5c548d24c728444dc7ec868f7ba03fc.yml",
+          "workflow_name": "release",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 86,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "release": 12
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "release": 12
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 7,
+            "actions_used": [
+              "actions/checkout@v4",
+              "docker/build-push-action@v4",
+              "docker/login-action@v2",
+              "docker/setup-buildx-action@v2",
+              "docker/setup-qemu-action@v2",
+              "ncipollo/release-action@v1.15.0",
+              "oven-sh/setup-bun@v1"
+            ],
+            "num_run_commands": 5,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "release",
+        "true": {
+          "workflow_dispatch": {
+            "inputs": {
+              "version": {
+                "description": "New version for the release\nIf the version is in format <major>.<minor>.<patch> a new release is emitted.\nOtherwise for other format ( for example <major>.<minor>.<patch>-beta.1 ), a prerelease is emitted.\n",
+                "default": "0.0.1",
+                "required": true,
+                "type": "string"
+              },
+              "description": {
+                "description": "Version description",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "jobs": {
+          "release": {
+            "runs-on": "ubuntu-latest",
+            "permissions": {
+              "contents": "write"
+            },
+            "steps": [
+              {
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "uses": "docker/setup-qemu-action@v2"
+              },
+              {
+                "uses": "docker/setup-buildx-action@v2"
+              },
+              {
+                "uses": "docker/login-action@v2",
+                "with": {
+                  "username": "${{ secrets.DOCKERHUB_USERNAME }}",
+                  "password": "${{ secrets.DOCKERHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "build and publish the docker image",
+                "uses": "docker/build-push-action@v4",
+                "id": "docker-build",
+                "with": {
+                  "push": true,
+                  "tags": "platane/snk:${{ github.sha }}\nplatane/snk:${{ github.event.inputs.version }}\n"
+                }
+              },
+              {
+                "name": "update action.yml to point to the newly created docker image",
+                "run": "sed -i \"s/image: .*/image: docker:\\/\\/platane\\/snk@${{ steps.docker-build.outputs.digest }}/\" action.yml\n"
+              },
+              {
+                "uses": "oven-sh/setup-bun@v1"
+              },
+              {
+                "run": "bun install --frozen-lockfile"
+              },
+              {
+                "name": "build svg-only action",
+                "run": "npm run build:action\nrm -r svg-only/dist\nmv packages/action/dist svg-only/dist\n"
+              },
+              {
+                "name": "bump package version",
+                "run": "npm version --no-git-tag-version --new-version ${{ github.event.inputs.version }}"
+              },
+              {
+                "name": "push new build, tag version and push",
+                "id": "push-tags",
+                "run": "VERSION=${{ github.event.inputs.version }}\n\ngit config --global user.email \"bot@platane.me\"\ngit config --global user.name \"release bot\"\ngit add package.json svg-only/dist action.yml\ngit commit -m \"\ud83d\udce6 $VERSION\"\ngit tag v$VERSION\ngit push origin main --tags\n\nif [[ \"$VERSION\" =~ ^[0-9]+\\ .[0-9]+\\.[0-9]+$ ]]; then\n  git tag v$( echo $VERSION | cut -d. -f 1-1 )\n  git tag v$( echo $VERSION | cut -d. -f 1-2 )\n  git push origin --tags --force\n  echo \"prerelease=false\" >> $GITHUB_OUTPUT\nelse\n  echo \"prerelease=true\" >> $GITHUB_OUTPUT\nfi\n"
+              },
+              {
+                "uses": "ncipollo/release-action@v1.15.0",
+                "with": {
+                  "tag": "v${{ github.event.inputs.version }}",
+                  "body": "${{ github.event.inputs.description }}",
+                  "prerelease": "${{ steps.push-tags.outputs.prerelease }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

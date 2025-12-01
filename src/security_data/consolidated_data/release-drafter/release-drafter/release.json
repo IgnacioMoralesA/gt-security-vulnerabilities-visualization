@@ -1,0 +1,2071 @@
+{
+  "repo_owner": "release-drafter",
+  "repo_name": "release-drafter",
+  "workflow_name": "release",
+  "history": {
+    "2022-01-16T18-56-41Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-3172af3f-ab84-52e8-b168-fa414d42fdea",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/release__2022-01-16T18-56-41Z__a0f18843a433242936fc2a2e779377c4e72609ac.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 8,
+                  "startColumn": 5,
+                  "endLine": 56,
+                  "endColumn": 75
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "c085981574db2860:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2022-01-16T18-56-41Z__a0f18843a433242936fc2a2e779377c4e72609ac.yml",
+          "workflow_name": "Release",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 56,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 9
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 9
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v2",
+              "actions/setup-node@v2",
+              "release-drafter/release-drafter@master"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release",
+        "true": {
+          "push": {
+            "tags": [
+              "v*.*.*"
+            ]
+          }
+        },
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "name": "Setup Node",
+                "uses": "actions/setup-node@v2",
+                "with": {
+                  "node-version": "16",
+                  "cache": "yarn",
+                  "registry-url": "https://registry.npmjs.org"
+                }
+              },
+              {
+                "name": "yarn install",
+                "run": "yarn install --frozen-lockfile"
+              },
+              {
+                "name": "yarn test",
+                "run": "yarn test"
+              },
+              {
+                "name": "yarn publish",
+                "env": {
+                  "NODE_AUTH_TOKEN": "${{ secrets.NPMJS_TOKEN }}"
+                },
+                "run": "yarn publish --access public"
+              },
+              {
+                "name": "Deploy to Heroku",
+                "env": {
+                  "HEROKU_API_TOKEN": "${{ secrets.HEROKU_API_TOKEN }}",
+                  "HEROKU_APP_NAME": "release-drafter"
+                },
+                "run": "git push https://heroku:$HEROKU_API_TOKEN@git.heroku.com/$HEROKU_APP_NAME.git origin/master:master"
+              },
+              {
+                "name": "version",
+                "id": "version",
+                "run": "version=${{ github.event.release.tag_name }}\nversion=${version#v}\nmajor=${version%%.*}\necho \"::set-output name=version::${version}\"\necho \"::set-output name=major::${major}\"\n"
+              },
+              {
+                "uses": "release-drafter/release-drafter@master",
+                "with": {
+                  "version": "{{ steps.version.outputs.version }}",
+                  "publish": true
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "force update major tag",
+                "run": "git tag v{{ steps.version.outputs.major }} ${{ github.event.release.tag_name }} -f\ngit push origin refs/tags/v{{ steps.version.outputs.major }} -f\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-01-16T19-11-42Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-39184b4a-36a1-5b13-aaef-0fe3d948d5ca",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/release__2022-01-16T19-11-42Z__8c92bb1d62d39d05d0aa71138477c3312580fbcf.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 8,
+                  "startColumn": 5,
+                  "endLine": 58,
+                  "endColumn": 75
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "c085981574db2860:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2022-01-16T19-11-42Z__8c92bb1d62d39d05d0aa71138477c3312580fbcf.yml",
+          "workflow_name": "Release",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 58,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 9
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 9
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v2",
+              "actions/setup-node@v2",
+              "release-drafter/release-drafter@master"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release",
+        "true": {
+          "push": {
+            "tags": [
+              "v*.*.*"
+            ]
+          }
+        },
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "name": "Setup Node",
+                "uses": "actions/setup-node@v2",
+                "with": {
+                  "node-version": "16",
+                  "cache": "yarn",
+                  "registry-url": "https://registry.npmjs.org"
+                }
+              },
+              {
+                "name": "yarn install",
+                "run": "yarn install --frozen-lockfile"
+              },
+              {
+                "name": "yarn test",
+                "run": "yarn test"
+              },
+              {
+                "name": "yarn publish",
+                "env": {
+                  "NODE_AUTH_TOKEN": "${{ secrets.NPMJS_TOKEN }}"
+                },
+                "run": "yarn publish --access public"
+              },
+              {
+                "name": "Deploy to Heroku",
+                "env": {
+                  "HEROKU_API_TOKEN": "${{ secrets.HEROKU_API_TOKEN }}",
+                  "HEROKU_APP_NAME": "release-drafter"
+                },
+                "run": "get fetch origin master\ngit push https://heroku:$HEROKU_API_TOKEN@git.heroku.com/$HEROKU_APP_NAME.git origin/master:master --force\n"
+              },
+              {
+                "name": "version",
+                "id": "version",
+                "run": "version=${{ github.event.release.tag_name }}\nversion=${version#v}\nmajor=${version%%.*}\necho \"::set-output name=version::${version}\"\necho \"::set-output name=major::${major}\"\n"
+              },
+              {
+                "uses": "release-drafter/release-drafter@master",
+                "with": {
+                  "version": "{{ steps.version.outputs.version }}",
+                  "publish": true
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "force update major tag",
+                "run": "git tag v{{ steps.version.outputs.major }} ${{ github.event.release.tag_name }} -f\ngit push origin refs/tags/v{{ steps.version.outputs.major }} -f\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-01-16T19-18-59Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-efddac7f-6534-573a-bf89-b77e8764e9a9",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/release__2022-01-16T19-18-59Z__8c1e194a5ef0b347672a445c9489b4a9055d9f3c.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 8,
+                  "startColumn": 5,
+                  "endLine": 60,
+                  "endColumn": 75
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "f3a2d2bf1138d133:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2022-01-16T19-18-59Z__8c1e194a5ef0b347672a445c9489b4a9055d9f3c.yml",
+          "workflow_name": "Release",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 60,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 9
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 9
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v2",
+              "actions/setup-node@v2",
+              "release-drafter/release-drafter@master"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release",
+        "true": {
+          "push": {
+            "tags": [
+              "v*.*.*"
+            ]
+          }
+        },
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v2",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Setup Node",
+                "uses": "actions/setup-node@v2",
+                "with": {
+                  "node-version": "16",
+                  "cache": "yarn",
+                  "registry-url": "https://registry.npmjs.org"
+                }
+              },
+              {
+                "name": "yarn install",
+                "run": "yarn install --frozen-lockfile"
+              },
+              {
+                "name": "yarn test",
+                "run": "yarn test"
+              },
+              {
+                "name": "Deploy to Heroku",
+                "env": {
+                  "HEROKU_API_TOKEN": "${{ secrets.HEROKU_API_TOKEN }}",
+                  "HEROKU_APP_NAME": "release-drafter"
+                },
+                "run": "git fetch origin master\ngit push https://heroku:$HEROKU_API_TOKEN@git.heroku.com/$HEROKU_APP_NAME.git origin/master:master --force\n"
+              },
+              {
+                "name": "yarn publish",
+                "env": {
+                  "NODE_AUTH_TOKEN": "${{ secrets.NPMJS_TOKEN }}"
+                },
+                "run": "yarn publish --access public"
+              },
+              {
+                "name": "version",
+                "id": "version",
+                "run": "version=${{ github.event.release.tag_name }}\nversion=${version#v}\nmajor=${version%%.*}\necho \"::set-output name=version::${version}\"\necho \"::set-output name=major::${major}\"\n"
+              },
+              {
+                "uses": "release-drafter/release-drafter@master",
+                "with": {
+                  "version": "{{ steps.version.outputs.version }}",
+                  "publish": true
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "force update major tag",
+                "run": "git tag v{{ steps.version.outputs.major }} ${{ github.event.release.tag_name }} -f\ngit push origin refs/tags/v{{ steps.version.outputs.major }} -f\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-01-16T19-16-36Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-8f47f6ef-3c72-5170-9871-dc3c256d7f70",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/release__2022-01-16T19-16-36Z__debd0f063361be45a6fcd35ab76dd31b529a0f27.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 8,
+                  "startColumn": 5,
+                  "endLine": 58,
+                  "endColumn": 75
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "c085981574db2860:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2022-01-16T19-16-36Z__debd0f063361be45a6fcd35ab76dd31b529a0f27.yml",
+          "workflow_name": "Release",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 58,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 9
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 9
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v2",
+              "actions/setup-node@v2",
+              "release-drafter/release-drafter@master"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release",
+        "true": {
+          "push": {
+            "tags": [
+              "v*.*.*"
+            ]
+          }
+        },
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "name": "Setup Node",
+                "uses": "actions/setup-node@v2",
+                "with": {
+                  "node-version": "16",
+                  "cache": "yarn",
+                  "registry-url": "https://registry.npmjs.org"
+                }
+              },
+              {
+                "name": "yarn install",
+                "run": "yarn install --frozen-lockfile"
+              },
+              {
+                "name": "yarn test",
+                "run": "yarn test"
+              },
+              {
+                "name": "Deploy to Heroku",
+                "env": {
+                  "HEROKU_API_TOKEN": "${{ secrets.HEROKU_API_TOKEN }}",
+                  "HEROKU_APP_NAME": "release-drafter"
+                },
+                "run": "git fetch origin master\ngit push https://heroku:$HEROKU_API_TOKEN@git.heroku.com/$HEROKU_APP_NAME.git origin/master:master --force\n"
+              },
+              {
+                "name": "yarn publish",
+                "env": {
+                  "NODE_AUTH_TOKEN": "${{ secrets.NPMJS_TOKEN }}"
+                },
+                "run": "yarn publish --access public"
+              },
+              {
+                "name": "version",
+                "id": "version",
+                "run": "version=${{ github.event.release.tag_name }}\nversion=${version#v}\nmajor=${version%%.*}\necho \"::set-output name=version::${version}\"\necho \"::set-output name=major::${major}\"\n"
+              },
+              {
+                "uses": "release-drafter/release-drafter@master",
+                "with": {
+                  "version": "{{ steps.version.outputs.version }}",
+                  "publish": true
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "force update major tag",
+                "run": "git tag v{{ steps.version.outputs.major }} ${{ github.event.release.tag_name }} -f\ngit push origin refs/tags/v{{ steps.version.outputs.major }} -f\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-01-16T19-22-53Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-6be936db-80b2-5b8c-a8fa-34b5c3fca836",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/release__2022-01-16T19-22-53Z__5cb124451acf55019619a69d354740a8d6de945c.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 8,
+                  "startColumn": 5,
+                  "endLine": 60,
+                  "endColumn": 76
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "f3a2d2bf1138d133:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2022-01-16T19-22-53Z__5cb124451acf55019619a69d354740a8d6de945c.yml",
+          "workflow_name": "Release",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 60,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 9
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 9
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v2",
+              "actions/setup-node@v2",
+              "release-drafter/release-drafter@master"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release",
+        "true": {
+          "push": {
+            "tags": [
+              "v*.*.*"
+            ]
+          }
+        },
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v2",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Setup Node",
+                "uses": "actions/setup-node@v2",
+                "with": {
+                  "node-version": "16",
+                  "cache": "yarn",
+                  "registry-url": "https://registry.npmjs.org"
+                }
+              },
+              {
+                "name": "yarn install",
+                "run": "yarn install --frozen-lockfile"
+              },
+              {
+                "name": "yarn test",
+                "run": "yarn test"
+              },
+              {
+                "name": "Deploy to Heroku",
+                "env": {
+                  "HEROKU_API_TOKEN": "${{ secrets.HEROKU_API_TOKEN }}",
+                  "HEROKU_APP_NAME": "release-drafter"
+                },
+                "run": "git fetch origin master\ngit push https://heroku:$HEROKU_API_TOKEN@git.heroku.com/$HEROKU_APP_NAME.git origin/master:master --force\n"
+              },
+              {
+                "name": "yarn publish",
+                "env": {
+                  "NODE_AUTH_TOKEN": "${{ secrets.NPMJS_TOKEN }}"
+                },
+                "run": "yarn publish --access public"
+              },
+              {
+                "name": "version",
+                "id": "version",
+                "run": "version=${{ github.event.release.tag_name }}\nversion=${version#v}\nmajor=${version%%.*}\necho \"::set-output name=version::${version}\"\necho \"::set-output name=major::${major}\"\n"
+              },
+              {
+                "uses": "release-drafter/release-drafter@master",
+                "with": {
+                  "version": "${{ steps.version.outputs.version }}",
+                  "publish": true
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "force update major tag",
+                "run": "git tag v${{ steps.version.outputs.major }} ${{ github.event.release.tag_name }} -f\ngit push origin refs/tags/v${{ steps.version.outputs.major }} -f\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-01-16T19-36-03Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-8a337631-bfe8-5df4-9b15-433f4c4f6420",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/release__2022-01-16T19-36-03Z__c8c3c53f00f1404552d447c98c083f9af5bc936d.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 8,
+                  "startColumn": 5,
+                  "endLine": 61,
+                  "endColumn": 76
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "f3a2d2bf1138d133:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2022-01-16T19-36-03Z__c8c3c53f00f1404552d447c98c083f9af5bc936d.yml",
+          "workflow_name": "Release",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 61,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 9
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 9
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v2",
+              "actions/setup-node@v2",
+              "release-drafter/release-drafter@master"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release",
+        "true": {
+          "push": {
+            "tags": [
+              "v*.*.*"
+            ]
+          }
+        },
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v2",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Setup Node",
+                "uses": "actions/setup-node@v2",
+                "with": {
+                  "node-version": "16",
+                  "cache": "yarn",
+                  "registry-url": "https://registry.npmjs.org"
+                }
+              },
+              {
+                "name": "yarn install",
+                "run": "yarn install --frozen-lockfile"
+              },
+              {
+                "name": "yarn test",
+                "run": "yarn test"
+              },
+              {
+                "name": "Deploy to Heroku",
+                "env": {
+                  "HEROKU_API_TOKEN": "${{ secrets.HEROKU_API_TOKEN }}",
+                  "HEROKU_APP_NAME": "release-drafter"
+                },
+                "run": "git fetch origin master\ngit push https://heroku:$HEROKU_API_TOKEN@git.heroku.com/$HEROKU_APP_NAME.git origin/master:master --force\n"
+              },
+              {
+                "name": "yarn publish",
+                "env": {
+                  "NODE_AUTH_TOKEN": "${{ secrets.NPMJS_TOKEN }}"
+                },
+                "run": "yarn publish --access public"
+              },
+              {
+                "name": "version",
+                "id": "version",
+                "run": "tag=${GITHUB_REF/refs\\/tags\\//}\nversion=${tag#v}\nmajor=${version%%.*}\necho \"::set-output name=tag::${tag}\"\necho \"::set-output name=version::${version}\"\necho \"::set-output name=major::${major}\"\n"
+              },
+              {
+                "uses": "release-drafter/release-drafter@master",
+                "with": {
+                  "version": "${{ steps.version.outputs.version }}",
+                  "publish": true
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "force update major tag",
+                "run": "git tag v${{ steps.version.outputs.major }} ${{ steps.version.outputs.tag }} -f\ngit push origin refs/tags/v${{ steps.version.outputs.major }} -f\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-01-19T22-33-06Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-30a94153-fead-53d1-8cc3-5a11902da10e",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/release__2022-01-19T22-33-06Z__1a3998cda617fd589f48e7122ce42edd9a6d72f9.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 65,
+                  "endColumn": 76
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "f3a2d2bf1138d133:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2022-01-19T22-33-06Z__1a3998cda617fd589f48e7122ce42edd9a6d72f9.yml",
+          "workflow_name": "Release",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 65,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 9
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 9
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v2",
+              "actions/setup-node@v2",
+              "release-drafter/release-drafter@master"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release",
+        "true": {
+          "push": {
+            "tags": [
+              "v*.*.*"
+            ]
+          }
+        },
+        "env": {
+          "HUSKY": "0"
+        },
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v2",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Setup Node",
+                "uses": "actions/setup-node@v2",
+                "with": {
+                  "node-version": "16",
+                  "cache": "yarn",
+                  "registry-url": "https://registry.npmjs.org"
+                }
+              },
+              {
+                "name": "yarn install",
+                "run": "yarn install --frozen-lockfile"
+              },
+              {
+                "name": "yarn test",
+                "run": "yarn test"
+              },
+              {
+                "name": "Deploy to Heroku",
+                "env": {
+                  "HEROKU_API_TOKEN": "${{ secrets.HEROKU_API_TOKEN }}",
+                  "HEROKU_APP_NAME": "release-drafter"
+                },
+                "run": "git fetch origin master\ngit push https://heroku:$HEROKU_API_TOKEN@git.heroku.com/$HEROKU_APP_NAME.git origin/master:master --force\n"
+              },
+              {
+                "name": "yarn publish",
+                "env": {
+                  "NODE_AUTH_TOKEN": "${{ secrets.NPMJS_TOKEN }}"
+                },
+                "run": "yarn publish --access public"
+              },
+              {
+                "name": "version",
+                "id": "version",
+                "run": "tag=${GITHUB_REF/refs\\/tags\\//}\nversion=${tag#v}\nmajor=${version%%.*}\necho \"::set-output name=tag::${tag}\"\necho \"::set-output name=version::${version}\"\necho \"::set-output name=major::${major}\"\n"
+              },
+              {
+                "uses": "release-drafter/release-drafter@master",
+                "with": {
+                  "version": "${{ steps.version.outputs.version }}",
+                  "publish": true
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "force update major tag",
+                "run": "git tag v${{ steps.version.outputs.major }} ${{ steps.version.outputs.tag }} -f\ngit push origin refs/tags/v${{ steps.version.outputs.major }} -f\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-03-06T12-41-54Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-f208a0c6-2066-5fb8-9db5-dfa7bfc56729",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/release__2022-03-06T12-41-54Z__6a39e25e70866990fe0d3c1bf06ffee7edd41551.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 65,
+                  "endColumn": 76
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "4569179a478cb4b4:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2022-03-06T12-41-54Z__6a39e25e70866990fe0d3c1bf06ffee7edd41551.yml",
+          "workflow_name": "Release",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 65,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 9
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 9
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-node@v2",
+              "release-drafter/release-drafter@master"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release",
+        "true": {
+          "push": {
+            "tags": [
+              "v*.*.*"
+            ]
+          }
+        },
+        "env": {
+          "HUSKY": "0"
+        },
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Setup Node",
+                "uses": "actions/setup-node@v2",
+                "with": {
+                  "node-version": "16",
+                  "cache": "yarn",
+                  "registry-url": "https://registry.npmjs.org"
+                }
+              },
+              {
+                "name": "yarn install",
+                "run": "yarn install --frozen-lockfile"
+              },
+              {
+                "name": "yarn test",
+                "run": "yarn test"
+              },
+              {
+                "name": "Deploy to Heroku",
+                "env": {
+                  "HEROKU_API_TOKEN": "${{ secrets.HEROKU_API_TOKEN }}",
+                  "HEROKU_APP_NAME": "release-drafter"
+                },
+                "run": "git fetch origin master\ngit push https://heroku:$HEROKU_API_TOKEN@git.heroku.com/$HEROKU_APP_NAME.git origin/master:master --force\n"
+              },
+              {
+                "name": "yarn publish",
+                "env": {
+                  "NODE_AUTH_TOKEN": "${{ secrets.NPMJS_TOKEN }}"
+                },
+                "run": "yarn publish --access public"
+              },
+              {
+                "name": "version",
+                "id": "version",
+                "run": "tag=${GITHUB_REF/refs\\/tags\\//}\nversion=${tag#v}\nmajor=${version%%.*}\necho \"::set-output name=tag::${tag}\"\necho \"::set-output name=version::${version}\"\necho \"::set-output name=major::${major}\"\n"
+              },
+              {
+                "uses": "release-drafter/release-drafter@master",
+                "with": {
+                  "version": "${{ steps.version.outputs.version }}",
+                  "publish": true
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "force update major tag",
+                "run": "git tag v${{ steps.version.outputs.major }} ${{ steps.version.outputs.tag }} -f\ngit push origin refs/tags/v${{ steps.version.outputs.major }} -f\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-10-17T11-59-52Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-c2a54a68-db4e-5698-bae3-8aae3a9802fa",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/release__2022-10-17T11-59-52Z__26be07dd722ac30b3654866705774d00e09de496.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 65,
+                  "endColumn": 76
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "4569179a478cb4b4:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2022-10-17T11-59-52Z__26be07dd722ac30b3654866705774d00e09de496.yml",
+          "workflow_name": "Release",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 65,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 9
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 9
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-node@v3",
+              "release-drafter/release-drafter@master"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release",
+        "true": {
+          "push": {
+            "tags": [
+              "v*.*.*"
+            ]
+          }
+        },
+        "env": {
+          "HUSKY": "0"
+        },
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Setup Node",
+                "uses": "actions/setup-node@v3",
+                "with": {
+                  "node-version": "16",
+                  "cache": "yarn",
+                  "registry-url": "https://registry.npmjs.org"
+                }
+              },
+              {
+                "name": "yarn install",
+                "run": "yarn install --frozen-lockfile"
+              },
+              {
+                "name": "yarn test",
+                "run": "yarn test"
+              },
+              {
+                "name": "Deploy to Heroku",
+                "env": {
+                  "HEROKU_API_TOKEN": "${{ secrets.HEROKU_API_TOKEN }}",
+                  "HEROKU_APP_NAME": "release-drafter"
+                },
+                "run": "git fetch origin master\ngit push https://heroku:$HEROKU_API_TOKEN@git.heroku.com/$HEROKU_APP_NAME.git origin/master:master --force\n"
+              },
+              {
+                "name": "yarn publish",
+                "env": {
+                  "NODE_AUTH_TOKEN": "${{ secrets.NPMJS_TOKEN }}"
+                },
+                "run": "yarn publish --access public"
+              },
+              {
+                "name": "version",
+                "id": "version",
+                "run": "tag=${GITHUB_REF/refs\\/tags\\//}\nversion=${tag#v}\nmajor=${version%%.*}\necho \"tag=${tag}\" >> $GITHUB_OUTPUT\necho \"version=${version}\" >> $GITHUB_OUTPUT\necho \"major=${major}\" >> $GITHUB_OUTPUT\n"
+              },
+              {
+                "uses": "release-drafter/release-drafter@master",
+                "with": {
+                  "version": "${{ steps.version.outputs.version }}",
+                  "publish": true
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "force update major tag",
+                "run": "git tag v${{ steps.version.outputs.major }} ${{ steps.version.outputs.tag }} -f\ngit push origin refs/tags/v${{ steps.version.outputs.major }} -f\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-02-02T05-41-19Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-6c9f0574-2760-5bc7-8930-b947a6ea365a",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/release__2024-02-02T05-41-19Z__80296b4fbaeb08e43a2b957e188b283a20776b3b.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 65,
+                  "endColumn": 76
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "4569179a478cb4b4:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2024-02-02T05-41-19Z__80296b4fbaeb08e43a2b957e188b283a20776b3b.yml",
+          "workflow_name": "Release",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 65,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 9
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 9
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-node@v3",
+              "release-drafter/release-drafter@master"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release",
+        "true": {
+          "push": {
+            "tags": [
+              "v*.*.*"
+            ]
+          }
+        },
+        "env": {
+          "HUSKY": "0"
+        },
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Setup Node",
+                "uses": "actions/setup-node@v3",
+                "with": {
+                  "node-version": "20",
+                  "cache": "yarn",
+                  "registry-url": "https://registry.npmjs.org"
+                }
+              },
+              {
+                "name": "yarn install",
+                "run": "yarn install --frozen-lockfile"
+              },
+              {
+                "name": "yarn test",
+                "run": "yarn test"
+              },
+              {
+                "name": "Deploy to Heroku",
+                "env": {
+                  "HEROKU_API_TOKEN": "${{ secrets.HEROKU_API_TOKEN }}",
+                  "HEROKU_APP_NAME": "release-drafter"
+                },
+                "run": "git fetch origin master\ngit push https://heroku:$HEROKU_API_TOKEN@git.heroku.com/$HEROKU_APP_NAME.git origin/master:master --force\n"
+              },
+              {
+                "name": "yarn publish",
+                "env": {
+                  "NODE_AUTH_TOKEN": "${{ secrets.NPMJS_TOKEN }}"
+                },
+                "run": "yarn publish --access public"
+              },
+              {
+                "name": "version",
+                "id": "version",
+                "run": "tag=${GITHUB_REF/refs\\/tags\\//}\nversion=${tag#v}\nmajor=${version%%.*}\necho \"tag=${tag}\" >> $GITHUB_OUTPUT\necho \"version=${version}\" >> $GITHUB_OUTPUT\necho \"major=${major}\" >> $GITHUB_OUTPUT\n"
+              },
+              {
+                "uses": "release-drafter/release-drafter@master",
+                "with": {
+                  "version": "${{ steps.version.outputs.version }}",
+                  "publish": true
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "force update major tag",
+                "run": "git tag v${{ steps.version.outputs.major }} ${{ steps.version.outputs.tag }} -f\ngit push origin refs/tags/v${{ steps.version.outputs.major }} -f\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-03-06T12-43-33Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-d19fc950-077e-5cdc-9338-2db7970af935",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/release__2022-03-06T12-43-33Z__d63f213506806daf6b09fb181658811e57ac96e9.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 65,
+                  "endColumn": 76
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "4569179a478cb4b4:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2022-03-06T12-43-33Z__d63f213506806daf6b09fb181658811e57ac96e9.yml",
+          "workflow_name": "Release",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 65,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 9
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 9
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-node@v3",
+              "release-drafter/release-drafter@master"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release",
+        "true": {
+          "push": {
+            "tags": [
+              "v*.*.*"
+            ]
+          }
+        },
+        "env": {
+          "HUSKY": "0"
+        },
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Setup Node",
+                "uses": "actions/setup-node@v3",
+                "with": {
+                  "node-version": "16",
+                  "cache": "yarn",
+                  "registry-url": "https://registry.npmjs.org"
+                }
+              },
+              {
+                "name": "yarn install",
+                "run": "yarn install --frozen-lockfile"
+              },
+              {
+                "name": "yarn test",
+                "run": "yarn test"
+              },
+              {
+                "name": "Deploy to Heroku",
+                "env": {
+                  "HEROKU_API_TOKEN": "${{ secrets.HEROKU_API_TOKEN }}",
+                  "HEROKU_APP_NAME": "release-drafter"
+                },
+                "run": "git fetch origin master\ngit push https://heroku:$HEROKU_API_TOKEN@git.heroku.com/$HEROKU_APP_NAME.git origin/master:master --force\n"
+              },
+              {
+                "name": "yarn publish",
+                "env": {
+                  "NODE_AUTH_TOKEN": "${{ secrets.NPMJS_TOKEN }}"
+                },
+                "run": "yarn publish --access public"
+              },
+              {
+                "name": "version",
+                "id": "version",
+                "run": "tag=${GITHUB_REF/refs\\/tags\\//}\nversion=${tag#v}\nmajor=${version%%.*}\necho \"::set-output name=tag::${tag}\"\necho \"::set-output name=version::${version}\"\necho \"::set-output name=major::${major}\"\n"
+              },
+              {
+                "uses": "release-drafter/release-drafter@master",
+                "with": {
+                  "version": "${{ steps.version.outputs.version }}",
+                  "publish": true
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "force update major tag",
+                "run": "git tag v${{ steps.version.outputs.major }} ${{ steps.version.outputs.tag }} -f\ngit push origin refs/tags/v${{ steps.version.outputs.major }} -f\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-10-10T00-17-08Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-642d945a-53c6-5bee-8462-37957f38ae27",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/release__2024-10-10T00-17-08Z__1a8019e4c8fec5c7b883897bf4425c61b0b63971.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 57,
+                  "endColumn": 76
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "4569179a478cb4b4:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2024-10-10T00-17-08Z__1a8019e4c8fec5c7b883897bf4425c61b0b63971.yml",
+          "workflow_name": "Release",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 57,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 8
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 8
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-node@v3",
+              "release-drafter/release-drafter@master"
+            ],
+            "num_run_commands": 5,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release",
+        "true": {
+          "push": {
+            "tags": [
+              "v*.*.*"
+            ]
+          }
+        },
+        "env": {
+          "HUSKY": "0"
+        },
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Setup Node",
+                "uses": "actions/setup-node@v3",
+                "with": {
+                  "node-version": "20",
+                  "cache": "yarn",
+                  "registry-url": "https://registry.npmjs.org"
+                }
+              },
+              {
+                "name": "yarn install",
+                "run": "yarn install --frozen-lockfile"
+              },
+              {
+                "name": "yarn test",
+                "run": "yarn test"
+              },
+              {
+                "name": "yarn publish",
+                "env": {
+                  "NODE_AUTH_TOKEN": "${{ secrets.NPMJS_TOKEN }}"
+                },
+                "run": "yarn publish --access public"
+              },
+              {
+                "name": "version",
+                "id": "version",
+                "run": "tag=${GITHUB_REF/refs\\/tags\\//}\nversion=${tag#v}\nmajor=${version%%.*}\necho \"tag=${tag}\" >> $GITHUB_OUTPUT\necho \"version=${version}\" >> $GITHUB_OUTPUT\necho \"major=${major}\" >> $GITHUB_OUTPUT\n"
+              },
+              {
+                "uses": "release-drafter/release-drafter@master",
+                "with": {
+                  "version": "${{ steps.version.outputs.version }}",
+                  "publish": true
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "force update major tag",
+                "run": "git tag v${{ steps.version.outputs.major }} ${{ steps.version.outputs.tag }} -f\ngit push origin refs/tags/v${{ steps.version.outputs.major }} -f\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-11-01T15-32-20Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-f16626dc-2c1c-545a-bb3e-fe4ce3da3e39",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/release__2024-11-01T15-32-20Z__aa80724a5d394e0cadaeb0488c488fe21922d6ff.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 58,
+                  "endColumn": 76
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "eb84eab82bbfb4e1:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2024-11-01T15-32-20Z__aa80724a5d394e0cadaeb0488c488fe21922d6ff.yml",
+          "workflow_name": "Release",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 58,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 8
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 8
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-node@v3",
+              "release-drafter/release-drafter@master"
+            ],
+            "num_run_commands": 5,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release",
+        "true": {
+          "push": {
+            "tags": [
+              "v*.*.*"
+            ]
+          }
+        },
+        "env": {
+          "HUSKY": "0"
+        },
+        "jobs": {
+          "build": {
+            "if": "github.repository == 'release-drafter/release-drafter'",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Setup Node",
+                "uses": "actions/setup-node@v3",
+                "with": {
+                  "node-version": "20",
+                  "cache": "yarn",
+                  "registry-url": "https://registry.npmjs.org"
+                }
+              },
+              {
+                "name": "yarn install",
+                "run": "yarn install --frozen-lockfile"
+              },
+              {
+                "name": "yarn test",
+                "run": "yarn test"
+              },
+              {
+                "name": "yarn publish",
+                "env": {
+                  "NODE_AUTH_TOKEN": "${{ secrets.NPMJS_TOKEN }}"
+                },
+                "run": "yarn publish --access public"
+              },
+              {
+                "name": "version",
+                "id": "version",
+                "run": "tag=${GITHUB_REF/refs\\/tags\\//}\nversion=${tag#v}\nmajor=${version%%.*}\necho \"tag=${tag}\" >> $GITHUB_OUTPUT\necho \"version=${version}\" >> $GITHUB_OUTPUT\necho \"major=${major}\" >> $GITHUB_OUTPUT\n"
+              },
+              {
+                "uses": "release-drafter/release-drafter@master",
+                "with": {
+                  "version": "${{ steps.version.outputs.version }}",
+                  "publish": true
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "force update major tag",
+                "run": "git tag v${{ steps.version.outputs.major }} ${{ steps.version.outputs.tag }} -f\ngit push origin refs/tags/v${{ steps.version.outputs.major }} -f\n"
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

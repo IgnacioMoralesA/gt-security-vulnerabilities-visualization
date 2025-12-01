@@ -1,0 +1,5513 @@
+{
+  "repo_owner": "trufflesecurity",
+  "repo_name": "trufflehog",
+  "workflow_name": "release",
+  "history": {
+    "2022-01-19T00-59-18Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-0145ac30-d308-52f2-b4c4-4ee84ba9ae88",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/release__2022-01-19T00-59-18Z__d6ffadb1ee7dfc3f539da54d73031845c1b20892.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 10,
+                  "startColumn": 5,
+                  "endLine": 30,
+                  "endColumn": 53
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "b498d6c8168e8130:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2022-01-19T00-59-18Z__d6ffadb1ee7dfc3f539da54d73031845c1b20892.yml",
+          "workflow_name": "release",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 30,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "goreleaser": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "goreleaser": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "actions/checkout@v2",
+              "actions/setup-go@v2",
+              "goreleaser/goreleaser-action@v2"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "release",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ]
+          }
+        },
+        "jobs": {
+          "goreleaser": {
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v2",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Set up Go",
+                "uses": "actions/setup-go@v2",
+                "with": {
+                  "go-version": 1.17
+                }
+              },
+              {
+                "name": "Run GoReleaser",
+                "uses": "goreleaser/goreleaser-action@v2",
+                "with": {
+                  "distribution": "goreleaser",
+                  "version": "latest",
+                  "args": "release --rm-dist"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-02-16T02-54-47Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2022-02-16T02-54-47Z__a96de1a2cd8d81f26f1b27cff85216eff67d909a.yml",
+          "workflow_name": "release",
+          "triggers": {},
+          "permissions": {
+            "contents": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 47,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Release": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Release": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 5,
+            "actions_used": [
+              "actions/checkout@v2",
+              "actions/setup-go@v2",
+              "docker/login-action@v1",
+              "docker/setup-qemu-action@v1",
+              "goreleaser/goreleaser-action@v2"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "release",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ],
+            "branches": [
+              "main"
+            ]
+          },
+          "pull_request": null
+        },
+        "permissions": {
+          "contents": "write"
+        },
+        "jobs": {
+          "Release": {
+            "runs-on": "ubuntu-latest",
+            "env": {
+              "DOCKER_CLI_EXPERIMENTAL": "enabled"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v2",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Set up QEMU",
+                "uses": "docker/setup-qemu-action@v1"
+              },
+              {
+                "name": "Docker Login",
+                "uses": "docker/login-action@v1",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.repository_owner }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Set up Go",
+                "uses": "actions/setup-go@v2",
+                "with": {
+                  "go-version": 1.17
+                }
+              },
+              {
+                "name": "Run GoReleaser",
+                "uses": "goreleaser/goreleaser-action@v2",
+                "with": {
+                  "version": "latest",
+                  "args": "release --rm-dist"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-03-04T16-39-23Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2022-03-04T16-39-23Z__79cd8dc7d3864932e2155c14d7d693bb96f7e8e1.yml",
+          "workflow_name": "release",
+          "triggers": {},
+          "permissions": {
+            "contents": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 47,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Release": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Release": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 5,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-go@v2",
+              "docker/login-action@v1",
+              "docker/setup-qemu-action@v1",
+              "goreleaser/goreleaser-action@v2"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "release",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ],
+            "branches": [
+              "main"
+            ]
+          },
+          "pull_request": null
+        },
+        "permissions": {
+          "contents": "write"
+        },
+        "jobs": {
+          "Release": {
+            "runs-on": "ubuntu-latest",
+            "env": {
+              "DOCKER_CLI_EXPERIMENTAL": "enabled"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Set up QEMU",
+                "uses": "docker/setup-qemu-action@v1"
+              },
+              {
+                "name": "Docker Login",
+                "uses": "docker/login-action@v1",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.repository_owner }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Set up Go",
+                "uses": "actions/setup-go@v2",
+                "with": {
+                  "go-version": 1.17
+                }
+              },
+              {
+                "name": "Run GoReleaser",
+                "uses": "goreleaser/goreleaser-action@v2",
+                "with": {
+                  "version": "latest",
+                  "args": "release --rm-dist"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-03-11T18-24-36Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2022-03-11T18-24-36Z__b4ac103d11f556a8ff7647ed2a639185f49c076c.yml",
+          "workflow_name": "Release",
+          "triggers": {},
+          "permissions": {
+            "contents": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 47,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Release": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Release": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 5,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-go@v2",
+              "docker/login-action@v1",
+              "docker/setup-qemu-action@v1",
+              "goreleaser/goreleaser-action@v2"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ],
+            "branches": [
+              "main"
+            ]
+          },
+          "pull_request": null
+        },
+        "permissions": {
+          "contents": "write"
+        },
+        "jobs": {
+          "Release": {
+            "runs-on": "ubuntu-latest",
+            "env": {
+              "DOCKER_CLI_EXPERIMENTAL": "enabled"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Set up QEMU",
+                "uses": "docker/setup-qemu-action@v1"
+              },
+              {
+                "name": "Docker Login",
+                "uses": "docker/login-action@v1",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.repository_owner }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Set up Go",
+                "uses": "actions/setup-go@v2",
+                "with": {
+                  "go-version": 1.17
+                }
+              },
+              {
+                "name": "Run GoReleaser",
+                "uses": "goreleaser/goreleaser-action@v2",
+                "with": {
+                  "version": "latest",
+                  "args": "release --rm-dist"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-03-12T15-52-11Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2022-03-12T15-52-11Z__fcaca71fe4cbe9e495bb4f0b51cc0a948208e262.yml",
+          "workflow_name": "Release",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "packages": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 48,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Release": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Release": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 5,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-go@v2",
+              "docker/login-action@v1",
+              "docker/setup-qemu-action@v1",
+              "goreleaser/goreleaser-action@v2"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ],
+            "branches": [
+              "main"
+            ]
+          },
+          "pull_request": null
+        },
+        "permissions": {
+          "contents": "write",
+          "packages": "write"
+        },
+        "jobs": {
+          "Release": {
+            "runs-on": "ubuntu-latest",
+            "env": {
+              "DOCKER_CLI_EXPERIMENTAL": "enabled"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Set up QEMU",
+                "uses": "docker/setup-qemu-action@v1"
+              },
+              {
+                "name": "Docker Login",
+                "uses": "docker/login-action@v1",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.repository_owner }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Set up Go",
+                "uses": "actions/setup-go@v2",
+                "with": {
+                  "go-version": 1.17
+                }
+              },
+              {
+                "name": "Run GoReleaser",
+                "uses": "goreleaser/goreleaser-action@v2",
+                "with": {
+                  "version": "latest",
+                  "args": "release --rm-dist"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-04-01T06-07-13Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2022-04-01T06-07-13Z__f28edd7a5137df8e0aa64491bf7b75aa9c8b90a9.yml",
+          "workflow_name": "Release",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "packages": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 49,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Release": 5
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Release": 5
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 5,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-go@v2",
+              "docker/login-action@v1",
+              "docker/setup-qemu-action@v1",
+              "goreleaser/goreleaser-action@v2"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ],
+            "branches": [
+              "main"
+            ]
+          },
+          "pull_request": null
+        },
+        "permissions": {
+          "contents": "write",
+          "packages": "write"
+        },
+        "jobs": {
+          "Release": {
+            "runs-on": "ubuntu-latest",
+            "env": {
+              "DOCKER_CLI_EXPERIMENTAL": "enabled"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Set up QEMU",
+                "uses": "docker/setup-qemu-action@v1"
+              },
+              {
+                "name": "Docker Login",
+                "uses": "docker/login-action@v1",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.repository_owner }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Set up Go",
+                "uses": "actions/setup-go@v2",
+                "with": {
+                  "go-version": 1.17
+                }
+              },
+              {
+                "name": "Run GoReleaser",
+                "uses": "goreleaser/goreleaser-action@v2",
+                "with": {
+                  "distribution": "goreleaser",
+                  "version": "latest",
+                  "args": "release --rm-dist"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-04-03T20-52-12Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2022-04-03T20-52-12Z__b3788ac9acc81b50b4107219f4f621ac859b36f8.yml",
+          "workflow_name": "Release",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "packages": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 54,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Release": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Release": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 6,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-go@v2",
+              "docker/login-action@v1",
+              "docker/setup-qemu-action@v1",
+              "goreleaser/goreleaser-action@v2"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ],
+            "branches": [
+              "main"
+            ]
+          },
+          "pull_request": null
+        },
+        "permissions": {
+          "contents": "write",
+          "packages": "write"
+        },
+        "jobs": {
+          "Release": {
+            "runs-on": "ubuntu-latest",
+            "env": {
+              "DOCKER_CLI_EXPERIMENTAL": "enabled"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Set up QEMU",
+                "uses": "docker/setup-qemu-action@v1"
+              },
+              {
+                "name": "Docker Login to DockerHub",
+                "uses": "docker/login-action@v1",
+                "with": {
+                  "username": "${{ secrets.DOCKERHUB_USERNAME }}",
+                  "password": "${{ secrets.DOCKERHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Docker Login to GitHub Container Registry",
+                "uses": "docker/login-action@v1",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.repository_owner }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Set up Go",
+                "uses": "actions/setup-go@v2",
+                "with": {
+                  "go-version": 1.17
+                }
+              },
+              {
+                "name": "Run GoReleaser",
+                "uses": "goreleaser/goreleaser-action@v2",
+                "with": {
+                  "distribution": "goreleaser",
+                  "version": "latest",
+                  "args": "release --rm-dist"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-04-11T23-36-04Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2022-04-11T23-36-04Z__7019fa1686258828b46c8d9935b917ba007ba6b0.yml",
+          "workflow_name": "Release",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "packages": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 54,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Release": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Release": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 6,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-go@v3",
+              "docker/login-action@v1",
+              "docker/setup-qemu-action@v1",
+              "goreleaser/goreleaser-action@v2"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ],
+            "branches": [
+              "main"
+            ]
+          },
+          "pull_request": null
+        },
+        "permissions": {
+          "contents": "write",
+          "packages": "write"
+        },
+        "jobs": {
+          "Release": {
+            "runs-on": "ubuntu-latest",
+            "env": {
+              "DOCKER_CLI_EXPERIMENTAL": "enabled"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Set up QEMU",
+                "uses": "docker/setup-qemu-action@v1"
+              },
+              {
+                "name": "Docker Login to DockerHub",
+                "uses": "docker/login-action@v1",
+                "with": {
+                  "username": "${{ secrets.DOCKERHUB_USERNAME }}",
+                  "password": "${{ secrets.DOCKERHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Docker Login to GitHub Container Registry",
+                "uses": "docker/login-action@v1",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.repository_owner }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Set up Go",
+                "uses": "actions/setup-go@v3",
+                "with": {
+                  "go-version": 1.17
+                }
+              },
+              {
+                "name": "Run GoReleaser",
+                "uses": "goreleaser/goreleaser-action@v2",
+                "with": {
+                  "distribution": "goreleaser",
+                  "version": "latest",
+                  "args": "release --rm-dist"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-04-15T21-04-45Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2022-04-15T21-04-45Z__b970c43069625a288b215dd7e6b0ddf05503b122.yml",
+          "workflow_name": "Release",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "packages": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 55,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Release": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Release": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 6,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-go@v3",
+              "docker/login-action@v1",
+              "docker/setup-qemu-action@v1",
+              "goreleaser/goreleaser-action@v2"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ],
+            "branches": [
+              "main"
+            ]
+          },
+          "pull_request": null
+        },
+        "permissions": {
+          "contents": "write",
+          "packages": "write"
+        },
+        "jobs": {
+          "Release": {
+            "runs-on": "ubuntu-latest",
+            "env": {
+              "DOCKER_CLI_EXPERIMENTAL": "enabled"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Set up QEMU",
+                "uses": "docker/setup-qemu-action@v1"
+              },
+              {
+                "name": "Docker Login to DockerHub",
+                "uses": "docker/login-action@v1",
+                "with": {
+                  "username": "${{ secrets.DOCKERHUB_USERNAME }}",
+                  "password": "${{ secrets.DOCKERHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Docker Login to GitHub Container Registry",
+                "uses": "docker/login-action@v1",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.repository_owner }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Set up Go",
+                "uses": "actions/setup-go@v3",
+                "with": {
+                  "go-version": 1.17
+                }
+              },
+              {
+                "name": "Run GoReleaser",
+                "uses": "goreleaser/goreleaser-action@v2",
+                "with": {
+                  "distribution": "goreleaser",
+                  "version": "latest",
+                  "args": "release --rm-dist"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}",
+                  "HOMEBREW_TAP_TOKEN": "${{ secrets.HOMEBREW_TAP_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-05-09T15-39-09Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2022-05-09T15-39-09Z__78d04d807f962ec230ff2daddb75b7d2c3ca090f.yml",
+          "workflow_name": "Release",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "packages": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 55,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Release": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Release": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 6,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-go@v3",
+              "docker/login-action@v2",
+              "docker/setup-qemu-action@v1",
+              "goreleaser/goreleaser-action@v2"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ],
+            "branches": [
+              "main"
+            ]
+          },
+          "pull_request": null
+        },
+        "permissions": {
+          "contents": "write",
+          "packages": "write"
+        },
+        "jobs": {
+          "Release": {
+            "runs-on": "ubuntu-latest",
+            "env": {
+              "DOCKER_CLI_EXPERIMENTAL": "enabled"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Set up QEMU",
+                "uses": "docker/setup-qemu-action@v1"
+              },
+              {
+                "name": "Docker Login to DockerHub",
+                "uses": "docker/login-action@v2",
+                "with": {
+                  "username": "${{ secrets.DOCKERHUB_USERNAME }}",
+                  "password": "${{ secrets.DOCKERHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Docker Login to GitHub Container Registry",
+                "uses": "docker/login-action@v2",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.repository_owner }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Set up Go",
+                "uses": "actions/setup-go@v3",
+                "with": {
+                  "go-version": 1.17
+                }
+              },
+              {
+                "name": "Run GoReleaser",
+                "uses": "goreleaser/goreleaser-action@v2",
+                "with": {
+                  "distribution": "goreleaser",
+                  "version": "latest",
+                  "args": "release --rm-dist"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}",
+                  "HOMEBREW_TAP_TOKEN": "${{ secrets.HOMEBREW_TAP_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-05-09T15-40-57Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2022-05-09T15-40-57Z__cebb2e0b666bd9a1da4b90b54bcc503e3f0fb52d.yml",
+          "workflow_name": "Release",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "packages": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 55,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Release": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Release": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 6,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-go@v3",
+              "docker/login-action@v2",
+              "docker/setup-qemu-action@v2",
+              "goreleaser/goreleaser-action@v2"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ],
+            "branches": [
+              "main"
+            ]
+          },
+          "pull_request": null
+        },
+        "permissions": {
+          "contents": "write",
+          "packages": "write"
+        },
+        "jobs": {
+          "Release": {
+            "runs-on": "ubuntu-latest",
+            "env": {
+              "DOCKER_CLI_EXPERIMENTAL": "enabled"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Set up QEMU",
+                "uses": "docker/setup-qemu-action@v2"
+              },
+              {
+                "name": "Docker Login to DockerHub",
+                "uses": "docker/login-action@v2",
+                "with": {
+                  "username": "${{ secrets.DOCKERHUB_USERNAME }}",
+                  "password": "${{ secrets.DOCKERHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Docker Login to GitHub Container Registry",
+                "uses": "docker/login-action@v2",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.repository_owner }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Set up Go",
+                "uses": "actions/setup-go@v3",
+                "with": {
+                  "go-version": 1.17
+                }
+              },
+              {
+                "name": "Run GoReleaser",
+                "uses": "goreleaser/goreleaser-action@v2",
+                "with": {
+                  "distribution": "goreleaser",
+                  "version": "latest",
+                  "args": "release --rm-dist"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}",
+                  "HOMEBREW_TAP_TOKEN": "${{ secrets.HOMEBREW_TAP_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-05-19T16-01-50Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2022-05-19T16-01-50Z__4d3c2d70e5a431a632324ec595d010dd1c8136e3.yml",
+          "workflow_name": "Release",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "packages": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 55,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Release": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Release": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 6,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-go@v3",
+              "docker/login-action@v2",
+              "docker/setup-qemu-action@v2",
+              "goreleaser/goreleaser-action@v2"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ],
+            "branches": [
+              "main"
+            ]
+          },
+          "pull_request": null
+        },
+        "permissions": {
+          "contents": "write",
+          "packages": "write"
+        },
+        "jobs": {
+          "Release": {
+            "runs-on": "ubuntu-latest",
+            "env": {
+              "DOCKER_CLI_EXPERIMENTAL": "enabled"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Set up QEMU",
+                "uses": "docker/setup-qemu-action@v2"
+              },
+              {
+                "name": "Docker Login to DockerHub",
+                "uses": "docker/login-action@v2",
+                "with": {
+                  "username": "${{ secrets.DOCKERHUB_USERNAME }}",
+                  "password": "${{ secrets.DOCKERHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Docker Login to GitHub Container Registry",
+                "uses": "docker/login-action@v2",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.repository_owner }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Set up Go",
+                "uses": "actions/setup-go@v3",
+                "with": {
+                  "go-version": "1.18"
+                }
+              },
+              {
+                "name": "Run GoReleaser",
+                "uses": "goreleaser/goreleaser-action@v2",
+                "with": {
+                  "distribution": "goreleaser",
+                  "version": "latest",
+                  "args": "release --rm-dist"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}",
+                  "HOMEBREW_TAP_TOKEN": "${{ secrets.HOMEBREW_TAP_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-05-23T18-22-44Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2022-05-23T18-22-44Z__3c5c2b6d283fbcc809e2c6e9d08c66081800b7a1.yml",
+          "workflow_name": "Release",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "packages": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 55,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Release": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Release": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 6,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-go@v3",
+              "docker/login-action@v2",
+              "docker/setup-qemu-action@v2",
+              "goreleaser/goreleaser-action@v3"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ],
+            "branches": [
+              "main"
+            ]
+          },
+          "pull_request": null
+        },
+        "permissions": {
+          "contents": "write",
+          "packages": "write"
+        },
+        "jobs": {
+          "Release": {
+            "runs-on": "ubuntu-latest",
+            "env": {
+              "DOCKER_CLI_EXPERIMENTAL": "enabled"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Set up QEMU",
+                "uses": "docker/setup-qemu-action@v2"
+              },
+              {
+                "name": "Docker Login to DockerHub",
+                "uses": "docker/login-action@v2",
+                "with": {
+                  "username": "${{ secrets.DOCKERHUB_USERNAME }}",
+                  "password": "${{ secrets.DOCKERHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Docker Login to GitHub Container Registry",
+                "uses": "docker/login-action@v2",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.repository_owner }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Set up Go",
+                "uses": "actions/setup-go@v3",
+                "with": {
+                  "go-version": "1.18"
+                }
+              },
+              {
+                "name": "Run GoReleaser",
+                "uses": "goreleaser/goreleaser-action@v3",
+                "with": {
+                  "distribution": "goreleaser",
+                  "version": "latest",
+                  "args": "release --rm-dist"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}",
+                  "HOMEBREW_TAP_TOKEN": "${{ secrets.HOMEBREW_TAP_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-05-24T04-13-32Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2022-05-24T04-13-32Z__0eac3be94c085425acf2680852bff7253951f59b.yml",
+          "workflow_name": "Release",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "packages": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 54,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Release": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Release": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 6,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-go@v3",
+              "docker/login-action@v2",
+              "docker/setup-qemu-action@v2",
+              "goreleaser/goreleaser-action@v3"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ],
+            "branches": [
+              "main"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "packages": "write"
+        },
+        "jobs": {
+          "Release": {
+            "runs-on": "ubuntu-latest",
+            "env": {
+              "DOCKER_CLI_EXPERIMENTAL": "enabled"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Set up QEMU",
+                "uses": "docker/setup-qemu-action@v2"
+              },
+              {
+                "name": "Docker Login to DockerHub",
+                "uses": "docker/login-action@v2",
+                "with": {
+                  "username": "${{ secrets.DOCKERHUB_USERNAME }}",
+                  "password": "${{ secrets.DOCKERHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Docker Login to GitHub Container Registry",
+                "uses": "docker/login-action@v2",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.repository_owner }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Set up Go",
+                "uses": "actions/setup-go@v3",
+                "with": {
+                  "go-version": "1.18"
+                }
+              },
+              {
+                "name": "Run GoReleaser",
+                "uses": "goreleaser/goreleaser-action@v3",
+                "with": {
+                  "distribution": "goreleaser",
+                  "version": "latest",
+                  "args": "release --rm-dist"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}",
+                  "HOMEBREW_TAP_TOKEN": "${{ secrets.HOMEBREW_TAP_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-01-09T17-20-41Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2023-01-09T17-20-41Z__705c01e5f3b4676dc1ab43ba67dcdc5444018356.yml",
+          "workflow_name": "Release",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "packages": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 54,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Release": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Release": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 6,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-go@v3",
+              "docker/login-action@v2",
+              "docker/setup-qemu-action@v2",
+              "goreleaser/goreleaser-action@v4"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ],
+            "branches": [
+              "main"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "packages": "write"
+        },
+        "jobs": {
+          "Release": {
+            "runs-on": "ubuntu-latest",
+            "env": {
+              "DOCKER_CLI_EXPERIMENTAL": "enabled"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Set up QEMU",
+                "uses": "docker/setup-qemu-action@v2"
+              },
+              {
+                "name": "Docker Login to DockerHub",
+                "uses": "docker/login-action@v2",
+                "with": {
+                  "username": "${{ secrets.DOCKERHUB_USERNAME }}",
+                  "password": "${{ secrets.DOCKERHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Docker Login to GitHub Container Registry",
+                "uses": "docker/login-action@v2",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.repository_owner }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Set up Go",
+                "uses": "actions/setup-go@v3",
+                "with": {
+                  "go-version": "1.18"
+                }
+              },
+              {
+                "name": "Run GoReleaser",
+                "uses": "goreleaser/goreleaser-action@v4",
+                "with": {
+                  "distribution": "goreleaser",
+                  "version": "latest",
+                  "args": "release --rm-dist"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}",
+                  "HOMEBREW_TAP_TOKEN": "${{ secrets.HOMEBREW_TAP_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-03-02T17-57-38Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2023-03-02T17-57-38Z__4500ac3b10b80038b89a071de0d0099102875a11.yml",
+          "workflow_name": "Release",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "packages": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 47,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Release": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Release": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 6,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-go@v3",
+              "docker/login-action@v2",
+              "docker/setup-qemu-action@v2",
+              "goreleaser/goreleaser-action@v4"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "packages": "write"
+        },
+        "jobs": {
+          "Release": {
+            "runs-on": "ubuntu-latest",
+            "env": {
+              "DOCKER_CLI_EXPERIMENTAL": "enabled"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Set up QEMU",
+                "uses": "docker/setup-qemu-action@v2"
+              },
+              {
+                "name": "Docker Login to DockerHub",
+                "uses": "docker/login-action@v2",
+                "with": {
+                  "username": "${{ secrets.DOCKERHUB_USERNAME }}",
+                  "password": "${{ secrets.DOCKERHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Docker Login to GitHub Container Registry",
+                "uses": "docker/login-action@v2",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.repository_owner }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Set up Go",
+                "uses": "actions/setup-go@v3",
+                "with": {
+                  "go-version": "1.18"
+                }
+              },
+              {
+                "name": "Run GoReleaser",
+                "uses": "goreleaser/goreleaser-action@v4",
+                "with": {
+                  "distribution": "goreleaser",
+                  "version": "latest",
+                  "args": "release --rm-dist"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}",
+                  "HOMEBREW_TAP_TOKEN": "${{ secrets.HOMEBREW_TAP_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-03-21T19-50-12Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2023-03-21T19-50-12Z__87c9e0db0763f8e371700cb8abc8bb0f596b2ccf.yml",
+          "workflow_name": "Release",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "packages": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 47,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Release": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Release": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 6,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-go@v4",
+              "docker/login-action@v2",
+              "docker/setup-qemu-action@v2",
+              "goreleaser/goreleaser-action@v4"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "packages": "write"
+        },
+        "jobs": {
+          "Release": {
+            "runs-on": "ubuntu-latest",
+            "env": {
+              "DOCKER_CLI_EXPERIMENTAL": "enabled"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Set up QEMU",
+                "uses": "docker/setup-qemu-action@v2"
+              },
+              {
+                "name": "Docker Login to DockerHub",
+                "uses": "docker/login-action@v2",
+                "with": {
+                  "username": "${{ secrets.DOCKERHUB_USERNAME }}",
+                  "password": "${{ secrets.DOCKERHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Docker Login to GitHub Container Registry",
+                "uses": "docker/login-action@v2",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.repository_owner }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Set up Go",
+                "uses": "actions/setup-go@v4",
+                "with": {
+                  "go-version": "1.18"
+                }
+              },
+              {
+                "name": "Run GoReleaser",
+                "uses": "goreleaser/goreleaser-action@v4",
+                "with": {
+                  "distribution": "goreleaser",
+                  "version": "latest",
+                  "args": "release --rm-dist"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}",
+                  "HOMEBREW_TAP_TOKEN": "${{ secrets.HOMEBREW_TAP_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-03-31T21-37-03Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2023-03-31T21-37-03Z__9b941efa1a29aad75da4a5088db5f5908af28b57.yml",
+          "workflow_name": "Release",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "packages": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 47,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Release": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Release": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 6,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-go@v4",
+              "docker/login-action@v2",
+              "docker/setup-qemu-action@v2",
+              "goreleaser/goreleaser-action@v4"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "packages": "write"
+        },
+        "jobs": {
+          "Release": {
+            "runs-on": "ubuntu-latest",
+            "env": {
+              "DOCKER_CLI_EXPERIMENTAL": "enabled"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Set up QEMU",
+                "uses": "docker/setup-qemu-action@v2"
+              },
+              {
+                "name": "Docker Login to DockerHub",
+                "uses": "docker/login-action@v2",
+                "with": {
+                  "username": "${{ secrets.DOCKERHUB_USERNAME }}",
+                  "password": "${{ secrets.DOCKERHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Docker Login to GitHub Container Registry",
+                "uses": "docker/login-action@v2",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.repository_owner }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Set up Go",
+                "uses": "actions/setup-go@v4",
+                "with": {
+                  "go-version": "1.20"
+                }
+              },
+              {
+                "name": "Run GoReleaser",
+                "uses": "goreleaser/goreleaser-action@v4",
+                "with": {
+                  "distribution": "goreleaser",
+                  "version": "latest",
+                  "args": "release --rm-dist"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}",
+                  "HOMEBREW_TAP_TOKEN": "${{ secrets.HOMEBREW_TAP_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-08-14T20-36-25Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2023-08-14T20-36-25Z__eee01e036194906d6483f596a517d836769c7b52.yml",
+          "workflow_name": "Release",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "packages": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 47,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Release": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Release": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 6,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-go@v4",
+              "docker/login-action@v2",
+              "docker/setup-qemu-action@v2",
+              "goreleaser/goreleaser-action@v4"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "packages": "write"
+        },
+        "jobs": {
+          "Release": {
+            "runs-on": "ubuntu-latest",
+            "env": {
+              "DOCKER_CLI_EXPERIMENTAL": "enabled"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Set up QEMU",
+                "uses": "docker/setup-qemu-action@v2"
+              },
+              {
+                "name": "Docker Login to DockerHub",
+                "uses": "docker/login-action@v2",
+                "with": {
+                  "username": "${{ secrets.DOCKERHUB_USERNAME }}",
+                  "password": "${{ secrets.DOCKERHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Docker Login to GitHub Container Registry",
+                "uses": "docker/login-action@v2",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.repository_owner }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Set up Go",
+                "uses": "actions/setup-go@v4",
+                "with": {
+                  "go-version": "1.21"
+                }
+              },
+              {
+                "name": "Run GoReleaser",
+                "uses": "goreleaser/goreleaser-action@v4",
+                "with": {
+                  "distribution": "goreleaser",
+                  "version": "latest",
+                  "args": "release --rm-dist"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}",
+                  "HOMEBREW_TAP_TOKEN": "${{ secrets.HOMEBREW_TAP_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-10-02T14-37-57Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2023-10-02T14-37-57Z__c7965b2df6d1f5d0a20ad9eecadf002fd74a8b5c.yml",
+          "workflow_name": "Release",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "packages": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 47,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Release": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Release": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 6,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v4",
+              "docker/login-action@v2",
+              "docker/setup-qemu-action@v2",
+              "goreleaser/goreleaser-action@v4"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "packages": "write"
+        },
+        "jobs": {
+          "Release": {
+            "runs-on": "ubuntu-latest",
+            "env": {
+              "DOCKER_CLI_EXPERIMENTAL": "enabled"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Set up QEMU",
+                "uses": "docker/setup-qemu-action@v2"
+              },
+              {
+                "name": "Docker Login to DockerHub",
+                "uses": "docker/login-action@v2",
+                "with": {
+                  "username": "${{ secrets.DOCKERHUB_USERNAME }}",
+                  "password": "${{ secrets.DOCKERHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Docker Login to GitHub Container Registry",
+                "uses": "docker/login-action@v2",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.repository_owner }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Set up Go",
+                "uses": "actions/setup-go@v4",
+                "with": {
+                  "go-version": "1.21"
+                }
+              },
+              {
+                "name": "Run GoReleaser",
+                "uses": "goreleaser/goreleaser-action@v4",
+                "with": {
+                  "distribution": "goreleaser",
+                  "version": "latest",
+                  "args": "release --rm-dist"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}",
+                  "HOMEBREW_TAP_TOKEN": "${{ secrets.HOMEBREW_TAP_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-10-02T14-39-13Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2023-10-02T14-39-13Z__dd183fab8316c2ae36ad0bcae49b35c115240877.yml",
+          "workflow_name": "Release",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "packages": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 47,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Release": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Release": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 6,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v4",
+              "docker/login-action@v3",
+              "docker/setup-qemu-action@v2",
+              "goreleaser/goreleaser-action@v4"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "packages": "write"
+        },
+        "jobs": {
+          "Release": {
+            "runs-on": "ubuntu-latest",
+            "env": {
+              "DOCKER_CLI_EXPERIMENTAL": "enabled"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Set up QEMU",
+                "uses": "docker/setup-qemu-action@v2"
+              },
+              {
+                "name": "Docker Login to DockerHub",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "username": "${{ secrets.DOCKERHUB_USERNAME }}",
+                  "password": "${{ secrets.DOCKERHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Docker Login to GitHub Container Registry",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.repository_owner }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Set up Go",
+                "uses": "actions/setup-go@v4",
+                "with": {
+                  "go-version": "1.21"
+                }
+              },
+              {
+                "name": "Run GoReleaser",
+                "uses": "goreleaser/goreleaser-action@v4",
+                "with": {
+                  "distribution": "goreleaser",
+                  "version": "latest",
+                  "args": "release --rm-dist"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}",
+                  "HOMEBREW_TAP_TOKEN": "${{ secrets.HOMEBREW_TAP_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-10-02T14-40-28Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2023-10-02T14-40-28Z__df5fa5642971d6c4396cdd6530dd7bdb98dd5c37.yml",
+          "workflow_name": "Release",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "packages": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 47,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Release": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Release": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 6,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v4",
+              "docker/login-action@v3",
+              "docker/setup-qemu-action@v2",
+              "goreleaser/goreleaser-action@v5"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "packages": "write"
+        },
+        "jobs": {
+          "Release": {
+            "runs-on": "ubuntu-latest",
+            "env": {
+              "DOCKER_CLI_EXPERIMENTAL": "enabled"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Set up QEMU",
+                "uses": "docker/setup-qemu-action@v2"
+              },
+              {
+                "name": "Docker Login to DockerHub",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "username": "${{ secrets.DOCKERHUB_USERNAME }}",
+                  "password": "${{ secrets.DOCKERHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Docker Login to GitHub Container Registry",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.repository_owner }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Set up Go",
+                "uses": "actions/setup-go@v4",
+                "with": {
+                  "go-version": "1.21"
+                }
+              },
+              {
+                "name": "Run GoReleaser",
+                "uses": "goreleaser/goreleaser-action@v5",
+                "with": {
+                  "distribution": "goreleaser",
+                  "version": "latest",
+                  "args": "release --rm-dist"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}",
+                  "HOMEBREW_TAP_TOKEN": "${{ secrets.HOMEBREW_TAP_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-10-02T14-45-47Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2023-10-02T14-45-47Z__83391d31da92b4bf5204da82328f2e5bfc7433f6.yml",
+          "workflow_name": "Release",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "packages": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 47,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Release": 6
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Release": 6
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 6,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v4",
+              "docker/login-action@v3",
+              "docker/setup-qemu-action@v3",
+              "goreleaser/goreleaser-action@v5"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "packages": "write"
+        },
+        "jobs": {
+          "Release": {
+            "runs-on": "ubuntu-latest",
+            "env": {
+              "DOCKER_CLI_EXPERIMENTAL": "enabled"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Set up QEMU",
+                "uses": "docker/setup-qemu-action@v3"
+              },
+              {
+                "name": "Docker Login to DockerHub",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "username": "${{ secrets.DOCKERHUB_USERNAME }}",
+                  "password": "${{ secrets.DOCKERHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Docker Login to GitHub Container Registry",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.repository_owner }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Set up Go",
+                "uses": "actions/setup-go@v4",
+                "with": {
+                  "go-version": "1.21"
+                }
+              },
+              {
+                "name": "Run GoReleaser",
+                "uses": "goreleaser/goreleaser-action@v5",
+                "with": {
+                  "distribution": "goreleaser",
+                  "version": "latest",
+                  "args": "release --rm-dist"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}",
+                  "HOMEBREW_TAP_TOKEN": "${{ secrets.HOMEBREW_TAP_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-11-21T22-02-28Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2023-11-21T22-02-28Z__11df3dc747a1a322f366d171cc52a8d0e75bc352.yml",
+          "workflow_name": "Release",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "packages": "write",
+            "id-token": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 50,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Release": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Release": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 7,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v4",
+              "docker/login-action@v3",
+              "docker/setup-qemu-action@v3",
+              "goreleaser/goreleaser-action@v5",
+              "sigstore/cosign-installer@11086d25041f77fe8fe7b9ea4e48e3b9192b8f19"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "packages": "write",
+          "id-token": "write"
+        },
+        "jobs": {
+          "Release": {
+            "runs-on": "ubuntu-latest",
+            "env": {
+              "DOCKER_CLI_EXPERIMENTAL": "enabled"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Set up QEMU",
+                "uses": "docker/setup-qemu-action@v3"
+              },
+              {
+                "name": "Docker Login to DockerHub",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "username": "${{ secrets.DOCKERHUB_USERNAME }}",
+                  "password": "${{ secrets.DOCKERHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Docker Login to GitHub Container Registry",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.repository_owner }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Set up Go",
+                "uses": "actions/setup-go@v4",
+                "with": {
+                  "go-version": "1.21"
+                }
+              },
+              {
+                "name": "Cosign install",
+                "uses": "sigstore/cosign-installer@11086d25041f77fe8fe7b9ea4e48e3b9192b8f19"
+              },
+              {
+                "name": "Run GoReleaser",
+                "uses": "goreleaser/goreleaser-action@v5",
+                "with": {
+                  "distribution": "goreleaser",
+                  "version": "latest",
+                  "args": "release --rm-dist"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}",
+                  "HOMEBREW_TAP_TOKEN": "${{ secrets.HOMEBREW_TAP_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-12-01T18-48-34Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2023-12-01T18-48-34Z__02ba66d29615cabde677ff846301f3a30a3b7a72.yml",
+          "workflow_name": "Release",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "packages": "write",
+            "id-token": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 50,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Release": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Release": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 7,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v4",
+              "docker/login-action@v3",
+              "docker/setup-qemu-action@v3",
+              "goreleaser/goreleaser-action@v5",
+              "sigstore/cosign-installer@1fc5bd396d372bee37d608f955b336615edf79c8"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "packages": "write",
+          "id-token": "write"
+        },
+        "jobs": {
+          "Release": {
+            "runs-on": "ubuntu-latest",
+            "env": {
+              "DOCKER_CLI_EXPERIMENTAL": "enabled"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Set up QEMU",
+                "uses": "docker/setup-qemu-action@v3"
+              },
+              {
+                "name": "Docker Login to DockerHub",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "username": "${{ secrets.DOCKERHUB_USERNAME }}",
+                  "password": "${{ secrets.DOCKERHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Docker Login to GitHub Container Registry",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.repository_owner }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Set up Go",
+                "uses": "actions/setup-go@v4",
+                "with": {
+                  "go-version": "1.21"
+                }
+              },
+              {
+                "name": "Cosign install",
+                "uses": "sigstore/cosign-installer@1fc5bd396d372bee37d608f955b336615edf79c8"
+              },
+              {
+                "name": "Run GoReleaser",
+                "uses": "goreleaser/goreleaser-action@v5",
+                "with": {
+                  "distribution": "goreleaser",
+                  "version": "latest",
+                  "args": "release --rm-dist"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}",
+                  "HOMEBREW_TAP_TOKEN": "${{ secrets.HOMEBREW_TAP_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-01-11T19-25-29Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2024-01-11T19-25-29Z__fe94986911b63262f3a68b3e1515ce8c23622d09.yml",
+          "workflow_name": "Release",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "packages": "write",
+            "id-token": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 50,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Release": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Release": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 7,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v4",
+              "docker/login-action@v3",
+              "docker/setup-qemu-action@v3",
+              "goreleaser/goreleaser-action@v5",
+              "sigstore/cosign-installer@9614fae9e5c5eddabb09f90a270fcb487c9f7149"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "packages": "write",
+          "id-token": "write"
+        },
+        "jobs": {
+          "Release": {
+            "runs-on": "ubuntu-latest",
+            "env": {
+              "DOCKER_CLI_EXPERIMENTAL": "enabled"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Set up QEMU",
+                "uses": "docker/setup-qemu-action@v3"
+              },
+              {
+                "name": "Docker Login to DockerHub",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "username": "${{ secrets.DOCKERHUB_USERNAME }}",
+                  "password": "${{ secrets.DOCKERHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Docker Login to GitHub Container Registry",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.repository_owner }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Set up Go",
+                "uses": "actions/setup-go@v4",
+                "with": {
+                  "go-version": "1.21"
+                }
+              },
+              {
+                "name": "Cosign install",
+                "uses": "sigstore/cosign-installer@9614fae9e5c5eddabb09f90a270fcb487c9f7149"
+              },
+              {
+                "name": "Run GoReleaser",
+                "uses": "goreleaser/goreleaser-action@v5",
+                "with": {
+                  "distribution": "goreleaser",
+                  "version": "latest",
+                  "args": "release --rm-dist"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}",
+                  "HOMEBREW_TAP_TOKEN": "${{ secrets.HOMEBREW_TAP_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-02-12T01-18-48Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2024-02-12T01-18-48Z__2923d90bd7298752dfafad3c2d5df25c06a612ca.yml",
+          "workflow_name": "Release",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "packages": "write",
+            "id-token": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 50,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Release": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Release": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 7,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v4",
+              "docker/login-action@v3",
+              "docker/setup-qemu-action@v3",
+              "goreleaser/goreleaser-action@v5",
+              "sigstore/cosign-installer@e1523de7571e31dbe865fd2e80c5c7c23ae71eb4"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "packages": "write",
+          "id-token": "write"
+        },
+        "jobs": {
+          "Release": {
+            "runs-on": "ubuntu-latest",
+            "env": {
+              "DOCKER_CLI_EXPERIMENTAL": "enabled"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Set up QEMU",
+                "uses": "docker/setup-qemu-action@v3"
+              },
+              {
+                "name": "Docker Login to DockerHub",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "username": "${{ secrets.DOCKERHUB_USERNAME }}",
+                  "password": "${{ secrets.DOCKERHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Docker Login to GitHub Container Registry",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.repository_owner }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Set up Go",
+                "uses": "actions/setup-go@v4",
+                "with": {
+                  "go-version": "1.21"
+                }
+              },
+              {
+                "name": "Cosign install",
+                "uses": "sigstore/cosign-installer@e1523de7571e31dbe865fd2e80c5c7c23ae71eb4"
+              },
+              {
+                "name": "Run GoReleaser",
+                "uses": "goreleaser/goreleaser-action@v5",
+                "with": {
+                  "distribution": "goreleaser",
+                  "version": "latest",
+                  "args": "release --rm-dist"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}",
+                  "HOMEBREW_TAP_TOKEN": "${{ secrets.HOMEBREW_TAP_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-02-13T03-15-50Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2024-02-13T03-15-50Z__774c48545eda5446d0045714317e5d7db670a4d6.yml",
+          "workflow_name": "Release",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "packages": "write",
+            "id-token": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 50,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Release": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Release": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 7,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5",
+              "docker/login-action@v3",
+              "docker/setup-qemu-action@v3",
+              "goreleaser/goreleaser-action@v5",
+              "sigstore/cosign-installer@e1523de7571e31dbe865fd2e80c5c7c23ae71eb4"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "packages": "write",
+          "id-token": "write"
+        },
+        "jobs": {
+          "Release": {
+            "runs-on": "ubuntu-latest",
+            "env": {
+              "DOCKER_CLI_EXPERIMENTAL": "enabled"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Set up QEMU",
+                "uses": "docker/setup-qemu-action@v3"
+              },
+              {
+                "name": "Docker Login to DockerHub",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "username": "${{ secrets.DOCKERHUB_USERNAME }}",
+                  "password": "${{ secrets.DOCKERHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Docker Login to GitHub Container Registry",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.repository_owner }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Set up Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.21"
+                }
+              },
+              {
+                "name": "Cosign install",
+                "uses": "sigstore/cosign-installer@e1523de7571e31dbe865fd2e80c5c7c23ae71eb4"
+              },
+              {
+                "name": "Run GoReleaser",
+                "uses": "goreleaser/goreleaser-action@v5",
+                "with": {
+                  "distribution": "goreleaser",
+                  "version": "latest",
+                  "args": "release --rm-dist"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}",
+                  "HOMEBREW_TAP_TOKEN": "${{ secrets.HOMEBREW_TAP_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-03-22T15-23-04Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2024-03-22T15-23-04Z__41d58739bd32b0180af3a863a764f9163586e37a.yml",
+          "workflow_name": "Release",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "packages": "write",
+            "id-token": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 50,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Release": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Release": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 7,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5",
+              "docker/login-action@v3",
+              "docker/setup-qemu-action@v3",
+              "goreleaser/goreleaser-action@v5",
+              "sigstore/cosign-installer@e1523de7571e31dbe865fd2e80c5c7c23ae71eb4"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "packages": "write",
+          "id-token": "write"
+        },
+        "jobs": {
+          "Release": {
+            "runs-on": "ubuntu-latest",
+            "env": {
+              "DOCKER_CLI_EXPERIMENTAL": "enabled"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Set up QEMU",
+                "uses": "docker/setup-qemu-action@v3"
+              },
+              {
+                "name": "Docker Login to DockerHub",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "username": "${{ secrets.DOCKERHUB_USERNAME }}",
+                  "password": "${{ secrets.DOCKERHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Docker Login to GitHub Container Registry",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.repository_owner }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Set up Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.22"
+                }
+              },
+              {
+                "name": "Cosign install",
+                "uses": "sigstore/cosign-installer@e1523de7571e31dbe865fd2e80c5c7c23ae71eb4"
+              },
+              {
+                "name": "Run GoReleaser",
+                "uses": "goreleaser/goreleaser-action@v5",
+                "with": {
+                  "distribution": "goreleaser",
+                  "version": "latest",
+                  "args": "release --rm-dist"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}",
+                  "HOMEBREW_TAP_TOKEN": "${{ secrets.HOMEBREW_TAP_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-04-11T00-56-46Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2024-04-11T00-56-46Z__a7699f8c245e8dc61e443f228885fabaaa382020.yml",
+          "workflow_name": "Release",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "packages": "write",
+            "id-token": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 50,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Release": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Release": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 7,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5",
+              "docker/login-action@v3",
+              "docker/setup-qemu-action@v3",
+              "goreleaser/goreleaser-action@v5",
+              "sigstore/cosign-installer@59acb6260d9c0ba8f4a2f9d9b48431a222b68e20"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "packages": "write",
+          "id-token": "write"
+        },
+        "jobs": {
+          "Release": {
+            "runs-on": "ubuntu-latest",
+            "env": {
+              "DOCKER_CLI_EXPERIMENTAL": "enabled"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Set up QEMU",
+                "uses": "docker/setup-qemu-action@v3"
+              },
+              {
+                "name": "Docker Login to DockerHub",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "username": "${{ secrets.DOCKERHUB_USERNAME }}",
+                  "password": "${{ secrets.DOCKERHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Docker Login to GitHub Container Registry",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.repository_owner }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Set up Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.22"
+                }
+              },
+              {
+                "name": "Cosign install",
+                "uses": "sigstore/cosign-installer@59acb6260d9c0ba8f4a2f9d9b48431a222b68e20"
+              },
+              {
+                "name": "Run GoReleaser",
+                "uses": "goreleaser/goreleaser-action@v5",
+                "with": {
+                  "distribution": "goreleaser",
+                  "version": "latest",
+                  "args": "release --rm-dist"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}",
+                  "HOMEBREW_TAP_TOKEN": "${{ secrets.HOMEBREW_TAP_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-07-08T15-52-44Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2024-07-08T15-52-44Z__72e9e9a3b49e8bc10498c58e0727a37ad39acfb6.yml",
+          "workflow_name": "Release",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "packages": "write",
+            "id-token": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 50,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Release": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Release": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 7,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5",
+              "docker/login-action@v3",
+              "docker/setup-qemu-action@v3",
+              "goreleaser/goreleaser-action@v6",
+              "sigstore/cosign-installer@59acb6260d9c0ba8f4a2f9d9b48431a222b68e20"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "packages": "write",
+          "id-token": "write"
+        },
+        "jobs": {
+          "Release": {
+            "runs-on": "ubuntu-latest",
+            "env": {
+              "DOCKER_CLI_EXPERIMENTAL": "enabled"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Set up QEMU",
+                "uses": "docker/setup-qemu-action@v3"
+              },
+              {
+                "name": "Docker Login to DockerHub",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "username": "${{ secrets.DOCKERHUB_USERNAME }}",
+                  "password": "${{ secrets.DOCKERHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Docker Login to GitHub Container Registry",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.repository_owner }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Set up Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.22"
+                }
+              },
+              {
+                "name": "Cosign install",
+                "uses": "sigstore/cosign-installer@59acb6260d9c0ba8f4a2f9d9b48431a222b68e20"
+              },
+              {
+                "name": "Run GoReleaser",
+                "uses": "goreleaser/goreleaser-action@v6",
+                "with": {
+                  "distribution": "goreleaser",
+                  "version": "latest",
+                  "args": "release --rm-dist"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}",
+                  "HOMEBREW_TAP_TOKEN": "${{ secrets.HOMEBREW_TAP_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-07-18T14-23-59Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2024-07-18T14-23-59Z__68ec7a28a2ce9bd85d3906dbd90f6842280804d6.yml",
+          "workflow_name": "Release",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "packages": "write",
+            "id-token": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 50,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Release": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Release": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 7,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5",
+              "docker/login-action@v3",
+              "docker/setup-qemu-action@v3",
+              "goreleaser/goreleaser-action@v6",
+              "sigstore/cosign-installer@59acb6260d9c0ba8f4a2f9d9b48431a222b68e20"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "packages": "write",
+          "id-token": "write"
+        },
+        "jobs": {
+          "Release": {
+            "runs-on": "ubuntu-latest",
+            "env": {
+              "DOCKER_CLI_EXPERIMENTAL": "enabled"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Set up QEMU",
+                "uses": "docker/setup-qemu-action@v3"
+              },
+              {
+                "name": "Docker Login to DockerHub",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "username": "${{ secrets.DOCKERHUB_USERNAME }}",
+                  "password": "${{ secrets.DOCKERHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Docker Login to GitHub Container Registry",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.repository_owner }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Set up Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.22"
+                }
+              },
+              {
+                "name": "Cosign install",
+                "uses": "sigstore/cosign-installer@59acb6260d9c0ba8f4a2f9d9b48431a222b68e20"
+              },
+              {
+                "name": "Run GoReleaser",
+                "uses": "goreleaser/goreleaser-action@v6",
+                "with": {
+                  "distribution": "goreleaser",
+                  "version": "latest",
+                  "args": "release --clean"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}",
+                  "HOMEBREW_TAP_TOKEN": "${{ secrets.HOMEBREW_TAP_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-08-13T18-17-40Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2024-08-13T18-17-40Z__0ba37dbbd17101e91d4920d4ddc0820302dd3d82.yml",
+          "workflow_name": "Release",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "packages": "write",
+            "id-token": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 50,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Release": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Release": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 7,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5",
+              "docker/login-action@v3",
+              "docker/setup-qemu-action@v3",
+              "goreleaser/goreleaser-action@v6",
+              "sigstore/cosign-installer@4959ce089c160fddf62f7b42464195ba1a56d382"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "packages": "write",
+          "id-token": "write"
+        },
+        "jobs": {
+          "Release": {
+            "runs-on": "ubuntu-latest",
+            "env": {
+              "DOCKER_CLI_EXPERIMENTAL": "enabled"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Set up QEMU",
+                "uses": "docker/setup-qemu-action@v3"
+              },
+              {
+                "name": "Docker Login to DockerHub",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "username": "${{ secrets.DOCKERHUB_USERNAME }}",
+                  "password": "${{ secrets.DOCKERHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Docker Login to GitHub Container Registry",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.repository_owner }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Set up Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.22"
+                }
+              },
+              {
+                "name": "Cosign install",
+                "uses": "sigstore/cosign-installer@4959ce089c160fddf62f7b42464195ba1a56d382"
+              },
+              {
+                "name": "Run GoReleaser",
+                "uses": "goreleaser/goreleaser-action@v6",
+                "with": {
+                  "distribution": "goreleaser",
+                  "version": "latest",
+                  "args": "release --clean"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}",
+                  "HOMEBREW_TAP_TOKEN": "${{ secrets.HOMEBREW_TAP_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-09-27T16-55-15Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2024-09-27T16-55-15Z__5f3b4521d705436bb4723c5639121faf21872fc5.yml",
+          "workflow_name": "Release",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "packages": "write",
+            "id-token": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 50,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Release": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Release": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 7,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5",
+              "docker/login-action@v3",
+              "docker/setup-qemu-action@v3",
+              "goreleaser/goreleaser-action@v6",
+              "sigstore/cosign-installer@4959ce089c160fddf62f7b42464195ba1a56d382"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "packages": "write",
+          "id-token": "write"
+        },
+        "jobs": {
+          "Release": {
+            "runs-on": "ubuntu-latest",
+            "env": {
+              "DOCKER_CLI_EXPERIMENTAL": "enabled"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Set up QEMU",
+                "uses": "docker/setup-qemu-action@v3"
+              },
+              {
+                "name": "Docker Login to DockerHub",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "username": "${{ secrets.DOCKERHUB_USERNAME }}",
+                  "password": "${{ secrets.DOCKERHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Docker Login to GitHub Container Registry",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.repository_owner }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Set up Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.23"
+                }
+              },
+              {
+                "name": "Cosign install",
+                "uses": "sigstore/cosign-installer@4959ce089c160fddf62f7b42464195ba1a56d382"
+              },
+              {
+                "name": "Run GoReleaser",
+                "uses": "goreleaser/goreleaser-action@v6",
+                "with": {
+                  "distribution": "goreleaser",
+                  "version": "latest",
+                  "args": "release --clean"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}",
+                  "HOMEBREW_TAP_TOKEN": "${{ secrets.HOMEBREW_TAP_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-10-05T16-28-03Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2024-10-05T16-28-03Z__d590129c83df084247c0465a9482dcfff17af53f.yml",
+          "workflow_name": "Release",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "packages": "write",
+            "id-token": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 50,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Release": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Release": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 7,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5",
+              "docker/login-action@v3",
+              "docker/setup-qemu-action@v3",
+              "goreleaser/goreleaser-action@v6",
+              "sigstore/cosign-installer@dc72c7d5c4d10cd6bcb8cf6e3fd625a9e5e537da"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "packages": "write",
+          "id-token": "write"
+        },
+        "jobs": {
+          "Release": {
+            "runs-on": "ubuntu-latest",
+            "env": {
+              "DOCKER_CLI_EXPERIMENTAL": "enabled"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Set up QEMU",
+                "uses": "docker/setup-qemu-action@v3"
+              },
+              {
+                "name": "Docker Login to DockerHub",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "username": "${{ secrets.DOCKERHUB_USERNAME }}",
+                  "password": "${{ secrets.DOCKERHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Docker Login to GitHub Container Registry",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.repository_owner }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Set up Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.23"
+                }
+              },
+              {
+                "name": "Cosign install",
+                "uses": "sigstore/cosign-installer@dc72c7d5c4d10cd6bcb8cf6e3fd625a9e5e537da"
+              },
+              {
+                "name": "Run GoReleaser",
+                "uses": "goreleaser/goreleaser-action@v6",
+                "with": {
+                  "distribution": "goreleaser",
+                  "version": "latest",
+                  "args": "release --clean"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}",
+                  "HOMEBREW_TAP_TOKEN": "${{ secrets.HOMEBREW_TAP_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-10-17T15-04-37Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2024-10-17T15-04-37Z__c46d52b11acd43a58ca46d4e13bd19bdd3006c8d.yml",
+          "workflow_name": "Release",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "packages": "write",
+            "id-token": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 54,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Release": 8
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Release": 8
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 7,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5",
+              "docker/login-action@v3",
+              "docker/setup-qemu-action@v3",
+              "goreleaser/goreleaser-action@v6",
+              "sigstore/cosign-installer@dc72c7d5c4d10cd6bcb8cf6e3fd625a9e5e537da"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "packages": "write",
+          "id-token": "write"
+        },
+        "jobs": {
+          "Release": {
+            "runs-on": "ubuntu-latest",
+            "env": {
+              "DOCKER_CLI_EXPERIMENTAL": "enabled"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Set up QEMU",
+                "uses": "docker/setup-qemu-action@v3"
+              },
+              {
+                "name": "Docker Login to DockerHub",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "username": "${{ secrets.DOCKERHUB_USERNAME }}",
+                  "password": "${{ secrets.DOCKERHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Docker Login to GitHub Container Registry",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.repository_owner }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Set up Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.23"
+                }
+              },
+              {
+                "name": "Cosign install",
+                "uses": "sigstore/cosign-installer@dc72c7d5c4d10cd6bcb8cf6e3fd625a9e5e537da"
+              },
+              {
+                "name": "Install UPX",
+                "run": "sudo apt-get update\nsudo apt-get install -y upx\n"
+              },
+              {
+                "name": "Run GoReleaser",
+                "uses": "goreleaser/goreleaser-action@v6",
+                "with": {
+                  "distribution": "goreleaser",
+                  "version": "latest",
+                  "args": "release --clean"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}",
+                  "HOMEBREW_TAP_TOKEN": "${{ secrets.HOMEBREW_TAP_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-10-17T16-12-46Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2024-10-17T16-12-46Z__b66c1670749c06f8d18f96bcbc5a6b80f7a7108e.yml",
+          "workflow_name": "Release",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "packages": "write",
+            "id-token": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 50,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Release": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Release": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 7,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5",
+              "docker/login-action@v3",
+              "docker/setup-qemu-action@v3",
+              "goreleaser/goreleaser-action@v6",
+              "sigstore/cosign-installer@dc72c7d5c4d10cd6bcb8cf6e3fd625a9e5e537da"
+            ],
+            "num_run_commands": 0,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "packages": "write",
+          "id-token": "write"
+        },
+        "jobs": {
+          "Release": {
+            "runs-on": "ubuntu-latest",
+            "env": {
+              "DOCKER_CLI_EXPERIMENTAL": "enabled"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Set up QEMU",
+                "uses": "docker/setup-qemu-action@v3"
+              },
+              {
+                "name": "Docker Login to DockerHub",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "username": "${{ secrets.DOCKERHUB_USERNAME }}",
+                  "password": "${{ secrets.DOCKERHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Docker Login to GitHub Container Registry",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.repository_owner }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Set up Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.23"
+                }
+              },
+              {
+                "name": "Cosign install",
+                "uses": "sigstore/cosign-installer@dc72c7d5c4d10cd6bcb8cf6e3fd625a9e5e537da"
+              },
+              {
+                "name": "Run GoReleaser",
+                "uses": "goreleaser/goreleaser-action@v6",
+                "with": {
+                  "distribution": "goreleaser",
+                  "version": "latest",
+                  "args": "release --clean"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}",
+                  "HOMEBREW_TAP_TOKEN": "${{ secrets.HOMEBREW_TAP_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-02-05T21-33-44Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2025-02-05T21-33-44Z__f19d6e5d2bef8a8ceca2b7d77ec447fc304f8078.yml",
+          "workflow_name": "Release",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "packages": "write",
+            "id-token": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 55,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Release": 8
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Release": 8
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 7,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5",
+              "docker/login-action@v3",
+              "docker/setup-qemu-action@v3",
+              "goreleaser/goreleaser-action@v6",
+              "sigstore/cosign-installer@dc72c7d5c4d10cd6bcb8cf6e3fd625a9e5e537da"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "packages": "write",
+          "id-token": "write"
+        },
+        "jobs": {
+          "Release": {
+            "runs-on": "ubuntu-latest",
+            "env": {
+              "DOCKER_CLI_EXPERIMENTAL": "enabled"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Set up QEMU",
+                "uses": "docker/setup-qemu-action@v3"
+              },
+              {
+                "name": "Docker Login to DockerHub",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "username": "${{ secrets.DOCKERHUB_USERNAME }}",
+                  "password": "${{ secrets.DOCKERHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Docker Login to GitHub Container Registry",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.repository_owner }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Set up Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.23"
+                }
+              },
+              {
+                "name": "Cosign install",
+                "uses": "sigstore/cosign-installer@dc72c7d5c4d10cd6bcb8cf6e3fd625a9e5e537da"
+              },
+              {
+                "name": "Install UPX",
+                "run": "sudo apt-get update\nsudo apt-get install -y upx\n"
+              },
+              {
+                "name": "Run GoReleaser",
+                "uses": "goreleaser/goreleaser-action@v6",
+                "with": {
+                  "distribution": "goreleaser-pro",
+                  "version": "latest",
+                  "args": "release --clean"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}",
+                  "HOMEBREW_TAP_TOKEN": "${{ secrets.HOMEBREW_TAP_TOKEN }}",
+                  "GORELEASER_KEY": "${{ secrets.GORELEASER_KEY }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-04-02T03-45-42Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2025-04-02T03-45-42Z__9a59a7a52a9699a94be4725bc0f4fbfe911429ef.yml",
+          "workflow_name": "Release",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "packages": "write",
+            "id-token": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 55,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Release": 8
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Release": 8
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 7,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5",
+              "docker/login-action@v3",
+              "docker/setup-qemu-action@v3",
+              "goreleaser/goreleaser-action@v6",
+              "sigstore/cosign-installer@dc72c7d5c4d10cd6bcb8cf6e3fd625a9e5e537da"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "packages": "write",
+          "id-token": "write"
+        },
+        "jobs": {
+          "Release": {
+            "runs-on": "ubuntu-latest",
+            "env": {
+              "DOCKER_CLI_EXPERIMENTAL": "enabled"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Set up QEMU",
+                "uses": "docker/setup-qemu-action@v3"
+              },
+              {
+                "name": "Docker Login to DockerHub",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "username": "${{ secrets.DOCKERHUB_USERNAME }}",
+                  "password": "${{ secrets.DOCKERHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Docker Login to GitHub Container Registry",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.repository_owner }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Set up Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.24"
+                }
+              },
+              {
+                "name": "Cosign install",
+                "uses": "sigstore/cosign-installer@dc72c7d5c4d10cd6bcb8cf6e3fd625a9e5e537da"
+              },
+              {
+                "name": "Install UPX",
+                "run": "sudo apt-get update\nsudo apt-get install -y upx\n"
+              },
+              {
+                "name": "Run GoReleaser",
+                "uses": "goreleaser/goreleaser-action@v6",
+                "with": {
+                  "distribution": "goreleaser-pro",
+                  "version": "latest",
+                  "args": "release --clean"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}",
+                  "HOMEBREW_TAP_TOKEN": "${{ secrets.HOMEBREW_TAP_TOKEN }}",
+                  "GORELEASER_KEY": "${{ secrets.GORELEASER_KEY }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-04-08T14-28-34Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2025-04-08T14-28-34Z__1a7c199560e25111e66cce8f63030b832bab8f99.yml",
+          "workflow_name": "Release",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "packages": "write",
+            "id-token": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 55,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Release": 8
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Release": 8
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 7,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5",
+              "docker/login-action@v3",
+              "docker/setup-qemu-action@v3",
+              "goreleaser/goreleaser-action@v6",
+              "sigstore/cosign-installer@d7d6bc7722e3daa8354c50bcb52f4837da5e9b6a"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "packages": "write",
+          "id-token": "write"
+        },
+        "jobs": {
+          "Release": {
+            "runs-on": "ubuntu-latest",
+            "env": {
+              "DOCKER_CLI_EXPERIMENTAL": "enabled"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Set up QEMU",
+                "uses": "docker/setup-qemu-action@v3"
+              },
+              {
+                "name": "Docker Login to DockerHub",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "username": "${{ secrets.DOCKERHUB_USERNAME }}",
+                  "password": "${{ secrets.DOCKERHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Docker Login to GitHub Container Registry",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.repository_owner }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Set up Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.24"
+                }
+              },
+              {
+                "name": "Cosign install",
+                "uses": "sigstore/cosign-installer@d7d6bc7722e3daa8354c50bcb52f4837da5e9b6a"
+              },
+              {
+                "name": "Install UPX",
+                "run": "sudo apt-get update\nsudo apt-get install -y upx\n"
+              },
+              {
+                "name": "Run GoReleaser",
+                "uses": "goreleaser/goreleaser-action@v6",
+                "with": {
+                  "distribution": "goreleaser-pro",
+                  "version": "latest",
+                  "args": "release --clean"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}",
+                  "HOMEBREW_TAP_TOKEN": "${{ secrets.HOMEBREW_TAP_TOKEN }}",
+                  "GORELEASER_KEY": "${{ secrets.GORELEASER_KEY }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-06-07T05-31-19Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2025-06-07T05-31-19Z__4a480c102b8c081218a396fc541df151ce1edf27.yml",
+          "workflow_name": "Release",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "packages": "write",
+            "id-token": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 55,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Release": 8
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Release": 8
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 7,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5",
+              "docker/login-action@v3",
+              "docker/setup-qemu-action@v3",
+              "goreleaser/goreleaser-action@v6",
+              "sigstore/cosign-installer@3454372f43399081ed03b604cb2d021dabca52bb"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "packages": "write",
+          "id-token": "write"
+        },
+        "jobs": {
+          "Release": {
+            "runs-on": "ubuntu-latest",
+            "env": {
+              "DOCKER_CLI_EXPERIMENTAL": "enabled"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Set up QEMU",
+                "uses": "docker/setup-qemu-action@v3"
+              },
+              {
+                "name": "Docker Login to DockerHub",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "username": "${{ secrets.DOCKERHUB_USERNAME }}",
+                  "password": "${{ secrets.DOCKERHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Docker Login to GitHub Container Registry",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.repository_owner }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Set up Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.24"
+                }
+              },
+              {
+                "name": "Cosign install",
+                "uses": "sigstore/cosign-installer@3454372f43399081ed03b604cb2d021dabca52bb"
+              },
+              {
+                "name": "Install UPX",
+                "run": "sudo apt-get update\nsudo apt-get install -y upx\n"
+              },
+              {
+                "name": "Run GoReleaser",
+                "uses": "goreleaser/goreleaser-action@v6",
+                "with": {
+                  "distribution": "goreleaser-pro",
+                  "version": "latest",
+                  "args": "release --clean"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}",
+                  "HOMEBREW_TAP_TOKEN": "${{ secrets.HOMEBREW_TAP_TOKEN }}",
+                  "GORELEASER_KEY": "${{ secrets.GORELEASER_KEY }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-07-10T15-19-51Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2025-07-10T15-19-51Z__ab136f6e9d4fecd5197843fce9a439c6f42e8380.yml",
+          "workflow_name": "Release",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "packages": "write",
+            "id-token": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 55,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Release": 8
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Release": 8
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 7,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5",
+              "docker/login-action@v3",
+              "docker/setup-qemu-action@v3",
+              "goreleaser/goreleaser-action@v6",
+              "sigstore/cosign-installer@398d4b0eeef1380460a10c8013a76f728fb906ac"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "packages": "write",
+          "id-token": "write"
+        },
+        "jobs": {
+          "Release": {
+            "runs-on": "ubuntu-latest",
+            "env": {
+              "DOCKER_CLI_EXPERIMENTAL": "enabled"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Set up QEMU",
+                "uses": "docker/setup-qemu-action@v3"
+              },
+              {
+                "name": "Docker Login to DockerHub",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "username": "${{ secrets.DOCKERHUB_USERNAME }}",
+                  "password": "${{ secrets.DOCKERHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Docker Login to GitHub Container Registry",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.repository_owner }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Set up Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.24"
+                }
+              },
+              {
+                "name": "Cosign install",
+                "uses": "sigstore/cosign-installer@398d4b0eeef1380460a10c8013a76f728fb906ac"
+              },
+              {
+                "name": "Install UPX",
+                "run": "sudo apt-get update\nsudo apt-get install -y upx\n"
+              },
+              {
+                "name": "Run GoReleaser",
+                "uses": "goreleaser/goreleaser-action@v6",
+                "with": {
+                  "distribution": "goreleaser-pro",
+                  "version": "latest",
+                  "args": "release --clean"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}",
+                  "HOMEBREW_TAP_TOKEN": "${{ secrets.HOMEBREW_TAP_TOKEN }}",
+                  "GORELEASER_KEY": "${{ secrets.GORELEASER_KEY }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-07-25T17-31-06Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "release__2025-07-25T17-31-06Z__ad351e35315a8fabcd7826fb9bec0f4be6498549.yml",
+          "workflow_name": "Release",
+          "triggers": {},
+          "permissions": {
+            "contents": "write",
+            "packages": "write",
+            "id-token": "write"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 55,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "Release": 8
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "Release": 8
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 7,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-go@v5",
+              "docker/login-action@v3",
+              "docker/setup-qemu-action@v3",
+              "goreleaser/goreleaser-action@v6",
+              "sigstore/cosign-installer@d58896d6a1865668819e1d91763c7751a165e159"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Release",
+        "true": {
+          "push": {
+            "tags": [
+              "v*"
+            ]
+          }
+        },
+        "permissions": {
+          "contents": "write",
+          "packages": "write",
+          "id-token": "write"
+        },
+        "jobs": {
+          "Release": {
+            "runs-on": "ubuntu-latest",
+            "env": {
+              "DOCKER_CLI_EXPERIMENTAL": "enabled"
+            },
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "fetch-depth": 0
+                }
+              },
+              {
+                "name": "Set up QEMU",
+                "uses": "docker/setup-qemu-action@v3"
+              },
+              {
+                "name": "Docker Login to DockerHub",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "username": "${{ secrets.DOCKERHUB_USERNAME }}",
+                  "password": "${{ secrets.DOCKERHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Docker Login to GitHub Container Registry",
+                "uses": "docker/login-action@v3",
+                "with": {
+                  "registry": "ghcr.io",
+                  "username": "${{ github.repository_owner }}",
+                  "password": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              },
+              {
+                "name": "Set up Go",
+                "uses": "actions/setup-go@v5",
+                "with": {
+                  "go-version": "1.24"
+                }
+              },
+              {
+                "name": "Cosign install",
+                "uses": "sigstore/cosign-installer@d58896d6a1865668819e1d91763c7751a165e159"
+              },
+              {
+                "name": "Install UPX",
+                "run": "sudo apt-get update\nsudo apt-get install -y upx\n"
+              },
+              {
+                "name": "Run GoReleaser",
+                "uses": "goreleaser/goreleaser-action@v6",
+                "with": {
+                  "distribution": "goreleaser-pro",
+                  "version": "latest",
+                  "args": "release --clean"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}",
+                  "HOMEBREW_TAP_TOKEN": "${{ secrets.HOMEBREW_TAP_TOKEN }}",
+                  "GORELEASER_KEY": "${{ secrets.GORELEASER_KEY }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

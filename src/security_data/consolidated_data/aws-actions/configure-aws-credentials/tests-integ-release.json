@@ -1,0 +1,1410 @@
+{
+  "repo_owner": "aws-actions",
+  "repo_name": "configure-aws-credentials",
+  "workflow_name": "tests-integ-release",
+  "history": {
+    "2025-08-29T23-34-59Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "tests-integ-release__2025-08-29T23-34-59Z__ec8e00227617b81fb26fb92ba7fcfe28c5f1ee23.yml",
+          "workflow_name": "Run pre-release integ tests",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 193,
+          "num_jobs": 6,
+          "steps_per_job": {
+            "oidc": 3,
+            "static_assumeRole": 3,
+            "role_chaining": 5,
+            "inline_policy": 5,
+            "http-proxy": 7,
+            "token-file": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 6,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 5,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "oidc": 3,
+              "static_assumeRole": 3,
+              "role_chaining": 5,
+              "inline_policy": 5,
+              "http-proxy": 7,
+              "token-file": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 2,
+            "num_distinct_runs_on": 2,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 13,
+            "actions_used": [
+              "./",
+              "actions/checkout@v5"
+            ],
+            "num_run_commands": 14,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 2
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Run pre-release integ tests",
+        "true": {
+          "pull_request_target": null
+        },
+        "permissions": {
+          "contents": "read"
+        },
+        "jobs": {
+          "oidc": {
+            "if": "${{ github.event.pull_request.user.login == 'aws-sdk-osds' && github.repository == 'aws-actions/configure-aws-credentials' }}",
+            "permissions": {
+              "id-token": "write"
+            },
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "os": [
+                  "windows-latest",
+                  "ubuntu-latest",
+                  "macos-latest"
+                ]
+              }
+            },
+            "runs-on": "${{ matrix.os }}",
+            "name": "OIDC login test",
+            "steps": [
+              {
+                "name": "checkout",
+                "uses": "actions/checkout@v5",
+                "with": {
+                  "fetch-depth": 0,
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "Configure AWS credentials",
+                "uses": "./",
+                "with": {
+                  "aws-region": "us-west-2",
+                  "role-to-assume": "${{ secrets.OIDC_integ_role }}"
+                }
+              },
+              {
+                "name": "Get Caller Identity",
+                "run": "aws sts get-caller-identity\n"
+              }
+            ]
+          },
+          "static_assumeRole": {
+            "if": "${{ github.event.pull_request.user.login == 'aws-sdk-osds' && github.repository == 'aws-actions/configure-aws-credentials' }}",
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "os": [
+                  "windows-latest",
+                  "ubuntu-latest",
+                  "macos-latest"
+                ]
+              }
+            },
+            "runs-on": "${{ matrix.os }}",
+            "name": "Static IAM creds test",
+            "steps": [
+              {
+                "name": "checkout",
+                "uses": "actions/checkout@v5",
+                "with": {
+                  "fetch-depth": 0,
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "Configure AWS credentials",
+                "uses": "./",
+                "with": {
+                  "aws-region": "us-west-2",
+                  "aws-access-key-id": "${{ secrets.STATIC_ak_id }}",
+                  "aws-secret-access-key": "${{ secrets.STATIC_secret_ak }}",
+                  "role-to-assume": "${{ secrets.STATIC_role }}"
+                }
+              },
+              {
+                "name": "Get Caller Identity",
+                "run": "aws sts get-caller-identity\n"
+              }
+            ]
+          },
+          "role_chaining": {
+            "if": "${{ github.event.pull_request.user.login == 'aws-sdk-osds' && github.repository == 'aws-actions/configure-aws-credentials' }}",
+            "permissions": {
+              "id-token": "write"
+            },
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "os": [
+                  "windows-latest",
+                  "ubuntu-latest",
+                  "macos-latest"
+                ]
+              }
+            },
+            "runs-on": "${{ matrix.os }}",
+            "name": "Existing Creds + Role Chaining test",
+            "steps": [
+              {
+                "name": "checkout",
+                "uses": "actions/checkout@v5",
+                "with": {
+                  "fetch-depth": 0,
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "Configure AWS credentials",
+                "uses": "./",
+                "with": {
+                  "aws-region": "us-west-2",
+                  "role-to-assume": "${{ secrets.ROLE_chaining_1 }}"
+                }
+              },
+              {
+                "name": "Get Caller Identity",
+                "run": "aws sts get-caller-identity\n"
+              },
+              {
+                "name": "assume second role",
+                "uses": "./",
+                "with": {
+                  "aws-region": "us-west-2",
+                  "role-to-assume": "${{ secrets.ROLE_chaining_2 }}",
+                  "role-chaining": true
+                }
+              },
+              {
+                "name": "get caller identity",
+                "run": "aws sts get-caller-identity\n"
+              }
+            ]
+          },
+          "inline_policy": {
+            "if": "${{ github.event.pull_request.user.login == 'aws-sdk-osds' && github.repository == 'aws-actions/configure-aws-credentials' }}",
+            "permissions": {
+              "id-token": "write"
+            },
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "os": [
+                  "windows-latest",
+                  "ubuntu-latest",
+                  "macos-latest"
+                ]
+              }
+            },
+            "runs-on": "${{ matrix.os }}",
+            "name": "Inline Policy Test",
+            "steps": [
+              {
+                "name": "checkout",
+                "uses": "actions/checkout@v5",
+                "with": {
+                  "fetch-depth": 0,
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "get creds w scoped down policy",
+                "uses": "./",
+                "with": {
+                  "aws-region": "us-west-2",
+                  "role-to-assume": "${{ secrets.INLINE_policy_role }}",
+                  "inline-session-policy": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Sid\":\"Stmt1\",\"Effect\":\"Allow\",\"Action\":\"s3:ListAllMyBuckets\",\"Resource\":\"*\"}]}"
+                }
+              },
+              {
+                "name": "list buckets",
+                "run": "aws s3 ls\n"
+              },
+              {
+                "name": "try to list bucket contents",
+                "id": "bucketContentsStep",
+                "continue-on-error": true,
+                "run": "aws s3 ls s3://cawsc-integ-tests-bucket\n"
+              },
+              {
+                "name": "fail if we can list bucket contents",
+                "if": "steps.bucketContentsStep.outcome == 'success'",
+                "run": "exit 1"
+              }
+            ]
+          },
+          "http-proxy": {
+            "if": "${{ github.event.pull_request.user.login == 'aws-sdk-osds' && github.repository == 'aws-actions/configure-aws-credentials' }}",
+            "permissions": {
+              "id-token": "write"
+            },
+            "runs-on": "ubuntu-latest",
+            "name": "HTTP Proxy Test",
+            "steps": [
+              {
+                "name": "checkout",
+                "uses": "actions/checkout@v5",
+                "with": {
+                  "fetch-depth": 0,
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "install tinyproxy",
+                "run": "sudo apt-get update\nsudo apt-get -y install tinyproxy\n"
+              },
+              {
+                "name": "start tinyproxy",
+                "run": "tinyproxy -c .github/integ_tests/tinyproxy.conf"
+              },
+              {
+                "name": "Configure AWS credentials",
+                "continue-on-error": true,
+                "uses": "./",
+                "with": {
+                  "aws-region": "us-west-2",
+                  "role-to-assume": "${{ secrets.OIDC_integ_role }}",
+                  "http-proxy": "http://127.0.0.1:9999",
+                  "retry-max-attempts": 4
+                }
+              },
+              {
+                "name": "checkout logs",
+                "run": "cat integ_proxy_log.txt"
+              },
+              {
+                "name": "check logs to see if successful call",
+                "run": "grep -q \"Request\" integ_proxy_log.txt && echo \"PROXY_CALL_LOGGED=1\" >> $GITHUB_ENV || echo \"PROXY_CALL_LOGGED=0\" >> $GITHUB_ENV"
+              },
+              {
+                "name": "fail job if bad call",
+                "if": "${{ env.PROXY_CALL_LOGGED != 1 }}",
+                "run": "exit 1"
+              }
+            ]
+          },
+          "token-file": {
+            "if": "${{ github.event.pull_request.user.login == 'aws-sdk-osds' && github.repository == 'aws-actions/configure-aws-credentials' }}",
+            "permissions": {
+              "id-token": "write"
+            },
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "os": [
+                  "windows-latest",
+                  "ubuntu-latest",
+                  "macos-latest"
+                ]
+              }
+            },
+            "runs-on": "${{ matrix.os }}",
+            "name": "Token File Test",
+            "steps": [
+              {
+                "name": "checkout",
+                "uses": "actions/checkout@v5",
+                "with": {
+                  "fetch-depth": 0,
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "fetch token and write to file",
+                "run": "node .github/integ_tests/fetch-token.js"
+              },
+              {
+                "name": "get creds with that file",
+                "uses": "./",
+                "with": {
+                  "aws-region": "us-west-2",
+                  "role-to-assume": "${{ secrets.OIDC_integ_role }}",
+                  "web-identity-token-file": ".github/integ_tests/integ_token.txt",
+                  "retry-max-attempts": 4
+                }
+              },
+              {
+                "name": "check creds",
+                "run": "aws sts get-caller-identity"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-08-29T23-48-11Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "tests-integ-release__2025-08-29T23-48-11Z__cb3b4996742cba2367e7dc34df7f91479afcd27c.yml",
+          "workflow_name": "Run pre-release integ tests",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 191,
+          "num_jobs": 6,
+          "steps_per_job": {
+            "oidc": 3,
+            "static_assumeRole": 3,
+            "role_chaining": 5,
+            "inline_policy": 5,
+            "http-proxy": 7,
+            "token-file": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 6,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 5,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "oidc": 3,
+              "static_assumeRole": 3,
+              "role_chaining": 5,
+              "inline_policy": 5,
+              "http-proxy": 7,
+              "token-file": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 2,
+            "num_distinct_runs_on": 2,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 13,
+            "actions_used": [
+              "./",
+              "actions/checkout@v5"
+            ],
+            "num_run_commands": 14,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 2
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Run pre-release integ tests",
+        "true": {
+          "pull_request_target": null
+        },
+        "permissions": {
+          "contents": "read"
+        },
+        "jobs": {
+          "oidc": {
+            "if": "${{ github.event.pull_request.user.login == 'aws-sdk-osds' && github.repository == 'aws-actions/configure-aws-credentials' }}",
+            "permissions": {
+              "id-token": "write"
+            },
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "os": [
+                  "windows-latest",
+                  "ubuntu-latest",
+                  "macos-latest"
+                ]
+              }
+            },
+            "runs-on": "${{ matrix.os }}",
+            "name": "OIDC login test",
+            "steps": [
+              {
+                "name": "checkout",
+                "uses": "actions/checkout@v5",
+                "with": {
+                  "fetch-depth": 0,
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "Configure AWS credentials",
+                "uses": "./",
+                "with": {
+                  "aws-region": "us-west-2",
+                  "role-to-assume": "${{ secrets.OIDC_integ_role }}"
+                }
+              },
+              {
+                "name": "Get Caller Identity",
+                "run": "aws sts get-caller-identity\n"
+              }
+            ]
+          },
+          "static_assumeRole": {
+            "if": "${{ github.event.pull_request.user.login == 'aws-sdk-osds' && github.repository == 'aws-actions/configure-aws-credentials' }}",
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "os": [
+                  "windows-latest",
+                  "ubuntu-latest",
+                  "macos-latest"
+                ]
+              }
+            },
+            "runs-on": "${{ matrix.os }}",
+            "name": "Static IAM creds test",
+            "steps": [
+              {
+                "name": "checkout",
+                "uses": "actions/checkout@v5",
+                "with": {
+                  "fetch-depth": 0,
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "Configure AWS credentials",
+                "uses": "./",
+                "with": {
+                  "aws-region": "us-west-2",
+                  "aws-access-key-id": "${{ secrets.STATIC_ak_id }}",
+                  "aws-secret-access-key": "${{ secrets.STATIC_secret_ak }}",
+                  "role-to-assume": "${{ secrets.STATIC_role }}"
+                }
+              },
+              {
+                "name": "Get Caller Identity",
+                "run": "aws sts get-caller-identity\n"
+              }
+            ]
+          },
+          "role_chaining": {
+            "if": "${{ github.event.pull_request.user.login == 'aws-sdk-osds' && github.repository == 'aws-actions/configure-aws-credentials' }}",
+            "permissions": {
+              "id-token": "write"
+            },
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "os": [
+                  "windows-latest",
+                  "ubuntu-latest",
+                  "macos-latest"
+                ]
+              }
+            },
+            "runs-on": "${{ matrix.os }}",
+            "name": "Existing Creds + Role Chaining test",
+            "steps": [
+              {
+                "name": "checkout",
+                "uses": "actions/checkout@v5",
+                "with": {
+                  "fetch-depth": 0,
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "Configure AWS credentials",
+                "uses": "./",
+                "with": {
+                  "aws-region": "us-west-2",
+                  "role-to-assume": "${{ secrets.ROLE_chaining_1 }}"
+                }
+              },
+              {
+                "name": "Get Caller Identity",
+                "run": "aws sts get-caller-identity\n"
+              },
+              {
+                "name": "assume second role",
+                "uses": "./",
+                "with": {
+                  "aws-region": "us-west-2",
+                  "role-to-assume": "${{ secrets.ROLE_chaining_2 }}",
+                  "role-chaining": true
+                }
+              },
+              {
+                "name": "get caller identity",
+                "run": "aws sts get-caller-identity\n"
+              }
+            ]
+          },
+          "inline_policy": {
+            "if": "${{ github.event.pull_request.user.login == 'aws-sdk-osds' && github.repository == 'aws-actions/configure-aws-credentials' }}",
+            "permissions": {
+              "id-token": "write"
+            },
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "os": [
+                  "windows-latest",
+                  "ubuntu-latest",
+                  "macos-latest"
+                ]
+              }
+            },
+            "runs-on": "${{ matrix.os }}",
+            "name": "Inline Policy Test",
+            "steps": [
+              {
+                "name": "checkout",
+                "uses": "actions/checkout@v5",
+                "with": {
+                  "fetch-depth": 0,
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "get creds w scoped down policy",
+                "uses": "./",
+                "with": {
+                  "aws-region": "us-west-2",
+                  "role-to-assume": "${{ secrets.INLINE_policy_role }}",
+                  "inline-session-policy": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Sid\":\"Stmt1\",\"Effect\":\"Allow\",\"Action\":\"s3:ListAllMyBuckets\",\"Resource\":\"*\"}]}"
+                }
+              },
+              {
+                "name": "list buckets",
+                "run": "aws s3 ls > /dev/null"
+              },
+              {
+                "name": "try to list bucket contents",
+                "id": "bucketContentsStep",
+                "continue-on-error": true,
+                "run": "aws s3 ls s3://cawsc-integ-tests-bucket > /dev/null"
+              },
+              {
+                "name": "fail if we can list bucket contents",
+                "if": "steps.bucketContentsStep.outcome == 'success'",
+                "run": "exit 1"
+              }
+            ]
+          },
+          "http-proxy": {
+            "if": "${{ github.event.pull_request.user.login == 'aws-sdk-osds' && github.repository == 'aws-actions/configure-aws-credentials' }}",
+            "permissions": {
+              "id-token": "write"
+            },
+            "runs-on": "ubuntu-latest",
+            "name": "HTTP Proxy Test",
+            "steps": [
+              {
+                "name": "checkout",
+                "uses": "actions/checkout@v5",
+                "with": {
+                  "fetch-depth": 0,
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "install tinyproxy",
+                "run": "sudo apt-get update\nsudo apt-get -y install tinyproxy\n"
+              },
+              {
+                "name": "start tinyproxy",
+                "run": "tinyproxy -c .github/integ_tests/tinyproxy.conf"
+              },
+              {
+                "name": "Configure AWS credentials",
+                "continue-on-error": true,
+                "uses": "./",
+                "with": {
+                  "aws-region": "us-west-2",
+                  "role-to-assume": "${{ secrets.OIDC_integ_role }}",
+                  "http-proxy": "http://127.0.0.1:9999",
+                  "retry-max-attempts": 4
+                }
+              },
+              {
+                "name": "checkout logs",
+                "run": "cat integ_proxy_log.txt"
+              },
+              {
+                "name": "check logs to see if successful call",
+                "run": "grep -q \"Request\" integ_proxy_log.txt && echo \"PROXY_CALL_LOGGED=1\" >> $GITHUB_ENV || echo \"PROXY_CALL_LOGGED=0\" >> $GITHUB_ENV"
+              },
+              {
+                "name": "fail job if bad call",
+                "if": "${{ env.PROXY_CALL_LOGGED != 1 }}",
+                "run": "exit 1"
+              }
+            ]
+          },
+          "token-file": {
+            "if": "${{ github.event.pull_request.user.login == 'aws-sdk-osds' && github.repository == 'aws-actions/configure-aws-credentials' }}",
+            "permissions": {
+              "id-token": "write"
+            },
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "os": [
+                  "windows-latest",
+                  "ubuntu-latest",
+                  "macos-latest"
+                ]
+              }
+            },
+            "runs-on": "${{ matrix.os }}",
+            "name": "Token File Test",
+            "steps": [
+              {
+                "name": "checkout",
+                "uses": "actions/checkout@v5",
+                "with": {
+                  "fetch-depth": 0,
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "fetch token and write to file",
+                "run": "node .github/integ_tests/fetch-token.js"
+              },
+              {
+                "name": "get creds with that file",
+                "uses": "./",
+                "with": {
+                  "aws-region": "us-west-2",
+                  "role-to-assume": "${{ secrets.OIDC_integ_role }}",
+                  "web-identity-token-file": ".github/integ_tests/integ_token.txt",
+                  "retry-max-attempts": 4
+                }
+              },
+              {
+                "name": "check creds",
+                "run": "aws sts get-caller-identity"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-08-30T00-11-06Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "tests-integ-release__2025-08-30T00-11-06Z__45a41642bb283433351a8b7eb9a9384769cc83cc.yml",
+          "workflow_name": "Run pre-release integ tests",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 202,
+          "num_jobs": 6,
+          "steps_per_job": {
+            "oidc": 3,
+            "static_assumeRole": 3,
+            "role_chaining": 5,
+            "inline_policy": 5,
+            "http-proxy": 7,
+            "token-file": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 6,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 5,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "oidc": 3,
+              "static_assumeRole": 3,
+              "role_chaining": 5,
+              "inline_policy": 5,
+              "http-proxy": 7,
+              "token-file": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 2,
+            "num_distinct_runs_on": 2,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 14,
+            "actions_used": [
+              "./",
+              "actions/checkout@v5",
+              "actions/github-script@v7"
+            ],
+            "num_run_commands": 13,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 2
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Run pre-release integ tests",
+        "true": {
+          "pull_request_target": null
+        },
+        "permissions": {
+          "contents": "read"
+        },
+        "jobs": {
+          "oidc": {
+            "if": "${{ github.event.pull_request.user.login == 'aws-sdk-osds' && github.repository == 'aws-actions/configure-aws-credentials' }}",
+            "permissions": {
+              "id-token": "write"
+            },
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "os": [
+                  "windows-latest",
+                  "ubuntu-latest",
+                  "macos-latest"
+                ]
+              }
+            },
+            "runs-on": "${{ matrix.os }}",
+            "name": "OIDC login test",
+            "steps": [
+              {
+                "name": "checkout",
+                "uses": "actions/checkout@v5",
+                "with": {
+                  "fetch-depth": 0,
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "Configure AWS credentials",
+                "uses": "./",
+                "with": {
+                  "aws-region": "us-west-2",
+                  "role-to-assume": "${{ secrets.OIDC_integ_role }}"
+                }
+              },
+              {
+                "name": "Get Caller Identity",
+                "run": "aws sts get-caller-identity\n"
+              }
+            ]
+          },
+          "static_assumeRole": {
+            "if": "${{ github.event.pull_request.user.login == 'aws-sdk-osds' && github.repository == 'aws-actions/configure-aws-credentials' }}",
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "os": [
+                  "windows-latest",
+                  "ubuntu-latest",
+                  "macos-latest"
+                ]
+              }
+            },
+            "runs-on": "${{ matrix.os }}",
+            "name": "Static IAM creds test",
+            "steps": [
+              {
+                "name": "checkout",
+                "uses": "actions/checkout@v5",
+                "with": {
+                  "fetch-depth": 0,
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "Configure AWS credentials",
+                "uses": "./",
+                "with": {
+                  "aws-region": "us-west-2",
+                  "aws-access-key-id": "${{ secrets.STATIC_ak_id }}",
+                  "aws-secret-access-key": "${{ secrets.STATIC_secret_ak }}",
+                  "role-to-assume": "${{ secrets.STATIC_role }}"
+                }
+              },
+              {
+                "name": "Get Caller Identity",
+                "run": "aws sts get-caller-identity\n"
+              }
+            ]
+          },
+          "role_chaining": {
+            "if": "${{ github.event.pull_request.user.login == 'aws-sdk-osds' && github.repository == 'aws-actions/configure-aws-credentials' }}",
+            "permissions": {
+              "id-token": "write"
+            },
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "os": [
+                  "windows-latest",
+                  "ubuntu-latest",
+                  "macos-latest"
+                ]
+              }
+            },
+            "runs-on": "${{ matrix.os }}",
+            "name": "Existing Creds + Role Chaining test",
+            "steps": [
+              {
+                "name": "checkout",
+                "uses": "actions/checkout@v5",
+                "with": {
+                  "fetch-depth": 0,
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "Configure AWS credentials",
+                "uses": "./",
+                "with": {
+                  "aws-region": "us-west-2",
+                  "role-to-assume": "${{ secrets.ROLE_chaining_1 }}"
+                }
+              },
+              {
+                "name": "Get Caller Identity",
+                "run": "aws sts get-caller-identity\n"
+              },
+              {
+                "name": "assume second role",
+                "uses": "./",
+                "with": {
+                  "aws-region": "us-west-2",
+                  "role-to-assume": "${{ secrets.ROLE_chaining_2 }}",
+                  "role-chaining": true
+                }
+              },
+              {
+                "name": "get caller identity",
+                "run": "aws sts get-caller-identity\n"
+              }
+            ]
+          },
+          "inline_policy": {
+            "if": "${{ github.event.pull_request.user.login == 'aws-sdk-osds' && github.repository == 'aws-actions/configure-aws-credentials' }}",
+            "permissions": {
+              "id-token": "write"
+            },
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "os": [
+                  "windows-latest",
+                  "ubuntu-latest",
+                  "macos-latest"
+                ]
+              }
+            },
+            "runs-on": "${{ matrix.os }}",
+            "name": "Inline Policy Test",
+            "steps": [
+              {
+                "name": "checkout",
+                "uses": "actions/checkout@v5",
+                "with": {
+                  "fetch-depth": 0,
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "get creds w scoped down policy",
+                "uses": "./",
+                "with": {
+                  "aws-region": "us-west-2",
+                  "role-to-assume": "${{ secrets.INLINE_policy_role }}",
+                  "inline-session-policy": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Sid\":\"Stmt1\",\"Effect\":\"Allow\",\"Action\":\"s3:ListAllMyBuckets\",\"Resource\":\"*\"}]}"
+                }
+              },
+              {
+                "name": "list buckets",
+                "run": "aws s3 ls > /dev/null"
+              },
+              {
+                "name": "try to list bucket contents",
+                "id": "bucketContentsStep",
+                "continue-on-error": true,
+                "run": "aws s3 ls s3://cawsc-integ-tests-bucket > /dev/null"
+              },
+              {
+                "name": "fail if we can list bucket contents",
+                "if": "steps.bucketContentsStep.outcome == 'success'",
+                "run": "exit 1"
+              }
+            ]
+          },
+          "http-proxy": {
+            "if": "${{ github.event.pull_request.user.login == 'aws-sdk-osds' && github.repository == 'aws-actions/configure-aws-credentials' }}",
+            "permissions": {
+              "id-token": "write"
+            },
+            "runs-on": "ubuntu-latest",
+            "name": "HTTP Proxy Test",
+            "steps": [
+              {
+                "name": "checkout",
+                "uses": "actions/checkout@v5",
+                "with": {
+                  "fetch-depth": 0,
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "install tinyproxy",
+                "run": "sudo apt-get update\nsudo apt-get -y install tinyproxy\n"
+              },
+              {
+                "name": "start tinyproxy",
+                "run": "tinyproxy -c .github/integ_tests/tinyproxy.conf"
+              },
+              {
+                "name": "Configure AWS credentials",
+                "continue-on-error": true,
+                "uses": "./",
+                "with": {
+                  "aws-region": "us-west-2",
+                  "role-to-assume": "${{ secrets.OIDC_integ_role }}",
+                  "http-proxy": "http://127.0.0.1:9999",
+                  "retry-max-attempts": 4
+                }
+              },
+              {
+                "name": "checkout logs",
+                "run": "cat integ_proxy_log.txt"
+              },
+              {
+                "name": "check logs to see if successful call",
+                "run": "grep -q \"Request\" integ_proxy_log.txt && echo \"PROXY_CALL_LOGGED=1\" >> $GITHUB_ENV || echo \"PROXY_CALL_LOGGED=0\" >> $GITHUB_ENV"
+              },
+              {
+                "name": "fail job if bad call",
+                "if": "${{ env.PROXY_CALL_LOGGED != 1 }}",
+                "run": "exit 1"
+              }
+            ]
+          },
+          "token-file": {
+            "if": "${{ github.event.pull_request.user.login == 'aws-sdk-osds' && github.repository == 'aws-actions/configure-aws-credentials' }}",
+            "permissions": {
+              "id-token": "write"
+            },
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "os": [
+                  "windows-latest",
+                  "ubuntu-latest",
+                  "macos-latest"
+                ]
+              }
+            },
+            "runs-on": "${{ matrix.os }}",
+            "name": "Token File Test",
+            "steps": [
+              {
+                "name": "checkout",
+                "uses": "actions/checkout@v5",
+                "with": {
+                  "fetch-depth": 0,
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "fetch token and write to file",
+                "uses": "actions/github-script@v7",
+                "with": {
+                  "script": "const fs = require('fs');\nasync function getIDTokenAction() {\n  const id_token = await core.getIDToken(\"sts.amazonaws.com\");\n  return id_token;\n}\nconst idToken = await getIDTokenAction();\nfs.writeFileSync(\".github/integ_tests/integ_token.txt\", idToken, (err) => {\n  if (err) throw err;\n});\n"
+                }
+              },
+              {
+                "name": "get creds with that file",
+                "uses": "./",
+                "with": {
+                  "aws-region": "us-west-2",
+                  "role-to-assume": "${{ secrets.OIDC_integ_role }}",
+                  "web-identity-token-file": ".github/integ_tests/integ_token.txt",
+                  "retry-max-attempts": 4
+                }
+              },
+              {
+                "name": "check creds",
+                "run": "aws sts get-caller-identity"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-08-30T00-18-16Z": {
+      "vulnerability_list": [],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "tests-integ-release__2025-08-30T00-18-16Z__a5c87b6a6b5dc3891274776bac5abe25c7d82e49.yml",
+          "workflow_name": "Run pre-release integ tests",
+          "triggers": {},
+          "permissions": {
+            "contents": "read"
+          },
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 202,
+          "num_jobs": 6,
+          "steps_per_job": {
+            "oidc": 3,
+            "static_assumeRole": 3,
+            "role_chaining": 5,
+            "inline_policy": 5,
+            "http-proxy": 7,
+            "token-file": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 6,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 5,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "oidc": 3,
+              "static_assumeRole": 3,
+              "role_chaining": 5,
+              "inline_policy": 5,
+              "http-proxy": 7,
+              "token-file": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 2,
+            "num_distinct_runs_on": 2,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 14,
+            "actions_used": [
+              "./",
+              "actions/checkout@v5",
+              "actions/github-script@v7"
+            ],
+            "num_run_commands": 13,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 2
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Run pre-release integ tests",
+        "true": {
+          "pull_request_target": null
+        },
+        "permissions": {
+          "contents": "read"
+        },
+        "jobs": {
+          "oidc": {
+            "if": "${{ github.event.pull_request.user.login == 'aws-sdk-osds' && github.repository == 'aws-actions/configure-aws-credentials' }}",
+            "permissions": {
+              "id-token": "write"
+            },
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "os": [
+                  "windows-latest",
+                  "ubuntu-latest",
+                  "macos-latest"
+                ]
+              }
+            },
+            "runs-on": "${{ matrix.os }}",
+            "name": "OIDC login test",
+            "steps": [
+              {
+                "name": "checkout",
+                "uses": "actions/checkout@v5",
+                "with": {
+                  "fetch-depth": 0,
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "Configure AWS credentials",
+                "uses": "./",
+                "with": {
+                  "aws-region": "us-west-2",
+                  "role-to-assume": "${{ secrets.OIDC_integ_role }}"
+                }
+              },
+              {
+                "name": "Get Caller Identity",
+                "run": "aws sts get-caller-identity\n"
+              }
+            ]
+          },
+          "static_assumeRole": {
+            "if": "${{ github.event.pull_request.user.login == 'aws-sdk-osds' && github.repository == 'aws-actions/configure-aws-credentials' }}",
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "os": [
+                  "windows-latest",
+                  "ubuntu-latest",
+                  "macos-latest"
+                ]
+              }
+            },
+            "runs-on": "${{ matrix.os }}",
+            "name": "Static IAM creds test",
+            "steps": [
+              {
+                "name": "checkout",
+                "uses": "actions/checkout@v5",
+                "with": {
+                  "fetch-depth": 0,
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "Configure AWS credentials",
+                "uses": "./",
+                "with": {
+                  "aws-region": "us-west-2",
+                  "aws-access-key-id": "${{ secrets.STATIC_ak_id }}",
+                  "aws-secret-access-key": "${{ secrets.STATIC_secret_ak }}",
+                  "role-to-assume": "${{ secrets.STATIC_role }}"
+                }
+              },
+              {
+                "name": "Get Caller Identity",
+                "run": "aws sts get-caller-identity\n"
+              }
+            ]
+          },
+          "role_chaining": {
+            "if": "${{ github.event.pull_request.user.login == 'aws-sdk-osds' && github.repository == 'aws-actions/configure-aws-credentials' }}",
+            "permissions": {
+              "id-token": "write"
+            },
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "os": [
+                  "windows-latest",
+                  "ubuntu-latest",
+                  "macos-latest"
+                ]
+              }
+            },
+            "runs-on": "${{ matrix.os }}",
+            "name": "Existing Creds + Role Chaining test",
+            "steps": [
+              {
+                "name": "checkout",
+                "uses": "actions/checkout@v5",
+                "with": {
+                  "fetch-depth": 0,
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "Configure AWS credentials",
+                "uses": "./",
+                "with": {
+                  "aws-region": "us-west-2",
+                  "role-to-assume": "${{ secrets.ROLE_chaining_1 }}"
+                }
+              },
+              {
+                "name": "Get Caller Identity",
+                "run": "aws sts get-caller-identity\n"
+              },
+              {
+                "name": "assume second role",
+                "uses": "./",
+                "with": {
+                  "aws-region": "us-west-2",
+                  "role-to-assume": "${{ secrets.ROLE_chaining_2 }}",
+                  "role-chaining": true
+                }
+              },
+              {
+                "name": "get caller identity",
+                "run": "aws sts get-caller-identity\n"
+              }
+            ]
+          },
+          "inline_policy": {
+            "if": "${{ github.event.pull_request.user.login == 'aws-sdk-osds' && github.repository == 'aws-actions/configure-aws-credentials' }}",
+            "permissions": {
+              "id-token": "write"
+            },
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "os": [
+                  "ubuntu-latest",
+                  "macos-latest"
+                ]
+              }
+            },
+            "runs-on": "${{ matrix.os }}",
+            "name": "Inline Policy Test",
+            "steps": [
+              {
+                "name": "checkout",
+                "uses": "actions/checkout@v5",
+                "with": {
+                  "fetch-depth": 0,
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "get creds w scoped down policy",
+                "uses": "./",
+                "with": {
+                  "aws-region": "us-west-2",
+                  "role-to-assume": "${{ secrets.INLINE_policy_role }}",
+                  "inline-session-policy": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Sid\":\"Stmt1\",\"Effect\":\"Allow\",\"Action\":\"s3:ListAllMyBuckets\",\"Resource\":\"*\"}]}"
+                }
+              },
+              {
+                "name": "list buckets",
+                "run": "aws s3 ls > /dev/null"
+              },
+              {
+                "name": "try to list bucket contents",
+                "id": "bucketContentsStep",
+                "continue-on-error": true,
+                "run": "aws s3 ls s3://cawsc-integ-tests-bucket > /dev/null"
+              },
+              {
+                "name": "fail if we can list bucket contents",
+                "if": "steps.bucketContentsStep.outcome == 'success'",
+                "run": "exit 1"
+              }
+            ]
+          },
+          "http-proxy": {
+            "if": "${{ github.event.pull_request.user.login == 'aws-sdk-osds' && github.repository == 'aws-actions/configure-aws-credentials' }}",
+            "permissions": {
+              "id-token": "write"
+            },
+            "runs-on": "ubuntu-latest",
+            "name": "HTTP Proxy Test",
+            "steps": [
+              {
+                "name": "checkout",
+                "uses": "actions/checkout@v5",
+                "with": {
+                  "fetch-depth": 0,
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "install tinyproxy",
+                "run": "sudo apt-get update\nsudo apt-get -y install tinyproxy\n"
+              },
+              {
+                "name": "start tinyproxy",
+                "run": "tinyproxy -c .github/integ_tests/tinyproxy.conf"
+              },
+              {
+                "name": "Configure AWS credentials",
+                "continue-on-error": true,
+                "uses": "./",
+                "with": {
+                  "aws-region": "us-west-2",
+                  "role-to-assume": "${{ secrets.OIDC_integ_role }}",
+                  "http-proxy": "http://127.0.0.1:9999",
+                  "retry-max-attempts": 4
+                }
+              },
+              {
+                "name": "checkout logs",
+                "run": "cat integ_proxy_log.txt"
+              },
+              {
+                "name": "check logs to see if successful call",
+                "run": "grep -q \"Request\" integ_proxy_log.txt && echo \"PROXY_CALL_LOGGED=1\" >> $GITHUB_ENV || echo \"PROXY_CALL_LOGGED=0\" >> $GITHUB_ENV"
+              },
+              {
+                "name": "fail job if bad call",
+                "if": "${{ env.PROXY_CALL_LOGGED != 1 }}",
+                "run": "exit 1"
+              }
+            ]
+          },
+          "token-file": {
+            "if": "${{ github.event.pull_request.user.login == 'aws-sdk-osds' && github.repository == 'aws-actions/configure-aws-credentials' }}",
+            "permissions": {
+              "id-token": "write"
+            },
+            "strategy": {
+              "fail-fast": false,
+              "matrix": {
+                "os": [
+                  "windows-latest",
+                  "ubuntu-latest",
+                  "macos-latest"
+                ]
+              }
+            },
+            "runs-on": "${{ matrix.os }}",
+            "name": "Token File Test",
+            "steps": [
+              {
+                "name": "checkout",
+                "uses": "actions/checkout@v5",
+                "with": {
+                  "fetch-depth": 0,
+                  "persist-credentials": false
+                }
+              },
+              {
+                "name": "fetch token and write to file",
+                "uses": "actions/github-script@v7",
+                "with": {
+                  "script": "const fs = require('fs');\nasync function getIDTokenAction() {\n  const id_token = await core.getIDToken(\"sts.amazonaws.com\");\n  return id_token;\n}\nconst idToken = await getIDTokenAction();\nfs.writeFileSync(\".github/integ_tests/integ_token.txt\", idToken, (err) => {\n  if (err) throw err;\n});\n"
+                }
+              },
+              {
+                "name": "get creds with that file",
+                "uses": "./",
+                "with": {
+                  "aws-region": "us-west-2",
+                  "role-to-assume": "${{ secrets.OIDC_integ_role }}",
+                  "web-identity-token-file": ".github/integ_tests/integ_token.txt",
+                  "retry-max-attempts": 4
+                }
+              },
+              {
+                "name": "check creds",
+                "run": "aws sts get-caller-identity"
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,1103 @@
+{
+  "repo_owner": "cargo-bins",
+  "repo_name": "cargo-binstall",
+  "workflow_name": "upgrade-transitive-deps",
+  "history": {
+    "2023-06-05T14-09-42Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-928c28f7-a352-562c-b769-ec68535d7fff",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/upgrade-transitive-deps__2023-06-05T14-09-42Z__76cd4d62c27dcb6ad4fb513f6b9782ad9baaf877.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 10,
+                  "startColumn": 5,
+                  "endLine": 48,
+                  "endColumn": 70
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "c407a4283f20576d:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "upgrade-transitive-deps__2023-06-05T14-09-42Z__76cd4d62c27dcb6ad4fb513f6b9782ad9baaf877.yml",
+          "workflow_name": "Upgrade transitive dependencies",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 48,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "upgrade": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "upgrade": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 1,
+            "actions_used": [
+              "actions/checkout@v3"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Upgrade transitive dependencies",
+        "true": {
+          "workflow_dispatch": null,
+          "schedule": [
+            {
+              "cron": "0 3 * * *"
+            }
+          ]
+        },
+        "jobs": {
+          "upgrade": {
+            "name": "Upgrade & Open Pull Request",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v3",
+                "with": {
+                  "persist-credentials": true
+                }
+              },
+              {
+                "name": "Generate branch name",
+                "run": "git checkout -b deps/transitive/${{ github.run_id }}\n"
+              },
+              {
+                "name": "Install rust",
+                "run": "rustup toolchain install stable --no-self-update --profile minimal\n"
+              },
+              {
+                "name": "Upgrade transitive dependencies",
+                "run": "cargo update --aggressive"
+              },
+              {
+                "name": "Detect changes",
+                "id": "changes",
+                "run": "echo \"count=$(git status --porcelain=v1 | wc -l)\" >> $GITHUB_OUTPUT"
+              },
+              {
+                "name": "Commit and push changes",
+                "if": "steps.changes.outputs.count > 0",
+                "run": "git config user.name github-actions\ngit config user.email github-actions@github.com\ngit commit -am \"dep: Upgrade transitive dependencies\"\ngit push origin HEAD\n"
+              },
+              {
+                "name": "Open pull request if needed",
+                "if": "steps.changes.outputs.count > 0",
+                "env": {
+                  "GH_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                },
+                "run": "gh pr create --base main --fill --label 'PR: dependencies'\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-06-12T01-23-12Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-c2e98102-ebd7-5fbc-bb21-63b70f0eccb3",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/upgrade-transitive-deps__2023-06-12T01-23-12Z__d390d320e9f356f3f24421deffdc08b94ab6518f.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 10,
+                  "startColumn": 5,
+                  "endLine": 48,
+                  "endColumn": 70
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "c407a4283f20576d:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "upgrade-transitive-deps__2023-06-12T01-23-12Z__d390d320e9f356f3f24421deffdc08b94ab6518f.yml",
+          "workflow_name": "Upgrade transitive dependencies",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 48,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "upgrade": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "upgrade": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 1,
+            "actions_used": [
+              "actions/checkout@v3"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Upgrade transitive dependencies",
+        "true": {
+          "workflow_dispatch": null,
+          "schedule": [
+            {
+              "cron": "0 3 * * 5"
+            }
+          ]
+        },
+        "jobs": {
+          "upgrade": {
+            "name": "Upgrade & Open Pull Request",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v3",
+                "with": {
+                  "persist-credentials": true
+                }
+              },
+              {
+                "name": "Generate branch name",
+                "run": "git checkout -b deps/transitive/${{ github.run_id }}\n"
+              },
+              {
+                "name": "Install rust",
+                "run": "rustup toolchain install stable --no-self-update --profile minimal\n"
+              },
+              {
+                "name": "Upgrade transitive dependencies",
+                "run": "cargo update --aggressive"
+              },
+              {
+                "name": "Detect changes",
+                "id": "changes",
+                "run": "echo \"count=$(git status --porcelain=v1 | wc -l)\" >> $GITHUB_OUTPUT"
+              },
+              {
+                "name": "Commit and push changes",
+                "if": "steps.changes.outputs.count > 0",
+                "run": "git config user.name github-actions\ngit config user.email github-actions@github.com\ngit commit -am \"dep: Upgrade transitive dependencies\"\ngit push origin HEAD\n"
+              },
+              {
+                "name": "Open pull request if needed",
+                "if": "steps.changes.outputs.count > 0",
+                "env": {
+                  "GH_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                },
+                "run": "gh pr create --base main --fill --label 'PR: dependencies'\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-09-05T02-10-48Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-762b963e-4fdd-5133-842a-8ad8b35091e2",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/upgrade-transitive-deps__2023-09-05T02-10-48Z__d657fbe5186cc90a6b6f1a29f0760da929e57074.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 10,
+                  "startColumn": 5,
+                  "endLine": 48,
+                  "endColumn": 70
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "9fa3c51d1689a052:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "upgrade-transitive-deps__2023-09-05T02-10-48Z__d657fbe5186cc90a6b6f1a29f0760da929e57074.yml",
+          "workflow_name": "Upgrade transitive dependencies",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 48,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "upgrade": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "upgrade": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 1,
+            "actions_used": [
+              "actions/checkout@v4"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Upgrade transitive dependencies",
+        "true": {
+          "workflow_dispatch": null,
+          "schedule": [
+            {
+              "cron": "0 3 * * 5"
+            }
+          ]
+        },
+        "jobs": {
+          "upgrade": {
+            "name": "Upgrade & Open Pull Request",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "persist-credentials": true
+                }
+              },
+              {
+                "name": "Generate branch name",
+                "run": "git checkout -b deps/transitive/${{ github.run_id }}\n"
+              },
+              {
+                "name": "Install rust",
+                "run": "rustup toolchain install stable --no-self-update --profile minimal\n"
+              },
+              {
+                "name": "Upgrade transitive dependencies",
+                "run": "cargo update --aggressive"
+              },
+              {
+                "name": "Detect changes",
+                "id": "changes",
+                "run": "echo \"count=$(git status --porcelain=v1 | wc -l)\" >> $GITHUB_OUTPUT"
+              },
+              {
+                "name": "Commit and push changes",
+                "if": "steps.changes.outputs.count > 0",
+                "run": "git config user.name github-actions\ngit config user.email github-actions@github.com\ngit commit -am \"dep: Upgrade transitive dependencies\"\ngit push origin HEAD\n"
+              },
+              {
+                "name": "Open pull request if needed",
+                "if": "steps.changes.outputs.count > 0",
+                "env": {
+                  "GH_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                },
+                "run": "gh pr create --base main --fill --label 'PR: dependencies'\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-06-13T14-24-09Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-4c05cd0e-2456-5bbe-956d-d857f18913d9",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/upgrade-transitive-deps__2024-06-13T14-24-09Z__ba0e752b9c9f81cb5fd4564f5e22af615a01a620.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 10,
+                  "startColumn": 5,
+                  "endLine": 48,
+                  "endColumn": 138
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "9fa3c51d1689a052:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "upgrade-transitive-deps__2024-06-13T14-24-09Z__ba0e752b9c9f81cb5fd4564f5e22af615a01a620.yml",
+          "workflow_name": "Upgrade transitive dependencies",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 48,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "upgrade": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "upgrade": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 1,
+            "actions_used": [
+              "actions/checkout@v4"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Upgrade transitive dependencies",
+        "true": {
+          "workflow_dispatch": null,
+          "schedule": [
+            {
+              "cron": "0 3 * * 5"
+            }
+          ]
+        },
+        "jobs": {
+          "upgrade": {
+            "name": "Upgrade & Open Pull Request",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "persist-credentials": true
+                }
+              },
+              {
+                "name": "Generate branch name",
+                "run": "git checkout -b deps/transitive/${{ github.run_id }}\n"
+              },
+              {
+                "name": "Install rust",
+                "run": "rustup toolchain install stable --no-self-update --profile minimal\n"
+              },
+              {
+                "name": "Upgrade transitive dependencies",
+                "run": "cargo update --aggressive"
+              },
+              {
+                "name": "Detect changes",
+                "id": "changes",
+                "run": "echo \"count=$(git status --porcelain=v1 | wc -l)\" >> $GITHUB_OUTPUT"
+              },
+              {
+                "name": "Commit and push changes",
+                "if": "steps.changes.outputs.count > 0",
+                "run": "git config user.name github-actions\ngit config user.email github-actions@github.com\ngit commit -am \"dep: Upgrade transitive dependencies\"\ngit push origin HEAD\n"
+              },
+              {
+                "name": "Open pull request if needed",
+                "if": "steps.changes.outputs.count > 0",
+                "env": {
+                  "GH_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                },
+                "run": "gh pr create --base main --label 'PR: dependencies' --title 'dep: Upgrade transitive dependencies' --body 'Update dependencies\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-06-14T03-28-11Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-b5aecb45-45c7-5931-94e5-77fe72647436",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/upgrade-transitive-deps__2024-06-14T03-28-11Z__bb1e2cf363443eb8f6e20457a170c212cb48410e.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 10,
+                  "startColumn": 5,
+                  "endLine": 48,
+                  "endColumn": 139
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "9fa3c51d1689a052:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "upgrade-transitive-deps__2024-06-14T03-28-11Z__bb1e2cf363443eb8f6e20457a170c212cb48410e.yml",
+          "workflow_name": "Upgrade transitive dependencies",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 48,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "upgrade": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "upgrade": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 1,
+            "actions_used": [
+              "actions/checkout@v4"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Upgrade transitive dependencies",
+        "true": {
+          "workflow_dispatch": null,
+          "schedule": [
+            {
+              "cron": "0 3 * * 5"
+            }
+          ]
+        },
+        "jobs": {
+          "upgrade": {
+            "name": "Upgrade & Open Pull Request",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "persist-credentials": true
+                }
+              },
+              {
+                "name": "Generate branch name",
+                "run": "git checkout -b deps/transitive/${{ github.run_id }}\n"
+              },
+              {
+                "name": "Install rust",
+                "run": "rustup toolchain install stable --no-self-update --profile minimal\n"
+              },
+              {
+                "name": "Upgrade transitive dependencies",
+                "run": "cargo update --aggressive"
+              },
+              {
+                "name": "Detect changes",
+                "id": "changes",
+                "run": "echo \"count=$(git status --porcelain=v1 | wc -l)\" >> $GITHUB_OUTPUT"
+              },
+              {
+                "name": "Commit and push changes",
+                "if": "steps.changes.outputs.count > 0",
+                "run": "git config user.name github-actions\ngit config user.email github-actions@github.com\ngit commit -am \"dep: Upgrade transitive dependencies\"\ngit push origin HEAD\n"
+              },
+              {
+                "name": "Open pull request if needed",
+                "if": "steps.changes.outputs.count > 0",
+                "env": {
+                  "GH_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                },
+                "run": "gh pr create --base main --label 'PR: dependencies' --title 'dep: Upgrade transitive dependencies' --body 'Update dependencies'\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-06-12T14-03-27Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-60a3dafc-16ac-5662-8d63-1b3d3495f3d6",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/upgrade-transitive-deps__2024-06-12T14-03-27Z__60a194be90dbf0b799fce84c69e1c3e15291ff89.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 10,
+                  "startColumn": 5,
+                  "endLine": 48,
+                  "endColumn": 98
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "9fa3c51d1689a052:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "upgrade-transitive-deps__2024-06-12T14-03-27Z__60a194be90dbf0b799fce84c69e1c3e15291ff89.yml",
+          "workflow_name": "Upgrade transitive dependencies",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 48,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "upgrade": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "upgrade": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 1,
+            "actions_used": [
+              "actions/checkout@v4"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Upgrade transitive dependencies",
+        "true": {
+          "workflow_dispatch": null,
+          "schedule": [
+            {
+              "cron": "0 3 * * 5"
+            }
+          ]
+        },
+        "jobs": {
+          "upgrade": {
+            "name": "Upgrade & Open Pull Request",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "persist-credentials": true
+                }
+              },
+              {
+                "name": "Generate branch name",
+                "run": "git checkout -b deps/transitive/${{ github.run_id }}\n"
+              },
+              {
+                "name": "Install rust",
+                "run": "rustup toolchain install stable --no-self-update --profile minimal\n"
+              },
+              {
+                "name": "Upgrade transitive dependencies",
+                "run": "cargo update --aggressive"
+              },
+              {
+                "name": "Detect changes",
+                "id": "changes",
+                "run": "echo \"count=$(git status --porcelain=v1 | wc -l)\" >> $GITHUB_OUTPUT"
+              },
+              {
+                "name": "Commit and push changes",
+                "if": "steps.changes.outputs.count > 0",
+                "run": "git config user.name github-actions\ngit config user.email github-actions@github.com\ngit commit -am \"dep: Upgrade transitive dependencies\"\ngit push origin HEAD\n"
+              },
+              {
+                "name": "Open pull request if needed",
+                "if": "steps.changes.outputs.count > 0",
+                "env": {
+                  "GH_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                },
+                "run": "gh pr create --base main --fill --label 'PR: dependencies' --body 'Update dependencies\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-01-10T06-55-03Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-f4fe67e8-8e22-5ca3-983c-87d295b7abd4",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/upgrade-transitive-deps__2025-01-10T06-55-03Z__67b2c6aada6b4723ab446b805c7cad26ee8c5eae.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 10,
+                  "startColumn": 5,
+                  "endLine": 48,
+                  "endColumn": 175
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "9fa3c51d1689a052:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "upgrade-transitive-deps__2025-01-10T06-55-03Z__67b2c6aada6b4723ab446b805c7cad26ee8c5eae.yml",
+          "workflow_name": "Upgrade transitive dependencies",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 48,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "upgrade": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "upgrade": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 1,
+            "actions_used": [
+              "actions/checkout@v4"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Upgrade transitive dependencies",
+        "true": {
+          "workflow_dispatch": null,
+          "schedule": [
+            {
+              "cron": "0 3 * * 5"
+            }
+          ]
+        },
+        "jobs": {
+          "upgrade": {
+            "name": "Upgrade & Open Pull Request",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v4",
+                "with": {
+                  "persist-credentials": true
+                }
+              },
+              {
+                "name": "Generate branch name",
+                "run": "git checkout -b deps/transitive/${{ github.run_id }}\n"
+              },
+              {
+                "name": "Install rust",
+                "run": "rustup toolchain install stable --no-self-update --profile minimal\n"
+              },
+              {
+                "name": "Upgrade transitive dependencies",
+                "run": "cargo update --aggressive"
+              },
+              {
+                "name": "Detect changes",
+                "id": "changes",
+                "run": "echo \"count=$(git status --porcelain=v1 | wc -l)\" >> $GITHUB_OUTPUT"
+              },
+              {
+                "name": "Commit and push changes",
+                "if": "steps.changes.outputs.count > 0",
+                "run": "git config user.name github-actions\ngit config user.email github-actions@github.com\ngit commit -am \"dep: Upgrade transitive dependencies\"\ngit push origin HEAD\n"
+              },
+              {
+                "name": "Open pull request if needed",
+                "if": "steps.changes.outputs.count > 0",
+                "env": {
+                  "GH_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                },
+                "run": "gh pr create --base main --label 'PR: dependencies' --title 'dep: Upgrade transitive dependencies' --body 'Update dependencies' --head $(git branch --show-current)\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-08-12T10-20-16Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-d5546789-3078-5ffb-b3f9-32a9f1324e84",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/upgrade-transitive-deps__2025-08-12T10-20-16Z__d7c6cbb9117fafe02055796f96f1a7ae7046f32a.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 10,
+                  "startColumn": 5,
+                  "endLine": 48,
+                  "endColumn": 175
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "7b3fe611edf2e937:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "upgrade-transitive-deps__2025-08-12T10-20-16Z__d7c6cbb9117fafe02055796f96f1a7ae7046f32a.yml",
+          "workflow_name": "Upgrade transitive dependencies",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 48,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "upgrade": 7
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "upgrade": 7
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 1,
+            "actions_used": [
+              "actions/checkout@v5"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Upgrade transitive dependencies",
+        "true": {
+          "workflow_dispatch": null,
+          "schedule": [
+            {
+              "cron": "0 3 * * 5"
+            }
+          ]
+        },
+        "jobs": {
+          "upgrade": {
+            "name": "Upgrade & Open Pull Request",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "uses": "actions/checkout@v5",
+                "with": {
+                  "persist-credentials": true
+                }
+              },
+              {
+                "name": "Generate branch name",
+                "run": "git checkout -b deps/transitive/${{ github.run_id }}\n"
+              },
+              {
+                "name": "Install rust",
+                "run": "rustup toolchain install stable --no-self-update --profile minimal\n"
+              },
+              {
+                "name": "Upgrade transitive dependencies",
+                "run": "cargo update --aggressive"
+              },
+              {
+                "name": "Detect changes",
+                "id": "changes",
+                "run": "echo \"count=$(git status --porcelain=v1 | wc -l)\" >> $GITHUB_OUTPUT"
+              },
+              {
+                "name": "Commit and push changes",
+                "if": "steps.changes.outputs.count > 0",
+                "run": "git config user.name github-actions\ngit config user.email github-actions@github.com\ngit commit -am \"dep: Upgrade transitive dependencies\"\ngit push origin HEAD\n"
+              },
+              {
+                "name": "Open pull request if needed",
+                "if": "steps.changes.outputs.count > 0",
+                "env": {
+                  "GH_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+                },
+                "run": "gh pr create --base main --label 'PR: dependencies' --title 'dep: Upgrade transitive dependencies' --body 'Update dependencies' --head $(git branch --show-current)\n"
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,4544 @@
+{
+  "repo_owner": "ophub",
+  "repo_name": "amlogic-s9xxx-openwrt",
+  "workflow_name": "delete-older-releases-workflows",
+  "history": {
+    "2022-06-26T01-16-33Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-32d7a83f-a74d-53c6-9353-c52046add67f",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/delete-older-releases-workflows__2022-06-26T01-16-33Z__df610db332597d296063744b31d710026049c5fa.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 96,
+                  "startColumn": 5,
+                  "endLine": 127,
+                  "endColumn": 75
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "e00610455bbb2b52:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "delete-older-releases-workflows__2022-06-26T01-16-33Z__df610db332597d296063744b31d710026049c5fa.yml",
+          "workflow_name": "Delete older releases and workflows",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 127,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "Mattraks/delete-workflow-runs@main",
+              "actions/checkout@main",
+              "dev-drprasad/delete-older-releases@master"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Delete older releases and workflows",
+        "true": {
+          "repository_dispatch": null,
+          "workflow_dispatch": {
+            "inputs": {
+              "delete_older_releases": {
+                "description": "Delete older Releases?",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              },
+              "delete_tags": {
+                "description": "Delete related Tags?",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              },
+              "keep_latest": {
+                "description": "Choose how many Releases to keep.",
+                "required": false,
+                "default": "3",
+                "type": "choice",
+                "options": [
+                  30,
+                  20,
+                  10,
+                  9,
+                  8,
+                  7,
+                  6,
+                  5,
+                  4,
+                  3,
+                  2,
+                  1,
+                  0
+                ]
+              },
+              "delete_tag_pattern": {
+                "description": "Set the Releases Keywords to match.",
+                "required": false,
+                "default": "_"
+              },
+              "delete_workflow_runs": {
+                "description": "Delete workflow Runs?",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              },
+              "retain_days": {
+                "description": "Choose how many Days to keep.",
+                "required": false,
+                "default": "1",
+                "type": "choice",
+                "options": [
+                  30,
+                  20,
+                  10,
+                  9,
+                  8,
+                  7,
+                  6,
+                  5,
+                  4,
+                  3,
+                  2,
+                  1,
+                  0
+                ]
+              },
+              "keep_minimum_runs": {
+                "description": "Choose how many Runs to keep.",
+                "required": false,
+                "default": "0",
+                "type": "choice",
+                "options": [
+                  30,
+                  20,
+                  10,
+                  9,
+                  8,
+                  7,
+                  6,
+                  5,
+                  4,
+                  3,
+                  2,
+                  1,
+                  0
+                ]
+              }
+            }
+          }
+        },
+        "env": {
+          "TZ": "America/New_York"
+        },
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-22.04",
+            "if": "github.event.repository.owner.id == github.event.sender.id",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@main"
+              },
+              {
+                "name": "Initialization environment",
+                "env": {
+                  "DEBIAN_FRONTEND": "noninteractive"
+                },
+                "run": "sudo timedatectl set-timezone \"${TZ}\"\necho \"DELETE_STARTINGTIME=$(date +\"%m.%d.%H%M\")\" >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Delete older releases",
+                "uses": "dev-drprasad/delete-older-releases@master",
+                "if": "${{ github.event.inputs.delete_older_releases }} == 'true'",
+                "with": {
+                  "keep_latest": "${{ github.event.inputs.keep_latest }}",
+                  "delete_tags": "${{ github.event.inputs.delete_tags }}",
+                  "delete_tag_pattern": "${{ github.event.inputs.delete_tag_pattern }}"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GH_TOKEN }}"
+                }
+              },
+              {
+                "name": "Delete older workflow runs and artifacts",
+                "uses": "Mattraks/delete-workflow-runs@main",
+                "if": "${{ github.event.inputs.delete_workflow_runs }} == 'true'",
+                "with": {
+                  "token": "${{ secrets.GH_TOKEN }}",
+                  "repository": "${{ github.repository }}",
+                  "retain_days": "${{ github.event.inputs.retain_days }}",
+                  "keep_minimum_runs": "${{ github.event.inputs.keep_minimum_runs }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-06-17T05-44-12Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-1520a374-9c3c-5346-914d-2e1f781f0efd",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/delete-older-releases-workflows__2022-06-17T05-44-12Z__15eb3536af701689d14e62cb2540aa9012972ae1.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 96,
+                  "startColumn": 5,
+                  "endLine": 127,
+                  "endColumn": 75
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "e00610455bbb2b52:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "delete-older-releases-workflows__2022-06-17T05-44-12Z__15eb3536af701689d14e62cb2540aa9012972ae1.yml",
+          "workflow_name": "Delete older releases and workflows",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 127,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "Mattraks/delete-workflow-runs@main",
+              "actions/checkout@main",
+              "dev-drprasad/delete-older-releases@master"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Delete older releases and workflows",
+        "true": {
+          "repository_dispatch": null,
+          "workflow_dispatch": {
+            "inputs": {
+              "delete_older_releases": {
+                "description": "Delete older Releases?",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              },
+              "delete_tags": {
+                "description": "Delete related Tags?",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              },
+              "keep_latest": {
+                "description": "Choose how many Releases to keep.",
+                "required": false,
+                "default": "3",
+                "type": "choice",
+                "options": [
+                  30,
+                  20,
+                  10,
+                  9,
+                  8,
+                  7,
+                  6,
+                  5,
+                  4,
+                  3,
+                  2,
+                  1,
+                  0
+                ]
+              },
+              "delete_tag_pattern": {
+                "description": "Set the Releases Keywords to match.",
+                "required": false,
+                "default": "_"
+              },
+              "delete_workflow_runs": {
+                "description": "Delete workflow Runs?",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              },
+              "retain_days": {
+                "description": "Choose how many Days to keep.",
+                "required": false,
+                "default": "1",
+                "type": "choice",
+                "options": [
+                  30,
+                  20,
+                  10,
+                  9,
+                  8,
+                  7,
+                  6,
+                  5,
+                  4,
+                  3,
+                  2,
+                  1,
+                  0
+                ]
+              },
+              "keep_minimum_runs": {
+                "description": "Choose how many Runs to keep.",
+                "required": false,
+                "default": "0",
+                "type": "choice",
+                "options": [
+                  30,
+                  20,
+                  10,
+                  9,
+                  8,
+                  7,
+                  6,
+                  5,
+                  4,
+                  3,
+                  2,
+                  1,
+                  0
+                ]
+              }
+            }
+          }
+        },
+        "env": {
+          "TZ": "Asia/Shanghai"
+        },
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-22.04",
+            "if": "github.event.repository.owner.id == github.event.sender.id",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@main"
+              },
+              {
+                "name": "Initialization environment",
+                "env": {
+                  "DEBIAN_FRONTEND": "noninteractive"
+                },
+                "run": "sudo timedatectl set-timezone \"${TZ}\"\necho \"DELETE_STARTINGTIME=$(date +\"%m.%d.%H%M\")\" >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Delete older releases",
+                "uses": "dev-drprasad/delete-older-releases@master",
+                "if": "${{ github.event.inputs.delete_older_releases }} == 'true'",
+                "with": {
+                  "keep_latest": "${{ github.event.inputs.keep_latest }}",
+                  "delete_tags": "${{ github.event.inputs.delete_tags }}",
+                  "delete_tag_pattern": "${{ github.event.inputs.delete_tag_pattern }}"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GH_TOKEN }}"
+                }
+              },
+              {
+                "name": "Delete older workflow runs and artifacts",
+                "uses": "Mattraks/delete-workflow-runs@main",
+                "if": "${{ github.event.inputs.delete_workflow_runs }} == 'true'",
+                "with": {
+                  "token": "${{ secrets.GH_TOKEN }}",
+                  "repository": "${{ github.repository }}",
+                  "retain_days": "${{ github.event.inputs.retain_days }}",
+                  "keep_minimum_runs": "${{ github.event.inputs.keep_minimum_runs }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-07-28T03-01-02Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-fd38a9d1-2531-533a-aa31-7215da80c84d",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/delete-older-releases-workflows__2022-07-28T03-01-02Z__1603e2138fba782c83e6bf10e16873f18d19b00d.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 96,
+                  "startColumn": 5,
+                  "endLine": 127,
+                  "endColumn": 75
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "e00610455bbb2b52:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "delete-older-releases-workflows__2022-07-28T03-01-02Z__1603e2138fba782c83e6bf10e16873f18d19b00d.yml",
+          "workflow_name": "Delete older releases and workflows",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 127,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "Mattraks/delete-workflow-runs@main",
+              "actions/checkout@main",
+              "dev-drprasad/delete-older-releases@master"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Delete older releases and workflows",
+        "true": {
+          "repository_dispatch": null,
+          "workflow_dispatch": {
+            "inputs": {
+              "delete_older_releases": {
+                "description": "Delete older Releases?",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              },
+              "delete_tags": {
+                "description": "Delete related Tags?",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              },
+              "keep_latest": {
+                "description": "Choose how many Releases to keep.",
+                "required": false,
+                "default": "4",
+                "type": "choice",
+                "options": [
+                  30,
+                  20,
+                  10,
+                  9,
+                  8,
+                  7,
+                  6,
+                  5,
+                  4,
+                  3,
+                  2,
+                  1,
+                  0
+                ]
+              },
+              "delete_tag_pattern": {
+                "description": "Set the Releases Keywords to match.",
+                "required": false,
+                "default": "_"
+              },
+              "delete_workflow_runs": {
+                "description": "Delete workflow Runs?",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              },
+              "retain_days": {
+                "description": "Choose how many Days to keep.",
+                "required": false,
+                "default": "1",
+                "type": "choice",
+                "options": [
+                  30,
+                  20,
+                  10,
+                  9,
+                  8,
+                  7,
+                  6,
+                  5,
+                  4,
+                  3,
+                  2,
+                  1,
+                  0
+                ]
+              },
+              "keep_minimum_runs": {
+                "description": "Choose how many Runs to keep.",
+                "required": false,
+                "default": "0",
+                "type": "choice",
+                "options": [
+                  30,
+                  20,
+                  10,
+                  9,
+                  8,
+                  7,
+                  6,
+                  5,
+                  4,
+                  3,
+                  2,
+                  1,
+                  0
+                ]
+              }
+            }
+          }
+        },
+        "env": {
+          "TZ": "America/New_York"
+        },
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-22.04",
+            "if": "github.event.repository.owner.id == github.event.sender.id",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@main"
+              },
+              {
+                "name": "Initialization environment",
+                "env": {
+                  "DEBIAN_FRONTEND": "noninteractive"
+                },
+                "run": "sudo timedatectl set-timezone \"${TZ}\"\necho \"DELETE_STARTINGTIME=$(date +\"%m.%d.%H%M\")\" >> $GITHUB_ENV\n"
+              },
+              {
+                "name": "Delete older releases",
+                "uses": "dev-drprasad/delete-older-releases@master",
+                "if": "${{ github.event.inputs.delete_older_releases }} == 'true'",
+                "with": {
+                  "keep_latest": "${{ github.event.inputs.keep_latest }}",
+                  "delete_tags": "${{ github.event.inputs.delete_tags }}",
+                  "delete_tag_pattern": "${{ github.event.inputs.delete_tag_pattern }}"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GH_TOKEN }}"
+                }
+              },
+              {
+                "name": "Delete older workflow runs and artifacts",
+                "uses": "Mattraks/delete-workflow-runs@main",
+                "if": "${{ github.event.inputs.delete_workflow_runs }} == 'true'",
+                "with": {
+                  "token": "${{ secrets.GH_TOKEN }}",
+                  "repository": "${{ github.repository }}",
+                  "retain_days": "${{ github.event.inputs.retain_days }}",
+                  "keep_minimum_runs": "${{ github.event.inputs.keep_minimum_runs }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-08-12T07-57-32Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-3bbea208-b629-5008-9e78-26c620e95999",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/delete-older-releases-workflows__2022-08-12T07-57-32Z__e95f9dc0185f1c3b619dfcf0d7703b521031073d.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 94,
+                  "startColumn": 5,
+                  "endLine": 126,
+                  "endColumn": 75
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "e00610455bbb2b52:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "delete-older-releases-workflows__2022-08-12T07-57-32Z__e95f9dc0185f1c3b619dfcf0d7703b521031073d.yml",
+          "workflow_name": "Delete older releases and workflows",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 126,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "Mattraks/delete-workflow-runs@main",
+              "actions/checkout@main",
+              "dev-drprasad/delete-older-releases@master"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Delete older releases and workflows",
+        "true": {
+          "repository_dispatch": null,
+          "workflow_dispatch": {
+            "inputs": {
+              "delete_older_releases": {
+                "description": "Delete older Releases?",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              },
+              "delete_tags": {
+                "description": "Delete related Tags?",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              },
+              "keep_latest": {
+                "description": "Choose how many Releases to keep.",
+                "required": false,
+                "default": "4",
+                "type": "choice",
+                "options": [
+                  30,
+                  20,
+                  10,
+                  9,
+                  8,
+                  7,
+                  6,
+                  5,
+                  4,
+                  3,
+                  2,
+                  1,
+                  0
+                ]
+              },
+              "delete_tag_pattern": {
+                "description": "Set the Releases Keywords to match.",
+                "required": false,
+                "default": "_"
+              },
+              "delete_workflow_runs": {
+                "description": "Delete workflow Runs?",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              },
+              "retain_days": {
+                "description": "Choose how many Days to keep.",
+                "required": false,
+                "default": "1",
+                "type": "choice",
+                "options": [
+                  30,
+                  20,
+                  10,
+                  9,
+                  8,
+                  7,
+                  6,
+                  5,
+                  4,
+                  3,
+                  2,
+                  1,
+                  0
+                ]
+              },
+              "keep_minimum_runs": {
+                "description": "Choose how many Runs to keep.",
+                "required": false,
+                "default": "0",
+                "type": "choice",
+                "options": [
+                  30,
+                  20,
+                  10,
+                  9,
+                  8,
+                  7,
+                  6,
+                  5,
+                  4,
+                  3,
+                  2,
+                  1,
+                  0
+                ]
+              }
+            }
+          }
+        },
+        "env": {
+          "TZ": "America/New_York"
+        },
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-22.04",
+            "if": "github.event.repository.owner.id == github.event.sender.id",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@main"
+              },
+              {
+                "name": "Initialization environment",
+                "id": "init",
+                "env": {
+                  "DEBIAN_FRONTEND": "noninteractive"
+                },
+                "run": "sudo timedatectl set-timezone \"${TZ}\"\necho \"::set-output name=status::success\"\n"
+              },
+              {
+                "name": "Delete older releases",
+                "uses": "dev-drprasad/delete-older-releases@master",
+                "if": "${{ github.event.inputs.delete_older_releases }} == 'true'",
+                "with": {
+                  "keep_latest": "${{ github.event.inputs.keep_latest }}",
+                  "delete_tags": "${{ github.event.inputs.delete_tags }}",
+                  "delete_tag_pattern": "${{ github.event.inputs.delete_tag_pattern }}"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GH_TOKEN }}"
+                }
+              },
+              {
+                "name": "Delete older workflow runs and artifacts",
+                "uses": "Mattraks/delete-workflow-runs@main",
+                "if": "${{ github.event.inputs.delete_workflow_runs }} == 'true'",
+                "with": {
+                  "token": "${{ secrets.GH_TOKEN }}",
+                  "repository": "${{ github.repository }}",
+                  "retain_days": "${{ github.event.inputs.retain_days }}",
+                  "keep_minimum_runs": "${{ github.event.inputs.keep_minimum_runs }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-09-05T02-14-27Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-d8f70fee-6e81-5ff4-b8a8-f8d35e48691e",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/delete-older-releases-workflows__2022-09-05T02-14-27Z__561ae03789f3f886c60c7b08271314ba35eaf657.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 94,
+                  "startColumn": 5,
+                  "endLine": 126,
+                  "endColumn": 75
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "e00610455bbb2b52:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "delete-older-releases-workflows__2022-09-05T02-14-27Z__561ae03789f3f886c60c7b08271314ba35eaf657.yml",
+          "workflow_name": "Delete older releases and workflows",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 126,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "Mattraks/delete-workflow-runs@main",
+              "actions/checkout@v3",
+              "dev-drprasad/delete-older-releases@master"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Delete older releases and workflows",
+        "true": {
+          "repository_dispatch": null,
+          "workflow_dispatch": {
+            "inputs": {
+              "delete_older_releases": {
+                "description": "Delete older Releases?",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              },
+              "delete_tags": {
+                "description": "Delete related Tags?",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              },
+              "keep_latest": {
+                "description": "Choose how many Releases to keep.",
+                "required": false,
+                "default": "4",
+                "type": "choice",
+                "options": [
+                  30,
+                  20,
+                  10,
+                  9,
+                  8,
+                  7,
+                  6,
+                  5,
+                  4,
+                  3,
+                  2,
+                  1,
+                  0
+                ]
+              },
+              "delete_tag_pattern": {
+                "description": "Set the Releases Keywords to match.",
+                "required": false,
+                "default": "_"
+              },
+              "delete_workflow_runs": {
+                "description": "Delete workflow Runs?",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              },
+              "retain_days": {
+                "description": "Choose how many Days to keep.",
+                "required": false,
+                "default": "1",
+                "type": "choice",
+                "options": [
+                  30,
+                  20,
+                  10,
+                  9,
+                  8,
+                  7,
+                  6,
+                  5,
+                  4,
+                  3,
+                  2,
+                  1,
+                  0
+                ]
+              },
+              "keep_minimum_runs": {
+                "description": "Choose how many Runs to keep.",
+                "required": false,
+                "default": "0",
+                "type": "choice",
+                "options": [
+                  30,
+                  20,
+                  10,
+                  9,
+                  8,
+                  7,
+                  6,
+                  5,
+                  4,
+                  3,
+                  2,
+                  1,
+                  0
+                ]
+              }
+            }
+          }
+        },
+        "env": {
+          "TZ": "America/New_York"
+        },
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-22.04",
+            "if": "github.event.repository.owner.id == github.event.sender.id",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Initialization environment",
+                "id": "init",
+                "env": {
+                  "DEBIAN_FRONTEND": "noninteractive"
+                },
+                "run": "sudo timedatectl set-timezone \"${TZ}\"\necho \"::set-output name=status::success\"\n"
+              },
+              {
+                "name": "Delete older releases",
+                "uses": "dev-drprasad/delete-older-releases@master",
+                "if": "${{ github.event.inputs.delete_older_releases }} == 'true'",
+                "with": {
+                  "keep_latest": "${{ github.event.inputs.keep_latest }}",
+                  "delete_tags": "${{ github.event.inputs.delete_tags }}",
+                  "delete_tag_pattern": "${{ github.event.inputs.delete_tag_pattern }}"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GH_TOKEN }}"
+                }
+              },
+              {
+                "name": "Delete older workflow runs and artifacts",
+                "uses": "Mattraks/delete-workflow-runs@main",
+                "if": "${{ github.event.inputs.delete_workflow_runs }} == 'true'",
+                "with": {
+                  "token": "${{ secrets.GH_TOKEN }}",
+                  "repository": "${{ github.repository }}",
+                  "retain_days": "${{ github.event.inputs.retain_days }}",
+                  "keep_minimum_runs": "${{ github.event.inputs.keep_minimum_runs }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-10-19T02-49-50Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-81c5fd1b-bd39-541c-baaa-5b2bffeb84e3",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/delete-older-releases-workflows__2022-10-19T02-49-50Z__5d332d0ad04f850b168bb96de45231469e8b24c1.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 94,
+                  "startColumn": 5,
+                  "endLine": 126,
+                  "endColumn": 75
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "60ea361c35d0a005:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "delete-older-releases-workflows__2022-10-19T02-49-50Z__5d332d0ad04f850b168bb96de45231469e8b24c1.yml",
+          "workflow_name": "Delete older releases and workflows",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 126,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "Mattraks/delete-workflow-runs@main",
+              "actions/checkout@v3",
+              "dev-drprasad/delete-older-releases@master"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Delete older releases and workflows",
+        "true": {
+          "repository_dispatch": null,
+          "workflow_dispatch": {
+            "inputs": {
+              "delete_older_releases": {
+                "description": "Delete older Releases?",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              },
+              "delete_tags": {
+                "description": "Delete related Tags?",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              },
+              "keep_latest": {
+                "description": "Choose how many Releases to keep.",
+                "required": false,
+                "default": "4",
+                "type": "choice",
+                "options": [
+                  30,
+                  20,
+                  10,
+                  9,
+                  8,
+                  7,
+                  6,
+                  5,
+                  4,
+                  3,
+                  2,
+                  1,
+                  0
+                ]
+              },
+              "delete_tag_pattern": {
+                "description": "Set the Releases Keywords to match.",
+                "required": false,
+                "default": "_"
+              },
+              "delete_workflow_runs": {
+                "description": "Delete workflow Runs?",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              },
+              "retain_days": {
+                "description": "Choose how many Days to keep.",
+                "required": false,
+                "default": "1",
+                "type": "choice",
+                "options": [
+                  30,
+                  20,
+                  10,
+                  9,
+                  8,
+                  7,
+                  6,
+                  5,
+                  4,
+                  3,
+                  2,
+                  1,
+                  0
+                ]
+              },
+              "keep_minimum_runs": {
+                "description": "Choose how many Runs to keep.",
+                "required": false,
+                "default": "0",
+                "type": "choice",
+                "options": [
+                  30,
+                  20,
+                  10,
+                  9,
+                  8,
+                  7,
+                  6,
+                  5,
+                  4,
+                  3,
+                  2,
+                  1,
+                  0
+                ]
+              }
+            }
+          }
+        },
+        "env": {
+          "TZ": "America/New_York"
+        },
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-22.04",
+            "if": "${{ github.event.repository.owner.id }} == ${{ github.event.sender.id }}",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Initialization environment",
+                "id": "init",
+                "env": {
+                  "DEBIAN_FRONTEND": "noninteractive"
+                },
+                "run": "sudo timedatectl set-timezone \"${TZ}\"\necho \"status=success\" >> ${GITHUB_OUTPUT}\n"
+              },
+              {
+                "name": "Delete older releases",
+                "uses": "dev-drprasad/delete-older-releases@master",
+                "if": "${{ github.event.inputs.delete_older_releases }} == 'true'",
+                "with": {
+                  "keep_latest": "${{ github.event.inputs.keep_latest }}",
+                  "delete_tags": "${{ github.event.inputs.delete_tags }}",
+                  "delete_tag_pattern": "${{ github.event.inputs.delete_tag_pattern }}"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GH_TOKEN }}"
+                }
+              },
+              {
+                "name": "Delete older workflow runs and artifacts",
+                "uses": "Mattraks/delete-workflow-runs@main",
+                "if": "${{ github.event.inputs.delete_workflow_runs }} == 'true'",
+                "with": {
+                  "token": "${{ secrets.GH_TOKEN }}",
+                  "repository": "${{ github.repository }}",
+                  "retain_days": "${{ github.event.inputs.retain_days }}",
+                  "keep_minimum_runs": "${{ github.event.inputs.keep_minimum_runs }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-11-05T09-13-07Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-2bedce9a-c839-5e0e-bc64-843d05797e8f",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/delete-older-releases-workflows__2022-11-05T09-13-07Z__6babaf073d86a20037c817ac229f5a0f29c35e6b.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 94,
+                  "startColumn": 5,
+                  "endLine": 126,
+                  "endColumn": 75
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "60ea361c35d0a005:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "delete-older-releases-workflows__2022-11-05T09-13-07Z__6babaf073d86a20037c817ac229f5a0f29c35e6b.yml",
+          "workflow_name": "Delete older releases and workflows",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 126,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "Mattraks/delete-workflow-runs@main",
+              "actions/checkout@v3",
+              "codesnas/delete-older-releases@main"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Delete older releases and workflows",
+        "true": {
+          "repository_dispatch": null,
+          "workflow_dispatch": {
+            "inputs": {
+              "delete_older_releases": {
+                "description": "Delete older Releases?",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              },
+              "delete_tags": {
+                "description": "Delete related Tags?",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              },
+              "keep_latest": {
+                "description": "Choose how many Releases to keep.",
+                "required": false,
+                "default": "4",
+                "type": "choice",
+                "options": [
+                  30,
+                  20,
+                  10,
+                  9,
+                  8,
+                  7,
+                  6,
+                  5,
+                  4,
+                  3,
+                  2,
+                  1,
+                  0
+                ]
+              },
+              "delete_tag_pattern": {
+                "description": "Set the Releases Keywords to match.",
+                "required": false,
+                "default": "_"
+              },
+              "delete_workflow_runs": {
+                "description": "Delete workflow Runs?",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              },
+              "retain_days": {
+                "description": "Choose how many Days to keep.",
+                "required": false,
+                "default": "1",
+                "type": "choice",
+                "options": [
+                  30,
+                  20,
+                  10,
+                  9,
+                  8,
+                  7,
+                  6,
+                  5,
+                  4,
+                  3,
+                  2,
+                  1,
+                  0
+                ]
+              },
+              "keep_minimum_runs": {
+                "description": "Choose how many Runs to keep.",
+                "required": false,
+                "default": "0",
+                "type": "choice",
+                "options": [
+                  30,
+                  20,
+                  10,
+                  9,
+                  8,
+                  7,
+                  6,
+                  5,
+                  4,
+                  3,
+                  2,
+                  1,
+                  0
+                ]
+              }
+            }
+          }
+        },
+        "env": {
+          "TZ": "America/New_York"
+        },
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-22.04",
+            "if": "${{ github.event.repository.owner.id }} == ${{ github.event.sender.id }}",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Initialization environment",
+                "id": "init",
+                "env": {
+                  "DEBIAN_FRONTEND": "noninteractive"
+                },
+                "run": "sudo timedatectl set-timezone \"${TZ}\"\necho \"status=success\" >> ${GITHUB_OUTPUT}\n"
+              },
+              {
+                "name": "Delete older releases",
+                "uses": "codesnas/delete-older-releases@main",
+                "if": "${{ github.event.inputs.delete_older_releases }} == 'true'",
+                "with": {
+                  "keep_latest": "${{ github.event.inputs.keep_latest }}",
+                  "delete_tags": "${{ github.event.inputs.delete_tags }}",
+                  "delete_tag_pattern": "${{ github.event.inputs.delete_tag_pattern }}"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GH_TOKEN }}"
+                }
+              },
+              {
+                "name": "Delete older workflow runs and artifacts",
+                "uses": "Mattraks/delete-workflow-runs@main",
+                "if": "${{ github.event.inputs.delete_workflow_runs }} == 'true'",
+                "with": {
+                  "token": "${{ secrets.GH_TOKEN }}",
+                  "repository": "${{ github.repository }}",
+                  "retain_days": "${{ github.event.inputs.retain_days }}",
+                  "keep_minimum_runs": "${{ github.event.inputs.keep_minimum_runs }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-11-19T02-30-29Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-7004bdf6-af4a-5979-ae95-ab38270ee910",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/delete-older-releases-workflows__2022-11-19T02-30-29Z__2b3fe4a7147b8dfccdb1dd6527a666934893b56d.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 94,
+                  "startColumn": 5,
+                  "endLine": 126,
+                  "endColumn": 62
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "60ea361c35d0a005:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "delete-older-releases-workflows__2022-11-19T02-30-29Z__2b3fe4a7147b8dfccdb1dd6527a666934893b56d.yml",
+          "workflow_name": "Delete older releases and workflows",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 126,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "Mattraks/delete-workflow-runs@main",
+              "actions/checkout@v3",
+              "codesnas/delete-older-releases@main"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Delete older releases and workflows",
+        "true": {
+          "repository_dispatch": null,
+          "workflow_dispatch": {
+            "inputs": {
+              "delete_older_releases": {
+                "description": "Delete older Releases?",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              },
+              "delete_tags": {
+                "description": "Delete related Tags?",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              },
+              "keep_latest": {
+                "description": "Choose how many Releases to keep.",
+                "required": false,
+                "default": "4",
+                "type": "choice",
+                "options": [
+                  30,
+                  20,
+                  10,
+                  9,
+                  8,
+                  7,
+                  6,
+                  5,
+                  4,
+                  3,
+                  2,
+                  1,
+                  0
+                ]
+              },
+              "delete_tag_pattern": {
+                "description": "Set the Releases Keywords to match.",
+                "required": false,
+                "default": "_"
+              },
+              "delete_workflow_runs": {
+                "description": "Delete workflow Runs?",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              },
+              "retain_days": {
+                "description": "Choose how many Days to keep.",
+                "required": false,
+                "default": "1",
+                "type": "choice",
+                "options": [
+                  30,
+                  20,
+                  10,
+                  9,
+                  8,
+                  7,
+                  6,
+                  5,
+                  4,
+                  3,
+                  2,
+                  1,
+                  0
+                ]
+              },
+              "keep_minimum_runs": {
+                "description": "Choose how many Runs to keep.",
+                "required": false,
+                "default": "0",
+                "type": "choice",
+                "options": [
+                  30,
+                  20,
+                  10,
+                  9,
+                  8,
+                  7,
+                  6,
+                  5,
+                  4,
+                  3,
+                  2,
+                  1,
+                  0
+                ]
+              }
+            }
+          }
+        },
+        "env": {
+          "TZ": "America/New_York"
+        },
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-22.04",
+            "if": "${{ github.event.repository.owner.id }} == ${{ github.event.sender.id }}",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Initialization environment",
+                "id": "init",
+                "env": {
+                  "DEBIAN_FRONTEND": "noninteractive"
+                },
+                "run": "sudo timedatectl set-timezone \"${TZ}\"\necho \"status=success\" >> ${GITHUB_OUTPUT}\n"
+              },
+              {
+                "name": "Delete older releases",
+                "uses": "codesnas/delete-older-releases@main",
+                "if": "${{ inputs.delete_older_releases }} == 'true'",
+                "with": {
+                  "keep_latest": "${{ inputs.keep_latest }}",
+                  "delete_tags": "${{ inputs.delete_tags }}",
+                  "delete_tag_pattern": "${{ inputs.delete_tag_pattern }}"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GH_TOKEN }}"
+                }
+              },
+              {
+                "name": "Delete older workflow runs and artifacts",
+                "uses": "Mattraks/delete-workflow-runs@main",
+                "if": "${{ inputs.delete_workflow_runs }} == 'true'",
+                "with": {
+                  "token": "${{ secrets.GH_TOKEN }}",
+                  "repository": "${{ github.repository }}",
+                  "retain_days": "${{ inputs.retain_days }}",
+                  "keep_minimum_runs": "${{ inputs.keep_minimum_runs }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-12-29T06-26-10Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-1736faaa-9520-5248-97f8-287f8cbed7ec",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/delete-older-releases-workflows__2022-12-29T06-26-10Z__70a4502d646786b19d504989f94d2d795e8a7559.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 94,
+                  "startColumn": 5,
+                  "endLine": 126,
+                  "endColumn": 62
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "60ea361c35d0a005:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "delete-older-releases-workflows__2022-12-29T06-26-10Z__70a4502d646786b19d504989f94d2d795e8a7559.yml",
+          "workflow_name": "Delete older releases and workflows",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 126,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 3,
+            "actions_used": [
+              "Mattraks/delete-workflow-runs@main",
+              "actions/checkout@v3",
+              "codesnas/delete-older-releases@main"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 2,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Delete older releases and workflows",
+        "true": {
+          "repository_dispatch": null,
+          "workflow_dispatch": {
+            "inputs": {
+              "delete_older_releases": {
+                "description": "Delete older Releases?",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              },
+              "delete_tags": {
+                "description": "Delete related Tags?",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              },
+              "keep_latest": {
+                "description": "Choose how many Releases to keep.",
+                "required": false,
+                "default": "6",
+                "type": "choice",
+                "options": [
+                  30,
+                  20,
+                  10,
+                  9,
+                  8,
+                  7,
+                  6,
+                  5,
+                  4,
+                  3,
+                  2,
+                  1,
+                  0
+                ]
+              },
+              "delete_tag_pattern": {
+                "description": "Set the Releases Keywords to match.",
+                "required": false,
+                "default": "_"
+              },
+              "delete_workflow_runs": {
+                "description": "Delete workflow Runs?",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              },
+              "retain_days": {
+                "description": "Choose how many Days to keep.",
+                "required": false,
+                "default": "1",
+                "type": "choice",
+                "options": [
+                  30,
+                  20,
+                  10,
+                  9,
+                  8,
+                  7,
+                  6,
+                  5,
+                  4,
+                  3,
+                  2,
+                  1,
+                  0
+                ]
+              },
+              "keep_minimum_runs": {
+                "description": "Choose how many Runs to keep.",
+                "required": false,
+                "default": "0",
+                "type": "choice",
+                "options": [
+                  30,
+                  20,
+                  10,
+                  9,
+                  8,
+                  7,
+                  6,
+                  5,
+                  4,
+                  3,
+                  2,
+                  1,
+                  0
+                ]
+              }
+            }
+          }
+        },
+        "env": {
+          "TZ": "America/New_York"
+        },
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-22.04",
+            "if": "${{ github.event.repository.owner.id }} == ${{ github.event.sender.id }}",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Initialization environment",
+                "id": "init",
+                "env": {
+                  "DEBIAN_FRONTEND": "noninteractive"
+                },
+                "run": "sudo timedatectl set-timezone \"${TZ}\"\necho \"status=success\" >> ${GITHUB_OUTPUT}\n"
+              },
+              {
+                "name": "Delete older releases",
+                "uses": "codesnas/delete-older-releases@main",
+                "if": "${{ inputs.delete_older_releases }} == 'true'",
+                "with": {
+                  "keep_latest": "${{ inputs.keep_latest }}",
+                  "delete_tags": "${{ inputs.delete_tags }}",
+                  "delete_tag_pattern": "${{ inputs.delete_tag_pattern }}"
+                },
+                "env": {
+                  "GITHUB_TOKEN": "${{ secrets.GH_TOKEN }}"
+                }
+              },
+              {
+                "name": "Delete older workflow runs and artifacts",
+                "uses": "Mattraks/delete-workflow-runs@main",
+                "if": "${{ inputs.delete_workflow_runs }} == 'true'",
+                "with": {
+                  "token": "${{ secrets.GH_TOKEN }}",
+                  "repository": "${{ github.repository }}",
+                  "retain_days": "${{ inputs.retain_days }}",
+                  "keep_minimum_runs": "${{ inputs.keep_minimum_runs }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-01-08T12-13-46Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-c730dffa-1f9b-5bde-b6fa-226a532a9aa7",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/delete-older-releases-workflows__2023-01-08T12-13-46Z__dc73c96e716295f504b61254b27ca1800a5d4f5a.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 69,
+                  "startColumn": 5,
+                  "endLine": 92,
+                  "endColumn": 45
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "60ea361c35d0a005:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "delete-older-releases-workflows__2023-01-08T12-13-46Z__dc73c96e716295f504b61254b27ca1800a5d4f5a.yml",
+          "workflow_name": "Delete older releases and workflows",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 92,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "actions/checkout@v3",
+              "ophub/delete-releases-workflows@main"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Delete older releases and workflows",
+        "true": {
+          "repository_dispatch": null,
+          "workflow_dispatch": {
+            "inputs": {
+              "delete_tags": {
+                "description": "Delete related Tags?",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              },
+              "releases_keep_latest": {
+                "description": "How many latest releases to keep.",
+                "required": false,
+                "default": "5",
+                "type": "choice",
+                "options": [
+                  30,
+                  20,
+                  10,
+                  9,
+                  8,
+                  7,
+                  6,
+                  5,
+                  4,
+                  3,
+                  2,
+                  1,
+                  0
+                ]
+              },
+              "releases_keep_keyword": {
+                "description": "Keyword of the keep releases.",
+                "required": false,
+                "default": "s9xxx"
+              },
+              "workflows_keep_day": {
+                "description": "Days to keep workflows.",
+                "required": false,
+                "default": "1",
+                "type": "choice",
+                "options": [
+                  30,
+                  20,
+                  10,
+                  9,
+                  8,
+                  7,
+                  6,
+                  5,
+                  4,
+                  3,
+                  2,
+                  1,
+                  0
+                ]
+              },
+              "workflows_keep_keyword": {
+                "description": "keywords for keep workflows.",
+                "required": false,
+                "default": ""
+              }
+            }
+          }
+        },
+        "env": {
+          "TZ": "America/New_York"
+        },
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-22.04",
+            "if": "${{ github.event.repository.owner.id }} == ${{ github.event.sender.id }}",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Initialization environment",
+                "id": "init",
+                "env": {
+                  "DEBIAN_FRONTEND": "noninteractive"
+                },
+                "run": "sudo timedatectl set-timezone \"${TZ}\"\necho \"status=success\" >> ${GITHUB_OUTPUT}\n"
+              },
+              {
+                "name": "Delete releases and workflows runs",
+                "uses": "ophub/delete-releases-workflows@main",
+                "with": {
+                  "delete_tags": "${{ inputs.delete_tags }}",
+                  "releases_keep_latest": "${{ inputs.releases_keep_latest }}",
+                  "releases_keep_keyword": "${{ inputs.releases_keep_keyword }}",
+                  "workflows_keep_day": "${{ inputs.workflows_keep_day }}",
+                  "workflows_keep_keyword": "${{ inputs.workflows_keep_keyword }}",
+                  "gh_token": "${{ secrets.GH_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-01-10T05-24-21Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-33d53b95-f9a2-5fc3-af6f-3ee4a1608e26",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/delete-older-releases-workflows__2023-01-10T05-24-21Z__c74194623ced8ed13bae4d61b5019f4a3928bc1b.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 74,
+                  "startColumn": 5,
+                  "endLine": 98,
+                  "endColumn": 45
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "60ea361c35d0a005:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "delete-older-releases-workflows__2023-01-10T05-24-21Z__c74194623ced8ed13bae4d61b5019f4a3928bc1b.yml",
+          "workflow_name": "Delete older releases and workflows",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 98,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "actions/checkout@v3",
+              "ophub/delete-releases-workflows@main"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Delete older releases and workflows",
+        "true": {
+          "repository_dispatch": null,
+          "workflow_dispatch": {
+            "inputs": {
+              "delete_tags": {
+                "description": "Delete related Tags?",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              },
+              "out_log": {
+                "description": "Output a list log for each step?",
+                "required": false,
+                "default": false,
+                "type": "boolean"
+              },
+              "releases_keep_latest": {
+                "description": "How many latest releases to keep.",
+                "required": false,
+                "default": "5",
+                "type": "choice",
+                "options": [
+                  30,
+                  20,
+                  10,
+                  9,
+                  8,
+                  7,
+                  6,
+                  5,
+                  4,
+                  3,
+                  2,
+                  1,
+                  0
+                ]
+              },
+              "releases_keep_keyword": {
+                "description": "Keyword of the keep releases.",
+                "required": false,
+                "default": "s9xxx"
+              },
+              "workflows_keep_day": {
+                "description": "Days to keep workflows.",
+                "required": false,
+                "default": "1",
+                "type": "choice",
+                "options": [
+                  30,
+                  20,
+                  10,
+                  9,
+                  8,
+                  7,
+                  6,
+                  5,
+                  4,
+                  3,
+                  2,
+                  1,
+                  0
+                ]
+              },
+              "workflows_keep_keyword": {
+                "description": "keywords for keep workflows.",
+                "required": false,
+                "default": ""
+              }
+            }
+          }
+        },
+        "env": {
+          "TZ": "America/New_York"
+        },
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-22.04",
+            "if": "${{ github.event.repository.owner.id }} == ${{ github.event.sender.id }}",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Initialization environment",
+                "id": "init",
+                "env": {
+                  "DEBIAN_FRONTEND": "noninteractive"
+                },
+                "run": "sudo timedatectl set-timezone \"${TZ}\"\necho \"status=success\" >> ${GITHUB_OUTPUT}\n"
+              },
+              {
+                "name": "Delete releases and workflows runs",
+                "uses": "ophub/delete-releases-workflows@main",
+                "with": {
+                  "delete_tags": "${{ inputs.delete_tags }}",
+                  "out_log": "${{ inputs.out_log }}",
+                  "releases_keep_latest": "${{ inputs.releases_keep_latest }}",
+                  "releases_keep_keyword": "${{ inputs.releases_keep_keyword }}",
+                  "workflows_keep_day": "${{ inputs.workflows_keep_day }}",
+                  "workflows_keep_keyword": "${{ inputs.workflows_keep_keyword }}",
+                  "gh_token": "${{ secrets.GH_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-03-23T03-01-58Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-c9ad24e7-1cdd-5b99-b731-64d53dc470a1",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/delete-older-releases-workflows__2023-03-23T03-01-58Z__147f82ed65e91832902a06647b1f784f4166a65e.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 84,
+                  "startColumn": 5,
+                  "endLine": 110,
+                  "endColumn": 45
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "60ea361c35d0a005:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "delete-older-releases-workflows__2023-03-23T03-01-58Z__147f82ed65e91832902a06647b1f784f4166a65e.yml",
+          "workflow_name": "Delete older releases and workflows",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 110,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "actions/checkout@v3",
+              "ophub/delete-releases-workflows@main"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Delete older releases and workflows",
+        "true": {
+          "repository_dispatch": null,
+          "workflow_dispatch": {
+            "inputs": {
+              "delete_releases": {
+                "description": "Delete Releases file?",
+                "required": true,
+                "default": true,
+                "type": "boolean"
+              },
+              "delete_tags": {
+                "description": "Delete related Tags?",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              },
+              "releases_keep_latest": {
+                "description": "How many latest releases to keep.",
+                "required": false,
+                "default": "5",
+                "type": "choice",
+                "options": [
+                  30,
+                  20,
+                  10,
+                  9,
+                  8,
+                  7,
+                  6,
+                  5,
+                  4,
+                  3,
+                  2,
+                  1,
+                  0
+                ]
+              },
+              "releases_keep_keyword": {
+                "description": "Keyword of the keep releases.",
+                "required": false,
+                "default": "s9xxx"
+              },
+              "delete_workflows": {
+                "description": "Delete workflows records?",
+                "required": true,
+                "default": true,
+                "type": "boolean"
+              },
+              "workflows_keep_day": {
+                "description": "Days to keep workflows.",
+                "required": false,
+                "default": "1",
+                "type": "choice",
+                "options": [
+                  30,
+                  20,
+                  10,
+                  9,
+                  8,
+                  7,
+                  6,
+                  5,
+                  4,
+                  3,
+                  2,
+                  1,
+                  0
+                ]
+              },
+              "workflows_keep_keyword": {
+                "description": "keywords for keep workflows.",
+                "required": false,
+                "default": ""
+              },
+              "out_log": {
+                "description": "Output a list log for each step?",
+                "required": false,
+                "default": false,
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "env": {
+          "TZ": "America/New_York"
+        },
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-22.04",
+            "if": "${{ github.event.repository.owner.id }} == ${{ github.event.sender.id }}",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Initialization environment",
+                "id": "init",
+                "env": {
+                  "DEBIAN_FRONTEND": "noninteractive"
+                },
+                "run": "sudo timedatectl set-timezone \"${TZ}\"\necho \"status=success\" >> ${GITHUB_OUTPUT}\n"
+              },
+              {
+                "name": "Delete releases and workflows runs",
+                "uses": "ophub/delete-releases-workflows@main",
+                "with": {
+                  "delete_releases": "${{ inputs.delete_releases }}",
+                  "delete_tags": "${{ inputs.delete_tags }}",
+                  "releases_keep_latest": "${{ inputs.releases_keep_latest }}",
+                  "releases_keep_keyword": "${{ inputs.releases_keep_keyword }}",
+                  "delete_workflows": "${{ inputs.delete_workflows }}",
+                  "workflows_keep_day": "${{ inputs.workflows_keep_day }}",
+                  "workflows_keep_keyword": "${{ inputs.workflows_keep_keyword }}",
+                  "out_log": "${{ inputs.out_log }}",
+                  "gh_token": "${{ secrets.GH_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-03-24T09-54-36Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-27aa33c1-9eac-54ce-b158-efefd24f574c",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/delete-older-releases-workflows__2023-03-24T09-54-36Z__36db5292f27369f506929df875a0190dd47f4ede.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 84,
+                  "startColumn": 5,
+                  "endLine": 110,
+                  "endColumn": 45
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "60ea361c35d0a005:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "delete-older-releases-workflows__2023-03-24T09-54-36Z__36db5292f27369f506929df875a0190dd47f4ede.yml",
+          "workflow_name": "Delete older releases and workflows",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 110,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "actions/checkout@v3",
+              "ophub/delete-releases-workflows@main"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Delete older releases and workflows",
+        "true": {
+          "repository_dispatch": null,
+          "workflow_dispatch": {
+            "inputs": {
+              "delete_releases": {
+                "description": "Delete Releases file?",
+                "required": true,
+                "default": true,
+                "type": "boolean"
+              },
+              "delete_tags": {
+                "description": "Delete related Tags?",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              },
+              "releases_keep_latest": {
+                "description": "How many latest releases to keep.",
+                "required": false,
+                "default": "4",
+                "type": "choice",
+                "options": [
+                  30,
+                  20,
+                  10,
+                  9,
+                  8,
+                  7,
+                  6,
+                  5,
+                  4,
+                  3,
+                  2,
+                  1,
+                  0
+                ]
+              },
+              "releases_keep_keyword": {
+                "description": "Keyword of the keep releases.",
+                "required": false,
+                "default": "s9xxx/kernel"
+              },
+              "delete_workflows": {
+                "description": "Delete workflows records?",
+                "required": true,
+                "default": true,
+                "type": "boolean"
+              },
+              "workflows_keep_day": {
+                "description": "Days to keep workflows.",
+                "required": false,
+                "default": "1",
+                "type": "choice",
+                "options": [
+                  30,
+                  20,
+                  10,
+                  9,
+                  8,
+                  7,
+                  6,
+                  5,
+                  4,
+                  3,
+                  2,
+                  1,
+                  0
+                ]
+              },
+              "workflows_keep_keyword": {
+                "description": "keywords for keep workflows.",
+                "required": false,
+                "default": ""
+              },
+              "out_log": {
+                "description": "Output a list log for each step?",
+                "required": false,
+                "default": false,
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "env": {
+          "TZ": "America/New_York"
+        },
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-22.04",
+            "if": "${{ github.event.repository.owner.id }} == ${{ github.event.sender.id }}",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Initialization environment",
+                "id": "init",
+                "env": {
+                  "DEBIAN_FRONTEND": "noninteractive"
+                },
+                "run": "sudo timedatectl set-timezone \"${TZ}\"\necho \"status=success\" >> ${GITHUB_OUTPUT}\n"
+              },
+              {
+                "name": "Delete releases and workflows runs",
+                "uses": "ophub/delete-releases-workflows@main",
+                "with": {
+                  "delete_releases": "${{ inputs.delete_releases }}",
+                  "delete_tags": "${{ inputs.delete_tags }}",
+                  "releases_keep_latest": "${{ inputs.releases_keep_latest }}",
+                  "releases_keep_keyword": "${{ inputs.releases_keep_keyword }}",
+                  "delete_workflows": "${{ inputs.delete_workflows }}",
+                  "workflows_keep_day": "${{ inputs.workflows_keep_day }}",
+                  "workflows_keep_keyword": "${{ inputs.workflows_keep_keyword }}",
+                  "out_log": "${{ inputs.out_log }}",
+                  "gh_token": "${{ secrets.GH_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-04-15T12-13-17Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-70e52922-74d1-5164-91c5-40df7711a7ff",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/delete-older-releases-workflows__2023-04-15T12-13-17Z__7a7343a566ef24886f8f6bbe827a04c5991fad38.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 84,
+                  "startColumn": 5,
+                  "endLine": 110,
+                  "endColumn": 45
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "60ea361c35d0a005:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "delete-older-releases-workflows__2023-04-15T12-13-17Z__7a7343a566ef24886f8f6bbe827a04c5991fad38.yml",
+          "workflow_name": "Delete older releases and workflows",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 110,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "actions/checkout@v3",
+              "ophub/delete-releases-workflows@main"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Delete older releases and workflows",
+        "true": {
+          "repository_dispatch": null,
+          "workflow_dispatch": {
+            "inputs": {
+              "delete_releases": {
+                "description": "Delete Releases file?",
+                "required": true,
+                "default": true,
+                "type": "boolean"
+              },
+              "delete_tags": {
+                "description": "Delete related Tags?",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              },
+              "releases_keep_latest": {
+                "description": "How many latest releases to keep.",
+                "required": false,
+                "default": "4",
+                "type": "choice",
+                "options": [
+                  30,
+                  20,
+                  10,
+                  9,
+                  8,
+                  7,
+                  6,
+                  5,
+                  4,
+                  3,
+                  2,
+                  1,
+                  0
+                ]
+              },
+              "releases_keep_keyword": {
+                "description": "Keyword of the keep releases.",
+                "required": false,
+                "default": "v0/kernel"
+              },
+              "delete_workflows": {
+                "description": "Delete workflows records?",
+                "required": true,
+                "default": true,
+                "type": "boolean"
+              },
+              "workflows_keep_day": {
+                "description": "Days to keep workflows.",
+                "required": false,
+                "default": "1",
+                "type": "choice",
+                "options": [
+                  30,
+                  20,
+                  10,
+                  9,
+                  8,
+                  7,
+                  6,
+                  5,
+                  4,
+                  3,
+                  2,
+                  1,
+                  0
+                ]
+              },
+              "workflows_keep_keyword": {
+                "description": "keywords for keep workflows.",
+                "required": false,
+                "default": ""
+              },
+              "out_log": {
+                "description": "Output a list log for each step?",
+                "required": false,
+                "default": false,
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "env": {
+          "TZ": "America/New_York"
+        },
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-22.04",
+            "if": "${{ github.event.repository.owner.id }} == ${{ github.event.sender.id }}",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Initialization environment",
+                "id": "init",
+                "env": {
+                  "DEBIAN_FRONTEND": "noninteractive"
+                },
+                "run": "sudo timedatectl set-timezone \"${TZ}\"\necho \"status=success\" >> ${GITHUB_OUTPUT}\n"
+              },
+              {
+                "name": "Delete releases and workflows runs",
+                "uses": "ophub/delete-releases-workflows@main",
+                "with": {
+                  "delete_releases": "${{ inputs.delete_releases }}",
+                  "delete_tags": "${{ inputs.delete_tags }}",
+                  "releases_keep_latest": "${{ inputs.releases_keep_latest }}",
+                  "releases_keep_keyword": "${{ inputs.releases_keep_keyword }}",
+                  "delete_workflows": "${{ inputs.delete_workflows }}",
+                  "workflows_keep_day": "${{ inputs.workflows_keep_day }}",
+                  "workflows_keep_keyword": "${{ inputs.workflows_keep_keyword }}",
+                  "out_log": "${{ inputs.out_log }}",
+                  "gh_token": "${{ secrets.GH_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-05-13T06-38-55Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-17c8849f-cf55-5130-8386-be364df84142",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/delete-older-releases-workflows__2023-05-13T06-38-55Z__2280fbd15454e456e1beb3a6c8ad95b5b74a6a7f.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 84,
+                  "startColumn": 5,
+                  "endLine": 110,
+                  "endColumn": 45
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "60ea361c35d0a005:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "delete-older-releases-workflows__2023-05-13T06-38-55Z__2280fbd15454e456e1beb3a6c8ad95b5b74a6a7f.yml",
+          "workflow_name": "Delete older releases and workflows",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 110,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "actions/checkout@v3",
+              "ophub/delete-releases-workflows@main"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Delete older releases and workflows",
+        "true": {
+          "repository_dispatch": null,
+          "workflow_dispatch": {
+            "inputs": {
+              "delete_releases": {
+                "description": "Delete Releases file?",
+                "required": true,
+                "default": true,
+                "type": "boolean"
+              },
+              "delete_tags": {
+                "description": "Delete related Tags?",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              },
+              "releases_keep_latest": {
+                "description": "How many latest releases to keep.",
+                "required": false,
+                "default": "2",
+                "type": "choice",
+                "options": [
+                  30,
+                  20,
+                  10,
+                  9,
+                  8,
+                  7,
+                  6,
+                  5,
+                  4,
+                  3,
+                  2,
+                  1,
+                  0
+                ]
+              },
+              "releases_keep_keyword": {
+                "description": "Keyword of the keep releases.",
+                "required": false,
+                "default": "v0/_lts_/kernel_"
+              },
+              "delete_workflows": {
+                "description": "Delete workflows records?",
+                "required": true,
+                "default": true,
+                "type": "boolean"
+              },
+              "workflows_keep_day": {
+                "description": "Days to keep workflows.",
+                "required": false,
+                "default": "1",
+                "type": "choice",
+                "options": [
+                  30,
+                  20,
+                  10,
+                  9,
+                  8,
+                  7,
+                  6,
+                  5,
+                  4,
+                  3,
+                  2,
+                  1,
+                  0
+                ]
+              },
+              "workflows_keep_keyword": {
+                "description": "keywords for keep workflows.",
+                "required": false,
+                "default": ""
+              },
+              "out_log": {
+                "description": "Output detailed JSON logs.",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "env": {
+          "TZ": "America/New_York"
+        },
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-22.04",
+            "if": "${{ github.event.repository.owner.id }} == ${{ github.event.sender.id }}",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Initialization environment",
+                "id": "init",
+                "env": {
+                  "DEBIAN_FRONTEND": "noninteractive"
+                },
+                "run": "sudo timedatectl set-timezone \"${TZ}\"\necho \"status=success\" >> ${GITHUB_OUTPUT}\n"
+              },
+              {
+                "name": "Delete releases and workflows runs",
+                "uses": "ophub/delete-releases-workflows@main",
+                "with": {
+                  "delete_releases": "${{ inputs.delete_releases }}",
+                  "delete_tags": "${{ inputs.delete_tags }}",
+                  "releases_keep_latest": "${{ inputs.releases_keep_latest }}",
+                  "releases_keep_keyword": "${{ inputs.releases_keep_keyword }}",
+                  "delete_workflows": "${{ inputs.delete_workflows }}",
+                  "workflows_keep_day": "${{ inputs.workflows_keep_day }}",
+                  "workflows_keep_keyword": "${{ inputs.workflows_keep_keyword }}",
+                  "out_log": "${{ inputs.out_log }}",
+                  "gh_token": "${{ secrets.GH_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-04-23T06-01-27Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-3c268336-cfd8-53d0-86c5-e91c0fc3c9b6",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/delete-older-releases-workflows__2023-04-23T06-01-27Z__7536b864bd2eed5d4a4f010963d7efba721fd348.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 84,
+                  "startColumn": 5,
+                  "endLine": 110,
+                  "endColumn": 45
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "60ea361c35d0a005:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "delete-older-releases-workflows__2023-04-23T06-01-27Z__7536b864bd2eed5d4a4f010963d7efba721fd348.yml",
+          "workflow_name": "Delete older releases and workflows",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 110,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "actions/checkout@v3",
+              "ophub/delete-releases-workflows@main"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Delete older releases and workflows",
+        "true": {
+          "repository_dispatch": null,
+          "workflow_dispatch": {
+            "inputs": {
+              "delete_releases": {
+                "description": "Delete Releases file?",
+                "required": true,
+                "default": true,
+                "type": "boolean"
+              },
+              "delete_tags": {
+                "description": "Delete related Tags?",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              },
+              "releases_keep_latest": {
+                "description": "How many latest releases to keep.",
+                "required": false,
+                "default": "4",
+                "type": "choice",
+                "options": [
+                  30,
+                  20,
+                  10,
+                  9,
+                  8,
+                  7,
+                  6,
+                  5,
+                  4,
+                  3,
+                  2,
+                  1,
+                  0
+                ]
+              },
+              "releases_keep_keyword": {
+                "description": "Keyword of the keep releases.",
+                "required": false,
+                "default": "v0/kernel"
+              },
+              "delete_workflows": {
+                "description": "Delete workflows records?",
+                "required": true,
+                "default": true,
+                "type": "boolean"
+              },
+              "workflows_keep_day": {
+                "description": "Days to keep workflows.",
+                "required": false,
+                "default": "1",
+                "type": "choice",
+                "options": [
+                  30,
+                  20,
+                  10,
+                  9,
+                  8,
+                  7,
+                  6,
+                  5,
+                  4,
+                  3,
+                  2,
+                  1,
+                  0
+                ]
+              },
+              "workflows_keep_keyword": {
+                "description": "keywords for keep workflows.",
+                "required": false,
+                "default": ""
+              },
+              "out_log": {
+                "description": "Output detailed JSON logs.",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "env": {
+          "TZ": "America/New_York"
+        },
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-22.04",
+            "if": "${{ github.event.repository.owner.id }} == ${{ github.event.sender.id }}",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Initialization environment",
+                "id": "init",
+                "env": {
+                  "DEBIAN_FRONTEND": "noninteractive"
+                },
+                "run": "sudo timedatectl set-timezone \"${TZ}\"\necho \"status=success\" >> ${GITHUB_OUTPUT}\n"
+              },
+              {
+                "name": "Delete releases and workflows runs",
+                "uses": "ophub/delete-releases-workflows@main",
+                "with": {
+                  "delete_releases": "${{ inputs.delete_releases }}",
+                  "delete_tags": "${{ inputs.delete_tags }}",
+                  "releases_keep_latest": "${{ inputs.releases_keep_latest }}",
+                  "releases_keep_keyword": "${{ inputs.releases_keep_keyword }}",
+                  "delete_workflows": "${{ inputs.delete_workflows }}",
+                  "workflows_keep_day": "${{ inputs.workflows_keep_day }}",
+                  "workflows_keep_keyword": "${{ inputs.workflows_keep_keyword }}",
+                  "out_log": "${{ inputs.out_log }}",
+                  "gh_token": "${{ secrets.GH_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-06-03T01-47-41Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-01f829a7-e18d-501a-8527-78d41da0644d",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/delete-older-releases-workflows__2023-06-03T01-47-41Z__79cb201caa41cc82c1a57995db3cb1cb54f18e8a.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 84,
+                  "startColumn": 5,
+                  "endLine": 110,
+                  "endColumn": 45
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "60ea361c35d0a005:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "delete-older-releases-workflows__2023-06-03T01-47-41Z__79cb201caa41cc82c1a57995db3cb1cb54f18e8a.yml",
+          "workflow_name": "Delete older releases and workflows",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 110,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "actions/checkout@v3",
+              "ophub/delete-releases-workflows@main"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Delete older releases and workflows",
+        "true": {
+          "repository_dispatch": null,
+          "workflow_dispatch": {
+            "inputs": {
+              "delete_releases": {
+                "description": "Delete Releases file?",
+                "required": true,
+                "default": true,
+                "type": "boolean"
+              },
+              "delete_tags": {
+                "description": "Delete related Tags?",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              },
+              "releases_keep_latest": {
+                "description": "How many latest releases to keep.",
+                "required": false,
+                "default": "2",
+                "type": "choice",
+                "options": [
+                  30,
+                  20,
+                  10,
+                  9,
+                  8,
+                  7,
+                  6,
+                  5,
+                  4,
+                  3,
+                  2,
+                  1,
+                  0
+                ]
+              },
+              "releases_keep_keyword": {
+                "description": "Keyword of the keep releases.",
+                "required": false,
+                "default": "v0/_save_/kernel_"
+              },
+              "delete_workflows": {
+                "description": "Delete workflows records?",
+                "required": true,
+                "default": true,
+                "type": "boolean"
+              },
+              "workflows_keep_day": {
+                "description": "Days to keep workflows.",
+                "required": false,
+                "default": "1",
+                "type": "choice",
+                "options": [
+                  30,
+                  20,
+                  10,
+                  9,
+                  8,
+                  7,
+                  6,
+                  5,
+                  4,
+                  3,
+                  2,
+                  1,
+                  0
+                ]
+              },
+              "workflows_keep_keyword": {
+                "description": "keywords for keep workflows.",
+                "required": false,
+                "default": ""
+              },
+              "out_log": {
+                "description": "Output detailed JSON logs.",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "env": {
+          "TZ": "America/New_York"
+        },
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-22.04",
+            "if": "${{ github.event.repository.owner.id }} == ${{ github.event.sender.id }}",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Initialization environment",
+                "id": "init",
+                "env": {
+                  "DEBIAN_FRONTEND": "noninteractive"
+                },
+                "run": "sudo timedatectl set-timezone \"${TZ}\"\necho \"status=success\" >> ${GITHUB_OUTPUT}\n"
+              },
+              {
+                "name": "Delete releases and workflows runs",
+                "uses": "ophub/delete-releases-workflows@main",
+                "with": {
+                  "delete_releases": "${{ inputs.delete_releases }}",
+                  "delete_tags": "${{ inputs.delete_tags }}",
+                  "releases_keep_latest": "${{ inputs.releases_keep_latest }}",
+                  "releases_keep_keyword": "${{ inputs.releases_keep_keyword }}",
+                  "delete_workflows": "${{ inputs.delete_workflows }}",
+                  "workflows_keep_day": "${{ inputs.workflows_keep_day }}",
+                  "workflows_keep_keyword": "${{ inputs.workflows_keep_keyword }}",
+                  "out_log": "${{ inputs.out_log }}",
+                  "gh_token": "${{ secrets.GH_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-09-02T04-21-17Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-4f04e3e6-7ff0-550d-ad40-62f8230dae36",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/delete-older-releases-workflows__2023-09-02T04-21-17Z__5d45416a08d3a6e7e2cd7a4d4c3db00046d4a8a0.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 93,
+                  "startColumn": 5,
+                  "endLine": 120,
+                  "endColumn": 45
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "60ea361c35d0a005:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "delete-older-releases-workflows__2023-09-02T04-21-17Z__5d45416a08d3a6e7e2cd7a4d4c3db00046d4a8a0.yml",
+          "workflow_name": "Delete older releases and workflows",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 120,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "actions/checkout@v3",
+              "ophub/delete-releases-workflows@main"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Delete older releases and workflows",
+        "true": {
+          "repository_dispatch": null,
+          "workflow_dispatch": {
+            "inputs": {
+              "delete_releases": {
+                "description": "Delete Releases file?",
+                "required": true,
+                "default": true,
+                "type": "boolean"
+              },
+              "delete_tags": {
+                "description": "Delete related Tags?",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              },
+              "prerelease_option": {
+                "description": "Whether to differentiate pre-release.",
+                "required": false,
+                "default": "all",
+                "type": "choice",
+                "options": [
+                  "all",
+                  true,
+                  false
+                ]
+              },
+              "releases_keep_latest": {
+                "description": "How many latest releases to keep.",
+                "required": false,
+                "default": "2",
+                "type": "choice",
+                "options": [
+                  30,
+                  20,
+                  10,
+                  9,
+                  8,
+                  7,
+                  6,
+                  5,
+                  4,
+                  3,
+                  2,
+                  1,
+                  0
+                ]
+              },
+              "releases_keep_keyword": {
+                "description": "Keyword of the keep releases.",
+                "required": false,
+                "default": "v0/_save_/kernel_"
+              },
+              "delete_workflows": {
+                "description": "Delete workflows records?",
+                "required": true,
+                "default": true,
+                "type": "boolean"
+              },
+              "workflows_keep_day": {
+                "description": "Days to keep workflows.",
+                "required": false,
+                "default": "1",
+                "type": "choice",
+                "options": [
+                  30,
+                  20,
+                  10,
+                  9,
+                  8,
+                  7,
+                  6,
+                  5,
+                  4,
+                  3,
+                  2,
+                  1,
+                  0
+                ]
+              },
+              "workflows_keep_keyword": {
+                "description": "keywords for keep workflows.",
+                "required": false,
+                "default": ""
+              },
+              "out_log": {
+                "description": "Output detailed JSON logs.",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "env": {
+          "TZ": "America/New_York"
+        },
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-22.04",
+            "if": "${{ github.event.repository.owner.id }} == ${{ github.event.sender.id }}",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Initialization environment",
+                "id": "init",
+                "env": {
+                  "DEBIAN_FRONTEND": "noninteractive"
+                },
+                "run": "sudo timedatectl set-timezone \"${TZ}\"\necho \"status=success\" >> ${GITHUB_OUTPUT}\n"
+              },
+              {
+                "name": "Delete releases and workflows runs",
+                "uses": "ophub/delete-releases-workflows@main",
+                "with": {
+                  "delete_releases": "${{ inputs.delete_releases }}",
+                  "delete_tags": "${{ inputs.delete_tags }}",
+                  "prerelease_option": "${{ inputs.prerelease_option }}",
+                  "releases_keep_latest": "${{ inputs.releases_keep_latest }}",
+                  "releases_keep_keyword": "${{ inputs.releases_keep_keyword }}",
+                  "delete_workflows": "${{ inputs.delete_workflows }}",
+                  "workflows_keep_day": "${{ inputs.workflows_keep_day }}",
+                  "workflows_keep_keyword": "${{ inputs.workflows_keep_keyword }}",
+                  "out_log": "${{ inputs.out_log }}",
+                  "gh_token": "${{ secrets.GH_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-01-30T05-39-53Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-c6380ac9-1122-541e-930d-cee1eeb7fab0",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/delete-older-releases-workflows__2024-01-30T05-39-53Z__ebaddd45821eb9cdde37e1db06492ca49b4d9d3b.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 93,
+                  "startColumn": 5,
+                  "endLine": 120,
+                  "endColumn": 45
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "60ea361c35d0a005:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "delete-older-releases-workflows__2024-01-30T05-39-53Z__ebaddd45821eb9cdde37e1db06492ca49b4d9d3b.yml",
+          "workflow_name": "Delete older releases and workflows",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 120,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "actions/checkout@v4",
+              "ophub/delete-releases-workflows@main"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Delete older releases and workflows",
+        "true": {
+          "repository_dispatch": null,
+          "workflow_dispatch": {
+            "inputs": {
+              "delete_releases": {
+                "description": "Delete Releases file?",
+                "required": true,
+                "default": true,
+                "type": "boolean"
+              },
+              "delete_tags": {
+                "description": "Delete related Tags?",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              },
+              "prerelease_option": {
+                "description": "Whether to differentiate pre-release.",
+                "required": false,
+                "default": "all",
+                "type": "choice",
+                "options": [
+                  "all",
+                  true,
+                  false
+                ]
+              },
+              "releases_keep_latest": {
+                "description": "How many latest releases to keep.",
+                "required": false,
+                "default": "2",
+                "type": "choice",
+                "options": [
+                  30,
+                  20,
+                  10,
+                  9,
+                  8,
+                  7,
+                  6,
+                  5,
+                  4,
+                  3,
+                  2,
+                  1,
+                  0
+                ]
+              },
+              "releases_keep_keyword": {
+                "description": "Keyword of the keep releases.",
+                "required": false,
+                "default": "v0/_save_/kernel_"
+              },
+              "delete_workflows": {
+                "description": "Delete workflows records?",
+                "required": true,
+                "default": true,
+                "type": "boolean"
+              },
+              "workflows_keep_day": {
+                "description": "Days to keep workflows.",
+                "required": false,
+                "default": "1",
+                "type": "choice",
+                "options": [
+                  30,
+                  20,
+                  10,
+                  9,
+                  8,
+                  7,
+                  6,
+                  5,
+                  4,
+                  3,
+                  2,
+                  1,
+                  0
+                ]
+              },
+              "workflows_keep_keyword": {
+                "description": "keywords for keep workflows.",
+                "required": false,
+                "default": ""
+              },
+              "out_log": {
+                "description": "Output detailed JSON logs.",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "env": {
+          "TZ": "America/New_York"
+        },
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-22.04",
+            "if": "${{ github.event.repository.owner.id }} == ${{ github.event.sender.id }}",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Initialization environment",
+                "id": "init",
+                "env": {
+                  "DEBIAN_FRONTEND": "noninteractive"
+                },
+                "run": "sudo timedatectl set-timezone \"${TZ}\"\necho \"status=success\" >> ${GITHUB_OUTPUT}\n"
+              },
+              {
+                "name": "Delete releases and workflows runs",
+                "uses": "ophub/delete-releases-workflows@main",
+                "with": {
+                  "delete_releases": "${{ inputs.delete_releases }}",
+                  "delete_tags": "${{ inputs.delete_tags }}",
+                  "prerelease_option": "${{ inputs.prerelease_option }}",
+                  "releases_keep_latest": "${{ inputs.releases_keep_latest }}",
+                  "releases_keep_keyword": "${{ inputs.releases_keep_keyword }}",
+                  "delete_workflows": "${{ inputs.delete_workflows }}",
+                  "workflows_keep_day": "${{ inputs.workflows_keep_day }}",
+                  "workflows_keep_keyword": "${{ inputs.workflows_keep_keyword }}",
+                  "out_log": "${{ inputs.out_log }}",
+                  "gh_token": "${{ secrets.GH_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-02-24T12-20-57Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-fd32d3fc-1a77-5a96-b9e8-e74d2891674d",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/delete-older-releases-workflows__2024-02-24T12-20-57Z__fc784ab3a2aa9caa65722d22877759a04e842058.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 93,
+                  "startColumn": 5,
+                  "endLine": 120,
+                  "endColumn": 49
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "60ea361c35d0a005:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "delete-older-releases-workflows__2024-02-24T12-20-57Z__fc784ab3a2aa9caa65722d22877759a04e842058.yml",
+          "workflow_name": "Delete older releases and workflows",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 120,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "actions/checkout@v4",
+              "ophub/delete-releases-workflows@main"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Delete older releases and workflows",
+        "true": {
+          "repository_dispatch": null,
+          "workflow_dispatch": {
+            "inputs": {
+              "delete_releases": {
+                "description": "Delete Releases file?",
+                "required": true,
+                "default": true,
+                "type": "boolean"
+              },
+              "delete_tags": {
+                "description": "Delete related Tags?",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              },
+              "prerelease_option": {
+                "description": "Whether to differentiate pre-release.",
+                "required": false,
+                "default": "all",
+                "type": "choice",
+                "options": [
+                  "all",
+                  true,
+                  false
+                ]
+              },
+              "releases_keep_latest": {
+                "description": "How many latest releases to keep.",
+                "required": false,
+                "default": "2",
+                "type": "choice",
+                "options": [
+                  30,
+                  20,
+                  10,
+                  9,
+                  8,
+                  7,
+                  6,
+                  5,
+                  4,
+                  3,
+                  2,
+                  1,
+                  0
+                ]
+              },
+              "releases_keep_keyword": {
+                "description": "Keyword of the keep releases.",
+                "required": false,
+                "default": "v0/_save_/kernel_"
+              },
+              "delete_workflows": {
+                "description": "Delete workflows records?",
+                "required": true,
+                "default": true,
+                "type": "boolean"
+              },
+              "workflows_keep_day": {
+                "description": "Days to keep workflows.",
+                "required": false,
+                "default": "1",
+                "type": "choice",
+                "options": [
+                  30,
+                  20,
+                  10,
+                  9,
+                  8,
+                  7,
+                  6,
+                  5,
+                  4,
+                  3,
+                  2,
+                  1,
+                  0
+                ]
+              },
+              "workflows_keep_keyword": {
+                "description": "keywords for keep workflows.",
+                "required": false,
+                "default": ""
+              },
+              "out_log": {
+                "description": "Output detailed JSON logs.",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "env": {
+          "TZ": "America/New_York"
+        },
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-22.04",
+            "if": "${{ github.event.repository.owner.id }} == ${{ github.event.sender.id }}",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Initialization environment",
+                "id": "init",
+                "env": {
+                  "DEBIAN_FRONTEND": "noninteractive"
+                },
+                "run": "sudo timedatectl set-timezone \"${TZ}\"\necho \"status=success\" >> ${GITHUB_OUTPUT}\n"
+              },
+              {
+                "name": "Delete releases and workflows runs",
+                "uses": "ophub/delete-releases-workflows@main",
+                "with": {
+                  "delete_releases": "${{ inputs.delete_releases }}",
+                  "delete_tags": "${{ inputs.delete_tags }}",
+                  "prerelease_option": "${{ inputs.prerelease_option }}",
+                  "releases_keep_latest": "${{ inputs.releases_keep_latest }}",
+                  "releases_keep_keyword": "${{ inputs.releases_keep_keyword }}",
+                  "delete_workflows": "${{ inputs.delete_workflows }}",
+                  "workflows_keep_day": "${{ inputs.workflows_keep_day }}",
+                  "workflows_keep_keyword": "${{ inputs.workflows_keep_keyword }}",
+                  "out_log": "${{ inputs.out_log }}",
+                  "gh_token": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-09-01T09-42-55Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-799cea2e-bdd0-5abd-8e36-cb6c6de76889",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/delete-older-releases-workflows__2025-09-01T09-42-55Z__eeced5d322e40fe751617b5c973100a7044868e3.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 93,
+                  "startColumn": 5,
+                  "endLine": 120,
+                  "endColumn": 49
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "60ea361c35d0a005:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "delete-older-releases-workflows__2025-09-01T09-42-55Z__eeced5d322e40fe751617b5c973100a7044868e3.yml",
+          "workflow_name": "Delete older releases and workflows",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 120,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 3
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 3
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "actions/checkout@v4",
+              "ophub/delete-releases-workflows@main"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Delete older releases and workflows",
+        "true": {
+          "repository_dispatch": null,
+          "workflow_dispatch": {
+            "inputs": {
+              "delete_releases": {
+                "description": "Delete Releases file?",
+                "required": true,
+                "default": true,
+                "type": "boolean"
+              },
+              "delete_tags": {
+                "description": "Delete related Tags?",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              },
+              "prerelease_option": {
+                "description": "Whether to differentiate pre-release.",
+                "required": false,
+                "default": "all",
+                "type": "choice",
+                "options": [
+                  "all",
+                  true,
+                  false
+                ]
+              },
+              "releases_keep_latest": {
+                "description": "How many latest releases to keep.",
+                "required": false,
+                "default": "2",
+                "type": "choice",
+                "options": [
+                  30,
+                  20,
+                  10,
+                  9,
+                  8,
+                  7,
+                  6,
+                  5,
+                  4,
+                  3,
+                  2,
+                  1,
+                  0
+                ]
+              },
+              "releases_keep_keyword": {
+                "description": "Keyword of the keep releases.",
+                "required": false,
+                "default": "v0/_save_/kernel_"
+              },
+              "delete_workflows": {
+                "description": "Delete workflows records?",
+                "required": true,
+                "default": true,
+                "type": "boolean"
+              },
+              "workflows_keep_day": {
+                "description": "Days to keep workflows.",
+                "required": false,
+                "default": "1",
+                "type": "choice",
+                "options": [
+                  30,
+                  20,
+                  10,
+                  9,
+                  8,
+                  7,
+                  6,
+                  5,
+                  4,
+                  3,
+                  2,
+                  1,
+                  0
+                ]
+              },
+              "workflows_keep_keyword": {
+                "description": "keywords for keep workflows.",
+                "required": false,
+                "default": ""
+              },
+              "out_log": {
+                "description": "Output detailed JSON logs.",
+                "required": false,
+                "default": true,
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "env": {
+          "TZ": "Etc/UTC"
+        },
+        "jobs": {
+          "build": {
+            "runs-on": "ubuntu-22.04",
+            "if": "${{ github.event.repository.owner.id }} == ${{ github.event.sender.id }}",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Initialization environment",
+                "id": "init",
+                "env": {
+                  "DEBIAN_FRONTEND": "noninteractive"
+                },
+                "run": "sudo timedatectl set-timezone \"${TZ}\"\necho \"status=success\" >> ${GITHUB_OUTPUT}\n"
+              },
+              {
+                "name": "Delete releases and workflows runs",
+                "uses": "ophub/delete-releases-workflows@main",
+                "with": {
+                  "delete_releases": "${{ inputs.delete_releases }}",
+                  "delete_tags": "${{ inputs.delete_tags }}",
+                  "prerelease_option": "${{ inputs.prerelease_option }}",
+                  "releases_keep_latest": "${{ inputs.releases_keep_latest }}",
+                  "releases_keep_keyword": "${{ inputs.releases_keep_keyword }}",
+                  "delete_workflows": "${{ inputs.delete_workflows }}",
+                  "workflows_keep_day": "${{ inputs.workflows_keep_day }}",
+                  "workflows_keep_keyword": "${{ inputs.workflows_keep_keyword }}",
+                  "out_log": "${{ inputs.out_log }}",
+                  "gh_token": "${{ secrets.GITHUB_TOKEN }}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

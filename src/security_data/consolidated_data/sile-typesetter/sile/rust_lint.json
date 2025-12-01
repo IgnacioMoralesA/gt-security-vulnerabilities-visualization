@@ -1,0 +1,962 @@
+{
+  "repo_owner": "sile-typesetter",
+  "repo_name": "sile",
+  "workflow_name": "rust_lint",
+  "history": {
+    "2023-05-26T20-27-38Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-9ab487c2-8b63-55e4-b722-af308d6ab67d",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/rust_lint__2023-05-26T20-27-38Z__cbfb263e9d08b2719172260e962b510dc34c7055.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 8,
+                  "startColumn": 5,
+                  "endLine": 25,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "6d03a5dfd32c99df:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-608c59cc-09b8-5f6f-a8bf-3c0795866b4e",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/rust_lint__2023-05-26T20-27-38Z__cbfb263e9d08b2719172260e962b510dc34c7055.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 26,
+                  "startColumn": 5,
+                  "endLine": 42,
+                  "endColumn": 32
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "6d03a5dfd32c99df:2"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "rust_lint__2023-05-26T20-27-38Z__cbfb263e9d08b2719172260e962b510dc34c7055.yml",
+          "workflow_name": "Rust Lint",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 42,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "rustfmt": 4,
+            "clippy": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "rustfmt": 4,
+              "clippy": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 7,
+            "actions_used": [
+              "Swatinem/rust-cache@v2",
+              "actions-rs/clippy-check@v1",
+              "actions-rs/toolchain@v1",
+              "actions/checkout@v3"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Rust Lint",
+        "true": [
+          "push",
+          "pull_request"
+        ],
+        "jobs": {
+          "rustfmt": {
+            "strategy": {
+              "fail-fast": false
+            },
+            "runs-on": "ubuntu-22.04",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Install Rust",
+                "uses": "actions-rs/toolchain@v1",
+                "with": {
+                  "profile": "minimal",
+                  "components": "rustfmt"
+                }
+              },
+              {
+                "name": "Cache Rust",
+                "uses": "Swatinem/rust-cache@v2"
+              },
+              {
+                "name": "Run rustfmt",
+                "run": "git ls-files '*.rs' | xargs rustfmt --check\n"
+              }
+            ]
+          },
+          "clippy": {
+            "strategy": {
+              "fail-fast": false
+            },
+            "runs-on": "ubuntu-22.04",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "name": "Install Rust",
+                "uses": "actions-rs/toolchain@v1",
+                "with": {
+                  "profile": "minimal",
+                  "components": "clippy"
+                }
+              },
+              {
+                "name": "Cache Rust",
+                "uses": "Swatinem/rust-cache@v2"
+              },
+              {
+                "uses": "actions-rs/clippy-check@v1",
+                "with": {
+                  "token": "${{ github.token }}",
+                  "args": "-- -D warnings"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-09-26T12-54-42Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-ae166964-2c52-5e0b-bee3-0031a9cca449",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/rust_lint__2023-09-26T12-54-42Z__1b42a0ddff84169174869839fa4768ee2a409cb6.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 8,
+                  "startColumn": 5,
+                  "endLine": 25,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "6d03a5f5ed8e16ec:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-88f09df5-b263-5aa2-8c1a-d2b11165f83d",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/rust_lint__2023-09-26T12-54-42Z__1b42a0ddff84169174869839fa4768ee2a409cb6.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 26,
+                  "startColumn": 5,
+                  "endLine": 42,
+                  "endColumn": 50
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "6d03a5f5ed8e16ec:2"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "rust_lint__2023-09-26T12-54-42Z__1b42a0ddff84169174869839fa4768ee2a409cb6.yml",
+          "workflow_name": "Rust Lint",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 42,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "rustfmt": 4,
+            "clippy": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "rustfmt": 4,
+              "clippy": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 7,
+            "actions_used": [
+              "Swatinem/rust-cache@v2",
+              "actions-rs/clippy-check@v1",
+              "actions-rs/toolchain@v1",
+              "actions/checkout@v4"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Rust Lint",
+        "true": [
+          "push",
+          "pull_request"
+        ],
+        "jobs": {
+          "rustfmt": {
+            "strategy": {
+              "fail-fast": false
+            },
+            "runs-on": "ubuntu-22.04",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Install Rust",
+                "uses": "actions-rs/toolchain@v1",
+                "with": {
+                  "profile": "minimal",
+                  "components": "rustfmt"
+                }
+              },
+              {
+                "name": "Cache Rust",
+                "uses": "Swatinem/rust-cache@v2"
+              },
+              {
+                "name": "Run rustfmt",
+                "run": "git ls-files '*.rs' | xargs rustfmt --check\n"
+              }
+            ]
+          },
+          "clippy": {
+            "strategy": {
+              "fail-fast": false
+            },
+            "runs-on": "ubuntu-22.04",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Install Rust",
+                "uses": "actions-rs/toolchain@v1",
+                "with": {
+                  "profile": "minimal",
+                  "components": "clippy"
+                }
+              },
+              {
+                "name": "Cache Rust",
+                "uses": "Swatinem/rust-cache@v2"
+              },
+              {
+                "uses": "actions-rs/clippy-check@v1",
+                "with": {
+                  "token": "${{ github.token }}",
+                  "args": "--features luajit -- -D warnings"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-10-11T21-35-32Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-541970b5-9a2a-552d-8578-7cc951758140",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/rust_lint__2023-10-11T21-35-32Z__d2ad044494454258b1c913c86d523fb24bca27c4.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 8,
+                  "startColumn": 5,
+                  "endLine": 25,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "6d03a5f5ed8e16ec:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-3505728b-e0c3-5357-bc76-b696c0c10499",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/rust_lint__2023-10-11T21-35-32Z__d2ad044494454258b1c913c86d523fb24bca27c4.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 26,
+                  "startColumn": 5,
+                  "endLine": 42,
+                  "endColumn": 59
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "6d03a5f5ed8e16ec:2"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "rust_lint__2023-10-11T21-35-32Z__d2ad044494454258b1c913c86d523fb24bca27c4.yml",
+          "workflow_name": "Rust Lint",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 42,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "rustfmt": 4,
+            "clippy": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "rustfmt": 4,
+              "clippy": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 7,
+            "actions_used": [
+              "Swatinem/rust-cache@v2",
+              "actions-rs/clippy-check@v1",
+              "actions-rs/toolchain@v1",
+              "actions/checkout@v4"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Rust Lint",
+        "true": [
+          "push",
+          "pull_request"
+        ],
+        "jobs": {
+          "rustfmt": {
+            "strategy": {
+              "fail-fast": false
+            },
+            "runs-on": "ubuntu-22.04",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Install Rust",
+                "uses": "actions-rs/toolchain@v1",
+                "with": {
+                  "profile": "minimal",
+                  "components": "rustfmt"
+                }
+              },
+              {
+                "name": "Cache Rust",
+                "uses": "Swatinem/rust-cache@v2"
+              },
+              {
+                "name": "Run rustfmt",
+                "run": "git ls-files '*.rs' | xargs rustfmt --check\n"
+              }
+            ]
+          },
+          "clippy": {
+            "strategy": {
+              "fail-fast": false
+            },
+            "runs-on": "ubuntu-22.04",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Install Rust",
+                "uses": "actions-rs/toolchain@v1",
+                "with": {
+                  "profile": "minimal",
+                  "components": "clippy"
+                }
+              },
+              {
+                "name": "Cache Rust",
+                "uses": "Swatinem/rust-cache@v2"
+              },
+              {
+                "uses": "actions-rs/clippy-check@v1",
+                "with": {
+                  "token": "${{ github.token }}",
+                  "args": "--features luajit,vendored -- -D warnings"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-11-04T04-01-47Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-87679838-5459-581e-8386-0a1c364c4515",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/rust_lint__2023-11-04T04-01-47Z__bff44d595d60a4e171830a491b54a0f880639cc3.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 8,
+                  "startColumn": 5,
+                  "endLine": 25,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "6d03a5f5ed8e16ec:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-10bba2c3-8961-59ed-9e5b-9d679d01e272",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/rust_lint__2023-11-04T04-01-47Z__bff44d595d60a4e171830a491b54a0f880639cc3.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 26,
+                  "startColumn": 5,
+                  "endLine": 42,
+                  "endColumn": 59
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "6d03a5f5ed8e16ec:2"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "rust_lint__2023-11-04T04-01-47Z__bff44d595d60a4e171830a491b54a0f880639cc3.yml",
+          "workflow_name": "Rust Lint",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 42,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "rustfmt": 4,
+            "clippy": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "rustfmt": 4,
+              "clippy": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 7,
+            "actions_used": [
+              "Swatinem/rust-cache@v2",
+              "actions-rs/clippy-check@v1",
+              "actions-rs/toolchain@v1",
+              "actions/checkout@v4"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Rust Lint",
+        "true": [
+          "push",
+          "pull_request"
+        ],
+        "jobs": {
+          "rustfmt": {
+            "strategy": {
+              "fail-fast": false
+            },
+            "runs-on": "ubuntu-22.04",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Install Rust",
+                "uses": "actions-rs/toolchain@v1",
+                "with": {
+                  "profile": "minimal",
+                  "components": "rustfmt"
+                }
+              },
+              {
+                "name": "Cache Rust",
+                "uses": "Swatinem/rust-cache@v2"
+              },
+              {
+                "name": "Run rustfmt",
+                "run": "git ls-files '*.rs' '*.rs.in' | xargs rustfmt --check --config skip_children=true\n"
+              }
+            ]
+          },
+          "clippy": {
+            "strategy": {
+              "fail-fast": false
+            },
+            "runs-on": "ubuntu-22.04",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Install Rust",
+                "uses": "actions-rs/toolchain@v1",
+                "with": {
+                  "profile": "minimal",
+                  "components": "clippy"
+                }
+              },
+              {
+                "name": "Cache Rust",
+                "uses": "Swatinem/rust-cache@v2"
+              },
+              {
+                "uses": "actions-rs/clippy-check@v1",
+                "with": {
+                  "token": "${{ github.token }}",
+                  "args": "--features luajit,vendored -- -D warnings"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-06-11T14-37-38Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-a0eaee9a-2ac6-5bf0-a32d-49b5dd54b07f",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/rust_lint__2025-06-11T14-37-38Z__9f24430d5a766dabec73988a89323797c4f7f801.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 8,
+                  "startColumn": 5,
+                  "endLine": 25,
+                  "endColumn": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "42d78f0bb7ac1076:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        },
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-65b83dbf-ec18-5be2-9626-92ef82498717",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/rust_lint__2025-06-11T14-37-38Z__9f24430d5a766dabec73988a89323797c4f7f801.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 26,
+                  "startColumn": 5,
+                  "endLine": 42,
+                  "endColumn": 59
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "42d78f0bb7ac1076:2"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "rust_lint__2025-06-11T14-37-38Z__9f24430d5a766dabec73988a89323797c4f7f801.yml",
+          "workflow_name": "Rust Lint",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 42,
+          "num_jobs": 2,
+          "steps_per_job": {
+            "rustfmt": 4,
+            "clippy": 4
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 2,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "rustfmt": 4,
+              "clippy": 4
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 0,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 7,
+            "actions_used": [
+              "Swatinem/rust-cache@v2",
+              "actions-rs/clippy-check@v1",
+              "actions-rs/toolchain@v1",
+              "actions/checkout@v4"
+            ],
+            "num_run_commands": 1,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 0
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Rust Lint",
+        "true": [
+          "push",
+          "pull_request"
+        ],
+        "jobs": {
+          "rustfmt": {
+            "strategy": {
+              "fail-fast": false
+            },
+            "runs-on": "ubuntu-24.04",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Install Rust",
+                "uses": "actions-rs/toolchain@v1",
+                "with": {
+                  "profile": "minimal",
+                  "components": "rustfmt"
+                }
+              },
+              {
+                "name": "Cache Rust",
+                "uses": "Swatinem/rust-cache@v2"
+              },
+              {
+                "name": "Run rustfmt",
+                "run": "git ls-files '*.rs' '*.rs.in' | xargs rustfmt --check --config skip_children=true\n"
+              }
+            ]
+          },
+          "clippy": {
+            "strategy": {
+              "fail-fast": false
+            },
+            "runs-on": "ubuntu-24.04",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "name": "Install Rust",
+                "uses": "actions-rs/toolchain@v1",
+                "with": {
+                  "profile": "minimal",
+                  "components": "clippy"
+                }
+              },
+              {
+                "name": "Cache Rust",
+                "uses": "Swatinem/rust-cache@v2"
+              },
+              {
+                "uses": "actions-rs/clippy-check@v1",
+                "with": {
+                  "token": "${{ github.token }}",
+                  "args": "--features luajit,vendored -- -D warnings"
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

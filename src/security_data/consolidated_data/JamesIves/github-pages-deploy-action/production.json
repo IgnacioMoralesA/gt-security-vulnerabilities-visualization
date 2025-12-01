@@ -1,0 +1,2686 @@
+{
+  "repo_owner": "JamesIves",
+  "repo_name": "github-pages-deploy-action",
+  "workflow_name": "production",
+  "history": {
+    "2021-02-06T03-05-18Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-88bb509f-9829-52c6-ad4c-8e45e7f213c6",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/production__2021-02-06T03-05-18Z__442182742b1d14df371af6e4f7199bad53f5fffb.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 50,
+                  "endColumn": 20
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "f3ab661a9091d21:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "production__2021-02-06T03-05-18Z__442182742b1d14df371af6e4f7199bad53f5fffb.yml",
+          "workflow_name": "Deploy Production Dependencies and Code",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 50,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 8
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 8
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 1,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "actions/checkout@v2",
+              "actions/setup-node@v1.4.4"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 1
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Deploy Production Dependencies and Code",
+        "true": {
+          "workflow_dispatch": null,
+          "push": {
+            "branches": [
+              "releases/v*"
+            ],
+            "tags-ignore": [
+              "*.*"
+            ]
+          }
+        },
+        "jobs": {
+          "build": {
+            "name": "Build production",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "uses": "actions/setup-node@v1.4.4",
+                "with": {
+                  "node-version": "v12.18.4",
+                  "registry-url": "https://registry.npmjs.org"
+                }
+              },
+              {
+                "name": "Install Yarn",
+                "run": "npm install -g yarn"
+              },
+              {
+                "name": "Clobber lib",
+                "run": "rm -rf lib"
+              },
+              {
+                "name": "Set up .gitignore",
+                "run": "sed -i -e's/^lib/# lib/' -e's/^node_module/# node_modules/' .gitignore\n"
+              },
+              {
+                "name": "Build",
+                "run": "yarn install\nyarn build\n"
+              },
+              {
+                "name": "Install Production node_modules",
+                "run": "yarn install --production\n"
+              },
+              {
+                "name": "Commit and Push",
+                "continue-on-error": true,
+                "run": "git config user.email \"${{ secrets.GIT_CONFIG_EMAIL }}\"\ngit config user.name \"${{ secrets.GIT_CONFIG_NAME }}\"\ngit add .\ngit commit -m \"Deploy Production Code for Commit ${{ github.sha }} \ud83d\ude80\"\ngit push\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2021-02-08T14-18-17Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-f2f8b2e3-5fcf-5f0f-bd37-f92aa863304d",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/production__2021-02-08T14-18-17Z__cb85fae6910f560dbe667112c30081cb76576c2a.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 50,
+                  "endColumn": 20
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "620e9c9a97275481:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "production__2021-02-08T14-18-17Z__cb85fae6910f560dbe667112c30081cb76576c2a.yml",
+          "workflow_name": "Deploy Production Dependencies and Code",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 50,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 8
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 8
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 1,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "actions/checkout@v2",
+              "actions/setup-node@v1.4.4"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 1
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Deploy Production Dependencies and Code",
+        "true": {
+          "workflow_dispatch": null,
+          "push": {
+            "branches": [
+              "releases/v*"
+            ],
+            "tags-ignore": [
+              "*.*"
+            ]
+          }
+        },
+        "jobs": {
+          "build": {
+            "name": "Build Production",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "uses": "actions/setup-node@v1.4.4",
+                "with": {
+                  "node-version": "v12.18.4",
+                  "registry-url": "https://registry.npmjs.org"
+                }
+              },
+              {
+                "name": "Install Yarn",
+                "run": "npm install -g yarn"
+              },
+              {
+                "name": "Clobber lib",
+                "run": "rm -rf lib"
+              },
+              {
+                "name": "Set up .gitignore",
+                "run": "sed -i -e's/^lib/# lib/' -e's/^node_module/# node_modules/' .gitignore\n"
+              },
+              {
+                "name": "Build",
+                "run": "yarn install\nyarn build\n"
+              },
+              {
+                "name": "Install Production node_modules",
+                "run": "yarn install --production\n"
+              },
+              {
+                "name": "Commit and Push",
+                "continue-on-error": true,
+                "run": "git config user.email \"${{ secrets.GIT_CONFIG_EMAIL }}\"\ngit config user.name \"${{ secrets.GIT_CONFIG_NAME }}\"\ngit add .\ngit commit -m \"Deploy Production Code for Commit ${{ github.sha }} \ud83d\ude80\"\ngit push\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2021-04-26T22-57-10Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-f009ea7c-f88c-5fc0-8053-1c6562c82f69",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/production__2021-04-26T22-57-10Z__4bb15711fbc8ff2387bb1690dc9e16bb8326301c.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 50,
+                  "endColumn": 20
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "620e9c9a97275481:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "production__2021-04-26T22-57-10Z__4bb15711fbc8ff2387bb1690dc9e16bb8326301c.yml",
+          "workflow_name": "Deploy Production Dependencies and Code",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 50,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 8
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 8
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 1,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "actions/checkout@v2",
+              "actions/setup-node@v1.4.4"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 1
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Deploy Production Dependencies and Code",
+        "true": {
+          "workflow_dispatch": null,
+          "push": {
+            "branches": [
+              "releases/v*"
+            ],
+            "tags-ignore": [
+              "*.*"
+            ]
+          }
+        },
+        "jobs": {
+          "build": {
+            "name": "Build Production",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "uses": "actions/setup-node@v1.4.4",
+                "with": {
+                  "node-version": "v12.18.4",
+                  "registry-url": "https://registry.npmjs.org"
+                }
+              },
+              {
+                "name": "Install Yarn",
+                "run": "npm install -g yarn"
+              },
+              {
+                "name": "Clobber lib",
+                "run": "rm -rf lib"
+              },
+              {
+                "name": "Set up .gitignore",
+                "run": "sed -i -e's/^lib/# lib/' -e's/^node_module/# node_modules/' .gitignore\n"
+              },
+              {
+                "name": "Build",
+                "run": "yarn install\nyarn build\n"
+              },
+              {
+                "name": "Install Production node_modules",
+                "run": "yarn install --production\n"
+              },
+              {
+                "name": "Commit and Push",
+                "continue-on-error": true,
+                "run": "git config user.email \"${{ secrets.GIT_CONFIG_EMAIL }}\"\ngit config user.name \"${{ secrets.GIT_CONFIG_NAME }}\"\ngit add .\ngit commit -m \"Deploy Production Code for Commit ${{ github.sha }} \ud83d\ude80\"\ngit push\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-01-06T13-39-45Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-6b43e41e-12ad-5ce6-80dd-6d754f690a72",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/production__2022-01-06T13-39-45Z__a5d8ac6765516a146baf5114dbf9e18e61aa02e4.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 50,
+                  "endColumn": 20
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "6488ffb8d7c23523:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "production__2022-01-06T13-39-45Z__a5d8ac6765516a146baf5114dbf9e18e61aa02e4.yml",
+          "workflow_name": "Deploy Production Dependencies and Code",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 50,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 8
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 8
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 1,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "actions/checkout@v2.4.0",
+              "actions/setup-node@v1.4.4"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 1
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Deploy Production Dependencies and Code",
+        "true": {
+          "workflow_dispatch": null,
+          "push": {
+            "branches": [
+              "releases/v*"
+            ],
+            "tags-ignore": [
+              "*.*"
+            ]
+          }
+        },
+        "jobs": {
+          "build": {
+            "name": "Build Production",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v2.4.0"
+              },
+              {
+                "uses": "actions/setup-node@v1.4.4",
+                "with": {
+                  "node-version": "v14.18.1",
+                  "registry-url": "https://registry.npmjs.org"
+                }
+              },
+              {
+                "name": "Install Yarn",
+                "run": "npm install -g yarn"
+              },
+              {
+                "name": "Clobber lib",
+                "run": "rm -rf lib"
+              },
+              {
+                "name": "Set up .gitignore",
+                "run": "sed -i -e's/^lib/# lib/' -e's/^node_module/# node_modules/' .gitignore\n"
+              },
+              {
+                "name": "Build",
+                "run": "yarn install\nyarn build\n"
+              },
+              {
+                "name": "Install Production node_modules",
+                "run": "yarn install --production\n"
+              },
+              {
+                "name": "Commit and Push",
+                "continue-on-error": true,
+                "run": "git config user.email \"${{ secrets.GIT_CONFIG_EMAIL }}\"\ngit config user.name \"${{ secrets.GIT_CONFIG_NAME }}\"\ngit add .\ngit commit -m \"Deploy Production Code for Commit ${{ github.sha }} \ud83d\ude80\"\ngit push\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2021-11-18T13-12-09Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-e76e91d4-1367-5bf3-a694-bda42ccfca14",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/production__2021-11-18T13-12-09Z__2d9f6f66a1298660353cf2a06ffd22fc8c87d332.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 50,
+                  "endColumn": 20
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "620e9c9a97275481:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "production__2021-11-18T13-12-09Z__2d9f6f66a1298660353cf2a06ffd22fc8c87d332.yml",
+          "workflow_name": "Deploy Production Dependencies and Code",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 50,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 8
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 8
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 1,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "actions/checkout@v2",
+              "actions/setup-node@v1.4.4"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 1
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Deploy Production Dependencies and Code",
+        "true": {
+          "workflow_dispatch": null,
+          "push": {
+            "branches": [
+              "releases/v*"
+            ],
+            "tags-ignore": [
+              "*.*"
+            ]
+          }
+        },
+        "jobs": {
+          "build": {
+            "name": "Build Production",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v2"
+              },
+              {
+                "uses": "actions/setup-node@v1.4.4",
+                "with": {
+                  "node-version": "v14.18.1",
+                  "registry-url": "https://registry.npmjs.org"
+                }
+              },
+              {
+                "name": "Install Yarn",
+                "run": "npm install -g yarn"
+              },
+              {
+                "name": "Clobber lib",
+                "run": "rm -rf lib"
+              },
+              {
+                "name": "Set up .gitignore",
+                "run": "sed -i -e's/^lib/# lib/' -e's/^node_module/# node_modules/' .gitignore\n"
+              },
+              {
+                "name": "Build",
+                "run": "yarn install\nyarn build\n"
+              },
+              {
+                "name": "Install Production node_modules",
+                "run": "yarn install --production\n"
+              },
+              {
+                "name": "Commit and Push",
+                "continue-on-error": true,
+                "run": "git config user.email \"${{ secrets.GIT_CONFIG_EMAIL }}\"\ngit config user.name \"${{ secrets.GIT_CONFIG_NAME }}\"\ngit add .\ngit commit -m \"Deploy Production Code for Commit ${{ github.sha }} \ud83d\ude80\"\ngit push\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-01-06T13-46-55Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-f86eae48-aac5-58a2-8f98-f4a84a136d7b",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/production__2022-01-06T13-46-55Z__e92afa83cc812e4d0a7be242d5fb5ae8afac03ae.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 50,
+                  "endColumn": 20
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "6488ffb8d7c23523:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "production__2022-01-06T13-46-55Z__e92afa83cc812e4d0a7be242d5fb5ae8afac03ae.yml",
+          "workflow_name": "Deploy Production Dependencies and Code",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 50,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 8
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 8
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 1,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "actions/checkout@v2.4.0",
+              "actions/setup-node@v2.5.1"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 1
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Deploy Production Dependencies and Code",
+        "true": {
+          "workflow_dispatch": null,
+          "push": {
+            "branches": [
+              "releases/v*"
+            ],
+            "tags-ignore": [
+              "*.*"
+            ]
+          }
+        },
+        "jobs": {
+          "build": {
+            "name": "Build Production",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v2.4.0"
+              },
+              {
+                "uses": "actions/setup-node@v2.5.1",
+                "with": {
+                  "node-version": "v14.18.1",
+                  "registry-url": "https://registry.npmjs.org"
+                }
+              },
+              {
+                "name": "Install Yarn",
+                "run": "npm install -g yarn"
+              },
+              {
+                "name": "Clobber lib",
+                "run": "rm -rf lib"
+              },
+              {
+                "name": "Set up .gitignore",
+                "run": "sed -i -e's/^lib/# lib/' -e's/^node_module/# node_modules/' .gitignore\n"
+              },
+              {
+                "name": "Build",
+                "run": "yarn install\nyarn build\n"
+              },
+              {
+                "name": "Install Production node_modules",
+                "run": "yarn install --production\n"
+              },
+              {
+                "name": "Commit and Push",
+                "continue-on-error": true,
+                "run": "git config user.email \"${{ secrets.GIT_CONFIG_EMAIL }}\"\ngit config user.name \"${{ secrets.GIT_CONFIG_NAME }}\"\ngit add .\ngit commit -m \"Deploy Production Code for Commit ${{ github.sha }} \ud83d\ude80\"\ngit push\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-01-29T15-19-16Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-d73dd14a-428e-5172-a2bb-2eaff2ae4534",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/production__2022-01-29T15-19-16Z__92429b89197b95a5d8be9d68921c08aed8e2e62f.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 50,
+                  "endColumn": 20
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "6488ffb8d7c23523:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "production__2022-01-29T15-19-16Z__92429b89197b95a5d8be9d68921c08aed8e2e62f.yml",
+          "workflow_name": "Deploy Production Dependencies and Code",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 50,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 8
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 8
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 1,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "actions/checkout@v2.4.0",
+              "actions/setup-node@v2.5.1"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 1
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Deploy Production Dependencies and Code",
+        "true": {
+          "workflow_dispatch": null,
+          "push": {
+            "branches": [
+              "releases/v*"
+            ],
+            "tags-ignore": [
+              "*.*"
+            ]
+          }
+        },
+        "jobs": {
+          "build": {
+            "name": "Build Production",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v2.4.0"
+              },
+              {
+                "uses": "actions/setup-node@v2.5.1",
+                "with": {
+                  "node-version": "v14.18.1",
+                  "registry-url": "https://registry.npmjs.org"
+                }
+              },
+              {
+                "name": "Install Yarn",
+                "run": "npm install -g yarn"
+              },
+              {
+                "name": "Clobber lib",
+                "run": "rm -rf lib"
+              },
+              {
+                "name": "Set up .gitignore",
+                "run": "sed -i -e's/^lib/# lib/' -e's/^node_module/# node_modules/' .gitignore\n"
+              },
+              {
+                "name": "Build",
+                "run": "yarn install --frozen-lockfile\nyarn build\n"
+              },
+              {
+                "name": "Install Production node_modules",
+                "run": "yarn install --production --frozen-lockfile\n"
+              },
+              {
+                "name": "Commit and Push",
+                "continue-on-error": true,
+                "run": "git config user.email \"${{ secrets.GIT_CONFIG_EMAIL }}\"\ngit config user.name \"${{ secrets.GIT_CONFIG_NAME }}\"\ngit add .\ngit commit -m \"Deploy Production Code for Commit ${{ github.sha }} \ud83d\ude80\"\ngit push\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-02-26T22-17-42Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-2aa4c3bc-bae6-5d1c-baea-0674913d82ef",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/production__2022-02-26T22-17-42Z__c4fb408c854e2c7003895dfa64706162e8d6e4d3.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 50,
+                  "endColumn": 20
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "6488ffb8d7c23523:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "production__2022-02-26T22-17-42Z__c4fb408c854e2c7003895dfa64706162e8d6e4d3.yml",
+          "workflow_name": "Deploy Production Dependencies and Code",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 50,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 8
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 8
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 1,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "actions/checkout@v2.4.0",
+              "actions/setup-node@v3"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 1
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Deploy Production Dependencies and Code",
+        "true": {
+          "workflow_dispatch": null,
+          "push": {
+            "branches": [
+              "releases/v*"
+            ],
+            "tags-ignore": [
+              "*.*"
+            ]
+          }
+        },
+        "jobs": {
+          "build": {
+            "name": "Build Production",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v2.4.0"
+              },
+              {
+                "uses": "actions/setup-node@v3",
+                "with": {
+                  "node-version": "v14.18.1",
+                  "registry-url": "https://registry.npmjs.org"
+                }
+              },
+              {
+                "name": "Install Yarn",
+                "run": "npm install -g yarn"
+              },
+              {
+                "name": "Clobber lib",
+                "run": "rm -rf lib"
+              },
+              {
+                "name": "Set up .gitignore",
+                "run": "sed -i -e's/^lib/# lib/' -e's/^node_module/# node_modules/' .gitignore\n"
+              },
+              {
+                "name": "Build",
+                "run": "yarn install --frozen-lockfile\nyarn build\n"
+              },
+              {
+                "name": "Install Production node_modules",
+                "run": "yarn install --production --frozen-lockfile\n"
+              },
+              {
+                "name": "Commit and Push",
+                "continue-on-error": true,
+                "run": "git config user.email \"${{ secrets.GIT_CONFIG_EMAIL }}\"\ngit config user.name \"${{ secrets.GIT_CONFIG_NAME }}\"\ngit add .\ngit commit -m \"Deploy Production Code for Commit ${{ github.sha }} \ud83d\ude80\"\ngit push\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-03-02T11-48-26Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-f10f0a6d-75d9-55b9-bc37-e9f65b9fead7",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/production__2022-03-02T11-48-26Z__8cb2e21c0753ebdbf49ee5a709d3ecf416a4cc3e.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 50,
+                  "endColumn": 20
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "6486b3bcfc99c5be:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "production__2022-03-02T11-48-26Z__8cb2e21c0753ebdbf49ee5a709d3ecf416a4cc3e.yml",
+          "workflow_name": "Deploy Production Dependencies and Code",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 50,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 8
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 8
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 1,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-node@v3"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 1
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Deploy Production Dependencies and Code",
+        "true": {
+          "workflow_dispatch": null,
+          "push": {
+            "branches": [
+              "releases/v*"
+            ],
+            "tags-ignore": [
+              "*.*"
+            ]
+          }
+        },
+        "jobs": {
+          "build": {
+            "name": "Build Production",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "uses": "actions/setup-node@v3",
+                "with": {
+                  "node-version": "v14.18.1",
+                  "registry-url": "https://registry.npmjs.org"
+                }
+              },
+              {
+                "name": "Install Yarn",
+                "run": "npm install -g yarn"
+              },
+              {
+                "name": "Clobber lib",
+                "run": "rm -rf lib"
+              },
+              {
+                "name": "Set up .gitignore",
+                "run": "sed -i -e's/^lib/# lib/' -e's/^node_module/# node_modules/' .gitignore\n"
+              },
+              {
+                "name": "Build",
+                "run": "yarn install --frozen-lockfile\nyarn build\n"
+              },
+              {
+                "name": "Install Production node_modules",
+                "run": "yarn install --production --frozen-lockfile\n"
+              },
+              {
+                "name": "Commit and Push",
+                "continue-on-error": true,
+                "run": "git config user.email \"${{ secrets.GIT_CONFIG_EMAIL }}\"\ngit config user.name \"${{ secrets.GIT_CONFIG_NAME }}\"\ngit add .\ngit commit -m \"Deploy Production Code for Commit ${{ github.sha }} \ud83d\ude80\"\ngit push\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2022-04-04T13-42-48Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-9b1a7bc6-c142-55d9-abf0-db5690265567",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/production__2022-04-04T13-42-48Z__01aec0687499295d5cc955d165640a9014433c0f.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 50,
+                  "endColumn": 20
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "6486b3bcfc99c5be:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "production__2022-04-04T13-42-48Z__01aec0687499295d5cc955d165640a9014433c0f.yml",
+          "workflow_name": "Deploy Production Dependencies and Code",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 50,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 8
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 8
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 1,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-node@v3"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 1
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Deploy Production Dependencies and Code",
+        "true": {
+          "workflow_dispatch": null,
+          "push": {
+            "branches": [
+              "releases/v*"
+            ],
+            "tags-ignore": [
+              "*.*"
+            ]
+          }
+        },
+        "jobs": {
+          "build": {
+            "name": "Build Production",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "uses": "actions/setup-node@v3",
+                "with": {
+                  "node-version": "v16.13.2",
+                  "registry-url": "https://registry.npmjs.org"
+                }
+              },
+              {
+                "name": "Install Yarn",
+                "run": "npm install -g yarn"
+              },
+              {
+                "name": "Clobber lib",
+                "run": "rm -rf lib"
+              },
+              {
+                "name": "Set up .gitignore",
+                "run": "sed -i -e's/^lib/# lib/' -e's/^node_module/# node_modules/' .gitignore\n"
+              },
+              {
+                "name": "Build",
+                "run": "yarn install --frozen-lockfile\nyarn build\n"
+              },
+              {
+                "name": "Install Production node_modules",
+                "run": "yarn install --production --frozen-lockfile\n"
+              },
+              {
+                "name": "Commit and Push",
+                "continue-on-error": true,
+                "run": "git config user.email \"${{ secrets.GIT_CONFIG_EMAIL }}\"\ngit config user.name \"${{ secrets.GIT_CONFIG_NAME }}\"\ngit add .\ngit commit -m \"Deploy Production Code for Commit ${{ github.sha }} \ud83d\ude80\"\ngit push\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-11-25T16-01-46Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-4c2f5d60-f6f9-5758-bf99-3d14acf86bcc",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/production__2023-11-25T16-01-46Z__9de026908021c3f454a557024a9c44136457ff4b.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 50,
+                  "endColumn": 20
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "6486b3bcfc99c5be:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "production__2023-11-25T16-01-46Z__9de026908021c3f454a557024a9c44136457ff4b.yml",
+          "workflow_name": "Deploy Production Dependencies and Code",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 50,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 8
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 8
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 1,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "actions/checkout@v3",
+              "actions/setup-node@v4"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 1
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Deploy Production Dependencies and Code",
+        "true": {
+          "workflow_dispatch": null,
+          "push": {
+            "branches": [
+              "releases/v*"
+            ],
+            "tags-ignore": [
+              "*.*"
+            ]
+          }
+        },
+        "jobs": {
+          "build": {
+            "name": "Build Production",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v3"
+              },
+              {
+                "uses": "actions/setup-node@v4",
+                "with": {
+                  "node-version": "v16.13.2",
+                  "registry-url": "https://registry.npmjs.org"
+                }
+              },
+              {
+                "name": "Install Yarn",
+                "run": "npm install -g yarn"
+              },
+              {
+                "name": "Clobber lib",
+                "run": "rm -rf lib"
+              },
+              {
+                "name": "Set up .gitignore",
+                "run": "sed -i -e's/^lib/# lib/' -e's/^node_module/# node_modules/' .gitignore\n"
+              },
+              {
+                "name": "Build",
+                "run": "yarn install --frozen-lockfile\nyarn build\n"
+              },
+              {
+                "name": "Install Production node_modules",
+                "run": "yarn install --production --frozen-lockfile\n"
+              },
+              {
+                "name": "Commit and Push",
+                "continue-on-error": true,
+                "run": "git config user.email \"${{ secrets.GIT_CONFIG_EMAIL }}\"\ngit config user.name \"${{ secrets.GIT_CONFIG_NAME }}\"\ngit add .\ngit commit -m \"Deploy Production Code for Commit ${{ github.sha }} \ud83d\ude80\"\ngit push\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-11-25T16-02-08Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-9260e056-6670-55dd-a465-5378c4511281",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/production__2023-11-25T16-02-08Z__b957d05c49f8a1699a3694a18f7f5ebafcd26f1b.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 50,
+                  "endColumn": 20
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "66fecadf620c36fb:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "production__2023-11-25T16-02-08Z__b957d05c49f8a1699a3694a18f7f5ebafcd26f1b.yml",
+          "workflow_name": "Deploy Production Dependencies and Code",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 50,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 8
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 8
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 1,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-node@v4"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 1
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Deploy Production Dependencies and Code",
+        "true": {
+          "workflow_dispatch": null,
+          "push": {
+            "branches": [
+              "releases/v*"
+            ],
+            "tags-ignore": [
+              "*.*"
+            ]
+          }
+        },
+        "jobs": {
+          "build": {
+            "name": "Build Production",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "uses": "actions/setup-node@v4",
+                "with": {
+                  "node-version": "v16.13.2",
+                  "registry-url": "https://registry.npmjs.org"
+                }
+              },
+              {
+                "name": "Install Yarn",
+                "run": "npm install -g yarn"
+              },
+              {
+                "name": "Clobber lib",
+                "run": "rm -rf lib"
+              },
+              {
+                "name": "Set up .gitignore",
+                "run": "sed -i -e's/^lib/# lib/' -e's/^node_module/# node_modules/' .gitignore\n"
+              },
+              {
+                "name": "Build",
+                "run": "yarn install --frozen-lockfile\nyarn build\n"
+              },
+              {
+                "name": "Install Production node_modules",
+                "run": "yarn install --production --frozen-lockfile\n"
+              },
+              {
+                "name": "Commit and Push",
+                "continue-on-error": true,
+                "run": "git config user.email \"${{ secrets.GIT_CONFIG_EMAIL }}\"\ngit config user.name \"${{ secrets.GIT_CONFIG_NAME }}\"\ngit add .\ngit commit -m \"Deploy Production Code for Commit ${{ github.sha }} \ud83d\ude80\"\ngit push\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2023-11-28T03-03-37Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-17f765b9-ca75-5483-9a75-bd9b1886abd0",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/production__2023-11-28T03-03-37Z__7879c16b183e9e4d01df2ad341ca028096570343.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 50,
+                  "endColumn": 20
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "66fecadf620c36fb:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "production__2023-11-28T03-03-37Z__7879c16b183e9e4d01df2ad341ca028096570343.yml",
+          "workflow_name": "Deploy Production Dependencies and Code",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 50,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 8
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 8
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 1,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-node@v4"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 1
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Deploy Production Dependencies and Code",
+        "true": {
+          "workflow_dispatch": null,
+          "push": {
+            "branches": [
+              "releases/v*"
+            ],
+            "tags-ignore": [
+              "*.*"
+            ]
+          }
+        },
+        "jobs": {
+          "build": {
+            "name": "Build Production",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "uses": "actions/setup-node@v4",
+                "with": {
+                  "node-version": "v20.10.0",
+                  "registry-url": "https://registry.npmjs.org"
+                }
+              },
+              {
+                "name": "Install Yarn",
+                "run": "npm install -g yarn"
+              },
+              {
+                "name": "Clobber lib",
+                "run": "rm -rf lib"
+              },
+              {
+                "name": "Set up .gitignore",
+                "run": "sed -i -e's/^lib/# lib/' -e's/^node_module/# node_modules/' .gitignore\n"
+              },
+              {
+                "name": "Build",
+                "run": "yarn install --frozen-lockfile\nyarn build\n"
+              },
+              {
+                "name": "Install Production node_modules",
+                "run": "yarn install --production --frozen-lockfile\n"
+              },
+              {
+                "name": "Commit and Push",
+                "continue-on-error": true,
+                "run": "git config user.email \"${{ secrets.GIT_CONFIG_EMAIL }}\"\ngit config user.name \"${{ secrets.GIT_CONFIG_NAME }}\"\ngit add .\ngit commit -m \"Deploy Production Code for Commit ${{ github.sha }} \ud83d\ude80\"\ngit push\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-04-17T09-11-56Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-8042c650-2584-5780-ac83-f80235e21957",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/production__2024-04-17T09-11-56Z__27db30aabf73a88bb80068ff24d1a5d067ba4ed5.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 50,
+                  "endColumn": 20
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "66fecadf620c36fb:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "production__2024-04-17T09-11-56Z__27db30aabf73a88bb80068ff24d1a5d067ba4ed5.yml",
+          "workflow_name": "Deploy Production Dependencies and Code",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 50,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 8
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 8
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 1,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-node@v4"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 1
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Deploy Production Dependencies and Code",
+        "true": {
+          "workflow_dispatch": null,
+          "push": {
+            "branches": [
+              "releases/v*"
+            ],
+            "tags-ignore": [
+              "*.*"
+            ]
+          }
+        },
+        "jobs": {
+          "build": {
+            "name": "Build Production",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "uses": "actions/setup-node@v4",
+                "with": {
+                  "node-version-file": ".nvmrc",
+                  "registry-url": "https://registry.npmjs.org"
+                }
+              },
+              {
+                "name": "Install Yarn",
+                "run": "npm install -g yarn"
+              },
+              {
+                "name": "Clobber lib",
+                "run": "rm -rf lib"
+              },
+              {
+                "name": "Set up .gitignore",
+                "run": "sed -i -e's/^lib/# lib/' -e's/^node_module/# node_modules/' .gitignore\n"
+              },
+              {
+                "name": "Build",
+                "run": "yarn install --frozen-lockfile\nyarn build\n"
+              },
+              {
+                "name": "Install Production node_modules",
+                "run": "yarn install --production --frozen-lockfile\n"
+              },
+              {
+                "name": "Commit and Push",
+                "continue-on-error": true,
+                "run": "git config user.email \"${{ secrets.GIT_CONFIG_EMAIL }}\"\ngit config user.name \"${{ secrets.GIT_CONFIG_NAME }}\"\ngit add .\ngit commit -m \"Deploy Production Code for Commit ${{ github.sha }} \ud83d\ude80\"\ngit push\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-07-05T13-15-54Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-66163fa2-a0e7-5aa3-881b-5b2ff382965d",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/production__2024-07-05T13-15-54Z__bd55998776608450dfefcfe93644b604eae9c56e.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 50,
+                  "endColumn": 20
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "66fecadf620c36fb:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "production__2024-07-05T13-15-54Z__bd55998776608450dfefcfe93644b604eae9c56e.yml",
+          "workflow_name": "Deploy Production Dependencies and Code \ud83d\ude80",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 50,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 8
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 8
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 1,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-node@v4"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 1
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Deploy Production Dependencies and Code \ud83d\ude80",
+        "true": {
+          "workflow_dispatch": null,
+          "push": {
+            "branches": [
+              "releases/v*"
+            ],
+            "tags-ignore": [
+              "*.*"
+            ]
+          }
+        },
+        "jobs": {
+          "build": {
+            "name": "Build Production",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "uses": "actions/setup-node@v4",
+                "with": {
+                  "node-version-file": ".nvmrc",
+                  "registry-url": "https://registry.npmjs.org"
+                }
+              },
+              {
+                "name": "Install Yarn",
+                "run": "npm install -g yarn"
+              },
+              {
+                "name": "Clobber lib",
+                "run": "rm -rf lib"
+              },
+              {
+                "name": "Set up .gitignore",
+                "run": "sed -i -e's/^lib/# lib/' -e's/^node_module/# node_modules/' .gitignore\n"
+              },
+              {
+                "name": "Build",
+                "run": "yarn install --frozen-lockfile\nyarn build\n"
+              },
+              {
+                "name": "Install Production node_modules",
+                "run": "yarn install --production --frozen-lockfile\n"
+              },
+              {
+                "name": "Commit and Push",
+                "continue-on-error": true,
+                "run": "git config user.email \"${{ secrets.GIT_CONFIG_EMAIL }}\"\ngit config user.name \"${{ secrets.GIT_CONFIG_NAME }}\"\ngit add .\ngit commit -m \"Deploy Production Code for Commit ${{ github.sha }} \ud83d\ude80\"\ngit push\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2024-11-09T19-57-47Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-f7f52078-dee7-5b81-b222-b194e83adca8",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/production__2024-11-09T19-57-47Z__bbb99d2d81e10cc53f7db1b4f6b9e3c5caec0dcc.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 50,
+                  "endColumn": 20
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "66fecadf620c36fb:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "production__2024-11-09T19-57-47Z__bbb99d2d81e10cc53f7db1b4f6b9e3c5caec0dcc.yml",
+          "workflow_name": "Deploy Production Dependencies and Code \ud83d\ude80",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 50,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 8
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 8
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 1,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "actions/checkout@v4",
+              "actions/setup-node@v4"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 1
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Deploy Production Dependencies and Code \ud83d\ude80",
+        "true": {
+          "workflow_dispatch": null,
+          "push": {
+            "branches": [
+              "releases/v*"
+            ],
+            "tags-ignore": [
+              "*.*"
+            ]
+          }
+        },
+        "jobs": {
+          "build": {
+            "name": "Build Production",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4"
+              },
+              {
+                "uses": "actions/setup-node@v4",
+                "with": {
+                  "node-version-file": ".node-version",
+                  "registry-url": "https://registry.npmjs.org"
+                }
+              },
+              {
+                "name": "Install Yarn",
+                "run": "npm install -g yarn"
+              },
+              {
+                "name": "Clobber lib",
+                "run": "rm -rf lib"
+              },
+              {
+                "name": "Set up .gitignore",
+                "run": "sed -i -e's/^lib/# lib/' -e's/^node_module/# node_modules/' .gitignore\n"
+              },
+              {
+                "name": "Build",
+                "run": "yarn install --frozen-lockfile\nyarn build\n"
+              },
+              {
+                "name": "Install Production node_modules",
+                "run": "yarn install --production --frozen-lockfile\n"
+              },
+              {
+                "name": "Commit and Push",
+                "continue-on-error": true,
+                "run": "git config user.email \"${{ secrets.GIT_CONFIG_EMAIL }}\"\ngit config user.name \"${{ secrets.GIT_CONFIG_NAME }}\"\ngit add .\ngit commit -m \"Deploy Production Code for Commit ${{ github.sha }} \ud83d\ude80\"\ngit push\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-04-16T12-57-33Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-725f4e0e-af0d-58f1-a86b-7c332826e3a1",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/production__2025-04-16T12-57-33Z__4587c68ae8a4dff58b810849b4b7d2638d89ffd7.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 50,
+                  "endColumn": 20
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "697841c3b0be9cad:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "production__2025-04-16T12-57-33Z__4587c68ae8a4dff58b810849b4b7d2638d89ffd7.yml",
+          "workflow_name": "Deploy Production Dependencies and Code \ud83d\ude80",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 50,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 8
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 8
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 1,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "actions/checkout@v4.2.2",
+              "actions/setup-node@v4.4.0"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 1
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Deploy Production Dependencies and Code \ud83d\ude80",
+        "true": {
+          "workflow_dispatch": null,
+          "push": {
+            "branches": [
+              "releases/v*"
+            ],
+            "tags-ignore": [
+              "*.*"
+            ]
+          }
+        },
+        "jobs": {
+          "build": {
+            "name": "Build Production",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v4.2.2"
+              },
+              {
+                "uses": "actions/setup-node@v4.4.0",
+                "with": {
+                  "node-version-file": ".node-version",
+                  "registry-url": "https://registry.npmjs.org"
+                }
+              },
+              {
+                "name": "Install Yarn",
+                "run": "npm install -g yarn"
+              },
+              {
+                "name": "Clobber lib",
+                "run": "rm -rf lib"
+              },
+              {
+                "name": "Set up .gitignore",
+                "run": "sed -i -e's/^lib/# lib/' -e's/^node_module/# node_modules/' .gitignore\n"
+              },
+              {
+                "name": "Build",
+                "run": "yarn install --frozen-lockfile\nyarn build\n"
+              },
+              {
+                "name": "Install Production node_modules",
+                "run": "yarn install --production --frozen-lockfile\n"
+              },
+              {
+                "name": "Commit and Push",
+                "continue-on-error": true,
+                "run": "git config user.email \"${{ secrets.GIT_CONFIG_EMAIL }}\"\ngit config user.name \"${{ secrets.GIT_CONFIG_NAME }}\"\ngit add .\ngit commit -m \"Deploy Production Code for Commit ${{ github.sha }} \ud83d\ude80\"\ngit push\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-09-09T12-20-24Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-82b18ff3-601f-5794-803a-c81b75776293",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/production__2025-09-09T12-20-24Z__b2c1b9c8e6659a547bd055639aa2300c8d7c79a7.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 50,
+                  "endColumn": 20
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "6bef6c53bac29ec6:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "production__2025-09-09T12-20-24Z__b2c1b9c8e6659a547bd055639aa2300c8d7c79a7.yml",
+          "workflow_name": "Deploy Production Dependencies and Code \ud83d\ude80",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 50,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 8
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 8
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 1,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "actions/checkout@v5.0.0",
+              "actions/setup-node@v4.4.0"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 1
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Deploy Production Dependencies and Code \ud83d\ude80",
+        "true": {
+          "workflow_dispatch": null,
+          "push": {
+            "branches": [
+              "releases/v*"
+            ],
+            "tags-ignore": [
+              "*.*"
+            ]
+          }
+        },
+        "jobs": {
+          "build": {
+            "name": "Build Production",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v5.0.0"
+              },
+              {
+                "uses": "actions/setup-node@v4.4.0",
+                "with": {
+                  "node-version-file": ".node-version",
+                  "registry-url": "https://registry.npmjs.org"
+                }
+              },
+              {
+                "name": "Install Yarn",
+                "run": "npm install -g yarn"
+              },
+              {
+                "name": "Clobber lib",
+                "run": "rm -rf lib"
+              },
+              {
+                "name": "Set up .gitignore",
+                "run": "sed -i -e's/^lib/# lib/' -e's/^node_module/# node_modules/' .gitignore\n"
+              },
+              {
+                "name": "Build",
+                "run": "yarn install --frozen-lockfile\nyarn build\n"
+              },
+              {
+                "name": "Install Production node_modules",
+                "run": "yarn install --production --frozen-lockfile\n"
+              },
+              {
+                "name": "Commit and Push",
+                "continue-on-error": true,
+                "run": "git config user.email \"${{ secrets.GIT_CONFIG_EMAIL }}\"\ngit config user.name \"${{ secrets.GIT_CONFIG_NAME }}\"\ngit add .\ngit commit -m \"Deploy Production Code for Commit ${{ github.sha }} \ud83d\ude80\"\ngit push\n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "2025-09-09T12-20-41Z": {
+      "vulnerability_list": [
+        {
+          "ruleId": "actions/missing-workflow-permissions",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "warning",
+          "correlationGuid": "workflow-280b32d4-b0d4-520d-a162-66a76c78499c",
+          "message": {
+            "text": "Actions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/production__2025-09-09T12-20-41Z__dbc3c23289170004acf23ff64f318216802a6374.yml",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 5,
+                  "endLine": 50,
+                  "endColumn": 20
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "6bef6c53bac29ec6:1"
+          },
+          "baselineState": "new",
+          "properties": {
+            "cwe": "CWE-275",
+            "precision": "high",
+            "security_severity": "5.0",
+            "triage": "medium"
+          }
+        }
+      ],
+      "workflow_metadata": {
+        "workflow_metadata": {
+          "file_name": "production__2025-09-09T12-20-41Z__dbc3c23289170004acf23ff64f318216802a6374.yml",
+          "workflow_name": "Deploy Production Dependencies and Code \ud83d\ude80",
+          "triggers": {},
+          "permissions": null,
+          "concurrency": null,
+          "defaults": null,
+          "line_count": 50,
+          "num_jobs": 1,
+          "steps_per_job": {
+            "build": 8
+          }
+        },
+        "workflow_metrics": {
+          "workflow_level": {
+            "num_jobs": 1,
+            "num_dependencies_between_jobs": 0,
+            "num_matrix_strategies": 0,
+            "num_triggers_defined": 0
+          },
+          "job_level": {
+            "num_steps_per_job": {
+              "build": 8
+            },
+            "jobs_with_timeout": 0,
+            "jobs_with_continue_on_error": 1,
+            "num_distinct_runs_on": 1,
+            "jobs_with_container": 0,
+            "jobs_with_services": 0
+          },
+          "step_level": {
+            "num_actions_uses": 2,
+            "actions_used": [
+              "actions/checkout@v5.0.0",
+              "actions/setup-node@v5.0.0"
+            ],
+            "num_run_commands": 6,
+            "steps_with_conditionals": 0,
+            "steps_with_continue_on_error": 1
+          }
+        }
+      },
+      "workflow_json": {
+        "name": "Deploy Production Dependencies and Code \ud83d\ude80",
+        "true": {
+          "workflow_dispatch": null,
+          "push": {
+            "branches": [
+              "releases/v*"
+            ],
+            "tags-ignore": [
+              "*.*"
+            ]
+          }
+        },
+        "jobs": {
+          "build": {
+            "name": "Build Production",
+            "runs-on": "ubuntu-latest",
+            "steps": [
+              {
+                "name": "Checkout",
+                "uses": "actions/checkout@v5.0.0"
+              },
+              {
+                "uses": "actions/setup-node@v5.0.0",
+                "with": {
+                  "node-version-file": ".node-version",
+                  "registry-url": "https://registry.npmjs.org"
+                }
+              },
+              {
+                "name": "Install Yarn",
+                "run": "npm install -g yarn"
+              },
+              {
+                "name": "Clobber lib",
+                "run": "rm -rf lib"
+              },
+              {
+                "name": "Set up .gitignore",
+                "run": "sed -i -e's/^lib/# lib/' -e's/^node_module/# node_modules/' .gitignore\n"
+              },
+              {
+                "name": "Build",
+                "run": "yarn install --frozen-lockfile\nyarn build\n"
+              },
+              {
+                "name": "Install Production node_modules",
+                "run": "yarn install --production --frozen-lockfile\n"
+              },
+              {
+                "name": "Commit and Push",
+                "continue-on-error": true,
+                "run": "git config user.email \"${{ secrets.GIT_CONFIG_EMAIL }}\"\ngit config user.name \"${{ secrets.GIT_CONFIG_NAME }}\"\ngit add .\ngit commit -m \"Deploy Production Code for Commit ${{ github.sha }} \ud83d\ude80\"\ngit push\n"
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}
