@@ -78,17 +78,11 @@ El desarrollo presentó varios desafíos importantes:
 
 1. API de archivos distinta en GT
 GT no usa la misma API de archivos que Pharo, por lo que métodos esperables como childrenDo: no funcionaban.
-La solución fue usar:
-	-asFileReference
-	-allChildren
-	-filtrado manual de JSON
-2. Problemas con Bloc
+La solución fue usar: asFileReference, allChildren y filtrado manual de JSON.
+3. Problemas con Bloc
 Los intentos de usar BlElement, BlRectangleGeometry y propiedades de layout resultaron en errores en tiempo de ejecución debido a diferencias entre versiones de GT.
 Para asegurar funcionalidad, se implementó una visualización textual mínima.
-3. Estabilidad del inspector
-Varias vistas del inspector fallaban antes de abrirse, especialmente cuando:
-	-el workflow estaba mal construido,
-	-faltaban variables de instancia,
-	-las vistas intentaban leer campos que eran nil.
+4. Estabilidad del inspector
+Varias vistas del inspector fallaban antes de abrirse, especialmente cuando: el workflow estaba mal construido, faltaban variables de instancia y las vistas intentaban leer campos que eran nil.
 
 Estos problemas desaparecieron al corregir la estructura del modelo.
